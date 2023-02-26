@@ -1913,10 +1913,10 @@ void DWIN_InitScreen() {
   last_E = 0;
   DWIN_DrawStatusLine();
   DWIN_Draw_Dashboard();
-  #if HAS_BED_PROBE
-    if (bedlevel.storage_slot < 0) bedlevel.storage_slot = 0;
-    settings.load_mesh(bedlevel.storage_slot);
-  #endif
+//  #if HAS_BED_PROBE
+//    if (bedlevel.storage_slot < 0) bedlevel.storage_slot = 0;
+//    settings.load_mesh(bedlevel.storage_slot);
+//  #endif
   LCD_MESSAGE(WELCOME_MSG);
   Goto_Main_Menu();
 }
