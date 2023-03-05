@@ -3460,6 +3460,9 @@ void Draw_Temperature_Menu() {
       #define _ITEM_SETPREHEAT(N) MENU_ITEM(ICON_SetPreheat##N, MSG_PREHEAT_## N ##_SETTINGS, onDrawSubMenu, Draw_Preheat## N ##_Menu);
       REPEAT_1(PREHEAT_COUNT, _ITEM_SETPREHEAT)
     #endif
+	#if ENABLED(MPCTEMP)
+      MENU_ITEM_F(ICON_MPCNozzle, STR_MPC_AUTOTUNE " Settings", onDrawSubMenu, Draw_HotendMPC_Menu);
+    #endif
   }
   UpdateMenu(TemperatureMenu);
 }
