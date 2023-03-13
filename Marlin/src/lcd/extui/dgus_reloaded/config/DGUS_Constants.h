@@ -54,11 +54,11 @@
 #endif
 
 #ifndef DGUS_ABS_TEMP_HOTEND
-  #define DGUS_ABS_TEMP_HOTEND 240
+  #define DGUS_ABS_TEMP_HOTEND 260
 #endif
 
 #ifndef DGUS_ABS_TEMP_BED
-  #define DGUS_ABS_TEMP_BED 80
+  #define DGUS_ABS_TEMP_BED 100
 #endif
 
 #ifndef DGUS_PETG_TEMP_HOTEND
@@ -66,7 +66,7 @@
 #endif
 
 #ifndef DGUS_PETG_TEMP_BED
-  #define DGUS_PETG_TEMP_BED 60
+  #define DGUS_PETG_TEMP_BED 80
 #endif
 
 #ifndef DGUS_DEFAULT_FILAMENT_LEN
@@ -74,7 +74,7 @@
 #endif
 
 #ifndef BED_TRAMMING_Z_HOP
-  #define BED_TRAMMING_Z_HOP 4.0
+  #define BED_TRAMMING_Z_HOP 5.0
 #endif
 
 #ifndef BED_TRAMMING_HEIGHT

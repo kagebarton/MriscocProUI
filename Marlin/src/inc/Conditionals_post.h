@@ -378,6 +378,7 @@
  */
 #if ENABLED(DELTA)
   #undef Z_SAFE_HOMING
+  #undef SLOWDOWN
 #endif
 
 #ifndef MESH_INSET

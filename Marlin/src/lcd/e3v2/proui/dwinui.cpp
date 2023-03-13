@@ -24,7 +24,6 @@
 #if ENABLED(DWIN_LCD_PROUI)
 
 #include "dwin_defines.h"
-#include "dwin_lcd.h"
 #include "dwinui.h"
 
 xy_int_t DWINUI::cursor = { 0 };

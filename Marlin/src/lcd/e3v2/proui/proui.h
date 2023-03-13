@@ -81,11 +81,11 @@ constexpr int16_t DEF_Z_PROBE_FEEDRATE_SLOW = Z_PROBE_FEEDRATE_SLOW;
 typedef struct {
   int16_t x_bed_size = DEF_X_BED_SIZE;
   int16_t y_bed_size = DEF_Y_BED_SIZE;
-  int16_t x_min_pos = DEF_X_MIN_POS;
-  int16_t y_min_pos = DEF_Y_MIN_POS;
-  int16_t x_max_pos = DEF_X_MAX_POS;
-  int16_t y_max_pos = DEF_Y_MAX_POS;
-  int16_t z_max_pos = DEF_Z_MAX_POS;
+  int16_t x_min_pos  = DEF_X_MIN_POS;
+  int16_t y_min_pos  = DEF_Y_MIN_POS;
+  int16_t x_max_pos  = DEF_X_MAX_POS;
+  int16_t y_max_pos  = DEF_Y_MAX_POS;
+  int16_t z_max_pos  = DEF_Z_MAX_POS;
   uint8_t grid_max_points = DEF_GRID_MAX_POINTS;
   float mesh_min_x = DEF_MESH_MIN_X;
   float mesh_max_x = DEF_MESH_MAX_X;
@@ -98,7 +98,9 @@ typedef struct {
   bool Runout_active_state = FIL_RUNOUT_STATE;
   bool FilamentMotionSensor = DEF_FIL_MOTION_SENSOR;
   celsius_t hotend_maxtemp = HEATER_0_MAXTEMP;
-  uint8_t TBopt[TBMaxOpt] = DEF_TBOPT;
+  #if HAS_TOOLBAR
+    uint8_t TBopt[TBMaxOpt] = DEF_TBOPT;
+  #endif
 } PRO_data_t;
 extern PRO_data_t PRO_data;
 

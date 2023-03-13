@@ -1,7 +1,7 @@
 /**
- * DWIN G-code thumbnail preview
+ * DWIN G-code File header utility
  * Author: Miguel A. Risco-Castillo
- * version: 3.3.3
+ * version: 1.1.3
  * Date: 2023/03/05
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,8 +22,29 @@
 
 #pragma once
 
-void Preview_DrawFromSD();
-void Preview_Invalidate();
-bool Preview_Valid();
-void Preview_Reset();
-void Preview_Show();
+typedef struct {
+  char name[13];      //8.3
+  bool isConfig;
+  uint32_t thumbstart;
+  uint16_t thumbsize;
+  uint8_t thumbheight;
+  uint8_t thumbwidth;
+  uint8_t *thumbdata;
+  float time;
+  float filament;
+  float layer;
+  float minx;
+  float maxx;
+  float miny;
+  float maxy;
+  float minz;
+  float maxz;
+  float width() { return maxx - minx; };
+  float length() { return maxy - miny; };
+  float height() { return maxz - minz; };
+  void setname(const char * const fn);
+  void clear();
+} fileprop_t;
+extern fileprop_t fileprop;
+
+void getFileHeader();

@@ -423,6 +423,10 @@ void PrintJobRecovery::resume() {
   // establish the current position as best we can.
   //
 
+  #if ENABLED(DWIN_LCD_PROUI) && DISABLED(NOZZLE_CLEAN_FEATURE)
+    xyze_pos_t save_pos = info.current_position;
+  #endif
+
   PROCESS_SUBCOMMANDS_NOW(F("G92.9E0")); // Reset E to 0
 
   #if Z_HOME_TO_MAX
@@ -484,6 +488,14 @@ void PrintJobRecovery::resume() {
       sprintf_P(cmd, PSTR("G92.9Z%s"), dtostrf(z_now, 1, 1, str_1));
       PROCESS_SUBCOMMANDS_NOW(cmd);
     #endif
+  #endif
+
+  #if ENABLED(DWIN_LCD_PROUI) && DISABLED(NOZZLE_CLEAN_FEATURE)
+    // Parking head to allow clean before of heating the hotend
+    gcode.process_subcommands_now(F("G27"));
+    DWIN_Popup_Continue(ICON_BLTouch, GET_TEXT_F(MSG_NOZZLE_PARKED), GET_TEXT_F(MSG_NOZZLE_CLEAN));
+    wait_for_user_response();
+    info.current_position = save_pos;
   #endif
 
   #if ENABLED(POWER_LOSS_RECOVER_ZHOME)
@@ -580,18 +592,22 @@ void PrintJobRecovery::resume() {
     dtostrf(info.current_position.y, 1, 3, str_2)
   );
   PROCESS_SUBCOMMANDS_NOW(cmd);
+  DEBUG_ECHOLNPGM("Move XY : ",cmd);
 
   // Move back down to the saved Z for printing
   sprintf_P(cmd, PSTR("G1Z%sF600"), dtostrf(z_print, 1, 3, str_1));
   PROCESS_SUBCOMMANDS_NOW(cmd);
+  DEBUG_ECHOLNPGM("Move Z : ",cmd);
 
   // Restore the feedrate
   sprintf_P(cmd, PSTR("G1F%d"), info.feedrate);
   PROCESS_SUBCOMMANDS_NOW(cmd);
+  DEBUG_ECHOLNPGM("Feedrate: ",cmd);
 
   // Restore E position with G92.9
   sprintf_P(cmd, PSTR("G92.9E%s"), dtostrf(info.current_position.e, 1, 3, str_1));
   PROCESS_SUBCOMMANDS_NOW(cmd);
+  DEBUG_ECHOLNPGM("Extruder : ",cmd);
 
   TERN_(GCODE_REPEAT_MARKERS, repeat = info.stored_repeat);
   TERN_(HAS_HOME_OFFSET, home_offset = info.home_offset);

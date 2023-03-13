@@ -23,7 +23,10 @@
 #include "dwinui.h"
 
 #define MENU_CHAR_LIMIT  24
-#define MENU_MAX_ITEMS   TERN(SDSORT_LIMIT, SDSORT_LIMIT, 64)
+
+#ifndef MENU_MAX_ITEMS
+  #define MENU_MAX_ITEMS 100
+#endif
 
 typedef struct {
   int32_t MaxValue     = 0;        // Auxiliar max integer/scaled float value

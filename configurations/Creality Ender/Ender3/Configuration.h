@@ -3177,7 +3177,7 @@
 #define ProUIex 1
 #define HAS_GCODE_PREVIEW 1
 #define HAS_TOOLBAR 1
-#define HAS_PIDPLOT 1
+#define HAS_PLOT 1
 #define HAS_ESDIAG 1
 #define HAS_CGCODE 1
 #define HAS_LOCKSCREEN 1

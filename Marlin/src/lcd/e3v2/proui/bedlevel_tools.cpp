@@ -191,14 +191,11 @@ float BedLevelToolsClass::get_min_value() {
 
 // Return 'true' if mesh is good and within LCD limits
 bool BedLevelToolsClass::meshvalidate() {
-  float min = __FLT_MAX__, max = __FLT_MAX__ * -1;
-
   GRID_LOOP(x, y) {
-    if (isnan(bedlevel.z_values[x][y])) return false;
-    if (bedlevel.z_values[x][y] < min) min = bedlevel.z_values[x][y];
-    if (bedlevel.z_values[x][y] > max) max = bedlevel.z_values[x][y];
+    const float v = bedlevel.z_values[x][y];
+    if (isnan(v) || !WITHIN(v, UBL_Z_OFFSET_MIN, UBL_Z_OFFSET_MAX)) return false;
   }
-  return (max <= UBL_Z_OFFSET_MAX) && (min >= UBL_Z_OFFSET_MIN);
+  return true;
 }
 
 #if ENABLED(USE_UBL_VIEWER)

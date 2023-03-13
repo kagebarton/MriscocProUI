@@ -78,12 +78,7 @@ void GcodeSuite::M303() {
   const celsius_t temp = seenS ? parser.value_celsius() : default_temp;
   const bool u = parser.boolval('U');
 
-  #if ENABLED(DWIN_LCD_PROUI)
-    if (seenC) HMI_data.PidCycles = c;
-    if (seenS) { if (hid == H_BED) HMI_data.BedPidT = temp; else TERN_(PIDTEMP, HMI_data.HotendPidT = temp); }
-  #else
-  TERN_(DWIN_PID_TUNE, DWIN_StartM303(seenC, c, seenS, hid, temp));
-  #endif	
+  TERN_(DWIN_LCD_PROUI, DWIN_M303(seenC, c, seenS, hid, temp));
 
   IF_DISABLED(BUSY_WHILE_HEATING, KEEPALIVE_STATE(NOT_BUSY));
 

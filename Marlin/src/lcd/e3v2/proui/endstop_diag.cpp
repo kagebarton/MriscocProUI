@@ -27,10 +27,8 @@
 
 #include "../../../core/types.h"
 #include "../../marlinui.h"
-#include "dwin_lcd.h"
-#include "dwinui.h"
-#include "dwin_popup.h"
 #include "dwin.h"
+#include "dwin_popup.h"
 
 #if HAS_FILAMENT_SENSOR
   #include "../../../feature/runout.h"

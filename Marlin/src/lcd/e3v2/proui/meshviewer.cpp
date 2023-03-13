@@ -25,8 +25,6 @@
 
 #include "../../../core/types.h"
 #include "../../marlinui.h"
-#include "dwin_lcd.h"
-#include "dwinui.h"
 #include "dwin.h"
 #include "dwin_popup.h"
 #include "../../../feature/bedlevel/bedlevel.h"
@@ -118,8 +116,10 @@ void MeshViewerClass::Draw(bool withsave /*=false*/, bool redraw /*=true*/) {
     BedLevelTools.Draw_Bed_Mesh(-1, 1, 8, 10 + TITLE_HEIGHT);}
     else
       if (redraw) DrawMesh(bedlevel.z_values, GRID_MAX_POINTS_X, GRID_MAX_POINTS_Y);
+      else DWINUI::Draw_Box(1, HMI_data.Background_Color, {89,305,99,38});
   #else
     if (redraw) DrawMesh(bedlevel.z_values, GRID_MAX_POINTS_X, GRID_MAX_POINTS_Y);
+    else DWINUI::Draw_Box(1, HMI_data.Background_Color, {89,305,99,38});
   #endif
   if (withsave) {
     DWINUI::Draw_Button(BTN_Save, 26, 305);

@@ -37,7 +37,7 @@
 #endif
 
 #ifndef BED_TRAMMING_Z_HOP
-  #define BED_TRAMMING_Z_HOP 4.0
+  #define BED_TRAMMING_Z_HOP 5.0
 #endif
 #ifndef BED_TRAMMING_HEIGHT
   #define BED_TRAMMING_HEIGHT 0.0
@@ -50,7 +50,7 @@
     #include "../../feature/bltouch.h"
   #endif
   #ifndef BED_TRAMMING_PROBE_TOLERANCE
-    #define BED_TRAMMING_PROBE_TOLERANCE 0.2
+    #define BED_TRAMMING_PROBE_TOLERANCE 0.1
   #endif
   float last_z;
   int good_points;

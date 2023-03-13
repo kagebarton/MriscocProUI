@@ -1121,7 +1121,7 @@
 
 /**
  * Idle Stepper Shutdown
- * Set DISABLE_INACTIVE_? 'true' to shut down axis steppers after an idle period.
+ * Enable DISABLE_INACTIVE_* to shut down axis steppers after an idle period.
  * The Deactive Time can be overridden with M18 and M84. Set to 0 for No Timeout.
  */
 #define DEFAULT_STEPPER_DEACTIVE_TIME 360
@@ -1432,10 +1432,10 @@
 
 #endif // HAS_MARLINUI_MENU
 
-#if EITHER(HAS_DISPLAY, DWIN_LCD_PROUI)
-  #define SOUND_MENU_ITEM    // Add a mute option to the LCD menu  // MRiscoC Enable Sound Menu Item
+#if HAS_DISPLAY
+  #define SOUND_MENU_ITEM     // Add a mute option to the LCD menu  // MRiscoC Enable Sound Menu Item
   #define SOUND_ON_DEFAULT    // Buzzer/speaker default enabled state
-  //#define TICK_ON_DEFAULT    // Beep/Tick default enabled state
+  //#define TICK_ON_DEFAULT   // Beep/Tick default enabled state
 
   // The timeout to return to the status screen from sub-menus
   //#define LCD_TIMEOUT_TO_STATUS 15000   // (ms)
@@ -1491,7 +1491,7 @@
     #endif
   #endif
 
-#endif // HAS_DISPLAY || DWIN_LCD_PROUI
+#endif // HAS_DISPLAY
 
 // Add 'M73' to set print job progress, overrides Marlin's built-in estimate
 #define SET_PROGRESS_MANUALLY  // MRiscoC Allow display feedback of host printing through GCode M73
