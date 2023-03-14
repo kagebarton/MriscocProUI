@@ -766,7 +766,7 @@
 /**
  * Maple environment
  */
-#if ENABLED(__STM32F1__) && DISABLED(NO_MAPLE_WARNING)
+#ifdef __STM32F1__
   #warning "Maple build environments are deprecated. Please use a non-Maple build environment. Report issues to the Marlin Firmware project."
 #endif
 
@@ -796,4 +796,8 @@
  */
 #if HAS_SHAPING && ANY(CORE_IS_XY, MARKFORGED_XY, MARKFORGED_YX)
   #warning "Input Shaping for CORE / MARKFORGED kinematic axes is still experimental."
+#endif
+
+#if MULTISTEPPING_LIMIT_WARNING
+  #warning "MULTISTEPPING_LIMIT has been automatically set to 128. Use a lower value if the machine is slow to respond."
 #endif

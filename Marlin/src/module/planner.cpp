@@ -3189,7 +3189,9 @@ bool Planner::buffer_line(const xyze_pos_t &cart, const_feedRate_t fr_mm_s
   #else // !IS_KINEMATIC
 
     return buffer_segment(machine, fr_mm_s, extruder, hints);
+
   #endif
+
 } // buffer_line()
 
 #if ENABLED(DIRECT_STEPPING)

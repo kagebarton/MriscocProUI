@@ -790,7 +790,6 @@ void unified_bed_leveling::shift_mesh_height() {
       #endif
 
       TERN_(ProUIex, if (ProEx.QuitLeveling()) return DWIN_LevelingDone(););
-
       best = do_furthest
         ? find_furthest_invalid_mesh_point()
         : find_closest_mesh_point_of_type(INVALID, nearby, true);
