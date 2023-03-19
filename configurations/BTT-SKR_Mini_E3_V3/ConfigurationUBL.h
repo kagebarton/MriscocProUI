@@ -695,6 +695,7 @@
  * @section mpctemp
  */
 #if ENABLED(MPCTEMP)
+  //#define MPC_AUTOTUNE                              // Include a method to do MPC auto-tuning (~5664-5882 bytes of flash)
   //#define MPC_EDIT_MENU                             // Add MPC editing to the "Advanced Settings" menu. (~1300 bytes of flash)
   //#define MPC_AUTOTUNE_MENU                         // Add MPC auto-tuning to the "Advanced Settings" menu. (~350 bytes of flash)
 
@@ -1356,17 +1357,15 @@
 /**
  * Z_MIN_PROBE_PIN
  *
- * Define this pin if the probe is not connected to Z_MIN_PIN.
- * If not defined the default pin for the selected MOTHERBOARD
- * will be used. Most of the time the default is what you want.
+ * Override this pin only if the probe cannot be connected to
+ * the default Z_MIN_PROBE_PIN for the selected MOTHERBOARD.
  *
  *  - The simplest option is to use a free endstop connector.
  *  - Use 5V for powered (usually inductive) sensors.
  *
- *  - RAMPS 1.3/1.4 boards may use the 5V, GND, and Aux4->D32 pin:
- *    - For simple switches connect...
- *      - normally-closed switches to GND and D32.
- *      - normally-open switches to 5V and D32.
+ *  - For simple switches...
+ *    - Normally-closed (NC) also connect to GND.
+ *    - Normally-open (NO) also connect to 5V.
  */
 //#define Z_MIN_PROBE_PIN PC14 // PC14 for V3_0 PA1 for V3_0_1 BTT SKR MINI E3
 
@@ -2074,6 +2073,9 @@
 
   #define UBL_HILBERT_CURVE         // Use Hilbert distribution for less travel when probing multiple points
 
+  //#define UBL_TILT_ON_MESH_POINTS         // Use nearest mesh points with G29 J for better Z reference
+  //#define UBL_TILT_ON_MESH_POINTS_3POINT  // Use nearest mesh points with G29 J0 (3-point)
+
   #define UBL_MESH_EDIT_MOVES_Z     // Sophisticated users prefer no movement of nozzle
   #define UBL_SAVE_ACTIVE_ON_M500   // Save the currently active mesh in the current slot on M500
 
@@ -2199,6 +2201,7 @@
 #if ENABLED(Z_SAFE_HOMING)
   #define Z_SAFE_HOMING_X_POINT X_CENTER  // X point for Z homing
   #define Z_SAFE_HOMING_Y_POINT Y_CENTER  // Y point for Z homing
+  //#define Z_SAFE_HOMING_POINT_ABSOLUTE  // Ignore home offsets (M206) for Z homing position
 #endif
 
 // Homing speeds (linear=mm/min, rotational=°/min)
@@ -3100,7 +3103,8 @@
 #if DGUS_UI_IS(MKS)
   #define USE_MKS_GREEN_UI
 #elif DGUS_UI_IS(IA_CREALITY)
-  //#define LCD_SCREEN_ROTATE 90 // Portrait Mode or 800x480 displays
+  //#define LCD_SCREEN_ROTATE 90          // Portrait Mode or 800x480 displays
+  //#define IA_CREALITY_BOOT_DELAY 1500   // (ms)
 #endif
 
 //

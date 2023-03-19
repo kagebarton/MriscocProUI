@@ -322,14 +322,19 @@ PGMSTR(str_t_heating_failed, STR_T_HEATING_FAILED);
   #else
     const celsius_t Temperature::hotend_maxtemp[HOTENDS];
   #endif
+  
+  #if ENABLED(MPCTEMP)
+    bool MPC::e_paused; // = false
+    int32_t MPC::e_position; // = 0
+  #endif
 
   // Sanity-check max readable temperatures
   /* / #define CHECK_MAXTEMP_(N,M,S) static_assert( \
   //   S >= 998 || M <= _MAX(TT_NAME(S)[0].celsius, TT_NAME(S)[COUNT(TT_NAME(S)) - 1].celsius) - HOTEND_OVERSHOOT, \
   //   "HEATER_" STRINGIFY(N) "_MAXTEMP (" STRINGIFY(M) ") is too high for thermistor_" STRINGIFY(S) ".h with HOTEND_OVERSHOOT=" STRINGIFY(HOTEND_OVERSHOOT) ".");
   // #define CHECK_MAXTEMP(N) TERN(TEMP_SENSOR_##N##_IS_THERMISTOR, CHECK_MAXTEMP_, CODE_0)(N, HEATER_##N##_MAXTEMP, TEMP_SENSOR_##N)
-  // REPEAT(HOTENDS, CHECK_MAXTEMP)
-*/
+  // REPEAT(HOTENDS, CHECK_MAXTEMP) */
+
   #if HAS_PREHEAT
     #define CHECK_PREHEAT__(N,P,T,M) static_assert(T <= M - HOTEND_OVERSHOOT, "PREHEAT_" STRINGIFY(P) "_TEMP_HOTEND (" STRINGIFY(T) ") must be less than HEATER_" STRINGIFY(N) "_MAXTEMP (" STRINGIFY(M) ") - " STRINGIFY(HOTEND_OVERSHOOT) ".");
     #define CHECK_PREHEAT_(N,P) CHECK_PREHEAT__(N, P, PREHEAT_##P##_TEMP_HOTEND, HEATER_##N##_MAXTEMP)
@@ -523,7 +528,7 @@ PGMSTR(str_t_heating_failed, STR_T_HEATING_FAILED);
     celsius_float_t old_temp = 9999;
     raw_adc_t Temperature::mintemp_raw_CHAMBER = TEMP_SENSOR_CHAMBER_RAW_LO_TEMP,
               Temperature::maxtemp_raw_CHAMBER = TEMP_SENSOR_CHAMBER_RAW_HI_TEMP;
-    TERN_(WATCH_CHAMBER, chamber_watch_t Temperature::watch_chamber{0});
+    TERN_(WATCH_CHAMBER, chamber_watch_t Temperature::watch_chamber);
     IF_DISABLED(PIDTEMPCHAMBER, millis_t Temperature::next_chamber_check_ms);
   #endif
 #endif
@@ -583,11 +588,6 @@ PGMSTR(str_t_heating_failed, STR_T_HEATING_FAILED);
  */
 
 volatile bool Temperature::raw_temps_ready = false;
-
-
-#if ENABLED(MPCTEMP)
-  int32_t Temperature::mpc_e_position; // = 0
-#endif
 
 #define TEMPDIR(N) ((TEMP_SENSOR_##N##_RAW_LO_TEMP) < (TEMP_SENSOR_##N##_RAW_HI_TEMP) ? 1 : -1)
 #define TP_CMP(S,A,B) (TEMPDIR(S) < 0 ? ((A)<(B)) : ((A)>(B)))
@@ -929,7 +929,7 @@ volatile bool Temperature::raw_temps_ready = false;
 
 #endif // HAS_PID_HEATING
 
-#if ENABLED(MPCTEMP)
+#if ENABLED(MPC_AUTOTUNE)
 
   #if EITHER(MPC_FAN_0_ALL_HOTENDS, MPC_FAN_0_ACTIVE_HOTEND)
     #define SINGLEFAN 1
@@ -1175,7 +1175,7 @@ volatile bool Temperature::raw_temps_ready = false;
     TERN_(HAS_FAN, SERIAL_ECHOLNPAIR_F("MPC_AMBIENT_XFER_COEFF_FAN255 ", ambient_xfer_coeff_fan255, 4));
   }
 
-#endif // MPCTEMP
+#endif // MPC_AUTOTUNE
 
 int16_t Temperature::getHeaterPower(const heater_id_t heater_id) {
   switch (heater_id) {
@@ -1511,14 +1511,14 @@ void Temperature::mintemp_error(const heater_id_t heater_id) {
 
       if (this_hotend) {
         const int32_t e_position = stepper.position(E_AXIS);
-        const float e_speed = (e_position - mpc_e_position) * planner.mm_per_step[E_AXIS] / MPC_dT;
+        const float e_speed = (e_position - MPC::e_position) * planner.mm_per_step[E_AXIS] / MPC_dT;
 
-        // The position can appear to make big jumps when, e.g. homing
+        // The position can appear to make big jumps when, e.g., homing
         if (fabs(e_speed) > planner.settings.max_feedrate_mm_s[E_AXIS])
-          mpc_e_position = e_position;
+          MPC::e_position = e_position;
         else if (e_speed > 0.0f) {  // Ignore retract/recover moves
-          ambient_xfer_coeff += e_speed * mpc.filament_heat_capacity_permm;
-          mpc_e_position = e_position;
+          if (!MPC::e_paused) ambient_xfer_coeff += e_speed * mpc.filament_heat_capacity_permm;
+          MPC::e_position = e_position;
         }
       }
 
@@ -2891,7 +2891,7 @@ void Temperature::init() {
    *
    * TODO: Embed the last 3 parameters during init, if not less optimal
    */
-  void Temperature::tr_state_machine_t::run(const_celsius_float_t current, const_celsius_float_t target, const heater_id_t heater_id, const uint16_t period_seconds, const celsius_t hysteresis_degc) {
+  void Temperature::tr_state_machine_t::run(const_celsius_float_t current, const_celsius_float_t target, const heater_id_t heater_id, const uint16_t period_seconds, const celsius_float_t hysteresis_degc) {
 
     #if HEATER_IDLE_HANDLER
       // Convert the given heater_id_t to an idle array index
@@ -2916,11 +2916,18 @@ void Temperature::init() {
     */
 
     #if ENABLED(THERMAL_PROTECTION_VARIANCE_MONITOR)
+
+      #ifdef THERMAL_PROTECTION_VARIANCE_MONITOR_PERIOD
+        #define VARIANCE_WINDOW THERMAL_PROTECTION_VARIANCE_MONITOR_PERIOD
+      #else
+        #define VARIANCE_WINDOW period_seconds
+      #endif
+
       if (state == TRMalfunction) { // temperature invariance may continue, regardless of heater state
         variance += ABS(current - last_temp); // no need for detection window now, a single change in variance is enough
         last_temp = current;
         if (!NEAR_ZERO(variance)) {
-          variance_timer = millis() + SEC_TO_MS(period_seconds);
+          variance_timer = millis() + SEC_TO_MS(VARIANCE_WINDOW);
           variance = 0.0;
           state = TRStable; // resume from where we detected the problem
         }
@@ -2953,21 +2960,32 @@ void Temperature::init() {
       // While the temperature is stable watch for a bad temperature
       case TRStable: {
 
+        const celsius_float_t rdiff = running_temp - current;
+
         #if ENABLED(ADAPTIVE_FAN_SLOWING)
           if (adaptive_fan_slowing && heater_id >= 0) {
-            const int fan_index = _MIN(heater_id, FAN_COUNT - 1);
-            if (fan_speed[fan_index] == 0 || current >= running_temp - (hysteresis_degc * 0.25f))
-              fan_speed_scaler[fan_index] = 128;
-            else if (current >= running_temp - (hysteresis_degc * 0.3335f))
-              fan_speed_scaler[fan_index] = 96;
-            else if (current >= running_temp - (hysteresis_degc * 0.5f))
-              fan_speed_scaler[fan_index] = 64;
-            else if (current >= running_temp - (hysteresis_degc * 0.8f))
-              fan_speed_scaler[fan_index] = 32;
+            const int_fast8_t fan_index = _MIN(heater_id, FAN_COUNT - 1);
+            uint8_t scale;
+            if (fan_speed[fan_index] == 0 || rdiff <= hysteresis_degc * 0.25f)
+              scale = 128;
+            else if (rdiff <= hysteresis_degc * 0.3335f)
+              scale = 96;
+            else if (rdiff <= hysteresis_degc * 0.5f)
+              scale = 64;
+            else if (rdiff <= hysteresis_degc * 0.8f)
+              scale = 32;
             else
-              fan_speed_scaler[fan_index] = 0;
+              scale = 0;
+
+            if (TERN0(REPORT_ADAPTIVE_FAN_SLOWING, DEBUGGING(INFO))) {
+              const uint8_t fss7 = fan_speed_scaler[fan_index] & 0x80;
+              if (fss7 ^ (scale & 0x80))
+                serial_ternary(fss7, F("Adaptive Fan Slowing "), nullptr, F("de"), F("activated.\n"));
+            }
+
+            fan_speed_scaler[fan_index] = scale;
           }
-        #endif
+        #endif // ADAPTIVE_FAN_SLOWING
 
         const millis_t now = millis();
 
@@ -2981,13 +2999,13 @@ void Temperature::init() {
               state = TRMalfunction;
               break;
             }
-            variance_timer = now + SEC_TO_MS(period_seconds);
+            variance_timer = now + SEC_TO_MS(VARIANCE_WINDOW);
             variance = 0.0;
             last_temp = current;
           }
         #endif
 
-        if (current >= running_temp - hysteresis_degc) {
+        if (rdiff <= hysteresis_degc) {
           timer = now + SEC_TO_MS(period_seconds);
           break;
         }

@@ -676,6 +676,10 @@
   #error "DISABLE_INACTIVE_E is now set with DISABLE_INACTIVE_EXTRUDER."
 #elif defined(INVERT_X_STEP_PIN) || defined(INVERT_Y_STEP_PIN) || defined(INVERT_Z_STEP_PIN) || defined(INVERT_I_STEP_PIN) || defined(INVERT_J_STEP_PIN) || defined(INVERT_K_STEP_PIN) || defined(INVERT_U_STEP_PIN) || defined(INVERT_V_STEP_PIN) || defined(INVERT_W_STEP_PIN) || defined(INVERT_E_STEP_PIN)
   #error "INVERT_*_STEP_PIN true is now STEP_STATE_* LOW, and INVERT_*_STEP_PIN false is now STEP_STATE_* HIGH."
+#elif defined(PROBE_PT_1_X) || defined(PROBE_PT_1_Y) || defined(PROBE_PT_2_X) || defined(PROBE_PT_2_Y) || defined(PROBE_PT_3_X) || defined(PROBE_PT_3_Y)
+  #error "PROBE_PT_[123]_[XY] is now defined using PROBE_PT_[123] with an array { x, y }."
+#elif defined(SQUARE_WAVE_STEPPING)
+  #error "SQUARE_WAVE_STEPPING is now EDGE_STEPPING."
 #endif
 
 // L64xx stepper drivers have been removed
@@ -1560,6 +1564,10 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
  */
 #if BOTH(PIDTEMP, MPCTEMP)
   #error "Only enable PIDTEMP or MPCTEMP, but not both."
+  #undef MPCTEMP
+  #undef MPC_AUTOTUNE
+  #undef MPC_EDIT_MENU
+  #undef MPC_AUTOTUNE_MENU
 #endif
 
 #if ENABLED(MPC_INCLUDE_FAN)
@@ -2109,6 +2117,12 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
   #endif
 
 #endif
+
+#define _POINT_COUNT (defined(PROBE_PT_1) + defined(PROBE_PT_2) + defined(PROBE_PT_3))
+#if _POINT_COUNT != 0 && _POINT_COUNT != 3
+  #error "For 3-Point Procedures all XY points must be defined (or none for the defaults)."
+#endif
+#undef _POINT_COUNT
 
 #if ALL(HAS_LEVELING, RESTORE_LEVELING_AFTER_G28, ENABLE_LEVELING_AFTER_G28)
   #error "Only enable RESTORE_LEVELING_AFTER_G28 or ENABLE_LEVELING_AFTER_G28, but not both."
@@ -3266,6 +3280,8 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
     #error "DWIN_LCD_PROUI does not support PID_EDIT_MENU or PID_AUTOTUNE_MENU."
   #elif EITHER(MPC_EDIT_MENU, MPC_AUTOTUNE_MENU)
     #error "DWIN_LCD_PROUI does not support MPC_EDIT_MENU or MPC_AUTOTUNE_MENU."
+  #elif ENABLED(LCD_BED_TRAMMING)
+    #error "DWIN_LCD_PROUI does not support LCD_BED_TRAMMING."
   #elif BOTH(LCD_BED_LEVELING, PROBE_MANUALLY)
     #error "DWIN_LCD_PROUI does not support LCD_BED_LEVELING with PROBE_MANUALLY."
   #endif

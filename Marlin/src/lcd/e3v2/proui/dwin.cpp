@@ -311,7 +311,7 @@ MenuClass *MaxAccelMenu = nullptr;
 #endif
 MenuClass *StepsMenu = nullptr;
 MenuClass *PIDMenu = nullptr;
-#if ENABLED(MPCTEMP)
+#if EITHER(MPC_EDIT_MENU, MPC_AUTOTUNE_MENU)
   MenuClass *HotendMPCMenu = nullptr;
 #endif
 #if ENABLED(PIDTEMP)
@@ -367,7 +367,7 @@ MenuItemClass *FanSpeedItem = nullptr;
 MenuItemClass *MMeshMoveZItem = nullptr;
 MenuItemClass *EditZValueItem = nullptr;
 
-bool Printing() { return (printingIsActive() || print_job_timer.isPaused()); }
+bool Printing() { return (printingIsActive() || printingIsPaused()); }
 bool SD_Printing() { return (Printing() && IS_SD_FILE_OPEN()); }
 bool Host_Printing() { return (Printing() && !IS_SD_FILE_OPEN()); }
 
@@ -583,7 +583,7 @@ void Draw_Print_ProgressRemain() {
 }
 
 void ICON_ResumeOrPause() {
-  if (checkkey == PrintProcess) print_job_timer.isPaused() ? ICON_Resume() : ICON_Pause();
+  if (checkkey == PrintProcess) printingIsPaused() ? ICON_Resume() : ICON_Pause();
 }
 
 // Update filename on print
@@ -1155,7 +1155,7 @@ void HMI_Printing() {
     switch (select_print.now) {
       case PRINT_SETUP: Draw_Tune_Menu(); break;
       case PRINT_PAUSE_RESUME:
-        if (print_job_timer.isPaused()) {  // if printer is already in pause
+        if (printingIsPaused()) {  // if printer is already in pause
           ui.resume_print();
           break;
         }
@@ -1284,7 +1284,7 @@ void EachMomentUpdate() {
   if (!PENDING(ms, next_rts_update_ms)) {
     next_rts_update_ms = ms + DWIN_UPDATE_INTERVAL;
 
-    if ((HMI_flag.printing_flag != Printing()) && !HMI_flag.home_flag) {
+    if ((Printing() != HMI_flag.printing_flag) && !HMI_flag.home_flag) {
       HMI_flag.printing_flag = Printing();
       DEBUG_ECHOLNPGM("printing_flag: ", HMI_flag.printing_flag);
       if (HMI_flag.printing_flag)
@@ -1295,8 +1295,8 @@ void EachMomentUpdate() {
         DWIN_Print_Finished();
     }
 
-    if ((print_job_timer.isPaused() != HMI_flag.pause_flag) && !HMI_flag.home_flag) {
-      HMI_flag.pause_flag = print_job_timer.isPaused();
+    if ((printingIsPaused() != HMI_flag.pause_flag) && !HMI_flag.home_flag) {
+      HMI_flag.pause_flag = printingIsPaused();
       DEBUG_ECHOLNPGM("pause_flag: ", HMI_flag.pause_flag);
       if (HMI_flag.pause_flag)
         DWIN_Print_Pause();
@@ -1470,22 +1470,16 @@ void DWIN_LevelingStart() {
       DWIN_Show_Popup(ICON_AutoLeveling, GET_TEXT_F(MSG_BED_LEVELING), GET_TEXT_F(MSG_PLEASE_WAIT), TERN(ProUIex, BTN_Cancel, 0));
     #endif
     #if BOTH(AUTO_BED_LEVELING_UBL, PREHEAT_BEFORE_LEVELING)
-      #if HAS_BED_PROBE
-        if (!DEBUGGING(DRYRUN)) probe.preheat_for_probing(LEVELING_NOZZLE_TEMP, HMI_data.BedLevT);
-      #else
-        #if HAS_HOTEND
-          if (!DEBUGGING(DRYRUN) && thermalManager.degTargetHotend(0) < LEVELING_NOZZLE_TEMP) {
-            thermalManager.setTargetHotend(LEVELING_NOZZLE_TEMP, 0);
-            thermalManager.wait_for_hotend(0);
-          }
-        #endif
-        #if HAS_HEATED_BED
-          if (!DEBUGGING(DRYRUN) && thermalManager.degTargetBed() < HMI_data.BedLevT) {
-            thermalManager.setTargetBed(HMI_data.BedLevT);
-            thermalManager.wait_for_bed_heating();
-          }
-        #endif
+      #if HAS_HOTEND
+        if (thermalManager.degTargetHotend(0) < LEVELING_NOZZLE_TEMP)
+          thermalManager.setTargetHotend(LEVELING_NOZZLE_TEMP, 0);
       #endif
+      #if HAS_HEATED_BED
+        if (thermalManager.degTargetBed() < HMI_data.BedLevT)
+          thermalManager.setTargetBed(HMI_data.BedLevT);
+      #endif
+      TERN_(HAS_HOTEND, thermalManager.wait_for_hotend(0));
+      TERN_(HAS_HEATED_BED, thermalManager.wait_for_bed_heating());
     #endif
   #elif ENABLED(MESH_BED_LEVELING)
     Draw_ManualMesh_Menu();
@@ -3629,17 +3623,21 @@ void Draw_Steps_Menu() {
 
 #endif
 
-#if ENABLED(MPCTEMP)
+#if EITHER(MPC_EDIT_MENU, MPC_AUTOTUNE_MENU)
 
-  void HotendMPC() { thermalManager.MPC_autotune(active_extruder); }
-  void SetHeaterPower() { SetPFloatOnClick(1, 200, 1); }
-  void SetBlkHeatCapacity() { SetPFloatOnClick(0, 40, 2); }
-  void SetSensorRespons() { SetPFloatOnClick(0, 1, 4); }
-  void SetAmbientXfer() { SetPFloatOnClick(0, 1, 4); }
-  #if ENABLED(MPC_INCLUDE_FAN)
-    void onDrawFanAdj(MenuItemClass* menuitem, int8_t line) { onDrawFloatMenu(menuitem, line, 4, thermalManager.temp_hotend[0].fanCoefficient()); }
-    void ApplyFanAdj() { thermalManager.temp_hotend[0].applyFanAdjustment(MenuData.Value / POW(10, 4)); }
-    void SetFanAdj() { SetFloatOnClick(0, 1, 4, thermalManager.temp_hotend[0].fanCoefficient(), ApplyFanAdj); }
+  #if ENABLED(MPC_AUTOTUNE_MENU)
+    void HotendMPC() { thermalManager.MPC_autotune(active_extruder); }
+  #endif
+  #if ENABLED(MPC_EDIT_MENU)
+    void SetHeaterPower() { SetPFloatOnClick(1, 200, 1); }
+    void SetBlkHeatCapacity() { SetPFloatOnClick(0, 40, 2); }
+    void SetSensorResponse() { SetPFloatOnClick(0, 1, 4); }
+    void SetAmbientXfer() { SetPFloatOnClick(0, 1, 4); }
+    #if ENABLED(MPC_INCLUDE_FAN)
+      void onDrawFanAdj(MenuItemClass* menuitem, int8_t line) { onDrawFloatMenu(menuitem, line, 4, thermalManager.temp_hotend[0].fanCoefficient()); }
+      void ApplyFanAdj() { thermalManager.temp_hotend[0].applyFanAdjustment(MenuData.Value / POW(10, 4)); }
+      void SetFanAdj() { SetFloatOnClick(0, 1, 4, thermalManager.temp_hotend[0].fanCoefficient(), ApplyFanAdj); }
+    #endif
   #endif
 
   void Draw_HotendMPC_Menu() {
@@ -3647,19 +3645,23 @@ void Draw_Steps_Menu() {
     if (SET_MENU_F(HotendMPCMenu, STR_MPC_AUTOTUNE " Settings", 7)) {
       MPC_t &mpc = thermalManager.temp_hotend[0].mpc;
       BACK_ITEM(Draw_AdvancedSettings_Menu);
-      MENU_ITEM(ICON_MPCNozzle, MSG_MPC_AUTOTUNE, onDrawMenuItem, HotendMPC);
-      EDIT_ITEM(ICON_MPCHeater, MSG_MPC_POWER, onDrawPFloatMenu, SetHeaterPower, &mpc.heater_power);
-      EDIT_ITEM(ICON_MPCHeatCap, MSG_MPC_BLOCK_HEAT_CAPACITY, onDrawPFloat2Menu, SetBlkHeatCapacity, &mpc.block_heat_capacity);
-      EDIT_ITEM(ICON_MPCValue, MSG_SENSOR_RESPONSIVENESS, onDrawPFloat4Menu, SetSensorRespons, &mpc.sensor_responsiveness);
-      EDIT_ITEM(ICON_MPCValue, MSG_MPC_AMBIENT_XFER_COEFF, onDrawPFloat4Menu, SetAmbientXfer, &mpc.ambient_xfer_coeff_fan0);
-      #if ENABLED(MPC_INCLUDE_FAN)
-        EDIT_ITEM(ICON_MPCFan, MSG_MPC_AMBIENT_XFER_COEFF_FAN, onDrawFanAdj, SetFanAdj, &mpc.fan255_adjustment);
+      #if ENABLED(MPC_AUTOTUNE_MENU)
+        MENU_ITEM(ICON_MPCNozzle, MSG_MPC_AUTOTUNE, onDrawMenuItem, HotendMPC);
+      #endif
+      #if ENABLED(MPC_EDIT_MENU)
+        EDIT_ITEM(ICON_MPCHeater, MSG_MPC_POWER, onDrawPFloatMenu, SetHeaterPower, &mpc.heater_power);
+        EDIT_ITEM(ICON_MPCHeatCap, MSG_MPC_BLOCK_HEAT_CAPACITY, onDrawPFloat2Menu, SetBlkHeatCapacity, &mpc.block_heat_capacity);
+        EDIT_ITEM(ICON_MPCValue, MSG_SENSOR_RESPONSIVENESS, onDrawPFloat4Menu, SetSensorResponse, &mpc.sensor_responsiveness);
+        EDIT_ITEM(ICON_MPCValue, MSG_MPC_AMBIENT_XFER_COEFF, onDrawPFloat4Menu, SetAmbientXfer, &mpc.ambient_xfer_coeff_fan0);
+        #if ENABLED(MPC_INCLUDE_FAN)
+          EDIT_ITEM(ICON_MPCFan, MSG_MPC_AMBIENT_XFER_COEFF_FAN, onDrawFanAdj, SetFanAdj, &mpc.fan255_adjustment);
+        #endif
       #endif
     }
     UpdateMenu(HotendMPCMenu);
   }
 
-#endif // MPCTEMP
+#endif // MPC_EDIT_MENU || MPC_AUTOTUNE_MENU
 
 #if ENABLED(PIDTEMPBED)
 

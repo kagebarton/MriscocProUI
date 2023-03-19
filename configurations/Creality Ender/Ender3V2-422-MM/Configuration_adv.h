@@ -3211,7 +3211,7 @@
    * Beta feature!
    * Create a 50/50 square wave step pulse optimal for stepper drivers.
    */
-  #define SQUARE_WAVE_STEPPING  // Ender Configs
+  #define EDGE_STEPPING  // Ender Configs
 
   /**
    * Enable M122 debugging command for TMC stepper drivers.
