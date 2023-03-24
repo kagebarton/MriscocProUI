@@ -2672,6 +2672,10 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
   #endif // HOTENDS > 2
 #endif // HAS_MULTI_HOTEND
 
+#if DO_TOOLCHANGE_FOR_PROBING && PROBING_TOOL >= EXTRUDERS
+  #error "PROBING_TOOL must be a valid tool index."
+#endif
+
 /**
  * Pins must be set for temp sensors, with some other feature requirements.
  */

@@ -65,8 +65,6 @@ void GcodeSuite::M73() {
       if (parser.seenval('C')) ui.set_interaction_time(60 * parser.value_ulong());
     #endif
 
-  #endif
-
   #if ENABLED(M73_REPORT)
     if (TERN1(M73_REPORT_SD_ONLY, IS_SD_PRINTING())) {
       SERIAL_ECHO_START();
@@ -84,3 +82,5 @@ void GcodeSuite::M73() {
     }
   #endif
 }
+
+#endif // SET_PROGRESS_MANUALLY

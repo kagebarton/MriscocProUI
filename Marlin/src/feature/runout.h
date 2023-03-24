@@ -47,6 +47,13 @@
   #define FILAMENT_RUNOUT_THRESHOLD 5
 #endif
 
+#if ENABLED(FILAMENT_MOTION_SENSOR)
+  #define HAS_FILAMENT_MOTION 1
+#endif
+#if DISABLED(FILAMENT_MOTION_SENSOR) || ENABLED(FILAMENT_SWITCH_AND_MOTION)
+  #define HAS_FILAMENT_SWITCH 1
+#endif
+
 void event_filament_runout(const uint8_t extruder);
 
 template<class RESPONSE_T, class SENSOR_T>
@@ -110,6 +117,11 @@ class TFilamentMonitor : public FilamentMonitorBase {
     static void filament_present(const uint8_t extruder) {
       response.filament_present(extruder);
     }
+    #if ENABLED(FILAMENT_SWITCH_AND_MOTION)
+      static void filament_motion_present(const uint8_t extruder) {
+        response.filament_motion_present(extruder);
+      }
+    #endif
 
     #if HAS_FILAMENT_RUNOUT_DISTANCE
       static float& runout_distance() { return response.runout_distance_mm; }
@@ -183,10 +195,15 @@ class FilamentSensorBase {
     static void filament_present(const uint8_t extruder) {
       runout.filament_present(extruder); // ...which calls response.filament_present(extruder)
     }
+    #if ENABLED(FILAMENT_SWITCH_AND_MOTION)
+      static void filament_motion_present(const uint8_t extruder) {
+        runout.filament_motion_present(extruder); // ...which calls response.filament_motion_present(extruder)
+      }
+    #endif
 
   public:
     static void setup() {
-      #define _INIT_RUNOUT_PIN(P,S,U,D) do{ if (ENABLED(U)) SET_INPUT_PULLUP(P); else if (ENABLED(D)) SET_INPUT_PULLDOWN(P); else SET_INPUT(P); }while(0)
+      #define _INIT_RUNOUT_PIN(P,S,U,D) do{ if (ENABLED(U)) SET_INPUT_PULLUP(P); else if (ENABLED(D)) SET_INPUT_PULLDOWN(P); else SET_INPUT(P); }while(0);
       #define  INIT_RUNOUT_PIN(N) _INIT_RUNOUT_PIN(FIL_RUNOUT##N##_PIN, FIL_RUNOUT##N##_STATE, FIL_RUNOUT##N##_PULLUP, FIL_RUNOUT##N##_PULLDOWN)
       #if NUM_RUNOUT_SENSORS >= 1
         #if ProUIex
