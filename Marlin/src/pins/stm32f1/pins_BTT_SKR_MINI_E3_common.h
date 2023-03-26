@@ -100,8 +100,8 @@
 #define HEATER_0_PIN                        PC8   // "HE"
 #define HEATER_BED_PIN                      PC9   // "HB"
 
-#ifndef FAN_PIN
-  #define FAN_PIN                           PA8   // "FAN0"
+#ifndef FAN0_PIN
+  #define FAN0_PIN                          PA8   // "FAN0"
 #endif
 
 //
@@ -150,7 +150,7 @@
    */
 
   #ifndef NO_CONTROLLER_CUSTOM_WIRING_WARNING
-    #warning "CAUTION! Ender-3 V2 display requires a custom cable. See 'pins_BTT_SKR_MINI_E3_common.h' for details. (Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning.)"
+    #error "CAUTION! Ender-3 V2 display requires a custom cable. See 'pins_BTT_SKR_MINI_E3_common.h' for details. (Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning.)"
   #endif
 
   #define BEEPER_PIN                 EXP1_02_PIN

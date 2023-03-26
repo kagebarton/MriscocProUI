@@ -658,6 +658,8 @@
   #error "EXTRA_LIN_ADVANCE_K is now ADVANCE_K_EXTRA."
 #elif defined(POLAR_SEGMENTS_PER_SECOND) || defined(DELTA_SEGMENTS_PER_SECOND)  || defined(SCARA_SEGMENTS_PER_SECOND) || defined(TPARA_SEGMENTS_PER_SECOND)
   #error "(POLAR|DELTA|SCARA|TPARA)_SEGMENTS_PER_SECOND is now DEFAULT_SEGMENTS_PER_SECOND."
+#elif defined(TMC_SW_MOSI) || defined(TMC_SW_MISO) || defined(TMC_SW_SCK)
+  #error "TMC_SW_(MOSI|MISO|SCK) is now TMC_SPI_(MOSI|MISO|SCK)."
 #elif ANY(DGUS_LCD_UI_ORIGIN, DGUS_LCD_UI_FYSETC, DGUS_LCD_UI_HIPRECY, DGUS_LCD_UI_MKS, DGUS_LCD_UI_RELOADED) && !defined(DGUS_LCD_UI)
   #error "DGUS_LCD_UI_[TYPE] is now set using DGUS_LCD_UI TYPE."
 #elif defined(DELTA_PRINTABLE_RADIUS)
@@ -680,6 +682,8 @@
   #error "PROBE_PT_[123]_[XY] is now defined using PROBE_PT_[123] with an array { x, y }."
 #elif defined(SQUARE_WAVE_STEPPING)
   #error "SQUARE_WAVE_STEPPING is now EDGE_STEPPING."
+#elif defined(FAN_PIN)
+  #error "FAN_PIN is now FAN0_PIN."
 #endif
 
 // L64xx stepper drivers have been removed
@@ -2377,21 +2381,21 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
  */
 #if HAS_AUTO_FAN
   #if HAS_FAN0
-    #if PIN_EXISTS(E0_AUTO_FAN) && E0_AUTO_FAN_PIN == FAN_PIN
-      #error "You cannot set E0_AUTO_FAN_PIN equal to FAN_PIN."
-    #elif PIN_EXISTS(E1_AUTO_FAN) && E1_AUTO_FAN_PIN == FAN_PIN
-      #error "You cannot set E1_AUTO_FAN_PIN equal to FAN_PIN."
-    #elif PIN_EXISTS(E2_AUTO_FAN) && E2_AUTO_FAN_PIN == FAN_PIN
-      #error "You cannot set E2_AUTO_FAN_PIN equal to FAN_PIN."
-    #elif PIN_EXISTS(E3_AUTO_FAN) &&  E3_AUTO_FAN_PIN == FAN_PIN
-      #error "You cannot set E3_AUTO_FAN_PIN equal to FAN_PIN."
+    #if PIN_EXISTS(E0_AUTO_FAN) && E0_AUTO_FAN_PIN == FAN0_PIN
+      #error "You cannot set E0_AUTO_FAN_PIN equal to FAN0_PIN."
+    #elif PIN_EXISTS(E1_AUTO_FAN) && E1_AUTO_FAN_PIN == FAN0_PIN
+      #error "You cannot set E1_AUTO_FAN_PIN equal to FAN0_PIN."
+    #elif PIN_EXISTS(E2_AUTO_FAN) && E2_AUTO_FAN_PIN == FAN0_PIN
+      #error "You cannot set E2_AUTO_FAN_PIN equal to FAN0_PIN."
+    #elif PIN_EXISTS(E3_AUTO_FAN) &&  E3_AUTO_FAN_PIN == FAN0_PIN
+      #error "You cannot set E3_AUTO_FAN_PIN equal to FAN0_PIN."
     #endif
   #endif
 #endif
 
 #if HAS_FAN0
-  #if CONTROLLER_FAN_PIN == FAN_PIN
-    #error "You cannot set CONTROLLER_FAN_PIN equal to FAN_PIN."
+  #if CONTROLLER_FAN_PIN == FAN0_PIN
+    #error "You cannot set CONTROLLER_FAN_PIN equal to FAN0_PIN."
   #elif ENABLED(FAN_SOFT_PWM_REQUIRED) && DISABLED(FAN_SOFT_PWM)
     #error "FAN_SOFT_PWM is required for your board. Enable it to continue."
   #endif
@@ -2433,8 +2437,8 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
 #if NEED_CASE_LIGHT_PIN
   #if !PIN_EXISTS(CASE_LIGHT)
     #error "CASE_LIGHT_ENABLE requires CASE_LIGHT_PIN, CASE_LIGHT_USE_NEOPIXEL, or CASE_LIGHT_USE_RGB_LED."
-  #elif CASE_LIGHT_PIN == FAN_PIN
-    #error "CASE_LIGHT_PIN conflicts with FAN_PIN. Resolve before continuing."
+  #elif CASE_LIGHT_PIN == FAN0_PIN
+    #error "CASE_LIGHT_PIN conflicts with FAN0_PIN. Resolve before continuing."
   #endif
 #endif
 
@@ -4197,11 +4201,11 @@ static_assert(_PLUS_TEST(4), "HOMING_FEEDRATE_MM_M values must be positive.");
     #elif !(defined(SPEED_POWER_MIN) && defined(SPEED_POWER_MAX) && defined(SPEED_POWER_STARTUP))
       #error "SPINDLE_LASER_USE_PWM equation constant(s) missing."
     #elif _PIN_CONFLICT(X_MIN)
-      #error "SPINDLE_LASER_USE_PWM pin conflicts with X_MIN_PIN."
+      #error "SPINDLE_LASER_PWM_PIN conflicts with X_MIN_PIN."
     #elif _PIN_CONFLICT(X_MAX)
-      #error "SPINDLE_LASER_USE_PWM pin conflicts with X_MAX_PIN."
+      #error "SPINDLE_LASER_PWM_PIN conflicts with X_MAX_PIN."
     #elif _PIN_CONFLICT(Z_STEP)
-      #error "SPINDLE_LASER_USE_PWM pin conflicts with Z_STEP_PIN."
+      #error "SPINDLE_LASER_PWM_PIN conflicts with Z_STEP_PIN."
     #elif _PIN_CONFLICT(CASE_LIGHT)
       #error "SPINDLE_LASER_PWM_PIN conflicts with CASE_LIGHT_PIN."
     #elif _PIN_CONFLICT(E0_AUTO_FAN)
@@ -4221,7 +4225,7 @@ static_assert(_PLUS_TEST(4), "HOMING_FEEDRATE_MM_M values must be positive.");
     #elif _PIN_CONFLICT(E7_AUTO_FAN)
       #error "SPINDLE_LASER_PWM_PIN conflicts with E7_AUTO_FAN_PIN."
     #elif _PIN_CONFLICT(FAN)
-      #error "SPINDLE_LASER_PWM_PIN conflicts with FAN_PIN."
+      #error "SPINDLE_LASER_PWM_PIN conflicts with FAN0_PIN."
     #elif _PIN_CONFLICT(FAN1)
       #error "SPINDLE_LASER_PWM_PIN conflicts with FAN1_PIN."
     #elif _PIN_CONFLICT(FAN2)

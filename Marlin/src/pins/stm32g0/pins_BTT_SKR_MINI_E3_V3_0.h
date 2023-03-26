@@ -136,7 +136,7 @@
 //
 #define HEATER_0_PIN                        PC8   // "HE"
 #define HEATER_BED_PIN                      PC9   // "HB"
-#define FAN_PIN                             PC6   // "FAN0"
+#define FAN0_PIN                            PC6   // "FAN0"
 #define FAN1_PIN                            PC7   // "FAN1"
 #define FAN2_PIN                            PB15  // "FAN2"
 
@@ -177,7 +177,7 @@
    */
 
   #ifndef NO_CONTROLLER_CUSTOM_WIRING_WARNING
-    #warning "CAUTION! DWIN_CREALITY_LCD requires a custom cable, see diagram above this line. (Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning.)"
+    #error "CAUTION! DWIN_CREALITY_LCD requires a custom cable, see diagram above this line. (Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning.)"
   #endif
 
   #define BEEPER_PIN                 EXP1_02_PIN

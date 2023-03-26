@@ -2212,6 +2212,14 @@
 #undef TMC_UART_IS
 #undef ANY_SERIAL_IS
 
+#if defined(__AVR_ARCH__) && defined(TMC_SPI_MISO) && defined(TMC_SPI_MOSI) && defined(TMC_SPI_SCK)
+  // Check that the pins are the solitary supported SPI hardware pins of the (AVR) platform.
+  // Otherwise we are forced to enable software SPI.
+  #if TMC_SPI_MISO != MISO || TMC_SPI_MOSI != MOSI || TMC_SPI_SCK != SCK
+    #define TMC_USE_SW_SPI
+  #endif
+#endif
+
 // Clean up unused ESP_WIFI pins
 #ifdef ESP_WIFI_MODULE_COM
   #if !SERIAL_IN_USE(ESP_WIFI_MODULE_COM)
@@ -2623,16 +2631,12 @@
 #define _NOT_E_AUTO(N,F) (E##N##_AUTO_FAN_PIN != FAN##F##_PIN)
 #define _HAS_FAN(F) (PIN_EXISTS(FAN##F) \
                      && CONTROLLER_FAN_PIN != FAN##F##_PIN \
-                     && _NOT_E_AUTO(0,F) \
-                     && _NOT_E_AUTO(1,F) \
-                     && _NOT_E_AUTO(2,F) \
-                     && _NOT_E_AUTO(3,F) \
-                     && _NOT_E_AUTO(4,F) \
-                     && _NOT_E_AUTO(5,F) \
-                     && _NOT_E_AUTO(6,F) \
-                     && _NOT_E_AUTO(7,F) \
+                     && _NOT_E_AUTO(0,F) && _NOT_E_AUTO(1,F) \
+                     && _NOT_E_AUTO(2,F) && _NOT_E_AUTO(3,F) \
+                     && _NOT_E_AUTO(4,F) && _NOT_E_AUTO(5,F) \
+                     && _NOT_E_AUTO(6,F) && _NOT_E_AUTO(7,F) \
                      && F < MAX_FANS)
-#if PIN_EXISTS(FAN)
+#if _HAS_FAN(0)
   #define HAS_FAN0 1
 #endif
 #if _HAS_FAN(1)

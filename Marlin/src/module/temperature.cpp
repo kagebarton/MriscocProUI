@@ -320,7 +320,7 @@ PGMSTR(str_t_heating_failed, STR_T_HEATING_FAILED);
   #if ProUIex
     celsius_t Temperature::hotend_maxtemp[HOTENDS] = ARRAY_BY_HOTENDS(HEATER_0_MAXTEMP, HEATER_1_MAXTEMP, HEATER_2_MAXTEMP, HEATER_3_MAXTEMP, HEATER_4_MAXTEMP, HEATER_5_MAXTEMP, HEATER_6_MAXTEMP, HEATER_7_MAXTEMP);
   #else
-    const celsius_t Temperature::hotend_maxtemp[HOTENDS];
+    constexpr celsius_t Temperature::hotend_maxtemp[HOTENDS];
   #endif
   
   #if ENABLED(MPCTEMP)
@@ -2676,7 +2676,7 @@ void Temperature::init() {
   #endif
 
   #if HAS_FAN0
-    INIT_FAN_PIN(FAN_PIN);
+    INIT_FAN_PIN(FAN0_PIN);
   #endif
   #if HAS_FAN1
     INIT_FAN_PIN(FAN1_PIN);
