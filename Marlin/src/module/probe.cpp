@@ -861,7 +861,7 @@ float Probe::run_z_probe(const bool sanity_check/*=true*/) {
   #endif
 
   return DIFF_TERN(HAS_HOTEND_OFFSET, measured_z, hotend_offset[active_extruder].z);
-} 
+}
 
 #endif
 

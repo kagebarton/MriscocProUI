@@ -631,6 +631,8 @@
   #include "stm32f1/pins_CREALITY_V4.h"         // STM32F1                                env:STM32F103RE_voxelab_maple_GD32 env:STM32F103RC_voxelab_maple_GD32 env:STM32F103RE_voxelab_maple_N32 env:STM32F103RC_voxelab_maple_N32
 #elif MB(SOVOL_V131)
   #include "stm32f1/pins_SOVOL_V131.h"          // GD32F1                                 env:GD32F103RET6_sovol_maple
+#elif MB(TRIGORILLA_V006)
+  #include "gd32f1/pins_TRIGORILLA_V006.h"      // GD32F103                               env:trigorilla_v006
 
 //
 // ARM Cortex-M4F

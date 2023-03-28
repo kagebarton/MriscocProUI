@@ -419,7 +419,7 @@ void CardReader::ls(const uint8_t lsflags) {
 
     SERIAL_EOL();
   }
-  
+
   void CardReader::getLongPath(char * const pathLong, char * const pathShort) {
 
     int i, pathLen = strlen(pathShort);

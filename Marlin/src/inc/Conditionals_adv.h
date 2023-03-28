@@ -84,7 +84,6 @@
 #if !HAS_BED_PROBE
   #undef BABYSTEP_ZPROBE_OFFSET
 #endif
-
 #if !HAS_STOWABLE_PROBE
   #undef PROBE_DEPLOY_STOW_MENU
 #endif

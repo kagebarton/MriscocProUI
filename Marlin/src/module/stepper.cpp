@@ -2096,10 +2096,9 @@ hal_timer_t Stepper::calc_timer_interval(uint32_t step_rate) {
 
     // A fast processor can just do integer division
     return step_rate ? uint32_t(STEPPER_TIMER_RATE) / step_rate : HAL_TIMER_TYPE_MAX;
-    
+
   #else
 
-    // AVR is able to keep up at 30khz Stepping ISR rate.
     constexpr uint32_t min_step_rate = (F_CPU) / 500000U; // i.e., 32 or 40
     if (step_rate >= 0x0800) {  // higher step rate
       // AVR is able to keep up at around 65kHz Stepping ISR rate at most.
