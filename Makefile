@@ -1,3 +1,6 @@
+# Include additional makefiles
+#include *.mk
+
 help:
 	@echo "Tasks for local development:"
 	@echo "* tests-single-ci:             Run a single test from inside the CI"
