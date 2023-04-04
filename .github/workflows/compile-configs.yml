@@ -41,6 +41,7 @@ jobs:
         echo "filename=ProUI-Default-NP-${AVTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/Default-NP/Configuration.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/Default-NP/Configuration_adv.h Marlin/Configuration_adv.h
+        cp configurations/Voxelab\ Aquila/Default-NP/Version.h Marlin/Version.h
         sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
         pio run
         mkdir temp
@@ -157,6 +158,7 @@ jobs:
         echo "filename=ProUI-MM-${GRID}x${GRID}-${AVTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/MM/Configuration.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/MM/Configuration_adv.h Marlin/Configuration_adv.h
+        cp configurations/Voxelab\ Aquila/MM/Version.h Marlin/Version.h
         sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
         sed -i "s/#define GRID_MAX_POINTS_X.*/#define GRID_MAX_POINTS_X $GRID/g" Marlin/Configuration.h
         pio run
@@ -216,6 +218,7 @@ jobs:
         echo "filename=ProUI-UBL-${GRID}x${GRID}${ISTMP}-${AVTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/UBL/Configuration\ Pro.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/UBL/Configuration_adv\ Pro.h Marlin/Configuration_adv.h
+        cp configurations/Voxelab\ Aquila/UBL/Version.h Marlin/Version.h
         sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
         sed -i "s/#define GRID_MAX_POINTS_X.*/#define GRID_MAX_POINTS_X $GRID/g" Marlin/Configuration.h
         if ($HS); then TEMP=; else TEMP='\/\/'; fi;

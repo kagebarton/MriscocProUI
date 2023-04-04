@@ -561,7 +561,7 @@ typedef struct SettingsDataStruct {
     bool no_tick; //encoder beep
   #endif
 
-  #if ENABLED(USE_UBL_VIEWER)
+  #if ENABLED(HAS_MESH) && ENABLED(USE_UBL_VIEWER)
     bool view_mesh;
   #endif
 
@@ -1639,7 +1639,7 @@ void MarlinSettings::postprocess() {
       EEPROM_WRITE(ui.no_tick);
     #endif
 
-    #if ENABLED(USE_UBL_VIEWER)
+    #if ENABLED(HAS_MESH) && ENABLED(USE_UBL_VIEWER)
       EEPROM_WRITE(BedLevelTools.view_mesh);
     #endif
     //
@@ -2639,7 +2639,7 @@ void MarlinSettings::postprocess() {
         EEPROM_READ(ui.no_tick);
       #endif
 
-      #if ENABLED(USE_UBL_VIEWER)
+      #if ENABLED(HAS_MESH) && ENABLED(USE_UBL_VIEWER)
         _FIELD_TEST(view_mesh);
         EEPROM_READ(BedLevelTools.view_mesh);
       #endif
@@ -3095,7 +3095,7 @@ void MarlinSettings::reset() {
     ui.no_tick = ENABLED(TICK_ON_DEFAULT); //added encoder beep bool
   #endif
 
-  #if ENABLED(USE_UBL_VIEWER)
+  #if ENABLED(HAS_MESH) && ENABLED(USE_UBL_VIEWER)
     BedLevelTools.view_mesh = ENABLED(USE_UBL_VIEWER); //added mesh viewer option
   #endif
 

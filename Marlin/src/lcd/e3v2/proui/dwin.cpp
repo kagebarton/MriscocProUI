@@ -2548,8 +2548,8 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
     #else
       #if ENABLED(LCD_BED_TRAMMING)
       constexpr float bed_tramming_inset_lfbr[] = BED_TRAMMING_INSET_LFRB;
-      #else  
-      const_float_t bed_tramming_inset_lfbr[] = {ui.screw_pos, ui.screw_pos. ui.screw_pos. ui.screw_pos};
+      #else
+      const_float_t bed_tramming_inset_lfbr[] = {ui.screw_pos, ui.screw_pos, ui.screw_pos, ui.screw_pos};
       #endif
       int16_t xpos = 0, ypos = 0;
     #endif
@@ -2940,17 +2940,18 @@ void onClick_StartAutoLev() {
 }
 void AutoLevStart() { Goto_Popup(PopUp_StartAutoLev, onClick_StartAutoLev); }
 
-// Clear or Zero Bed Mesh Values
-  void Popup_ZeroMesh() { DWIN_Popup_ConfirmCancel(ICON_Info_0, F("Zero Current Mesh?")); }
-  void OnClick_ZeroMesh() {
-    if (HMI_flag.select_flag) {
-    ZERO(bedlevel.z_values);
-    DONE_BUZZ(true);
+#if HAS_MESH
+  // Clear or Zero Bed Mesh Values
+    void Popup_ZeroMesh() { DWIN_Popup_ConfirmCancel(ICON_Info_0, F("Zero Current Mesh?")); }
+    void OnClick_ZeroMesh() {
+      if (HMI_flag.select_flag) {
+      ZERO(bedlevel.z_values);
+      DONE_BUZZ(true);
+      }
+      HMI_ReturnScreen();
     }
-    HMI_ReturnScreen();
-  }
-  void ZeroCurrentMesh() { Goto_Popup(Popup_ZeroMesh, OnClick_ZeroMesh); }
-
+    void ZeroCurrentMesh() { Goto_Popup(Popup_ZeroMesh, OnClick_ZeroMesh); }
+#endif
 
 // Menu Creation and Drawing functions ======================================================
 
