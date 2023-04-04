@@ -38,7 +38,7 @@ jobs:
       id: build_configs
       run: |
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "::set-output name=filename::ProUI-Default-NP-${AVTMP}.bin"
+        echo "filename=ProUI-Default-NP-${AVTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxlab\ Aquila/Default-NP/Configuration.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/Default-NP/Configuration_adv.h Marlin/Configuration_adv.h
         sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
@@ -154,7 +154,7 @@ jobs:
       id: build_configs
       run: |
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "::set-output name=filename::ProUI-MM-${GRID}x${GRID}-${AVTMP}.bin"
+        echo "filename=ProUI-MM-${GRID}x${GRID}-${AVTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/MM/Configuration.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/MM/Configuration_adv.h Marlin/Configuration_adv.h
         sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
@@ -213,7 +213,7 @@ jobs:
       run: |
         if ($IS); then ISTMP=-IS; else ISTMP=; fi;
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "::set-output name=filename::ProUI-UBL-${GRID}x${GRID}${ISTMP}-${AVTMP}.bin"
+        echo "filename=ProUI-UBL-${GRID}x${GRID}${ISTMP}-${AVTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/UBL/Configuration\ Pro.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/UBL/Configuration_adv\ Pro.h Marlin/Configuration_adv.h
         sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
