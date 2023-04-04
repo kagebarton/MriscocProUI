@@ -9,7 +9,7 @@ on:
 jobs:
   Build-Default:
     name: Build Default Files
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       matrix:
         chip: [GD32,N32]
@@ -62,7 +62,7 @@ jobs:
         asset_content_type: application/x-binary
   # Build-BLTouch:
   #   name: Build BL-Touch Files
-  #   runs-on: ubuntu-latest
+  #   runs-on: self-hosted
   #   strategy:
   #     matrix:
   #       chip: [GD32,N32]
@@ -123,7 +123,7 @@ jobs:
   #       asset_content_type: application/x-binary
   Build-Manual-Mesh:
     name: Build Manual-Mesh Files
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       matrix:
         chip: [GD32,N32]
@@ -179,7 +179,7 @@ jobs:
         asset_content_type: application/x-binary
   Build-UBL-BLTouch:
     name: Build BL-Touch UBL Files
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       matrix:
         chip: [GD32,N32]
@@ -241,7 +241,7 @@ jobs:
         asset_content_type: application/x-binary
   # Build-UBL-NoProbe:
   #   name: Build NoProbe UBL Files
-  #   runs-on: ubuntu-latest
+  #   runs-on: self-hosted
   #   strategy:
   #     matrix:
   #       chip: [GD32,N32]
