@@ -9,26 +9,26 @@ on:
 jobs:
   Build-Default:
     name: Build Default Files
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         chip: [GD32,N32]
     steps:
     - uses: actions/checkout@v2
     - name: Cache pip
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
     - name: Cache PlatformIO
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.platformio
         key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
@@ -62,7 +62,7 @@ jobs:
         asset_content_type: application/x-binary
   # Build-BLTouch:
   #   name: Build BL-Touch Files
-  #   runs-on: self-hosted
+  #   runs-on: ubuntu-latest
   #   strategy:
   #     matrix:
   #       chip: [GD32,N32]
@@ -71,19 +71,19 @@ jobs:
   #   steps:
   #   - uses: actions/checkout@v2
   #   - name: Cache pip
-  #     uses: actions/cache@v2
+  #     uses: actions/cache@v3
   #     with:
   #       path: ~/.cache/pip
   #       key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
   #       restore-keys: |
   #         ${{ runner.os }}-pip-
   #   - name: Cache PlatformIO
-  #     uses: actions/cache@v2
+  #     uses: actions/cache@v3
   #     with:
   #       path: ~/.platformio
   #       key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
   #   - name: Set up Python
-  #     uses: actions/setup-python@v3
+  #     uses: actions/setup-python@v4
   #   - name: Install PlatformIO
   #     run: |
   #       python -m pip install --upgrade pip
@@ -123,7 +123,7 @@ jobs:
   #       asset_content_type: application/x-binary
   Build-Manual-Mesh:
     name: Build Manual-Mesh Files
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         chip: [GD32,N32]
@@ -131,19 +131,19 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Cache pip
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
     - name: Cache PlatformIO
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.platformio
         key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
@@ -179,7 +179,7 @@ jobs:
         asset_content_type: application/x-binary
   Build-UBL-BLTouch:
     name: Build BL-Touch UBL Files
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         chip: [GD32,N32]
@@ -188,19 +188,19 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Cache pip
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
     - name: Cache PlatformIO
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.platformio
         key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
@@ -241,7 +241,7 @@ jobs:
         asset_content_type: application/x-binary
   # Build-UBL-NoProbe:
   #   name: Build NoProbe UBL Files
-  #   runs-on: self-hosted
+  #   runs-on: ubuntu-latest
   #   strategy:
   #     matrix:
   #       chip: [GD32,N32]
@@ -249,19 +249,19 @@ jobs:
   #   steps:
   #   - uses: actions/checkout@v2
   #   - name: Cache pip
-  #     uses: actions/cache@v2
+  #     uses: actions/cache@v3
   #     with:
   #       path: ~/.cache/pip
   #       key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
   #       restore-keys: |
   #         ${{ runner.os }}-pip-
   #   - name: Cache PlatformIO
-  #     uses: actions/cache@v2
+  #     uses: actions/cache@v3
   #     with:
   #       path: ~/.platformio
   #       key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
   #   - name: Set up Python
-  #     uses: actions/setup-python@v3
+  #     uses: actions/setup-python@v4
   #   - name: Install PlatformIO
   #     run: |
   #       python -m pip install --upgrade pip
