@@ -3370,7 +3370,7 @@
 //#define HAS_DACAI 1
 
 // Professional firmware features:
-#define ProUIex 1
+//#define ProUIex 1
 #ifdef ProUIex
   #define HAS_GCODE_PREVIEW 1
   #define HAS_TOOLBAR 1
