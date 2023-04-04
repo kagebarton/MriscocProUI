@@ -56,3 +56,6 @@ if "MARLIN_FEATURES" in env:
        print("Unified Mesh Bed Leveling detected")
        shutil.copy(libpath+arch+'libproui_ubl.a', libpath+'libproui.a')
 
+    else:
+       print("Unified Mesh Bed Leveling detected")
+       shutil.copy(libpath+arch+'libproui_ubl.a', libpath+'libproui.a')
