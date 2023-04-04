@@ -39,7 +39,7 @@ jobs:
       run: |
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
         echo "filename=ProUI-Default-NP-${AVTMP}.bin" >> $GITHUB_OUTPUT
-        cp configurations/Voxlab\ Aquila/Default-NP/Configuration.h Marlin/Configuration.h
+        cp configurations/Voxelab\ Aquila/Default-NP/Configuration.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/Default-NP/Configuration_adv.h Marlin/Configuration_adv.h
         sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
         pio run
