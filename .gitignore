@@ -125,6 +125,7 @@ tags
 .clang_complete
 .gcc-flags.json
 /lib/
+/node_modules/
 
 # Secure Credentials
 Configuration_Secure.h
