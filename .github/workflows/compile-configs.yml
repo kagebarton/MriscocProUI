@@ -1,10 +1,11 @@
 name: Build Configs
 
 on:
+  workflow_dispatch:
   release:
     types: [created]
 
-  workflow_dispatch:
+
 
 jobs:
   Build-Default:
@@ -56,7 +57,7 @@ jobs:
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1.0.2
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}
       with:
         upload_url: ${{ steps.get_release.outputs.upload_url }}
         asset_path: temp/build.bin
