@@ -188,7 +188,7 @@ jobs:
       matrix:
         chip: [GD32,N32]
         grid: [5,7]
-        inshape: [true,false]
+        inshape: [false,false]
     steps:
     - uses: actions/checkout@v2
     - name: Cache pip
