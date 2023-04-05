@@ -51,7 +51,7 @@ jobs:
         AQUILA_VER: ${{ matrix.chip }}
     - name: Get release
       id: get_release
-      html_url: "https://github.com/classicrocker883/MriscocProUI/releases/2.1.3b"
+      #html_url: "https://github.com/classicrocker883/MriscocProUI/releases/2.1.3b"
       uses: bruceadams/get-release@v1.3.2
       env:
         GITHUB_TOKEN: ${{ github.token }}
