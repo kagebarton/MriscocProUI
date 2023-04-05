@@ -3,9 +3,7 @@ name: Build Configs
 on:
   workflow_dispatch:
   release:
-    types: [created]
-
-
+    types: [created]  
 
 jobs:
   Build-Default:
@@ -53,11 +51,12 @@ jobs:
       id: get_release
       uses: bruceadams/get-release@v1.3.2
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1.0.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
         upload_url: ${{ steps.get_release.outputs.upload_url }}
         asset_path: temp/build.bin
         asset_name: ${{ steps.build_configs.outputs.filename }}
@@ -188,7 +187,7 @@ jobs:
       matrix:
         chip: [GD32,N32]
         grid: [5,7]
-        inshape: [false,false]
+        inshape: [true,false]
     steps:
     - uses: actions/checkout@v2
     - name: Cache pip
