@@ -49,6 +49,16 @@ jobs:
         mv .pio/build/STM32F103RC_voxelab_maple_$AQUILA_VER/*.bin temp/build.bin
       env:
         AQUILA_VER: ${{ matrix.chip }}
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: '2.1.4'
+        release_name: Release 2.1.4
+        draft: false
+        prerelease: false
     - name: Get release
       id: get_release
       #html_url: "https://github.com/classicrocker883/MriscocProUI/releases/2.1.3b"
@@ -59,8 +69,6 @@ jobs:
       uses: actions/upload-release-asset@v1.0.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: v2.1.3c
         upload_url: ${{ steps.get_release.outputs.upload_url }}
         asset_path: temp/build.bin
         asset_name: ${{ steps.build_configs.outputs.filename }}
