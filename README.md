@@ -69,7 +69,11 @@ The Issue Queue is reserved for Bug Reports and Feature Requests. To get help wi
 
 ## Credits
 
-My Reddit u/[TBA]
+Thanks to Reddit u/schuh8 for donating his board to help test the firmware.
+<br>
+and I*_U*1
+</br>
+
 
 
 Find me on [Facebook](https://www.facebook.com/yoboyyy) 
