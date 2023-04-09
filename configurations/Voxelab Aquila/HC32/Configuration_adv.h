@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2022 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -20,6 +20,9 @@
  *
  */
 #pragma once
+
+// Created by configs generator for Professional firmware
+// https://github.com/mriscoc/Ender3V2S1
 
 /**
  * Configuration_adv.h
@@ -331,7 +334,7 @@
  * Thermal Protection parameters for the bed are just as above for hotends.
  */
 #if ENABLED(THERMAL_PROTECTION_BED)
-  #define THERMAL_PROTECTION_BED_PERIOD        20 // Seconds
+  #define THERMAL_PROTECTION_BED_PERIOD        60 // Seconds
   #define THERMAL_PROTECTION_BED_HYSTERESIS     2 // Degrees Celsius
 
   /**
@@ -400,6 +403,7 @@
     // Keep in mind that some heaters heat up faster than others.
     //#define THERMAL_PROTECTION_VARIANCE_MONITOR_PERIOD 30  // (s) Override all watch periods
   #endif
+  #define NO_VARIANCE_MONITOR_WARNING
 #endif
 
 #if ENABLED(PIDTEMP)
@@ -543,9 +547,9 @@
  * Hotend Idle Timeout
  * Prevent filament in the nozzle from charring and causing a critical jam.
  */
-//#define HOTEND_IDLE_TIMEOUT
+#define HOTEND_IDLE_TIMEOUT  // MRiscoC Disable heaters after timeout
 #if ENABLED(HOTEND_IDLE_TIMEOUT)
-  #define HOTEND_IDLE_TIMEOUT_SEC (5*60)    // (seconds) Time without extruder movement to trigger protection
+  #define HOTEND_IDLE_TIMEOUT_SEC (6*60)    // (seconds) Time without extruder movement to trigger protection
   #define HOTEND_IDLE_MIN_TRIGGER   180     // (°C) Minimum temperature to enable hotend protection
   #define HOTEND_IDLE_NOZZLE_TARGET   0     // (°C) Safe temperature for the nozzle after timeout
   #define HOTEND_IDLE_BED_TARGET      0     // (°C) Safe temperature for the bed after timeout
@@ -940,7 +944,7 @@
 
   // Safety: The probe needs time to recognize the command.
   //         Minimum command delay (ms). Enable and increase if needed.
-  //#define BLTOUCH_DELAY 500
+  #define BLTOUCH_DELAY 200
 
   /**
    * Settings for BLTOUCH Classic 1.2, 1.3 or BLTouch Smart 1.0, 2.0, 2.2, 3.0, 3.1, and most clones:
@@ -984,14 +988,14 @@
    *
    * Set the default state here, change with 'M401 S' or UI, use M500 to save, M502 to reset.
    */
-  //#define BLTOUCH_HS_MODE true
+  #define BLTOUCH_HS_MODE true
 
   // Safety: Enable voltage mode settings in the LCD menu.
   //#define BLTOUCH_LCD_VOLTAGE_MENU
 
 #endif // BLTOUCH
 
-// @section extras
+// @section calibration
 
 /**
  * Z Steppers Auto-Alignment
@@ -1084,11 +1088,55 @@
    *   M4: 40 = Clockwise, 41 = Counter-Clockwise
    *   M5: 50 = Clockwise, 51 = Counter-Clockwise
    */
-  #define TRAMMING_SCREW_THREAD 30
+  #define TRAMMING_SCREW_THREAD 40
 
 #endif
 
-// @section motion
+// @section motion control
+
+/**
+ * Fixed-time-based Motion Control -- EXPERIMENTAL
+ * Enable/disable and set parameters with G-code M493.
+ */
+//#define FT_MOTION
+#if ENABLED(FT_MOTION)
+  #define FTM_DEFAULT_MODE         ftMotionMode_ENABLED // Default mode of fixed time control. (Enums in ft_types.h)
+  #define FTM_DEFAULT_DYNFREQ_MODE dynFreqMode_DISABLED // Default mode of dynamic frequency calculation. (Enums in ft_types.h)
+  #define FTM_SHAPING_DEFAULT_X_FREQ 37.0f              // (Hz) Default peak frequency used by input shapers.
+  #define FTM_SHAPING_DEFAULT_Y_FREQ 37.0f              // (Hz) Default peak frequency used by input shapers.
+  #define FTM_LINEAR_ADV_DEFAULT_ENA false              // Default linear advance enable (true) or disable (false).
+  #define FTM_LINEAR_ADV_DEFAULT_K    0.0f              // Default linear advance gain.
+  #define FTM_SHAPING_ZETA            0.1f              // Zeta used by input shapers.
+  #define FTM_SHAPING_V_TOL           0.05f             // Vibration tolerance used by EI input shapers.
+
+  /**
+   * Advanced configuration
+   */
+  #define FTM_BATCH_SIZE 100                            // Batch size for trajectory generation;
+                                                        // half the window size for Ulendo FBS.
+  #define FTM_FS           1000                         // (Hz) Frequency for trajectory generation. (1 / FTM_TS)
+  #define FTM_TS              0.001f                    // (s) Time step for trajectory generation. (1 / FTM_FS)
+  #define FTM_STEPPER_FS  20000                         // (Hz) Frequency for stepper I/O update.
+  #define FTM_MIN_TICKS ((STEPPER_TIMER_RATE) / (FTM_STEPPER_FS)) // Minimum stepper ticks between steps.
+  #define FTM_MIN_SHAPE_FREQ 10                         // Minimum shaping frequency.
+  #define FTM_ZMAX          100                         // Maximum delays for shaping functions (even numbers only!).
+                                                        // Calculate as:
+                                                        //    1/2 * (FTM_FS / FTM_MIN_SHAPE_FREQ) for ZV.
+                                                        //    (FTM_FS / FTM_MIN_SHAPE_FREQ) for ZVD, MZV.
+                                                        //    3/2 * (FTM_FS / FTM_MIN_SHAPE_FREQ) for 2HEI.
+                                                        //    2 * (FTM_FS / FTM_MIN_SHAPE_FREQ) for 3HEI.
+  #define FTM_STEPS_PER_UNIT_TIME 20                    // Interpolated stepper commands per unit time.
+                                                        // Calculate as (FTM_STEPPER_FS / FTM_FS).
+  #define FTM_CTS_COMPARE_VAL 10                        // Comparison value used in interpolation algorithm.
+                                                        // Calculate as (FTM_STEPS_PER_UNIT_TIME / 2).
+  // These values may be configured to adjust duration of loop().
+  #define FTM_STEPS_PER_LOOP 60                         // Number of stepper commands to generate each loop().
+  #define FTM_POINTS_PER_LOOP 100                       // Number of trajectory points to generate each loop().
+
+  // This value may be configured to adjust duration to consume the command buffer.
+  // Try increasing this value if stepper motion is not smooth.
+  #define FTM_STEPPERCMD_BUFF_SIZE 1000                 // Size of the stepper command buffers.
+#endif
 
 /**
  * Input Shaping -- EXPERIMENTAL
@@ -1124,8 +1172,10 @@
   #endif
   //#define SHAPING_MIN_FREQ  20        // By default the minimum of the shaping frequencies. Override to affect SRAM usage.
   //#define SHAPING_MAX_STEPRATE 10000  // By default the maximum total step rate of the shaped axes. Override to affect SRAM usage.
-  //#define SHAPING_MENU                // Add a menu to the LCD to set shaping parameters.
+  #define SHAPING_MENU                  // Add a menu to the LCD to set shaping parameters.
 #endif
+
+// @section motion
 
 #define AXIS_RELATIVE_MODES { false, false, false, false }
 
@@ -1149,7 +1199,7 @@
  * Enable DISABLE_IDLE_* to shut down axis steppers after an idle period.
  * The default timeout duration can be overridden with M18 and M84. Set to 0 for No Timeout.
  */
-#define DEFAULT_STEPPER_TIMEOUT_SEC 120
+#define DEFAULT_STEPPER_TIMEOUT_SEC 360
 #define DISABLE_IDLE_X
 #define DISABLE_IDLE_Y
 #define DISABLE_IDLE_Z    // Disable if the nozzle could fall onto your printed part!
@@ -1162,17 +1212,21 @@
 #define DISABLE_IDLE_E    // Shut down all idle extruders
 
 // Default Minimum Feedrates for printing and travel moves
-#define DEFAULT_MINIMUMFEEDRATE       0.0     // (mm/s. °/s for rotational-only moves) Minimum feedrate. Set with M205 S.
-#define DEFAULT_MINTRAVELFEEDRATE     0.0     // (mm/s. °/s for rotational-only moves) Minimum travel feedrate. Set with M205 T.
+#define DEFAULT_MINIMUMFEEDRATE             0.0     // (mm/s) Minimum feedrate. Set with M205 S.
+#define DEFAULT_MINTRAVELFEEDRATE           0.0     // (mm/s) Minimum travel feedrate. Set with M205 T.
+#if HAS_ROTATIONAL_AXES
+  #define DEFAULT_ANGULAR_MINIMUMFEEDRATE   0.0     // (°/s) Minimum feedrate for rotational-only moves. Set with M205 P.
+  #define DEFAULT_ANGULAR_MINTRAVELFEEDRATE 0.0     // (°/s) Minimum travel feedrate for rotational-only moves. Set with M205 Q.
+#endif
 
 // Minimum time that a segment needs to take as the buffer gets emptied
-#define DEFAULT_MINSEGMENTTIME        20000   // (µs) Set with M205 B.
+#define DEFAULT_MINSEGMENTTIME        50000   // (µs) Set with M205 B.
 
 // Slow down the machine if the lookahead buffer is (by default) half full.
 // Increase the slowdown divisor for larger buffer sizes.
 #define SLOWDOWN
 #if ENABLED(SLOWDOWN)
-  #define SLOWDOWN_DIVISOR 2
+  #define SLOWDOWN_DIVISOR 4
 #endif
 
 /**
@@ -1383,7 +1437,7 @@
 // @section lcd
 
 #if HAS_MANUAL_MOVE_MENU
-  #define MANUAL_FEEDRATE { 50*60, 50*60, 4*60, 2*60 } // (mm/min) Feedrates for manual moves along X, Y, Z, E from panel
+  #define MANUAL_FEEDRATE { 60*60, 60*60, 8*60, 2*60 } // (mm/min) Feedrates for manual moves along X, Y, Z, E from panel
   #define FINE_MANUAL_MOVE 0.025    // (mm) Smallest manual move (< 0.1mm) applying to Z on most machines
   #if IS_ULTIPANEL
     #define MANUAL_E_MOVES_RELATIVE // Display extruder move distance rather than "position"
@@ -1394,8 +1448,9 @@
 // Change values more rapidly when the encoder is rotated faster
 #define ENCODER_RATE_MULTIPLIER
 #if ENABLED(ENCODER_RATE_MULTIPLIER)
-  #define ENCODER_10X_STEPS_PER_SEC   30  // (steps/s) Encoder rate for 10x speed
-  #define ENCODER_100X_STEPS_PER_SEC  80  // (steps/s) Encoder rate for 100x speed
+  #define ENCODER_5X_STEPS_PER_SEC    40  // Ender Configs
+  #define ENCODER_10X_STEPS_PER_SEC   75  // (steps/s) Encoder rate for 10x speed  // Ender Configs
+  #define ENCODER_100X_STEPS_PER_SEC 105  // (steps/s) Encoder rate for 100x speed  // Ender Configs
 #endif
 
 // Play a beep when the feedrate is changed from the Status Screen
@@ -1408,7 +1463,7 @@
 //
 // LCD Backlight Timeout
 //
-//#define LCD_BACKLIGHT_TIMEOUT_MINS 1  // (minutes) Timeout before turning off the backlight
+//#define LCD_BACKLIGHT_TIMEOUT_MINS 10 // (minutes) Timeout before turning off the backlight
 
 #if HAS_BED_PROBE && EITHER(HAS_MARLINUI_MENU, HAS_TFT_LVGL_UI)
   //#define PROBE_OFFSET_WIZARD       // Add a Probe Z Offset calibration option to the LCD menu
@@ -1464,24 +1519,42 @@
 #endif // HAS_MARLINUI_MENU
 
 #if HAS_DISPLAY
-  //#define SOUND_MENU_ITEM   // Add a mute option to the LCD menu
+  /**
+   * *** VENDORS PLEASE READ ***
+   *
+   * Marlin allows you to add a custom boot image for Graphical LCDs.
+   * With this option Marlin will first show your custom screen followed
+   * by the standard Marlin logo with version number and web URL.
+   *
+   * We encourage you to take advantage of this new feature and we also
+   * respectfully request that you retain the unmodified Marlin boot screen.
+   */
+  #if ANY(HAS_MARLINUI_U8GLIB, TOUCH_UI_FTDI_EVE, IS_DWIN_MARLINUI)
+    #define SHOW_BOOTSCREEN                 // Show the Marlin bootscreen on startup. ** ENABLE FOR PRODUCTION **
+    #if ENABLED(SHOW_BOOTSCREEN)
+      #define BOOTSCREEN_TIMEOUT 4000       // (ms) Total Duration to display the boot screen(s)
+      #if EITHER(HAS_MARLINUI_U8GLIB, TFT_COLOR_UI)
+        #define BOOT_MARLIN_LOGO_SMALL      // Show a smaller Marlin logo on the Boot Screen (saving lots of flash)
+      #endif
+      //#define SHOW_CUSTOM_BOOTSCREEN      // Show the bitmap in Marlin/_Bootscreen.h on startup.
+    #endif
+    #if HAS_MARLINUI_U8GLIB
+      //#define CUSTOM_STATUS_SCREEN_IMAGE  // Show the bitmap in Marlin/_Statusscreen.h on the status screen.
+    #endif
+  #endif
+
+  #define SOUND_MENU_ITEM     // Add a mute option to the LCD menu
   #define SOUND_ON_DEFAULT    // Buzzer/speaker default enabled state
+  //#define TICK_ON_DEFAULT   // Beep/Tick default enabled state
 
   // The timeout to return to the status screen from sub-menus
   //#define LCD_TIMEOUT_TO_STATUS 15000   // (ms)
 
-  #if ENABLED(SHOW_BOOTSCREEN)
-    #define BOOTSCREEN_TIMEOUT 4000       // (ms) Total Duration to display the boot screen(s)
-    #if EITHER(HAS_MARLINUI_U8GLIB, TFT_COLOR_UI)
-      #define BOOT_MARLIN_LOGO_SMALL      // Show a smaller Marlin logo on the Boot Screen (saving lots of flash)
-    #endif
-  #endif
-
   // Scroll a longer status message into view
-  //#define STATUS_MESSAGE_SCROLLING
+  #define STATUS_MESSAGE_SCROLLING  // MRiscoC Allow scrolling of large status messages
 
   // Apply a timeout to low-priority status messages
-  //#define STATUS_MESSAGE_TIMEOUT_SEC 30 // (seconds)
+  #define STATUS_MESSAGE_TIMEOUT_SEC 30 // (seconds)  // MRiscoC Enable Status Message Timeout
 
   // On the Info Screen, display XY with one decimal place when possible
   //#define LCD_DECIMAL_SMALL_XY
@@ -1491,6 +1564,9 @@
 
   // Display a negative temperature instead of "err"
   //#define SHOW_TEMPERATURE_BELOW_ZERO
+
+  // Change Title Menu Text to Centered
+  #define TITLE_CENTERED 
 
   /**
    * LED Control Menu
@@ -1521,14 +1597,14 @@
 #endif // HAS_DISPLAY
 
 // Add 'M73' to set print job progress, overrides Marlin's built-in estimate
-//#define SET_PROGRESS_MANUALLY
+#define SET_PROGRESS_MANUALLY  // MRiscoC Allow display feedback of host printing through GCode M73
 #if ENABLED(SET_PROGRESS_MANUALLY)
-  #define SET_PROGRESS_PERCENT            // Add 'P' parameter to set percentage done
-  #define SET_REMAINING_TIME              // Add 'R' parameter to set remaining time
+  #define SET_PROGRESS_PERCENT            // Add 'P' parameter to set percentage done  // MRiscoC Allow display feedback of host printing through GCode M73
+  #define SET_REMAINING_TIME              // Add 'R' parameter to set remaining time  // MRiscoC Allow display feedback of host printing through GCode M73
   //#define SET_INTERACTION_TIME          // Add 'C' parameter to set time until next filament change or other user interaction
-  //#define M73_REPORT                    // Report M73 values to host
+  #define M73_REPORT                      // Report M73 values to host
   #if BOTH(M73_REPORT, SDSUPPORT)
-    #define M73_REPORT_SD_ONLY            // Report only when printing from SD
+    //#define M73_REPORT_SD_ONLY          // Report only when printing from SD
   #endif
 #endif
 
@@ -1593,7 +1669,7 @@
 
   //#define MEDIA_MENU_AT_TOP               // Force the media menu to be listed on the top of the main menu
 
-  #define EVENT_GCODE_SD_ABORT "G28XY"      // G-code to run on SD Abort Print (e.g., "G28XY" or "G27")
+  #define EVENT_GCODE_SD_ABORT "G27 P2"      // G-code to run on SD Abort Print (e.g., "G28XY" or "G27")
 
   #if ENABLED(PRINTER_EVENT_LEDS)
     #define PE_LEDS_COMPLETED_TIME  (30*60) // (seconds) Time to keep the LED "done" color before restoring normal illumination
@@ -1657,13 +1733,13 @@
 
   // SD Card Sorting options
   #if ENABLED(SDCARD_SORT_ALPHA)
-    #define SDSORT_LIMIT       40     // Maximum number of sorted items (10-256). Costs 27 bytes each.
+    #define SDSORT_LIMIT       80     // Maximum number of sorted items (10-256). Costs 27 bytes each.
     #define FOLDER_SORTING     -1     // -1=above  0=none  1=below
-    #define SDSORT_GCODE       false  // Allow turning sorting on/off with LCD and M34 G-code.
-    #define SDSORT_USES_RAM    true   // Pre-allocate a static array for faster pre-sorting.
+    #define SDSORT_GCODE       true   // Allow turning sorting on/off with LCD and M34 G-code.  // MRiscoC Allows disable file sort by M34 g-code
+    #define SDSORT_USES_RAM    true   // Pre-allocate a static array for faster pre-sorting.  // Ender Configs
     #define SDSORT_USES_STACK  false  // Prefer the stack for pre-sorting to give back some SRAM. (Negated by next 2 options.)
-    #define SDSORT_CACHE_NAMES false  // Keep sorted items in RAM longer for speedy performance. Most expensive option.
-    #define SDSORT_DYNAMIC_RAM false  // Use dynamic allocation (within SD menus). Least expensive option. Set SDSORT_LIMIT before use!
+    #define SDSORT_CACHE_NAMES true   // Keep sorted items in RAM longer for speedy performance. Most expensive option.  // Ender Configs
+    #define SDSORT_DYNAMIC_RAM true   // Use dynamic allocation (within SD menus). Least expensive option. Set SDSORT_LIMIT before use!  // Ender Configs
     #define SDSORT_CACHE_VFATS 2      // Maximum number of 13-byte VFAT entries to use for sorting.
                                       // Note: Only affects SCROLL_LONG_FILENAMES with SDSORT_CACHE_NAMES but not SDSORT_DYNAMIC_RAM.
   #endif
@@ -1672,13 +1748,13 @@
   // LCD's font must contain the characters. Check your selected LCD language.
   //#define UTF_FILENAME_SUPPORT
 
-  //#define LONG_FILENAME_HOST_SUPPORT    // Get the long filename of a file/folder with 'M33 <dosname>' and list long filenames with 'M20 L'
-  //#define LONG_FILENAME_WRITE_SUPPORT   // Create / delete files with long filenames via M28, M30, and Binary Transfer Protocol
-  //#define M20_TIMESTAMP_SUPPORT         // Include timestamps by adding the 'T' flag to M20 commands
+  #define LONG_FILENAME_HOST_SUPPORT    // Get the long filename of a file/folder with 'M33 <dosname>' and list long filenames with 'M20 L'  // MRiscoC Enabled
+  #define LONG_FILENAME_WRITE_SUPPORT   // Create / delete files with long filenames via M28, M30, and Binary Transfer Protocol  // MRiscoC Enabled
+  //#define M20_TIMESTAMP_SUPPORT       // Include timestamps by adding the 'T' flag to M20 commands
 
-  #define SCROLL_LONG_FILENAMES         // Scroll long filenames in the SD card menu
+  #define SCROLL_LONG_FILENAMES         // Scroll long filenames in the SD card menu  // MRiscoC Enabled
 
-  //#define SD_ABORT_NO_COOLDOWN          // Leave the heaters on after Stop Print (not recommended!)
+  //#define SD_ABORT_NO_COOLDOWN        // Leave the heaters on after Stop Print (not recommended!)
 
   /**
    * Abort SD printing when any endstop is triggered.
@@ -1800,7 +1876,16 @@
  * By default an onboard SD card reader may be shared as a USB mass-
  * storage device. This option hides the SD card from the host PC.
  */
-#define NO_SD_HOST_DRIVE   // Disable SD Card access over USB (for security).
+//#define NO_SD_HOST_DRIVE   // Disable SD Card access over USB (for security).
+
+/**
+ * By default the framework is responsible for the shared media I/O.
+ * Enable this if you need Marlin to take care of the shared media I/O.
+ * Useful if shared media isn't working properly on some boards.
+ */
+#if ENABLED(SDSUPPORT) && DISABLED(NO_SD_HOST_DRIVE)
+  //#define DISKIO_HOST_DRIVE
+#endif
 
 /**
  * Additional options for Graphical Displays
@@ -2103,12 +2188,12 @@
 #define BABYSTEPPING
 #if ENABLED(BABYSTEPPING)
   //#define INTEGRATED_BABYSTEPPING         // EXPERIMENTAL integration of babystepping into the Stepper ISR
-  //#define BABYSTEP_WITHOUT_HOMING
-  //#define BABYSTEP_ALWAYS_AVAILABLE       // Allow babystepping at all times (not just during movement).
+  #define BABYSTEP_WITHOUT_HOMING  	        // MRiscoC Enabled BbS without home
+  #define BABYSTEP_ALWAYS_AVAILABLE         // Allow babystepping at all times (not just during movement).  // MRiscoC Active BbS always
   //#define BABYSTEP_XY                     // Also enable X/Y Babystepping. Not supported on DELTA!
   #define BABYSTEP_INVERT_Z false           // Change if Z babysteps should go the other way
   //#define BABYSTEP_MILLIMETER_UNITS       // Specify BABYSTEP_MULTIPLICATOR_(XY|Z) in mm instead of micro-steps
-  #define BABYSTEP_MULTIPLICATOR_Z  1       // (steps or mm) Steps or millimeter distance for each Z babystep
+  #define BABYSTEP_MULTIPLICATOR_Z  1       // (steps or mm) Steps or millimeter distance for each Z babystep  // Ender Configs 40
   #define BABYSTEP_MULTIPLICATOR_XY 1       // (steps or mm) Steps or millimeter distance for each XY babystep
 
   //#define DOUBLECLICK_FOR_Z_BABYSTEPPING  // Double-click on the Status Screen for Z Babystepping.
@@ -2123,10 +2208,16 @@
 
   //#define BABYSTEP_DISPLAY_TOTAL          // Display total babysteps since last G28
 
-  //#define BABYSTEP_ZPROBE_OFFSET          // Combine M851 Z and Babystepping
-  #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
-    //#define BABYSTEP_HOTEND_Z_OFFSET      // For multiple hotends, babystep relative Z offsets
+  #ifdef BLTOUCH
+    #define BABYSTEP_ZPROBE_OFFSET          // Combine M851 Z and Babystepping
+    //#define BABYSTEP_GLOBAL_Z             // Combine M424 Z and Babystepping
+
+    #if EITHER(BABYSTEP_ZPROBE_OFFSET, BABYSTEP_GLOBAL_Z)
+      #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
+        //#define BABYSTEP_HOTEND_Z_OFFSET  // For multiple hotends, babystep relative Z offsets
+      #endif
     //#define BABYSTEP_GFX_OVERLAY          // Enable graphical overlay on Z-offset editor
+    #endif
   #endif
 #endif
 
@@ -2147,16 +2238,16 @@
  *
  * See https://marlinfw.org/docs/features/lin_advance.html for full instructions.
  */
-//#define LIN_ADVANCE
+#define LIN_ADVANCE
 #if ENABLED(LIN_ADVANCE)
   #if ENABLED(DISTINCT_E_FACTORS)
-    #define ADVANCE_K { 0.22 }    // (mm) Compression length per 1mm/s extruder speed, per extruder
+    #define ADVANCE_K { 0.00 }    // (mm) Compression length per 1mm/s extruder speed, per extruder
   #else
-    #define ADVANCE_K 0.22        // (mm) Compression length applying to all extruders
+    #define ADVANCE_K 0.00        // (mm) Compression length applying to all extruders
   #endif
   //#define ADVANCE_K_EXTRA       // Add a second linear advance constant, configurable with M900 L.
   //#define LA_DEBUG              // Print debug information to serial during operation. Disable for production use.
-  //#define ALLOW_LOW_EJERK       // Allow a DEFAULT_EJERK value of <10. Recommended for direct drive hotends.
+  #define ALLOW_LOW_EJERK         // Allow a DEFAULT_EJERK value of <10. Recommended for direct drive hotends.
   //#define EXPERIMENTAL_I2S_LA   // Allow I2S_STEPPER_STREAM to be used with LA. Performance degrades as the LA step rate reaches ~20kHz.
 #endif
 
@@ -2326,7 +2417,7 @@
   #define MIN_CIRCLE_SEGMENTS    72   // Minimum number of segments in a complete circle
   //#define ARC_SEGMENTS_PER_SEC 50   // Use the feedrate to choose the segment length
   #define N_ARC_CORRECTION       25   // Number of interpolated segments between corrections
-  //#define ARC_P_CIRCLES             // Enable the 'P' parameter to specify complete circles
+  #define ARC_P_CIRCLES               // Enable the 'P' parameter to specify complete circles  // MRiscoC Enabled
   //#define SF_ARC_FIX                // Enable only if using SkeinForge with "Arc Point" fillet procedure
 #endif
 
@@ -2420,18 +2511,18 @@
 // The number of linear moves that can be in the planner at once.
 // The value of BLOCK_BUFFER_SIZE must be a power of 2 (e.g., 8, 16, 32)
 #if BOTH(SDSUPPORT, DIRECT_STEPPING)
-  #define BLOCK_BUFFER_SIZE  8
+  #define BLOCK_BUFFER_SIZE  32
 #elif ENABLED(SDSUPPORT)
-  #define BLOCK_BUFFER_SIZE 16
+  #define BLOCK_BUFFER_SIZE 32
 #else
-  #define BLOCK_BUFFER_SIZE 16
+  #define BLOCK_BUFFER_SIZE 32
 #endif
 
 // @section serial
 
 // The ASCII buffer for serial input
 #define MAX_CMD_SIZE 96
-#define BUFSIZE 4
+#define BUFSIZE 32
 
 // Transmission to Host Buffer Size
 // To save 386 bytes of flash (and TX_BUFFER_SIZE+3 bytes of RAM) set to 0.
@@ -2497,14 +2588,14 @@
  */
 //#define REALTIME_REPORTING_COMMANDS
 #if ENABLED(REALTIME_REPORTING_COMMANDS)
-  //#define FULL_REPORT_TO_HOST_FEATURE   // Auto-report the machine status like Grbl CNC
+  #define FULL_REPORT_TO_HOST_FEATURE   // Auto-report the machine status like Grbl CNC
 #endif
 
 // Bad Serial-connections can miss a received command by sending an 'ok'
 // Therefore some clients abort after 30 seconds in a timeout.
 // Some other clients start sending commands while receiving a 'wait'.
 // This "wait" is only sent when the buffer is empty. 1 second is a good value here.
-#define NO_TIMEOUTS 1000 // Milliseconds
+//#define NO_TIMEOUTS 1000 // Milliseconds
 
 // Some clients will have this feature soon. This could make the NO_TIMEOUTS unnecessary.
 //#define ADVANCED_OK
@@ -2514,7 +2605,7 @@
 #define SERIAL_OVERRUN_PROTECTION
 
 // For serial echo, the number of digits after the decimal point
-#define SERIAL_FLOAT_PRECISION 4
+//#define SERIAL_FLOAT_PRECISION 4
 
 /**
  * Set the number of proportional font spaces required to fill up a typical character space.
@@ -2550,20 +2641,20 @@
  *
  * Note that M207 / M208 / M209 settings are saved to EEPROM.
  */
-//#define FWRETRACT
+#define FWRETRACT  // MRiscoC Enabled support for firmware based retract
 #if ENABLED(FWRETRACT)
-  #define FWRETRACT_AUTORETRACT             // Override slicer retractions
+  //#define FWRETRACT_AUTORETRACT             // Override slicer retractions  // MRiscoC use slicer retract
   #if ENABLED(FWRETRACT_AUTORETRACT)
     #define MIN_AUTORETRACT             0.1 // (mm) Don't convert E moves under this length
     #define MAX_AUTORETRACT            10.0 // (mm) Don't convert E moves over this length
   #endif
-  #define RETRACT_LENGTH                3   // (mm) Default retract length (positive value)
+  #define RETRACT_LENGTH                5   // (mm) Default retract length (positive value)  // MRiscoC Bowden
   #define RETRACT_LENGTH_SWAP          13   // (mm) Default swap retract length (positive value)
-  #define RETRACT_FEEDRATE             45   // (mm/s) Default feedrate for retracting
-  #define RETRACT_ZRAISE                0   // (mm) Default retract Z-raise
+  #define RETRACT_FEEDRATE             40   // (mm/s) Default feedrate for retracting  // MRiscoC Bowden
+  #define RETRACT_ZRAISE              0.2   // (mm) Default retract Z-raise  // MRiscoC Bowden
   #define RETRACT_RECOVER_LENGTH        0   // (mm) Default additional recover length (added to retract length on recover)
   #define RETRACT_RECOVER_LENGTH_SWAP   0   // (mm) Default additional swap recover length (added to retract length on recover from toolchange)
-  #define RETRACT_RECOVER_FEEDRATE      8   // (mm/s) Default feedrate for recovering from retraction
+  #define RETRACT_RECOVER_FEEDRATE     40   // (mm/s) Default feedrate for recovering from retraction  // MRiscoC Bowden
   #define RETRACT_RECOVER_FEEDRATE_SWAP 8   // (mm/s) Default feedrate for recovering from swap retraction
   #if ENABLED(MIXING_EXTRUDER)
     //#define RETRACT_SYNC_MIXING           // Retract and restore all mixing steppers simultaneously
@@ -2684,16 +2775,16 @@
   #define PAUSE_PARK_RETRACT_FEEDRATE         60  // (mm/s) Initial retract feedrate.
   #define PAUSE_PARK_RETRACT_LENGTH            2  // (mm) Initial retract.
                                                   // This short retract is done immediately, before parking the nozzle.
-  #define FILAMENT_CHANGE_UNLOAD_FEEDRATE     10  // (mm/s) Unload filament feedrate. This can be pretty fast.
+  #define FILAMENT_CHANGE_UNLOAD_FEEDRATE     20  // (mm/s) Unload filament feedrate. This can be pretty fast.  // MRiscoC Increased filament unload speed
   #define FILAMENT_CHANGE_UNLOAD_ACCEL        25  // (mm/s^2) Lower acceleration may allow a faster feedrate.
   #define FILAMENT_CHANGE_UNLOAD_LENGTH      100  // (mm) The length of filament for a complete unload.
                                                   //   For Bowden, the full length of the tube and nozzle.
                                                   //   For direct drive, the full length of the nozzle.
                                                   //   Set to 0 for manual unloading.
   #define FILAMENT_CHANGE_SLOW_LOAD_FEEDRATE   6  // (mm/s) Slow move when starting load.
-  #define FILAMENT_CHANGE_SLOW_LOAD_LENGTH     0  // (mm) Slow length, to allow time to insert material.
+  #define FILAMENT_CHANGE_SLOW_LOAD_LENGTH    50  // (mm) Slow length, to allow time to insert material.
                                                   // 0 to disable start loading and skip to fast load only
-  #define FILAMENT_CHANGE_FAST_LOAD_FEEDRATE   6  // (mm/s) Load filament feedrate. This can be pretty fast.
+  #define FILAMENT_CHANGE_FAST_LOAD_FEEDRATE  12  // (mm/s) Load filament feedrate. This can be pretty fast.  // MRiscoC Increased filament load speed
   #define FILAMENT_CHANGE_FAST_LOAD_ACCEL     25  // (mm/s^2) Lower acceleration may allow a faster feedrate.
   #define FILAMENT_CHANGE_FAST_LOAD_LENGTH     0  // (mm) Load length of filament, from extruder gear to nozzle.
                                                   //   For Bowden, the full length of the tube and nozzle.
@@ -2713,16 +2804,16 @@
   #define FILAMENT_UNLOAD_PURGE_LENGTH         8  // (mm) An unretract is done, then this length is purged.
   #define FILAMENT_UNLOAD_PURGE_FEEDRATE      25  // (mm/s) feedrate to purge before unload
 
-  #define PAUSE_PARK_NOZZLE_TIMEOUT           45  // (seconds) Time limit before the nozzle is turned off for safety.
-  #define FILAMENT_CHANGE_ALERT_BEEPS         10  // Number of alert beeps to play when a response is needed.
+  #define PAUSE_PARK_NOZZLE_TIMEOUT          90   // (seconds) Time limit before the nozzle is turned off for safety.
+  #define FILAMENT_CHANGE_ALERT_BEEPS         5   // Number of alert beeps to play when a response is needed.
   #define PAUSE_PARK_NO_STEPPER_TIMEOUT           // Enable for XYZ steppers to stay powered on during filament change.
   //#define FILAMENT_CHANGE_RESUME_ON_INSERT      // Automatically continue / load filament when runout sensor is triggered again.
   //#define PAUSE_REHEAT_FAST_RESUME              // Reduce number of waits by not prompting again post-timeout before continuing.
 
-  //#define PARK_HEAD_ON_PAUSE                    // Park the nozzle during pause and filament change.
+  #define PARK_HEAD_ON_PAUSE                      // Park the nozzle during pause and filament change.  // MRiscoC Enabled park head when pause command was issued
   //#define HOME_BEFORE_FILAMENT_CHANGE           // If needed, home before parking for filament change
 
-  //#define FILAMENT_LOAD_UNLOAD_GCODES           // Add M701/M702 Load/Unload G-codes, plus Load/Unload in the LCD Prepare menu.
+  #define FILAMENT_LOAD_UNLOAD_GCODES             // Add M701/M702 Load/Unload G-codes, plus Load/Unload in the LCD Prepare menu.  // MRiscoC Enabled load/unload Filament G-codes
   //#define FILAMENT_UNLOAD_ALL_EXTRUDERS         // Allow M702 to unload all extruders above a minimum target temp (as set by M302)
 #endif
 
@@ -3094,7 +3185,7 @@
    * Define your own with:
    * { <off_time[1..15]>, <hysteresis_end[-3..12]>, hysteresis_start[1..8] }
    */
-  #define CHOPPER_TIMING CHOPPER_DEFAULT_12V        // All axes (override below)
+  #define CHOPPER_TIMING CHOPPER_DEFAULT_24V        // All axes (override below)  // MRiscoC Correct value for UART mode drivers
   //#define CHOPPER_TIMING_X  CHOPPER_TIMING        // For X Axes (override below)
   //#define CHOPPER_TIMING_X2 CHOPPER_TIMING_X
   //#define CHOPPER_TIMING_Y  CHOPPER_TIMING        // For Y Axes (override below)
@@ -3238,7 +3329,7 @@
   /**
    * Step on both rising and falling edge signals (as with a square wave).
    */
-  //#define EDGE_STEPPING
+  #define EDGE_STEPPING  // Ender Configs
 
   /**
    * Enable M122 debugging command for TMC stepper drivers.
@@ -3631,6 +3722,14 @@
  */
 //#define CNC_COORDINATE_SYSTEMS
 
+/**
+ * CNC Drilling Cycle - UNDER DEVELOPMENT
+ *
+ * Enables G81 to perform a drilling cycle.
+ * Currently only supports a single cycle, no G-code chaining.
+ */
+//#define CNC_DRILLING_CYCLE
+
 // @section reporting
 
 /**
@@ -3657,7 +3756,7 @@
  */
 #define EXTENDED_CAPABILITIES_REPORT
 #if ENABLED(EXTENDED_CAPABILITIES_REPORT)
-  //#define M115_GEOMETRY_REPORT
+  #define M115_GEOMETRY_REPORT  // MRiscoC Enabled
 #endif
 
 // @section security
@@ -3720,7 +3819,7 @@
 #endif
 
 // Support for MeatPack G-code compression (https://github.com/scottmudge/OctoPrint-MeatPack)
-//#define MEATPACK_ON_SERIAL_PORT_1
+#define MEATPACK_ON_SERIAL_PORT_1
 //#define MEATPACK_ON_SERIAL_PORT_2
 
 //#define GCODE_CASE_INSENSITIVE  // Accept G-code sent to the firmware in lowercase
@@ -3750,6 +3849,7 @@
 #ifdef G0_FEEDRATE
   //#define VARIABLE_G0_FEEDRATE // The G0 feedrate is set by F in G0 motion mode
 #endif
+//#define G0_ANGULAR_FEEDRATE 2700 // (°/min)
 
 // @section gcode
 
@@ -3890,10 +3990,10 @@
  * Host Prompt Support enables Marlin to use the host for user prompts so
  * filament runout and other processes can be managed from the host side.
  */
-//#define HOST_ACTION_COMMANDS
+#define HOST_ACTION_COMMANDS  // MRiscoC Enabled actions from host
 #if ENABLED(HOST_ACTION_COMMANDS)
   //#define HOST_PAUSE_M76                // Tell the host to pause in response to M76
-  //#define HOST_PROMPT_SUPPORT           // Initiate host prompts to get user feedback
+  #define HOST_PROMPT_SUPPORT             // Initiate host prompts to get user feedback  // MRiscoC Enabled responses from host
   #if ENABLED(HOST_PROMPT_SUPPORT)
     //#define HOST_STATUS_NOTIFICATIONS   // Send some status messages to the host as notifications
   #endif
@@ -3908,7 +4008,7 @@
  *
  * Implement M486 to allow Marlin to skip objects
  */
-//#define CANCEL_OBJECTS
+#define CANCEL_OBJECTS  // MRiscoC Enabled M486 to skip objects
 #if ENABLED(CANCEL_OBJECTS)
   #define CANCEL_OBJECTS_REPORTING // Emit the current object as a status message
 #endif
@@ -4210,6 +4310,8 @@
     #define MMU2_CAN_LOAD_INCREMENT_SEQUENCE \
       { -MMU2_CAN_LOAD_INCREMENT, MMU2_CAN_LOAD_FEEDRATE }
 
+    // Continue unloading if sensor detects filament after the initial unload move
+    //#define MMU_IR_UNLOAD_MOVE
   #else
 
     /**

@@ -388,8 +388,11 @@ class FilamentSensorBase {
   // during a runout condition.
   class RunoutResponseDelayed {
     private:
-      static volatile float runout_mm_countdown[NUM_RUNOUT_SENSORS];
-
+      #if ProUIex
+        static volatile float runout_mm_countdown[NUM_RUNOUT_SENSORS];
+      #else
+	static volatile countdown_t mm_countdown;
+      #endif
     public:
       static float runout_distance_mm;
 
@@ -407,8 +410,8 @@ class FilamentSensorBase {
           if (ELAPSED(ms, t)) {
             t = millis() + 1000UL;
             LOOP_L_N(i, NUM_RUNOUT_SENSORS)
-              SERIAL_ECHOF(i ? F(", ") : F("Runout remaining mm: "), runout_mm_countdown[i]);
-            #if ENABLED(FILAMENT_SWITCH_AND_MOTION)
+	      SERIAL_ECHOF(i ? F(", ") : F("Runout remaining mm: "), TERN(ProUIex, runout_mm_countdown[i], mm_countdown.runout[i]));
+	    #if ENABLED(FILAMENT_SWITCH_AND_MOTION)
               LOOP_L_N(i, NUM_MOTION_SENSORS)
                 SERIAL_ECHOF(i ? F(", ") : F("Motion remaining mm: "), mm_countdown.motion[i]);
             #endif
@@ -419,7 +422,7 @@ class FilamentSensorBase {
 
       static uint8_t has_run_out() {
         uint8_t runout_flags = 0;
-        LOOP_L_N(i, NUM_RUNOUT_SENSORS) if (runout_mm_countdown[i] < 0) SBI(runout_flags, i);
+        LOOP_L_N(i, NUM_RUNOUT_SENSORS) if (TERN(ProUIex, runout_mm_countdown[i], mm_countdown.runout[i]) < 0) SBI(runout_flags, i);
         #if ENABLED(FILAMENT_SWITCH_AND_MOTION)
           LOOP_L_N(i, NUM_MOTION_SENSORS) if (mm_countdown.motion[i] < 0) SBI(runout_flags, i);
         #endif
@@ -427,7 +430,7 @@ class FilamentSensorBase {
       }
 
       static void filament_present(const uint8_t extruder) {
-        runout_mm_countdown[extruder] = runout_distance_mm;
+        (TERN(ProUIex, runout_mm_countdown[extruder], mm_countdown.runout[extruder])) = runout_distance_mm;
       }
 
       #if ENABLED(FILAMENT_SWITCH_AND_MOTION)
@@ -442,7 +445,10 @@ class FilamentSensorBase {
           const uint8_t e = b->extruder;
           const int32_t steps = b->steps.e;
           const float mm = (TEST(b->direction_bits, E_AXIS) ? -steps : steps) * planner.mm_per_step[E_AXIS_N(e)];
-          if (e < NUM_RUNOUT_SENSORS) runout_mm_countdown[e] -= mm;
+          if (e < NUM_RUNOUT_SENSORS) TERN(ProUIex, runout_mm_countdown[e], mm_countdown.runout[e])-= mm;
+          #if ENABLED(FILAMENT_SWITCH_AND_MOTION)
+            if (e < NUM_MOTION_SENSORS) mm_countdown.motion[e] -= mm;
+          #endif
         }
       }
   };

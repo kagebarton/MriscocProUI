@@ -66,26 +66,6 @@
 #define STRING_CONFIG_H_AUTHOR "Miguel A. Risco-Castillo (MRiscoC)" // Who made the changes.
 #define CUSTOM_VERSION_FILE Version.h // Path from the root directory (no quotes)
 
-/**
- * *** VENDORS PLEASE READ ***
- *
- * Marlin allows you to add a custom boot image for Graphical LCDs.
- * With this option Marlin will first show your custom screen followed
- * by the standard Marlin logo with version number and web URL.
- *
- * We encourage you to take advantage of this new feature and we also
- * respectfully request that you retain the unmodified Marlin boot screen.
- */
-
-// Show the Marlin bootscreen on startup. ** ENABLE FOR PRODUCTION **
-#define SHOW_BOOTSCREEN
-
-// Show the bitmap in Marlin/_Bootscreen.h on startup.
-//#define SHOW_CUSTOM_BOOTSCREEN
-
-// Show the bitmap in Marlin/_Statusscreen.h on the status screen.
-//#define CUSTOM_STATUS_SCREEN_IMAGE
-
 // @section machine
 
 // Choose the name from boards.h that matches your setup
@@ -2189,8 +2169,8 @@
 
 #if ENABLED(LCD_BED_TRAMMING)
   #define BED_TRAMMING_INSET_LFRB { 25.4, 25.4, 25.4, 25.4 } // (mm) Left, Front, Right, Back insets
-  #define BED_TRAMMING_HEIGHT      0.0        // (mm) Z height of nozzle at leveling points
-  #define BED_TRAMMING_Z_HOP       5.0        // (mm) Z height of nozzle between leveling points
+  #define BED_TRAMMING_HEIGHT      0.0        // (mm) Z height of nozzle at tramming points
+  #define BED_TRAMMING_Z_HOP       5.0        // (mm) Z height of nozzle between tramming points
   #define BED_TRAMMING_INCLUDE_CENTER       // Move to the center after the last corner
   #define BED_TRAMMING_USE_PROBE
   #if ENABLED(BED_TRAMMING_USE_PROBE)
@@ -3151,6 +3131,8 @@
  *  - Download files as specified for your type of display.
  *  - Plug the microSD card into the back of the display.
  *  - Boot the display and wait for the update to complete.
+ *
+ * :[ 'ORIGIN', 'FYSETC', 'HYPRECY', 'MKS', 'RELOADED', 'IA_CREALITY' ]
  */
 //#define DGUS_LCD_UI ORIGIN
 #if DGUS_UI_IS(MKS)
@@ -3374,6 +3356,7 @@
   #define HAS_GCODE_PREVIEW 1
   #define HAS_TOOLBAR 1
 #endif
+  #define HAS_GCODE_PREVIEW 1
   #define HAS_PLOT 1
   #define HAS_ESDIAG 1
   #define HAS_CGCODE 1
@@ -3387,6 +3370,7 @@
   #endif
   //#define JD_TUNE_ITEM  // Enable only if Juntion Deviation is enabled
   #define ADVK_TUNE_ITEM  // Enable only if Linear Advance is enabled
+  #define PLOT_TUNE_ITEM  // Enable only if HAS_PLOT is enabled
   //#define MEDIASORT_MENU_ITEM  // Allows enable/disable file list sorting
 
 //#define DWIN_CREALITY_LCD_JYERSUI   // Jyers UI by Jacob Myers

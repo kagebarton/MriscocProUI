@@ -1,4 +1,4 @@
-/** Aquila UBL Mriscoc ProUI
+/** Aquila C2 Default-No Probe
  * Marlin 3D Printer Firmware
  * Copyright (c) 2022 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
@@ -66,31 +66,11 @@
 #define STRING_CONFIG_H_AUTHOR "Miguel A. Risco-Castillo (MRiscoC)" // Who made the changes.
 #define CUSTOM_VERSION_FILE Version.h // Path from the root directory (no quotes)
 
-/**
- * *** VENDORS PLEASE READ ***
- *
- * Marlin allows you to add a custom boot image for Graphical LCDs.
- * With this option Marlin will first show your custom screen followed
- * by the standard Marlin logo with version number and web URL.
- *
- * We encourage you to take advantage of this new feature and we also
- * respectfully request that you retain the unmodified Marlin boot screen.
- */
-
-// Show the Marlin bootscreen on startup. ** ENABLE FOR PRODUCTION **
-#define SHOW_BOOTSCREEN
-
-// Show the bitmap in Marlin/_Bootscreen.h on startup.
-//#define SHOW_CUSTOM_BOOTSCREEN
-
-// Show the bitmap in Marlin/_Statusscreen.h on the status screen.
-//#define CUSTOM_STATUS_SCREEN_IMAGE
-
 // @section machine
 
 // Choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
-  #define MOTHERBOARD BOARD_VOXELAB_AQUILA // BOARD_CREALITY_V427 BOARD_VOXELAB_AQUILA BOARD_CREALITY_V4
+  #define MOTHERBOARD BOARD_AQUILA_X2_H32 // BOARD_CREALITY_V427 BOARD_VOXELAB_AQUILA BOARD_AQUILA_X2_H32 BOARD_CREALITY_V422
 #endif
 
 /**
@@ -101,7 +81,7 @@
  *
  * :[-1, 0, 1, 2, 3, 4, 5, 6, 7]
  */
-#define SERIAL_PORT 1  // Ender Configs
+#define SERIAL_PORT 2  // Ender Configs 1 | HC32 2
 #define NO_AUTO_ASSIGN_WARNING  // Disable serial warnings
 #define NO_MAPLE_WARNING        // Disable warning when using Maple env
 
@@ -1356,7 +1336,7 @@
 //#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN  // Probe connected to BLTouch port
 
 // Force the use of the probe for Z-axis homing
-#define USE_PROBE_FOR_Z_HOMING
+#define USE_PROBE_FOR_Z_HOMING  // Manual mesh not have a probe
 
 /**
  * Z_MIN_PROBE_PIN
@@ -1385,7 +1365,7 @@
  * Use G29 repeatedly, adjusting the Z height at each point with movement commands
  * or (with LCD_BED_LEVELING) the LCD controller.
  */
-//#define PROBE_MANUALLY
+//#define PROBE_MANUALLY  // Manual mesh version
 
 /**
  * A Fix-Mounted Probe either doesn't deploy or needs manual deployment.
@@ -1631,7 +1611,7 @@
  * A total of 2 does fast/slow probes with a weighted average.
  * A total of 3 or more adds more slow probes, taking the average.
  */
-#define MULTIPLE_PROBING 1    // Use a value of (1) with ProUIex, otherwise (2)
+#define MULTIPLE_PROBING 2
 //#define EXTRA_PROBING    1
 
 /**
@@ -1762,10 +1742,10 @@
  */
 #define Z_IDLE_HEIGHT Z_HOME_POS
 
-#define Z_HOMING_HEIGHT  5        // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ...
+#define Z_HOMING_HEIGHT  5      // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ...
                                   // Be sure to have this much clearance over your Z_MAX_POS to prevent grinding.
 
-//#define Z_AFTER_HOMING  10      // (mm) Height to move to after homing Z
+//#define Z_AFTER_HOMING  5         // (mm) Height to move to after homing Z
 
 // Direction of endstops when homing; 1=MAX, -1=MIN
 // :[-1,1]
@@ -1789,7 +1769,7 @@
 #define X_MIN_POS 0  // MRiscoC Stock physical limit
 #define Y_MIN_POS 0  // MRiscoC Stock physical limit
 #define Z_MIN_POS 0
-#define X_MAX_POS 230  // MRiscoC Stock physical limit
+#define X_MAX_POS 220  // MRiscoC Stock physical limit
 #define Y_MAX_POS 220  // MRiscoC Stock physical limit
 #define Z_MAX_POS 250  // Ender Configs
 //#define I_MIN_POS 0
@@ -2190,10 +2170,10 @@
 
 #if ENABLED(LCD_BED_TRAMMING)
   #define BED_TRAMMING_INSET_LFRB { 25.4, 25.4, 25.4, 25.4 } // (mm) Left, Front, Right, Back insets
-  #define BED_TRAMMING_HEIGHT      0.0        // (mm) Z height of nozzle at leveling points
-  #define BED_TRAMMING_Z_HOP       5.0        // (mm) Z height of nozzle between leveling points
+  #define BED_TRAMMING_HEIGHT      0.0        // (mm) Z height of nozzle at tramming points
+  #define BED_TRAMMING_Z_HOP       5.0        // (mm) Z height of nozzle between tramming points
   #define BED_TRAMMING_INCLUDE_CENTER       // Move to the center after the last corner
-  #define BED_TRAMMING_USE_PROBE
+  //#define BED_TRAMMING_USE_PROBE
   #if ENABLED(BED_TRAMMING_USE_PROBE)
     #define BED_TRAMMING_PROBE_TOLERANCE 0.05f  // (mm)
     #define BED_TRAMMING_VERIFY_RAISED        // After adjustment triggers the probe, re-probe to verify
@@ -2339,7 +2319,7 @@
  */
 #define EEPROM_SETTINGS       // Persistent storage with M500 and M501  // Ender Configs
 //#define DISABLE_M503        // Saves ~2700 bytes of flash. Disable for release!
-//#define EEPROM_CHITCHAT     // Give feedback on EEPROM commands. Disable to save PROGMEM.
+#define EEPROM_CHITCHAT       // Give feedback on EEPROM commands. Disable to save PROGMEM.
 #define EEPROM_BOOT_SILENT    // Keep M503 quiet and only give errors during first load
 #if ENABLED(EEPROM_SETTINGS)
   #define EEPROM_AUTO_INIT    // Init EEPROM automatically on any errors.  // Ender Configs
@@ -2387,10 +2367,10 @@
 //#define PREHEAT_2_TEMP_CHAMBER 35
 #define PREHEAT_2_FAN_SPEED     0 // Value from 0 to 255
 
-//#define PREHEAT_3_LABEL       "Warmup"
-//#define PREHEAT_3_TEMP_HOTEND 200
-//#define PREHEAT_3_TEMP_BED     50
-//#define PREHEAT_3_FAN_SPEED     0
+#define PREHEAT_3_LABEL       "Warmup"
+#define PREHEAT_3_TEMP_HOTEND 200
+#define PREHEAT_3_TEMP_BED     50
+#define PREHEAT_3_FAN_SPEED     0
 
 //#define PREHEAT_4_LABEL       "TPU"
 //#define PREHEAT_4_TEMP_HOTEND 230
@@ -2462,7 +2442,7 @@
  *
  *   Caveats: The ending Z should be the same as starting Z.
  */
-//#define NOZZLE_CLEAN_FEATURE
+#define NOZZLE_CLEAN_FEATURE
 
 #if ENABLED(NOZZLE_CLEAN_FEATURE)
   // Default number of pattern repetitions
@@ -2683,7 +2663,7 @@
 //
 //  Set this option if CLOCKWISE causes values to DECREASE
 //
-#define REVERSE_ENCODER_DIRECTION
+//#define REVERSE_ENCODER_DIRECTION
 
 //
 // This option reverses the encoder direction for navigating LCD menus.
@@ -3152,6 +3132,8 @@
  *  - Download files as specified for your type of display.
  *  - Plug the microSD card into the back of the display.
  *  - Boot the display and wait for the update to complete.
+ *
+ * :[ 'ORIGIN', 'FYSETC', 'HYPRECY', 'MKS', 'RELOADED', 'IA_CREALITY' ]
  */
 //#define DGUS_LCD_UI ORIGIN
 #if DGUS_UI_IS(MKS)
@@ -3376,9 +3358,9 @@
   #define HAS_TOOLBAR 1
 #endif
   #define HAS_PLOT 1
-  //#define HAS_ESDIAG 1
-  #define HAS_CGCODE 1
-  //#define HAS_LOCKSCREEN 1
+  #define HAS_ESDIAG 1
+  //#define HAS_CGCODE 1
+  #define HAS_LOCKSCREEN 1
   //#define HAS_SD_EXTENDER 1  // Enable to support SD card extender cables
   #define SHOW_REAL_POS
   #define ACTIVATE_MESH_ITEM  // Allows temporary enabling of mesh leveling
@@ -3388,6 +3370,7 @@
   #endif
   //#define JD_TUNE_ITEM  // Enable only if Juntion Deviation is enabled
   #define ADVK_TUNE_ITEM  // Enable only if Linear Advance is enabled
+  #define PLOT_TUNE_ITEM  // Enable only if HAS_PLOT is enabled
   //#define MEDIASORT_MENU_ITEM  // Allows enable/disable file list sorting
 
 //#define DWIN_CREALITY_LCD_JYERSUI   // Jyers UI by Jacob Myers

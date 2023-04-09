@@ -836,7 +836,7 @@ bool DWIN_lcd_sd_status = false;
 void SetMediaAutoMount() { Toggle_Chkb_Line(HMI_data.MediaAutoMount); }
 
 inline uint16_t nr_sd_menu_items() {
-  return _MIN(card.get_num_Files() + !card.flag.workDirIsRoot, MENU_MAX_ITEMS);
+  return _MIN(card.get_num_items() + !card.flag.workDirIsRoot, MENU_MAX_ITEMS);
 }
 
 void make_name_without_ext(char *dst, char *src, size_t maxlen=MENU_CHAR_LIMIT) {
@@ -883,7 +883,7 @@ void onClickSDItem() {
   if (hasUpDir && CurrentMenu->selected == 1) return SDCard_Up();
   else {
     const uint16_t filenum = CurrentMenu->selected - 1 - hasUpDir;
-    card.getfilename_sorted(SD_ORDER(filenum, card.get_num_Files()));
+    card.selectFileByIndexSorted(filenum);
 
     // Enter that folder!
     if (card.flag.filenameIsDir) return SDCard_Folder(card.filename);
@@ -926,7 +926,7 @@ void onClickSDItem() {
       last_itemselected = selected;
       if (selected >= 1 + hasUpDir) {
         const int8_t filenum = selected - 1 - hasUpDir; // Skip "Back" and ".."
-        card.getfilename_sorted(SD_ORDER(filenum, card.get_num_Files()));
+        card.selectFileByIndexSorted(filenum);
         make_name_without_ext(shift_name, card.longest_filename(), LONG_FILENAME_LENGTH);
         shift_len = strlen(shift_name);
         shift_amt = 0;
@@ -951,7 +951,7 @@ void onDrawFileName(MenuItemClass* menuitem, int8_t line) {
   }
   else {
     uint8_t icon;
-    card.getfilename_sorted(SD_ORDER(menuitem->pos - is_subdir - 1, card.get_num_Files()));
+    card.selectFileByIndexSorted(menuitem->pos - is_subdir - 1);
     make_name_without_ext(shift_name, card.longest_filename());
     icon = card.flag.filenameIsDir ? ICON_Folder : card.fileIsBinary() ? ICON_Binary : ICON_File;
     Draw_Menu_Line(line, icon, shift_name);
@@ -1642,43 +1642,44 @@ void DWIN_LevelingDone() {
 #endif // MPCTEMP
 
 //Temperature (PID Tuning Graph) Plot During Printing
+#if ENABLED(HAS_PLOT) && ENABLED(PLOT_TUNE_ITEM)
+  #if HAS_TEMP_SENSOR
+    void DWIN_Draw_Plot_Nozzle() {
+      HMI_SaveProcessID(PlotProcess);
+      htemp = 1;
+      frame_rect_t gfrm = {30, 135, DWIN_WIDTH - 60, 160};
+      DWINUI::ClearMainArea();
+      Draw_Popup_Bkgd();
+      DWINUI::Draw_CenteredString(3, HMI_data.PopupTxt_Color, 75, F("Nozzle Temperature"));
+      DWIN_Draw_String(false, 2, HMI_data.PopupTxt_Color, HMI_data.PopupBg_Color, gfrm.x, gfrm.y - DWINUI::fontHeight() - 4, F("Target:     Celsius"));
+      _maxtemp = thermalManager.hotend_maxtemp[0];
+      _target = thermalManager.temp_hotend[0].target;
+      plot.Draw(gfrm, _maxtemp, _target);
+      DWINUI::Draw_Int(false, 2, HMI_data.StatusTxt_Color, HMI_data.PopupBg_Color, 3, gfrm.x + 80, gfrm.y - DWINUI::fontHeight() - 4, _target);
+      DWINUI::Draw_Button(BTN_Continue, 86, 305);
+      Draw_Select_Box(86, 305);
+      DWIN_UpdateLCD();
+    }
+  #endif
 
-#if HAS_PLOT && HAS_TEMP_SENSOR
-  void DWIN_Draw_Plot_Nozzle() {
-    HMI_SaveProcessID(PlotProcess);
-    htemp = 1;
-    frame_rect_t gfrm = {30, 135, DWIN_WIDTH - 60, 160};
-    DWINUI::ClearMainArea();
-    Draw_Popup_Bkgd();
-    DWINUI::Draw_CenteredString(3, HMI_data.PopupTxt_Color, 75, F("Nozzle Temperature"));
-    DWIN_Draw_String(false, 2, HMI_data.PopupTxt_Color, HMI_data.PopupBg_Color, gfrm.x, gfrm.y - DWINUI::fontHeight() - 4, F("Target:     Celsius"));
-    _maxtemp = thermalManager.hotend_maxtemp[0];
-    _target = thermalManager.temp_hotend[0].target;
-    plot.Draw(gfrm, _maxtemp, _target);
-    DWINUI::Draw_Int(false, 2, HMI_data.StatusTxt_Color, HMI_data.PopupBg_Color, 3, gfrm.x + 80, gfrm.y - DWINUI::fontHeight() - 4, _target);
-    DWINUI::Draw_Button(BTN_Continue, 86, 305);
-    Draw_Select_Box(86, 305);
-    DWIN_UpdateLCD();
-  }
-#endif
-
-#if HAS_PLOT && HAS_HEATED_BED
-  void DWIN_Draw_Plot_Bed() {
-    HMI_SaveProcessID(PlotProcess);
-    htemp = 0;
-    frame_rect_t gfrm = {30, 135, DWIN_WIDTH - 60, 160};
-    DWINUI::ClearMainArea();
-    Draw_Popup_Bkgd();
-    DWINUI::Draw_CenteredString(3, HMI_data.PopupTxt_Color, 75, F("Bed Temperature"));
-    DWIN_Draw_String(false, 2, HMI_data.PopupTxt_Color, HMI_data.PopupBg_Color, gfrm.x, gfrm.y - DWINUI::fontHeight() - 4, F("Target:     Celsius"));
-    _maxtemp = BED_MAXTEMP;
-    _target = thermalManager.temp_bed.target;
-    plot.Draw(gfrm, _maxtemp, _target);
-    DWINUI::Draw_Int(false, 2, HMI_data.StatusTxt_Color, HMI_data.PopupBg_Color, 3, gfrm.x + 80, gfrm.y - DWINUI::fontHeight() - 4, _target);
-    DWINUI::Draw_Button(BTN_Continue, 86, 305);
-    Draw_Select_Box(86, 305);
-    DWIN_UpdateLCD();
-  }
+  #if HAS_HEATED_BED
+    void DWIN_Draw_Plot_Bed() {
+      HMI_SaveProcessID(PlotProcess);
+      htemp = 0;
+      frame_rect_t gfrm = {30, 135, DWIN_WIDTH - 60, 160};
+      DWINUI::ClearMainArea();
+      Draw_Popup_Bkgd();
+      DWINUI::Draw_CenteredString(3, HMI_data.PopupTxt_Color, 75, F("Bed Temperature"));
+      DWIN_Draw_String(false, 2, HMI_data.PopupTxt_Color, HMI_data.PopupBg_Color, gfrm.x, gfrm.y - DWINUI::fontHeight() - 4, F("Target:     Celsius"));
+      _maxtemp = BED_MAXTEMP;
+      _target = thermalManager.temp_bed.target;
+      plot.Draw(gfrm, _maxtemp, _target);
+      DWINUI::Draw_Int(false, 2, HMI_data.StatusTxt_Color, HMI_data.PopupBg_Color, 3, gfrm.x + 80, gfrm.y - DWINUI::fontHeight() - 4, _target);
+      DWINUI::Draw_Button(BTN_Continue, 86, 305);
+      Draw_Select_Box(86, 305);
+      DWIN_UpdateLCD();
+    }
+  #endif
 #endif
 
 // Started a Print Job
@@ -3290,7 +3291,7 @@ void Draw_Tune_Menu() {
     #if HAS_ZOFFSET_ITEM && EITHER(BABYSTEP_ZPROBE_OFFSET, JUST_BABYSTEP)
     EDIT_ITEM(ICON_Zoffset, MSG_ZPROBE_ZOFFSET, onDrawPFloat2Menu, SetZOffset, &BABY_Z_VAR);
     #endif
-    #if HAS_PLOT
+    #if ENABLED(HAS_PLOT) && ENABLED(PLOT_TUNE_ITEM)
       MENU_ITEM_F(ICON_PIDNozzle, "Hotend Temp Graph", onDrawMenuItem, DWIN_Draw_Plot_Nozzle);
       MENU_ITEM_F(ICON_PIDBed, "Bed Temp Graph", onDrawMenuItem, DWIN_Draw_Plot_Bed);
     #endif

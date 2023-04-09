@@ -41,7 +41,7 @@ uint8_t ServoCount = 0;
 #define TIMERA_UNIT1_CH1_PIN Pin00
 #define TIMERA_UNIT1_CH1_FUNC Func_Tima0
 
-#include <boards.h>
+#include "../../core/boards.h"
 #include <io.h>
 #ifndef TARGET_HC32F46x
 #include <pwm.h>
@@ -72,7 +72,7 @@ uint8_t ServoCount = 0;
 #define ANGLE_TO_US(a) uint16_t(map((a), minAngle, maxAngle, SERVO_DEFAULT_MIN_PW, SERVO_DEFAULT_MAX_PW))
 #define US_TO_ANGLE(us) int16_t(map((us), SERVO_DEFAULT_MIN_PW, SERVO_DEFAULT_MAX_PW, minAngle, maxAngle))
 
-void H32Servo::servoWrite(uint8_t inPin, uint16_t duty_cycle)
+void libServo::servoWrite(uint8_t inPin, uint16_t duty_cycle)
 {
 #ifdef SERVO0_TIMER_NUM
   if (servoIndex == 0)
@@ -91,7 +91,7 @@ void H32Servo::servoWrite(uint8_t inPin, uint16_t duty_cycle)
 #endif
 }
 
-H32Servo::H32Servo()
+libServo::libServo()
 {
   servoIndex = ServoCount < MAX_SERVOS ? ServoCount++ : INVALID_SERVO;
 #ifndef TARGET_HC32F46x
@@ -106,7 +106,7 @@ void TimeraUnit1_IrqCallback(void)
 }
 #endif
 
-bool H32Servo::attach(const int32_t inPin, const int32_t inMinAngle, const int32_t inMaxAngle)
+bool libServo::attach(const int32_t inPin, const int32_t inMinAngle, const int32_t inMaxAngle)
 {
   if (servoIndex >= MAX_SERVOS)
     return false;
@@ -213,7 +213,7 @@ bool H32Servo::attach(const int32_t inPin, const int32_t inMinAngle, const int32
 #endif
 }
 
-bool H32Servo::detach()
+bool libServo::detach()
 {
   if (!attached())
     return false;
@@ -222,7 +222,7 @@ bool H32Servo::detach()
   return true;
 }
 
-int32_t H32Servo::read() const
+int32_t libServo::read() const
 {
   if (attached())
   {
@@ -241,7 +241,7 @@ int32_t H32Servo::read() const
   return 0;
 }
 
-void H32Servo::move(const int32_t value)
+void libServo::move(const int32_t value)
 {
   constexpr uint16_t servo_delay[] = SERVO_DELAY;
   static_assert(COUNT(servo_delay) == NUM_SERVOS, "SERVO_DELAY must be an array NUM_SERVOS long.");
@@ -280,7 +280,7 @@ extern "C" void Servo_IRQHandler()
   }
 }
 
-bool H32Servo::setupSoftPWM(const int32_t inPin)
+bool libServo::setupSoftPWM(const int32_t inPin)
 {
   timer_dev *tdev = get_timer_dev(SERVO0_TIMER_NUM);
   if (!tdev)
@@ -307,7 +307,7 @@ bool H32Servo::setupSoftPWM(const int32_t inPin)
   return true;
 }
 
-void H32Servo::pwmSetDuty(const uint16_t duty_cycle)
+void libServo::pwmSetDuty(const uint16_t duty_cycle)
 {
   timer_dev *tdev = get_timer_dev(SERVO0_TIMER_NUM);
   timer_set_compare(tdev, 1, duty_cycle);
@@ -329,7 +329,7 @@ void H32Servo::pwmSetDuty(const uint16_t duty_cycle)
   }
 }
 
-void H32Servo::pauseSoftPWM()
+void libServo::pauseSoftPWM()
 { // detach
   timer_dev *tdev = get_timer_dev(SERVO0_TIMER_NUM);
   timer_pause(tdev);
@@ -338,12 +338,12 @@ void H32Servo::pauseSoftPWM()
 
 #else
 
-bool H32Servo::setupSoftPWM(const int32_t inPin)
+bool libServo::setupSoftPWM(const int32_t inPin)
 {
   return false;
 }
-void H32Servo::pwmSetDuty(const uint16_t duty_cycle) {}
-void H32Servo::pauseSoftPWM() {}
+void libServo::pwmSetDuty(const uint16_t duty_cycle) {}
+void libServo::pauseSoftPWM() {}
 
 #endif
 

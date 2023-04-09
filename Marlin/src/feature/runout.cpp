@@ -47,11 +47,14 @@ bool FilamentMonitorBase::enabled = true,
 
 #if HAS_FILAMENT_RUNOUT_DISTANCE
   float RunoutResponseDelayed::runout_distance_mm = FILAMENT_RUNOUT_DISTANCE_MM;
-  volatile float RunoutResponseDelayed::runout_mm_countdown[NUM_RUNOUT_SENSORS];
   #if ProUIex
+    volatile float RunoutResponseDelayed::runout_mm_countdown[NUM_RUNOUT_SENSORS];
     uint8_t FilamentSensorDevice::motion_detected;
-  #elif ENABLED(FILAMENT_MOTION_SENSOR)
-    uint8_t FilamentSensorEncoder::motion_detected;
+  #else
+    volatile countdown_t RunoutResponseDelayed::mm_countdown;
+    #if ENABLED(FILAMENT_MOTION_SENSOR)
+      uint8_t FilamentSensorEncoder::motion_detected;
+    #endif
   #endif
 #else
   int8_t RunoutResponseDebounced::runout_count[NUM_RUNOUT_SENSORS]; // = 0

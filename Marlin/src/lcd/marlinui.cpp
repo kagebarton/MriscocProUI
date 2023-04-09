@@ -1209,7 +1209,7 @@ void MarlinUI::init() {
           #ifdef NEOPIXEL_BKGD_INDEX_FIRST
             neo.set_background_off();
             neo.show();
-          #elif PIN_EXIST(LCD_BACKLIGHT)
+          //#elif PIN_EXIST(LCD_BACKLIGHT)
             WRITE(LCD_BACKLIGHT_PIN, LOW); // Backlight off
 	  #else
           // Backlight off (add function to turn off backlight for LCD-12864)

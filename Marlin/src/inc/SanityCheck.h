@@ -700,6 +700,8 @@
   #error "DEFAULT_STEPPER_DEACTIVE_TIME is now DEFAULT_STEPPER_TIMEOUT_SEC."
 #elif defined(TFT_SHARED_SPI)
   #error "TFT_SHARED_SPI is now TFT_SHARED_IO."
+#elif defined(LCD_PINS_ENABLE)
+  #error "LCD_PINS_ENABLE is now LCD_PINS_EN."
 #endif
 
 // L64xx stepper drivers have been removed
@@ -735,6 +737,17 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
 #endif
 #undef _ISMAX_1
 #undef _ISSNS_1
+
+/**
+ * Hephestos 2 Heated Bed Kit requirements
+ */
+#if ENABLED(HEPHESTOS2_HEATED_BED_KIT)
+  #if TEMP_SENSOR_BED != 70
+    #error "HEPHESTOS2_HEATED_BED_KIT requires TEMP_SENSOR_BED 70."
+  #elif DISABLED(HEATER_BED_INVERTING)
+    #error "HEPHESTOS2_HEATED_BED_KIT requires HEATER_BED_INVERTING."
+  #endif
+#endif
 
 /**
  * Probe temp compensation requirements
@@ -1022,7 +1035,9 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
  * SD File Sorting
  */
 #if ENABLED(SDCARD_SORT_ALPHA)
-  #if SDSORT_LIMIT > 256
+  #if NONE(EXTENSIBLE_UI, HAS_MARLINUI_MENU, DWIN_CREALITY_LCD, DWIN_LCD_PROUI)
+    #error "SDCARD_SORT_ALPHA requires an LCD that supports it. (It doesn't apply to M20, etc.)"
+  #elif SDSORT_LIMIT > 256
     #error "SDSORT_LIMIT must be 256 or smaller."
   #elif SDSORT_LIMIT < 10
     #error "SDSORT_LIMIT should be greater than 9 to be useful."
@@ -1037,10 +1052,10 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
   #if ENABLED(SDSORT_CACHE_NAMES) && DISABLED(SDSORT_DYNAMIC_RAM)
     #if SDSORT_CACHE_VFATS < 2
       #error "SDSORT_CACHE_VFATS must be 2 or greater!"
-    #elif SDSORT_CACHE_VFATS > MAX_VFAT_ENTRIES
+    #elif SDSORT_CACHE_VFATS > VFAT_ENTRIES_LIMIT
       #undef SDSORT_CACHE_VFATS
-      #define SDSORT_CACHE_VFATS MAX_VFAT_ENTRIES
-      #warning "SDSORT_CACHE_VFATS was reduced to MAX_VFAT_ENTRIES!"
+      #define SDSORT_CACHE_VFATS VFAT_ENTRIES_LIMIT
+      #define SDSORT_CACHE_VFATS_WARNING 1
     #endif
   #endif
 #endif

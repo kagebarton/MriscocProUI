@@ -35,16 +35,16 @@
 #define SERVO_DEFAULT_MIN_ANGLE 0
 #define SERVO_DEFAULT_MAX_ANGLE 180
 
-#define HAL_SERVO_LIB H32Servo
+#define HAL_SERVO_LIB libServo
 
 #if defined(TARGET_HC32F46x) && NUM_SERVOS > 1
 #error "HC32F46x only supports one servo"
 #endif
 
-class H32Servo
+class libServo
 {
 public:
-  H32Servo();
+  libServo();
   bool attach(const int32_t pin, const int32_t minAngle = SERVO_DEFAULT_MIN_ANGLE, const int32_t maxAngle = SERVO_DEFAULT_MAX_ANGLE);
   bool attached() const { return pin != NOT_ATTACHED; }
   bool detach();
@@ -64,3 +64,5 @@ private:
   void pauseSoftPWM();
   void pwmSetDuty(const uint16_t duty_cycle);
 };
+
+typedef libServo hal_servo_t;
