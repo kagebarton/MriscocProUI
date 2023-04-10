@@ -70,7 +70,7 @@
 
 // Choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
-  #define MOTHERBOARD BOARD_AQUILA_X2_H32 // BOARD_CREALITY_V427 BOARD_VOXELAB_AQUILA BOARD_AQUILA_X2_H32 BOARD_CREALITY_V422
+  #define MOTHERBOARD BOARD_VOXELAB_AQUILA // BOARD_CREALITY_V427 BOARD_VOXELAB_AQUILA BOARD_CREALITY_V422
 #endif
 
 /**
@@ -81,7 +81,7 @@
  *
  * :[-1, 0, 1, 2, 3, 4, 5, 6, 7]
  */
-#define SERIAL_PORT 2  // Ender Configs 1 | HC32 2
+#define SERIAL_PORT 1  // Ender Configs
 #define NO_AUTO_ASSIGN_WARNING  // Disable serial warnings
 #define NO_MAPLE_WARNING        // Disable warning when using Maple env
 
@@ -3352,7 +3352,7 @@
 //#define HAS_DACAI 1
 
 // Professional firmware features:
-#define ProUIex 1
+// #define ProUIex 1
 #ifdef ProUIex
   #define HAS_GCODE_PREVIEW 1
   #define HAS_TOOLBAR 1

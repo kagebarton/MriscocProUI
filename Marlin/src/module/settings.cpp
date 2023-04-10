@@ -3076,7 +3076,7 @@ void MarlinSettings::reset() {
   #ifdef BED_SCREW_INSET
     ui.screw_pos = BED_SCREW_INSET; 
   #endif
-  
+
   //
   // Case Light Brightness
   //

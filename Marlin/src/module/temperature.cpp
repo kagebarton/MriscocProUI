@@ -328,12 +328,14 @@ PGMSTR(str_t_heating_failed, STR_T_HEATING_FAILED);
     int32_t MPC::e_position; // = 0
   #endif
 
+  /*
   // Sanity-check max readable temperatures
-  /* / #define CHECK_MAXTEMP_(N,M,S) static_assert( \
-  //   S >= 998 || M <= _MAX(TT_NAME(S)[0].celsius, TT_NAME(S)[COUNT(TT_NAME(S)) - 1].celsius) - HOTEND_OVERSHOOT, \
-  //   "HEATER_" STRINGIFY(N) "_MAXTEMP (" STRINGIFY(M) ") is too high for thermistor_" STRINGIFY(S) ".h with HOTEND_OVERSHOOT=" STRINGIFY(HOTEND_OVERSHOOT) ".");
-  // #define CHECK_MAXTEMP(N) TERN(TEMP_SENSOR_##N##_IS_THERMISTOR, CHECK_MAXTEMP_, CODE_0)(N, HEATER_##N##_MAXTEMP, TEMP_SENSOR_##N)
-  // REPEAT(HOTENDS, CHECK_MAXTEMP) */
+  #define CHECK_MAXTEMP_(N,M,S) static_assert( \
+    S >= 998 || M <= _MAX(TT_NAME(S)[0].celsius, TT_NAME(S)[COUNT(TT_NAME(S)) - 1].celsius) - HOTEND_OVERSHOOT, \
+    "HEATER_" STRINGIFY(N) "_MAXTEMP (" STRINGIFY(M) ") is too high for thermistor_" STRINGIFY(S) ".h with HOTEND_OVERSHOOT=" STRINGIFY(HOTEND_OVERSHOOT) ".");
+  #define CHECK_MAXTEMP(N) TERN(TEMP_SENSOR_##N##_IS_THERMISTOR, CHECK_MAXTEMP_, CODE_0)(N, HEATER_##N##_MAXTEMP, TEMP_SENSOR_##N)
+  REPEAT(HOTENDS, CHECK_MAXTEMP)
+  */
 
   #if HAS_PREHEAT
     #define CHECK_PREHEAT__(N,P,T,M) static_assert(T <= M - HOTEND_OVERSHOOT, "PREHEAT_" STRINGIFY(P) "_TEMP_HOTEND (" STRINGIFY(T) ") must be less than HEATER_" STRINGIFY(N) "_MAXTEMP (" STRINGIFY(M) ") - " STRINGIFY(HOTEND_OVERSHOOT) ".");
@@ -3400,8 +3402,7 @@ void Temperature::readings_ready() {
  *  - For ENDSTOP_INTERRUPTS_FEATURE check endstops if flagged
  *  - Call planner.isr to count down its "ignore" time
  */
-//HC32F46x: gcc requires the ISR function to have a return type
-TERN_(TARGET_HC32F46x, void) HAL_TEMP_TIMER_ISR() {
+HAL_TEMP_TIMER_ISR() {
   HAL_timer_isr_prologue(MF_TIMER_TEMP);
 
   Temperature::isr();
