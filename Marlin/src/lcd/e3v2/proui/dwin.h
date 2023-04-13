@@ -350,12 +350,12 @@ void Draw_Steps_Menu();
   #include "../../../module/temperature.h"
   void DWIN_M303(const bool seenC, const int c, const bool seenS, const heater_id_t hid, const celsius_t temp);
   void DWIN_PidTuning(tempcontrol_t result);
-#endif
-#if ENABLED(PIDTEMP)
-  void Draw_HotendPID_Menu();
-#endif
-#if ENABLED(PIDTEMPBED)
-  void Draw_BedPID_Menu();
+  #if ENABLED(PIDTEMP)
+    void Draw_HotendPID_Menu();
+  #endif
+  #if ENABLED(PIDTEMPBED)
+    void Draw_BedPID_Menu();
+  #endif
 #endif
 
 // MPC

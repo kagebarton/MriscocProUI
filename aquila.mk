@@ -14,7 +14,7 @@ FIRMWARE_NAME ?= $(shell date +"firmware-%m%d%Y-%H%M%S")
 export FIRMWARE_NAME
 
 # Evaluate HS (High Speed) variable if it's been enabled.
-ifeq ($(HS), true)
+ifeq ($(IS), true)
  DISABLE_HS_BLTOUCH =
 else
  DISABLE_HS_BLTOUCH = \/\/

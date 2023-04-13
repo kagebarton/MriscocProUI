@@ -240,10 +240,6 @@ constexpr float max_acceleration_edit_values[] =
   ;
 #endif
 
-#if ENABLED(LCD_BED_TRAMMING)
-  constexpr float bed_tramming_inset_lfbr[] = BED_TRAMMING_INSET_LFRB;
-#endif
-
 bool hash_changed = true; // Flag to know if message status was changed
 bool blink = false;
 uint8_t checkkey = 255, last_checkkey = MainMenu;
@@ -668,7 +664,7 @@ void Goto_PrintDone() {
 void Draw_Main_Menu() {
   DWINUI::ClearMainArea();
   Title.ShowCaption(MACHINE_NAME);
-  DWINUI::Draw_Icon(ICON_LOGO, 71, 52);   // CREALITY logo
+  DWINUI::Draw_Icon(ICON_LOGO, 71, 52);  // CREALITY logo
   ICON_Print();
   ICON_Prepare();
   ICON_Control();
@@ -725,7 +721,7 @@ void _draw_ZOffsetIcon() {
         _leveling_active = planner.leveling_active;
         if (!_leveling_active) {
           DWIN_Draw_Rectangle(1, HMI_data.Background_Color, 186, 415, 205, 436);
-          DWINUI::Draw_Icon(ICON_Zoffset, 187, 416);
+          DWINUI::Draw_Icon(ICON_Zoffset, 186, 416);
         }
       }
    // #endif
@@ -1199,6 +1195,12 @@ void Draw_Main_Area() {
   }
 }
 
+void HMI_ReturnScreen() {
+  checkkey = last_checkkey;
+  wait_for_user = false;
+  Draw_Main_Area();
+}
+
 void HMI_WaitForUser() {
   EncoderState encoder_diffState = get_encoder_state();
   if (encoder_diffState != ENCODER_DIFF_NO && !ui.backlight) {
@@ -1428,12 +1430,6 @@ void HMI_SaveProcessID(const uint8_t id) {
          || (id == WaitResponse)) wait_for_user = true;
     checkkey = id;
   }
-}
-
-void HMI_ReturnScreen() {
-  checkkey = last_checkkey;
-  wait_for_user = false;
-  Draw_Main_Area();
 }
 
 void DWIN_HomingStart() {
@@ -2384,10 +2380,9 @@ void SetMoveZ() { HMI_value.axis = Z_AXIS; SetPFloatOnClick(Z_MIN_POS, Z_MAX_POS
 
 #endif
 
-
-  #if LCD_BACKLIGHT_TIMEOUT_MINS
+#if LCD_BACKLIGHT_TIMEOUT_MINS
   void SetTimer() { SetPIntOnClick(ui.backlight_timeout_min, ui.backlight_timeout_max); }
-  #endif
+#endif
 
 #if ProUIex && ENABLED(NOZZLE_PARK_FEATURE)
   void SetParkPosX()   { SetPIntOnClick(X_MIN_POS, X_MAX_POS); }
@@ -2840,9 +2835,11 @@ void SetStepsZ() { HMI_value.axis = Z_AXIS, SetPFloatOnClick( MIN_STEP, MAX_STEP
 #if ENABLED(FWRETRACT)
   void Return_FWRetract_Menu() { (PreviousMenu == FilamentMenu) ? Draw_FilamentMan_Menu() : Draw_Tune_Menu(); }
   void SetRetractLength() { SetPFloatOnClick( 0, 10, UNITFDIGITS); }
-  void SetRetractSpeed() { SetPFloatOnClick( 1, 90, UNITFDIGITS); }
-  void SetZRaise() { SetPFloatOnClick( 0, 2, 2); }
-  void SetAddRecover() { SetPFloatOnClick(-5, 5, UNITFDIGITS); }
+  void SetRetractSpeed()  { SetPFloatOnClick( 1, 90, UNITFDIGITS); }
+  void SetZRaise() 	  { SetPFloatOnClick( 0, 2, 2); }
+  void SetAddRecover()    { SetPFloatOnClick(-5, 5, UNITFDIGITS); }
+#else
+  void SetRetractSpeed()  { SetPFloatOnClick( 1, 90, UNITFDIGITS); }
 #endif
 
 #if HAS_TOOLBAR
@@ -3047,7 +3044,9 @@ void Draw_Control_Menu() {
     #if ENABLED(LED_CONTROL_MENU)
       MENU_ITEM(ICON_LedControl, MSG_LED_CONTROL, onDrawSubMenu, Draw_LedControl_Menu);
     #endif
+    #if ENABLED(PRINTCOUNTER)
       MENU_ITEM(ICON_PrintStats, MSG_INFO_STATS_MENU, onDrawSubMenu, Goto_PrintStats);
+    #endif
       MENU_ITEM(ICON_Info, MSG_INFO_SCREEN, onDrawSubMenu, Goto_Info_Menu);
   }
   ui.reset_status(true);
@@ -4149,7 +4148,7 @@ void Draw_AdvancedSettings_Menu() {
 
 void Draw_Advanced_Menu() { // Control --> Advaned Settings Menu
   checkkey = Menu;
-  if (SET_MENU(AdvancedMenu, MSG_ADVANCED_SETTINGS, 11)) {
+  if (SET_MENU(AdvancedMenu, MSG_ADVANCED_SETTINGS, 13)) {
     BACK_ITEM(Draw_Control_Menu);
     #if HAS_LCD_BRIGHTNESS
       EDIT_ITEM(ICON_Brightness, MSG_BRIGHTNESS, onDrawPInt8Menu, SetBrightness, &ui.brightness);
