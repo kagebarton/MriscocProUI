@@ -3356,7 +3356,6 @@
   #define HAS_GCODE_PREVIEW 1
   #define HAS_TOOLBAR 1
 #endif
-  #define HAS_GCODE_PREVIEW 1
   #define HAS_PLOT 1
   #define HAS_ESDIAG 1
   #define HAS_CGCODE 1
@@ -3364,7 +3363,9 @@
   //#define HAS_SD_EXTENDER 1  // Enable to support SD card extender cables
   #define SHOW_REAL_POS
   #define ACTIVATE_MESH_ITEM  // Allows temporary enabling of mesh leveling
-  #define RUNOUT_TUNE_ITEM
+  #if FILAMENT_RUNOUT_SENSOR
+    #define RUNOUT_TUNE_ITEM
+  #endif
   #if ENABLED(POWER_LOSS_RECOVERY)
     #define PLR_TUNE_ITEM
   #endif

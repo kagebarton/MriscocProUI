@@ -95,8 +95,10 @@ typedef struct {
   uint8_t multiple_probing = MULTIPLE_PROBING;
   bool Invert_E0 = DEF_INVERT_E0_DIR;
   xyz_int_t Park_point = DEF_NOZZLE_PARK_POINT;
+  #if HAS_FILAMENT_SENSOR
   bool Runout_active_state = FIL_RUNOUT_STATE;
   bool FilamentMotionSensor = DEF_FIL_MOTION_SENSOR;
+  #endif
   celsius_t hotend_maxtemp = HEATER_0_MAXTEMP;
   #if HAS_TOOLBAR
     uint8_t TBopt[TBMaxOpt] = DEF_TBOPT;

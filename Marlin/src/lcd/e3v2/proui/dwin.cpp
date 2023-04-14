@@ -1687,7 +1687,11 @@ void DWIN_Print_Started() {
   HMI_flag.pause_flag = false;
   HMI_flag.abort_flag = false;
   select_print.reset();
-  if (!fileprop.isConfig) Goto_PrintProcess();
+  #if ProUIex
+    if (!fileprop.isConfig) Goto_PrintProcess();
+  #else
+    Goto_PrintProcess();
+  #endif
 }
 
 // Pause a print job
@@ -1709,7 +1713,12 @@ void DWIN_Print_Finished() {
   HMI_flag.abort_flag = false;
   HMI_flag.pause_flag = false;
   wait_for_heatup = false;
-  if (!fileprop.isConfig) Goto_PrintDone(); else fileprop.isConfig = false;
+  #if ProUIex
+    if (!fileprop.isConfig) Goto_PrintDone(); 
+    else fileprop.isConfig = false;
+  #else
+    Goto_PrintDone();
+  #endif
 }
 
 // Print was aborted
@@ -2078,16 +2087,24 @@ void DWIN_RedrawScreen() {
       Goto_Popup(Preview_DrawFromSD, onClick_ConfirmToPrint);
     else {
       // Print SD file
-      fileprop.isConfig = false;
-      card.openAndPrintFile(card.filename);
+      #if ProUIex
+        fileprop.isConfig = false;
+        card.openAndPrintFile(card.filename);
+      #else
+        card.openAndPrintFile(card.filename);
+      #endif
     }
   }
 
 #else
   void Goto_ConfirmToPrint() {
     // Print SD file
+    #if ProUIex
     fileprop.isConfig = false;
     card.openAndPrintFile(card.filename);
+    #else
+    card.openAndPrintFile(card.filename);
+    #endif
   }
 #endif
 
@@ -4159,7 +4176,9 @@ void Draw_Advanced_Menu() { // Control --> Advaned Settings Menu
     #if ENABLED(PLR_TUNE_ITEM) && ENABLED(POWER_LOSS_RECOVERY)
       EDIT_ITEM(ICON_Pwrlossr, MSG_OUTAGE_RECOVERY, onDrawChkbMenu, SetPwrLossr, &recovery.enabled);
     #endif
+    #if BED_SCREW_INSET
       EDIT_ITEM_F(ICON_ProbeMargin, "Bed Screw Inset", onDrawPFloatMenu, SetRetractSpeed, &ui.screw_pos); //changed
+    #endif
     #if ENABLED(SOUND_MENU_ITEM)
       EDIT_ITEM(ICON_Sound, MSG_TICK, onDrawChkbMenu, SetEnableTick, &ui.no_tick); //changed
       EDIT_ITEM(ICON_Sound, MSG_SOUND, onDrawChkbMenu, SetEnableSound, &ui.sound_on); //changed
