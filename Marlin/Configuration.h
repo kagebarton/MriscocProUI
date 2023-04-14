@@ -1611,7 +1611,7 @@
  * A total of 2 does fast/slow probes with a weighted average.
  * A total of 3 or more adds more slow probes, taking the average.
  */
-#define MULTIPLE_PROBING 2
+#define MULTIPLE_PROBING 1    // Use a value of (1) with ProUIex, otherwise (2)
 //#define EXTRA_PROBING    1
 
 /**
@@ -1742,10 +1742,10 @@
  */
 #define Z_IDLE_HEIGHT Z_HOME_POS
 
-#define Z_HOMING_HEIGHT  5      // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ...
+#define Z_HOMING_HEIGHT  5        // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ...
                                   // Be sure to have this much clearance over your Z_MAX_POS to prevent grinding.
 
-//#define Z_AFTER_HOMING  5         // (mm) Height to move to after homing Z
+//#define Z_AFTER_HOMING  10      // (mm) Height to move to after homing Z
 
 // Direction of endstops when homing; 1=MAX, -1=MIN
 // :[-1,1]
@@ -2994,7 +2994,7 @@
 // This is RAMPS-compatible using a single 10-pin connector.
 // (For CR-10 owners who want to replace the Melzi Creality board but retain the display)
 //
-//#define CR10_STOCKDISPLAY    //For DWIN LCD Ender 3 V2 / Voxelab Aquila line --> 3300
+#define CR10_STOCKDISPLAY    //For DWIN LCD Ender 3 V2 / Voxelab Aquila line --> 3300
 #if ENABLED(CR10_STOCKDISPLAY)
   #define RET6_12864_LCD
 #endif
@@ -3348,23 +3348,25 @@
 // LCD-12864 Ender 3 / CR10_STOCKDISPLAY line --> 2960
 
 //#define DWIN_CREALITY_LCD           // Creality UI
-#define DWIN_LCD_PROUI              // Pro UI by MRiscoC
+//#define DWIN_LCD_PROUI              // Pro UI by MRiscoC
 //#define HAS_DACAI 1
 
 // Professional firmware features:
-// #define ProUIex 1
+//#define ProUIex 1
 #ifdef ProUIex
   #define HAS_GCODE_PREVIEW 1
   #define HAS_TOOLBAR 1
 #endif
   #define HAS_PLOT 1
   #define HAS_ESDIAG 1
-  //#define HAS_CGCODE 1
+  #define HAS_CGCODE 1
   #define HAS_LOCKSCREEN 1
   //#define HAS_SD_EXTENDER 1  // Enable to support SD card extender cables
   #define SHOW_REAL_POS
   #define ACTIVATE_MESH_ITEM  // Allows temporary enabling of mesh leveling
-  #define RUNOUT_TUNE_ITEM
+  #if FILAMENT_RUNOUT_SENSOR
+    #define RUNOUT_TUNE_ITEM
+  #endif
   #if ENABLED(POWER_LOSS_RECOVERY)
     #define PLR_TUNE_ITEM
   #endif

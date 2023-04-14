@@ -70,7 +70,7 @@
 
 // Choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
-  #define MOTHERBOARD BOARD_VOXELAB_AQUILA // BOARD_CREALITY_V427 BOARD_VOXELAB_AQUILA BOARD_CREALITY_V4
+  #define MOTHERBOARD BOARD_VOXELAB_AQUILA // BOARD_CREALITY_V427 BOARD_VOXELAB_AQUILA BOARD_CREALITY_V422
 #endif
 
 /**
@@ -3364,7 +3364,9 @@
   //#define HAS_SD_EXTENDER 1  // Enable to support SD card extender cables
   #define SHOW_REAL_POS
   #define ACTIVATE_MESH_ITEM  // Allows temporary enabling of mesh leveling
-  #define RUNOUT_TUNE_ITEM
+  #if FILAMENT_RUNOUT_SENSOR
+    #define RUNOUT_TUNE_ITEM
+  #endif
   #if ENABLED(POWER_LOSS_RECOVERY)
     #define PLR_TUNE_ITEM
   #endif

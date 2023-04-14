@@ -66,26 +66,6 @@
 #define STRING_CONFIG_H_AUTHOR "Miguel A. Risco-Castillo (MRiscoC)" // Who made the changes.
 #define CUSTOM_VERSION_FILE Version.h // Path from the root directory (no quotes)
 
-/**
- * *** VENDORS PLEASE READ ***
- *
- * Marlin allows you to add a custom boot image for Graphical LCDs.
- * With this option Marlin will first show your custom screen followed
- * by the standard Marlin logo with version number and web URL.
- *
- * We encourage you to take advantage of this new feature and we also
- * respectfully request that you retain the unmodified Marlin boot screen.
- */
-
-// Show the Marlin bootscreen on startup. ** ENABLE FOR PRODUCTION **
-#define SHOW_BOOTSCREEN
-
-// Show the bitmap in Marlin/_Bootscreen.h on startup.
-#define SHOW_CUSTOM_BOOTSCREEN
-
-// Show the bitmap in Marlin/_Statusscreen.h on the status screen.
-//#define CUSTOM_STATUS_SCREEN_IMAGE
-
 // @section machine
 
 // Choose the name from boards.h that matches your setup
@@ -1357,7 +1337,7 @@
 //#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN  // Probe connected to BLTouch port
 
 // Force the use of the probe for Z-axis homing
-#define USE_PROBE_FOR_Z_HOMING
+#define USE_PROBE_FOR_Z_HOMING  // Manual mesh not have a probe
 
 /**
  * Z_MIN_PROBE_PIN
@@ -1386,7 +1366,7 @@
  * Use G29 repeatedly, adjusting the Z height at each point with movement commands
  * or (with LCD_BED_LEVELING) the LCD controller.
  */
-//#define PROBE_MANUALLY
+//#define PROBE_MANUALLY  // Manual mesh version
 
 /**
  * A Fix-Mounted Probe either doesn't deploy or needs manual deployment.
@@ -1632,7 +1612,7 @@
  * A total of 2 does fast/slow probes with a weighted average.
  * A total of 3 or more adds more slow probes, taking the average.
  */
-#define MULTIPLE_PROBING 1    // Use a value of (1) with ProUIex, otherwise (2)
+#define MULTIPLE_PROBING 2    // Use a value of (1) with ProUIex, otherwise (2)
 //#define EXTRA_PROBING    1
 
 /**
@@ -1919,6 +1899,47 @@
     // as the filament moves. (Be sure to set FILAMENT_RUNOUT_DISTANCE_MM
     // large enough to avoid false positives.)
     //#define FILAMENT_MOTION_SENSOR
+
+    #if ENABLED(FILAMENT_MOTION_SENSOR)
+      //#define FILAMENT_SWITCH_AND_MOTION
+      #if ENABLED(FILAMENT_SWITCH_AND_MOTION)
+        #define NUM_MOTION_SENSORS   1          // Number of sensors, up to one per extruder. Define a FIL_MOTION#_PIN for each.
+        //#define FIL_MOTION1_PIN    -1
+
+        // Override individually if the motion sensors vary
+        //#define FIL_MOTION1_STATE LOW
+        //#define FIL_MOTION1_PULLUP
+        //#define FIL_MOTION1_PULLDOWN
+
+        //#define FIL_MOTION2_STATE LOW
+        //#define FIL_MOTION2_PULLUP
+        //#define FIL_MOTION2_PULLDOWN
+
+        //#define FIL_MOTION3_STATE LOW
+        //#define FIL_MOTION3_PULLUP
+        //#define FIL_MOTION3_PULLDOWN
+
+        //#define FIL_MOTION4_STATE LOW
+        //#define FIL_MOTION4_PULLUP
+        //#define FIL_MOTION4_PULLDOWN
+
+        //#define FIL_MOTION5_STATE LOW
+        //#define FIL_MOTION5_PULLUP
+        //#define FIL_MOTION5_PULLDOWN
+
+        //#define FIL_MOTION6_STATE LOW
+        //#define FIL_MOTION6_PULLUP
+        //#define FIL_MOTION6_PULLDOWN
+
+        //#define FIL_MOTION7_STATE LOW
+        //#define FIL_MOTION7_PULLUP
+        //#define FIL_MOTION7_PULLDOWN
+
+        //#define FIL_MOTION8_STATE LOW
+        //#define FIL_MOTION8_PULLUP
+        //#define FIL_MOTION8_PULLDOWN
+      #endif
+    #endif
   #endif
 #endif
 
@@ -2422,7 +2443,7 @@
  *
  *   Caveats: The ending Z should be the same as starting Z.
  */
-//#define NOZZLE_CLEAN_FEATURE
+#define NOZZLE_CLEAN_FEATURE
 
 #if ENABLED(NOZZLE_CLEAN_FEATURE)
   // Default number of pattern repetitions
@@ -3112,6 +3133,8 @@
  *  - Download files as specified for your type of display.
  *  - Plug the microSD card into the back of the display.
  *  - Boot the display and wait for the update to complete.
+ *
+ * :[ 'ORIGIN', 'FYSETC', 'HYPRECY', 'MKS', 'RELOADED', 'IA_CREALITY' ]
  */
 //#define DGUS_LCD_UI ORIGIN
 #if DGUS_UI_IS(MKS)
@@ -3342,10 +3365,15 @@
   //#define HAS_SD_EXTENDER 1  // Enable to support SD card extender cables
   #define SHOW_REAL_POS
   #define ACTIVATE_MESH_ITEM  // Allows temporary enabling of mesh leveling
-  #define RUNOUT_TUNE_ITEM
-  #define PLR_TUNE_ITEM
+  #if FILAMENT_RUNOUT_SENSOR
+    #define RUNOUT_TUNE_ITEM
+  #endif
+  #if ENABLED(POWER_LOSS_RECOVERY)
+    #define PLR_TUNE_ITEM
+  #endif
   //#define JD_TUNE_ITEM  // Enable only if Juntion Deviation is enabled
   #define ADVK_TUNE_ITEM  // Enable only if Linear Advance is enabled
+  #define PLOT_TUNE_ITEM  // Enable only if HAS_PLOT is enabled
   //#define MEDIASORT_MENU_ITEM  // Allows enable/disable file list sorting
 
 //#define DWIN_CREALITY_LCD_JYERSUI   // Jyers UI by Jacob Myers
