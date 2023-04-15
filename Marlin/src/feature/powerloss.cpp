@@ -593,22 +593,18 @@ void PrintJobRecovery::resume() {
     dtostrf(info.current_position.y, 1, 3, str_2)
   );
   PROCESS_SUBCOMMANDS_NOW(cmd);
-  DEBUG_ECHOLNPGM("Move XY : ",cmd);
 
   // Move back down to the saved Z for printing
   sprintf_P(cmd, PSTR("G1Z%sF600"), dtostrf(z_print, 1, 3, str_1));
   PROCESS_SUBCOMMANDS_NOW(cmd);
-  DEBUG_ECHOLNPGM("Move Z : ",cmd);
 
   // Restore the feedrate
   sprintf_P(cmd, PSTR("G1F%d"), info.feedrate);
   PROCESS_SUBCOMMANDS_NOW(cmd);
-  DEBUG_ECHOLNPGM("Feedrate: ",cmd);
 
   // Restore E position with G92.9
   sprintf_P(cmd, PSTR("G92.9E%s"), dtostrf(info.current_position.e, 1, 3, str_1));
   PROCESS_SUBCOMMANDS_NOW(cmd);
-  DEBUG_ECHOLNPGM("Extruder : ",cmd);
 
   TERN_(GCODE_REPEAT_MARKERS, repeat = info.stored_repeat);
   TERN_(HAS_HOME_OFFSET, home_offset = info.home_offset);
