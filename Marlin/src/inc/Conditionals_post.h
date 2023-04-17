@@ -3280,12 +3280,12 @@
 #if defined(TARGET_LPC1768) && IS_RRD_FG_SC && (SD_SCK_PIN == LCD_PINS_D4)
   #define SDCARD_SORT_ALPHA         // Keep one directory level in RAM. Changing directory levels
                                     // may still glitch the screen, but LCD updates clean it up.
-  #if SDSORT_LIMIT > 64 || !SDSORT_USES_RAM || SDSORT_USES_STACK || !SDSORT_CACHE_NAMES
+  #if SDSORT_LIMIT > 100 || !SDSORT_USES_RAM || SDSORT_USES_STACK || !SDSORT_CACHE_NAMES
     #undef SDSORT_LIMIT
     #undef SDSORT_USES_RAM
     #undef SDSORT_USES_STACK
     #undef SDSORT_CACHE_NAMES
-    #define SDSORT_LIMIT       64
+    #define SDSORT_LIMIT       100
     #define SDSORT_USES_RAM    true
     #define SDSORT_USES_STACK  false
     #define SDSORT_CACHE_NAMES true

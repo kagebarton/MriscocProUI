@@ -48,14 +48,14 @@ if "MARLIN_FEATURES" in env:
        print("Manual Mesh Bed Leveling detected")
        shutil.copy(libpath+arch+'libproui_mbl.a', libpath+'libproui.a')
 
-    if(marlin_abl):
+    elif(marlin_abl):
        print("Auto Mesh Bed Leveling detected")
        shutil.copy(libpath+arch+'libproui_abl.a', libpath+'libproui.a')
 
-    if(marlin_ubl):
+    elif(marlin_ubl):
        print("Unified Mesh Bed Leveling detected")
        shutil.copy(libpath+arch+'libproui_ubl.a', libpath+'libproui.a')
 
     else:
-       print("Unified Mesh Bed Leveling detected")
-       shutil.copy(libpath+arch+'libproui_ubl.a', libpath+'libproui.a')
+       print("Default-No Probe detected")
+       shutil.copy(libpath+arch+'libproui_mbl.a', libpath+'libproui.a')
