@@ -794,14 +794,6 @@ void do_blocking_move_to_x(const_float_t rx, const_feedRate_t fr_mm_s/*=0.0*/) {
     if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("do_z_clearance_by(", zclear, ")");
     do_z_clearance(current_position.z + zclear, false);
   }
-  void do_move_after_z_homing() {
-    DEBUG_SECTION(mzah, "do_move_after_z_homing", DEBUGGING(LEVELING));
-    #if defined(Z_AFTER_HOMING) || ALL(DWIN_LCD_PROUI, INDIVIDUAL_AXIS_HOMING_SUBMENU, MESH_BED_LEVELING)
-      do_z_clearance(Z_POST_CLEARANCE, true);
-    #elif ENABLED(USE_PROBE_FOR_Z_HOMING)
-      probe.move_z_after_probing();
-    #endif
-  }
 #endif
 
 //
