@@ -214,9 +214,11 @@
 #elif defined(PID_ADD_EXTRUSION_RATE)
   #error "PID_ADD_EXTRUSION_RATE is now PID_EXTRUSION_SCALING and is DISABLED by default."
 #elif defined(Z_RAISE_BEFORE_HOMING)
-  #error "Z_RAISE_BEFORE_HOMING is now Z_HOMING_HEIGHT."
+  #error "Z_RAISE_BEFORE_HOMING is now Z_CLEARANCE_FOR_HOMING."
 #elif defined(MIN_Z_HEIGHT_FOR_HOMING)
-  #error "MIN_Z_HEIGHT_FOR_HOMING is now Z_HOMING_HEIGHT."
+  #error "MIN_Z_HEIGHT_FOR_HOMING is now Z_CLEARANCE_FOR_HOMING."
+#elif defined(Z_HOMING_HEIGHT)
+  #error "Z_HOMING_HEIGHT is now Z_CLEARANCE_FOR_HOMING."
 #elif defined(Z_RAISE_BEFORE_PROBING) || defined(Z_RAISE_AFTER_PROBING)
   #error "Z_RAISE_(BEFORE|AFTER)_PROBING are deprecated. Use Z_CLEARANCE_DEPLOY_PROBE and Z_AFTER_PROBING instead."
 #elif defined(Z_RAISE_PROBE_DEPLOY_STOW) || defined(Z_RAISE_BETWEEN_PROBINGS)
@@ -1897,9 +1899,15 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
       #endif
     #endif
 
-    #if ENABLED(BLTOUCH_HS_MODE) && BLTOUCH_HS_MODE == 0
-      #error "BLTOUCH_HS_MODE must now be defined as true or false, indicating the default state."
+    #if HAS_BLTOUCH_HS_MODE
+      constexpr char hs[] = STRINGIFY(BLTOUCH_HS_MODE);
+      static_assert(!(strcmp(hs, "1") && strcmp(hs, "true") && strcmp(hs, "0") && strcmp(hs, "false")), \
+        "BLTOUCH_HS_MODE must now be defined as true or false, indicating the default state.");
+      #ifdef BLTOUCH_HS_EXTRA_CLEARANCE
+        static_assert(BLTOUCH_HS_EXTRA_CLEARANCE > 0, "BLTOUCH_HS_MODE requires a positive BLTOUCH_HS_EXTRA_CLEARANCE.");
+      #endif
     #endif
+
     #if BLTOUCH_DELAY < 200
       #error "BLTOUCH_DELAY less than 200 is unsafe and is not supported."
     #endif
@@ -1941,8 +1949,8 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
       #error "TOUCH_MI_PROBE requires TOUCH_MI_RETRACT_Z."
     #elif defined(Z_AFTER_PROBING)
       #error "TOUCH_MI_PROBE requires Z_AFTER_PROBING to be disabled."
-    #elif Z_HOMING_HEIGHT < 10
-      #error "TOUCH_MI_PROBE requires Z_HOMING_HEIGHT >= 10."
+    #elif Z_CLEARANCE_FOR_HOMING < 10
+      #error "TOUCH_MI_PROBE requires Z_CLEARANCE_FOR_HOMING >= 10."
     #elif DISABLED(BABYSTEP_ZPROBE_OFFSET)
       #error "TOUCH_MI_PROBE requires BABYSTEPPING with BABYSTEP_ZPROBE_OFFSET."
     #elif !HAS_RESUME_CONTINUE
@@ -3324,7 +3332,17 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
       #error "LCD_BACKLIGHT_TIMEOUT is not compatible with NEOPIXEL_BKGD_ALWAYS_ON."
     #endif
   #elif !PIN_EXISTS(LCD_BACKLIGHT)
-   // #error "LCD_BACKLIGHT_TIMEOUT_MINS requires either LCD_BACKLIGHT_PIN or NEOPIXEL_BKGD_INDEX_FIRST."
+    //#error "LCD_BACKLIGHT_TIMEOUT_MINS requires either LCD_BACKLIGHT_PIN or NEOPIXEL_BKGD_INDEX_FIRST."
+  #endif
+#endif
+
+// Startup Tune requirements
+#ifdef STARTUP_TUNE
+  #if EITHER(ANYCUBIC_LCD_CHIRON, ANYCUBIC_LCD_VYPER)
+    #error "STARTUP_TUNE should be disabled with ANYCUBIC_LCD_CHIRON or ANYCUBIC_LCD_VYPER."
+  #elif !(BOTH(HAS_BEEPER, SPEAKER) || USE_MARLINUI_BUZZER)
+    #error "STARTUP_TUNE requires a BEEPER_PIN with SPEAKER or USE_MARLINUI_BUZZER."
+    #undef STARTUP_TUNE
   #endif
 #endif
 

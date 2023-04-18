@@ -28,6 +28,7 @@
 #include "../../module/motion.h"
 #include "../../module/probe.h"
 #include "../../feature/bedlevel/bedlevel.h"
+#include "../../lcd/marlinui.h"
 
 #if HAS_PTC
   #include "../../feature/probe_temp_comp.h"
@@ -35,10 +36,6 @@
 
 #if HAS_MULTI_HOTEND
   #include "../../module/tool_change.h"
-#endif
-
-#if ENABLED(DWIN_LCD_PROUI)
-  #include "../../lcd/marlinui.h"
 #endif
 
 /**
