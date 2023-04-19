@@ -34,14 +34,14 @@
  * Verbose version identifier which should contain a reference to the location
  * from where the binary was downloaded or the source code was compiled.
  */
-#define DETAILED_BUILD_VERSION SHORT_BUILD_VERSION " Aquila-MM"
+#define DETAILED_BUILD_VERSION SHORT_BUILD_VERSION " Ender3V2-NP"
 
 /**
  * The STRING_DISTRIBUTION_DATE represents when the binary file was built,
  * here we define this default string as the date where the latest release
  * version was tagged.
  */
-//#define STRING_DISTRIBUTION_DATE "2022-12-14"
+//#define STRING_DISTRIBUTION_DATE "2023-03-07"
 
 #define STRING_DISTRIBUTION_DATE __DATE__
 #define STRING_DISTRIBUTION_TIME __TIME__
@@ -49,7 +49,7 @@
 /**
  * Defines a generic printer name to be output to the LCD after booting Marlin.
  */
-#define BOOT_MACHINE_NAME "Aquila"
+#define MACHINE_NAME "Ender-3V2"
 
 /**
  * The SOURCE_CODE_URL is the location where users will find the Marlin Source

@@ -197,8 +197,6 @@
  */
 //#define HEPHESTOS2_HEATED_BED_KIT
 #if ENABLED(HEPHESTOS2_HEATED_BED_KIT)
-  #undef TEMP_SENSOR_BED
-  #define TEMP_SENSOR_BED 70
   #define HEATER_BED_INVERTING true
 #endif
 
@@ -377,7 +375,7 @@
    * Thermal Protection Variance Monitor - EXPERIMENTAL
    * Kill the machine on a stuck temperature sensor.
    *
-   * This feature may cause some thermally-stable systems to halt. Be sure to test it throughly under
+   * This feature may cause some thermally-stable systems to halt. Be sure to test it thoroughly under
    * a variety of conditions. Disable if you get false positives.
    *
    * This feature ensures that temperature sensors are updating regularly. If sensors die or get "stuck",
@@ -403,7 +401,6 @@
     // Keep in mind that some heaters heat up faster than others.
     //#define THERMAL_PROTECTION_VARIANCE_MONITOR_PERIOD 30  // (s) Override all watch periods
   #endif
-  #define NO_VARIANCE_MONITOR_WARNING
 #endif
 
 #if ENABLED(PIDTEMP)
@@ -421,7 +418,7 @@
    * You can either just add a constant compensation with the DEFAULT_Kf value
    * or follow the instruction below to get speed-dependent compensation.
    *
-   * Constant compensation (use only with fanspeeds of 0% and 100%)
+   * Constant compensation (use only with fan speeds of 0% and 100%)
    * ---------------------------------------------------------------------
    * A good starting point for the Kf-value comes from the calculation:
    *   kf = (power_fan * eff_fan) / power_heater * 255
@@ -448,7 +445,7 @@
     //#define PID_FAN_SCALING_ALTERNATIVE_DEFINITION
     #if ENABLED(PID_FAN_SCALING_ALTERNATIVE_DEFINITION)
       // The alternative definition is used for an easier configuration.
-      // Just figure out Kf at fullspeed (255) and PID_FAN_SCALING_MIN_SPEED.
+      // Just figure out Kf at full speed (255) and PID_FAN_SCALING_MIN_SPEED.
       // DEFAULT_Kf and PID_FAN_SCALING_LIN_FACTOR are calculated accordingly.
 
       #define PID_FAN_SCALING_AT_FULL_SPEED 13.0        //=PID_FAN_SCALING_LIN_FACTOR*255+DEFAULT_Kf
@@ -615,7 +612,7 @@
  *
  * Define one or both of these to override the default 0-255 range.
  */
-#define FAN_MIN_PWM 50
+#define FAN_MIN_PWM 50  // Ender Configs
 //#define FAN_MAX_PWM 128
 
 /**
@@ -627,7 +624,7 @@
  * FAST_PWM_FAN_FREQUENCY
  *   Set this to your desired frequency.
  *   For AVR, if left undefined this defaults to F = F_CPU/(2*255*1)
- *            i.e., F = 31.4kHz on 16MHz microcontrollers or F = 39.2kHz on 20MHz microcontrollers.
+ *            i.e., F = 31.4kHz on 16MHz micro-controllers or F = 39.2kHz on 20MHz micro-controllers.
  *   For non AVR, if left undefined this defaults to F = 1Khz.
  *   This F value is only to protect the hardware from an absence of configuration
  *   and not to complete it when users are not aware that the frequency must be specifically set to support the target board.
@@ -675,7 +672,7 @@
  * Multiple extruders can be assigned to the same pin in which case
  * the fan will turn on when any selected extruder is above the threshold.
  */
-#define E0_AUTO_FAN_PIN -1
+#define E0_AUTO_FAN_PIN -1  // Ender3V2 Configs
 #define E1_AUTO_FAN_PIN -1
 #define E2_AUTO_FAN_PIN -1
 #define E3_AUTO_FAN_PIN -1
@@ -919,7 +916,7 @@
 //#define HOMING_BACKOFF_POST_MM { 2, 2, 2 }  // (linear=mm, rotational=°) Backoff from endstops after homing
 //#define XY_COUNTERPART_BACKOFF_MM 0         // (mm) Backoff X after homing Y, and vice-versa
 
-#define QUICK_HOME                          // If G28 contains XY do a diagonal move first
+#define QUICK_HOME                            // If G28 contains XY do a diagonal move first
 //#define HOME_Y_BEFORE_X                     // If G28 contains XY home Y before X
 //#define HOME_Z_FIRST                        // Home Z first. Requires a Z-MIN endstop (not a probe).
 //#define CODEPENDENT_XY_HOMING               // If X/Y can't home without homing Y/X first
@@ -966,11 +963,14 @@
    * Danger: Don't activate 5V mode unless attached to a 5V-tolerant controller!
    * V3.0 or 3.1: Set default mode to 5V mode at Marlin startup.
    * If disabled, OD mode is the hard-coded default on 3.0
-   * On startup, Marlin will compare its eeprom to this value. If the selected mode
-   * differs, a mode set eeprom write will be completed at initialization.
-   * Use the option below to force an eeprom write to a V3.1 probe regardless.
+   * On startup, Marlin will compare its EEPROM to this value. If the selected mode
+   * differs, a mode set EEPROM write will be completed at initialization.
+   * Use the option below to force an EEPROM write to a V3.1 probe regardless.
    */
   //#define BLTOUCH_SET_5V_MODE
+
+  // Safety: Enable voltage mode settings in the LCD menu.
+  //#define BLTOUCH_LCD_VOLTAGE_MENU
 
   /**
    * Safety: Activate if connecting a probe with an unknown voltage mode.
@@ -990,8 +990,12 @@
    */
   #define BLTOUCH_HS_MODE true
 
-  // Safety: Enable voltage mode settings in the LCD menu.
-  //#define BLTOUCH_LCD_VOLTAGE_MENU
+  #ifdef BLTOUCH_HS_MODE
+    // The probe Z offset (M851 Z) is the height at which the probe triggers.
+    // This must be large enough to keep the probe pin off the bed and prevent
+    // it from snagging on the bed clips.
+    #define BLTOUCH_HS_EXTRA_CLEARANCE    7 // Extra Z Clearance
+  #endif
 
 #endif // BLTOUCH
 
@@ -1067,7 +1071,7 @@
 #if ENABLED(ASSISTED_TRAMMING)
 
   // Define from 3 to 9 points to probe.
-  #define TRAMMING_POINT_XY { {  20, 20 }, { 180,  20 }, { 180, 180 }, { 20, 180 } }
+  #define TRAMMING_POINT_XY { { 29, 29 }, { 199, 29 }, { 199, 199 }, { 29, 199 } }
 
   // Define position names for probe points.
   #define TRAMMING_POINT_NAME_1 "Front-Left"
@@ -1338,7 +1342,7 @@
   //#define CALIBRATION_MEASURE_WMAX
 
   // Probing at the exact top center only works if the center is flat. If
-  // probing on a screwhead or hollow washer, probe near the edges.
+  // probing on a screw head or hollow washer, probe near the edges.
   //#define CALIBRATION_MEASURE_AT_TOP_EDGES
 
   // Define the pin to read during calibration
@@ -1448,7 +1452,7 @@
 // Change values more rapidly when the encoder is rotated faster
 #define ENCODER_RATE_MULTIPLIER
 #if ENABLED(ENCODER_RATE_MULTIPLIER)
-  #define ENCODER_5X_STEPS_PER_SEC    40  // Ender Configs
+  #define ENCODER_5X_STEPS_PER_SEC    40  // (steps/s) Encoder rate for 5x speed
   #define ENCODER_10X_STEPS_PER_SEC   75  // (steps/s) Encoder rate for 10x speed  // Ender Configs
   #define ENCODER_100X_STEPS_PER_SEC 105  // (steps/s) Encoder rate for 100x speed  // Ender Configs
 #endif
@@ -1463,7 +1467,7 @@
 //
 // LCD Backlight Timeout
 //
-//#define LCD_BACKLIGHT_TIMEOUT_MINS 10 // (minutes) Timeout before turning off the backlight
+#define LCD_BACKLIGHT_TIMEOUT_MINS 10 // (minutes) Timeout before turning off the backlight
 
 #if HAS_BED_PROBE && EITHER(HAS_MARLINUI_MENU, HAS_TFT_LVGL_UI)
   //#define PROBE_OFFSET_WIZARD       // Add a Probe Z Offset calibration option to the LCD menu
@@ -1516,6 +1520,9 @@
   // Insert a menu for preheating at the top level to allow for quick access
   //#define PREHEAT_SHORTCUT_MENU_ITEM
 
+  // Add Configuration > Debug Menu > Endstop Test for endstop/probe/runout testing
+  //#define LCD_ENDSTOP_TEST
+
 #endif // HAS_MARLINUI_MENU
 
 #if HAS_DISPLAY
@@ -1536,9 +1543,12 @@
       #if EITHER(HAS_MARLINUI_U8GLIB, TFT_COLOR_UI)
         #define BOOT_MARLIN_LOGO_SMALL      // Show a smaller Marlin logo on the Boot Screen (saving lots of flash)
       #endif
-      //#define SHOW_CUSTOM_BOOTSCREEN      // Show the bitmap in Marlin/_Bootscreen.h on startup.
+      #define SHOW_CUSTOM_BOOTSCREEN      // Show the bitmap in Marlin/_Bootscreen.h on startup.
     #endif
     #if HAS_MARLINUI_U8GLIB
+      #if ENABLED(SHOW_BOOTSCREEN)
+        //#define BOOT_MARLIN_LOGO_ANIMATED // Animated Marlin logo. Costs ~3260 (or ~940) bytes of flash.
+      #endif
       //#define CUSTOM_STATUS_SCREEN_IMAGE  // Show the bitmap in Marlin/_Statusscreen.h on the status screen.
     #endif
   #endif
@@ -1651,7 +1661,7 @@
 
   //#define GCODE_REPEAT_MARKERS            // Enable G-code M808 to set repeat markers and do looping
 
-  #define SD_PROCEDURE_DEPTH 1              // Increase if you need more nested M32 calls
+  #define SD_PROCEDURE_DEPTH 1              // Increase if you need more nested M32 calls  // MRiscoC save program memory
 
   #define SD_FINISHED_STEPPERRELEASE true   // Disable steppers when SD Print is finished
   #define SD_FINISHED_RELEASECOMMAND "M84"  // Use "M84XYE" to keep Z enabled so your bed stays in place
@@ -1729,7 +1739,7 @@
    *  - SDSORT_CACHE_NAMES will retain the sorted file listing in RAM. (Expensive!)
    *  - SDSORT_DYNAMIC_RAM only uses RAM when the SD menu is visible. (Use with caution!)
    */
-  #define SDCARD_SORT_ALPHA
+  #define SDCARD_SORT_ALPHA  // Ender Configs
 
   // SD Card Sorting options
   #if ENABLED(SDCARD_SORT_ALPHA)
@@ -1837,11 +1847,11 @@
   //#define CONFIGURATION_EMBEDDING
 
   // Add an optimized binary file transfer mode, initiated with 'M28 B1'
-  //#define BINARY_FILE_TRANSFER
+  //#define BINARY_FILE_TRANSFER  // MRiscoC Enabled for easy firmware upgrade
 
   #if ENABLED(BINARY_FILE_TRANSFER)
     // Include extra facilities (e.g., 'M20 F') supporting firmware upload via BINARY_FILE_TRANSFER
-    //#define CUSTOM_FIRMWARE_UPLOAD
+    //#define CUSTOM_FIRMWARE_UPLOAD  // MRiscoC Enabled for easy firmware upgrade
   #endif
 
   /**
@@ -1947,7 +1957,7 @@
   #endif
 
   /**
-   * Status (Info) Screen customizations
+   * Status (Info) Screen customization
    * These options may affect code size and screen render time.
    * Custom status screens can forcibly override these settings.
    */
@@ -1964,7 +1974,6 @@
   //#define STATUS_ALT_FAN_BITMAP     // Use the alternative fan bitmap
   //#define STATUS_FAN_FRAMES 3       // :[0,1,2,3,4] Number of fan animation frames
   //#define STATUS_HEAT_PERCENT       // Show heating in a progress bar
-  //#define BOOT_MARLIN_LOGO_ANIMATED // Animated Marlin logo. Costs ~3260 (or ~940) bytes of flash.
 
   // Frivolous Game Options
   //#define MARLIN_BRICKOUT
@@ -2185,7 +2194,7 @@
  *
  * Warning: Does not respect endstops!
  */
-#define BABYSTEPPING
+#define BABYSTEPPING  // Ender Configs
 #if ENABLED(BABYSTEPPING)
   //#define INTEGRATED_BABYSTEPPING         // EXPERIMENTAL integration of babystepping into the Stepper ISR
   #define BABYSTEP_WITHOUT_HOMING  	        // MRiscoC Enabled BbS without home
@@ -2200,7 +2209,7 @@
   #if ENABLED(DOUBLECLICK_FOR_Z_BABYSTEPPING)
     #define DOUBLECLICK_MAX_INTERVAL 1250   // Maximum interval between clicks, in milliseconds.
                                             // Note: Extra time may be added to mitigate controller latency.
-    //#define MOVE_Z_WHEN_IDLE              // Jump to the move Z menu on doubleclick when printer is idle.
+    //#define MOVE_Z_WHEN_IDLE              // Jump to the move Z menu on double-click when printer is idle.
     #if ENABLED(MOVE_Z_WHEN_IDLE)
       #define MOVE_Z_IDLE_MULTIPLICATOR 1   // Multiply 1mm by this factor for the move step size.
     #endif
@@ -2306,10 +2315,10 @@
 
 #if EITHER(MESH_BED_LEVELING, AUTO_BED_LEVELING_UBL)
   // Override the mesh area if the automatic (max) area is too large
-  //#define MESH_MIN_X MESH_INSET
-  //#define MESH_MIN_Y MESH_INSET
-  //#define MESH_MAX_X X_BED_SIZE - (MESH_INSET)
-  //#define MESH_MAX_Y Y_BED_SIZE - (MESH_INSET)
+  #define MESH_MIN_X MESH_INSET
+  #define MESH_MIN_Y MESH_INSET
+  #define MESH_MAX_X X_BED_SIZE - (MESH_INSET)
+  #define MESH_MAX_Y Y_BED_SIZE - (MESH_INSET)
 #endif
 
 #if BOTH(AUTO_BED_LEVELING_UBL, EEPROM_SETTINGS)
@@ -2452,7 +2461,7 @@
 #endif
 
 // Moves (or segments) with fewer steps than this will be joined with the next move
-#define MIN_STEPS_PER_SEGMENT 6
+#define MIN_STEPS_PER_SEGMENT 4  // MRiscoC Increase little movements accuracy
 
 /**
  * Minimum delay before and after setting the stepper DIR (in ns)
@@ -2531,7 +2540,7 @@
 // For debug-echo: 128 bytes for the optimal speed.
 // Other output doesn't need to be that speedy.
 // :[0, 2, 4, 8, 16, 32, 64, 128, 256]
-#define TX_BUFFER_SIZE 0
+#define TX_BUFFER_SIZE 64
 
 // Host Receive Buffer Size
 // Without XON/XOFF flow control (see SERIAL_XON_XOFF below) 32 bytes should be enough.
@@ -2569,7 +2578,7 @@
  * Currently handles M108, M112, M410, M876
  * NOTE: Not yet implemented for all platforms.
  */
-#define EMERGENCY_PARSER
+#define EMERGENCY_PARSER  // MRiscoC Enabled instantaneous response to emergency commands
 
 /**
  * Realtime Reporting (requires EMERGENCY_PARSER)
@@ -2770,7 +2779,7 @@
  *
  * Enable PARK_HEAD_ON_PAUSE to add the G-code M125 Pause and Park.
  */
-#define ADVANCED_PAUSE_FEATURE
+#define ADVANCED_PAUSE_FEATURE  // MRiscoC Enabled
 #if ENABLED(ADVANCED_PAUSE_FEATURE)
   #define PAUSE_PARK_RETRACT_FEEDRATE         60  // (mm/s) Initial retract feedrate.
   #define PAUSE_PARK_RETRACT_LENGTH            2  // (mm) Initial retract.
@@ -2804,8 +2813,8 @@
   #define FILAMENT_UNLOAD_PURGE_LENGTH         8  // (mm) An unretract is done, then this length is purged.
   #define FILAMENT_UNLOAD_PURGE_FEEDRATE      25  // (mm/s) feedrate to purge before unload
 
-  #define PAUSE_PARK_NOZZLE_TIMEOUT          90   // (seconds) Time limit before the nozzle is turned off for safety.
-  #define FILAMENT_CHANGE_ALERT_BEEPS         5   // Number of alert beeps to play when a response is needed.
+  #define PAUSE_PARK_NOZZLE_TIMEOUT           90  // (seconds) Time limit before the nozzle is turned off for safety.
+  #define FILAMENT_CHANGE_ALERT_BEEPS          5  // Number of alert beeps to play when a response is needed.
   #define PAUSE_PARK_NO_STEPPER_TIMEOUT           // Enable for XYZ steppers to stay powered on during filament change.
   //#define FILAMENT_CHANGE_RESUME_ON_INSERT      // Automatically continue / load filament when runout sensor is triggered again.
   //#define PAUSE_REHEAT_FAST_RESUME              // Reduce number of waits by not prompting again post-timeout before continuing.
@@ -3329,7 +3338,7 @@
   /**
    * Step on both rising and falling edge signals (as with a square wave).
    */
-  #define EDGE_STEPPING  // Ender Configs
+  #define EDGE_STEPPING
 
   /**
    * Enable M122 debugging command for TMC stepper drivers.
@@ -3566,7 +3575,7 @@
      * Feed rates are set by the F parameter of a move command e.g. G1 X0 Y10 F6000
      * Laser power would be calculated by bit shifting off 8 LSB's. In binary this is div 256.
      * The calculation gives us ocr values from 0 to 255, values over F65535 will be set as 255 .
-     * More refined power control such as compesation for accell/decell will be addressed in future releases.
+     * More refined power control such as compensation for accel/decel will be addressed in future releases.
      *
      * M5 I clears inline mode and set power to 0, M5 sets the power output to 0 but leaves inline mode on.
      */
@@ -3574,8 +3583,8 @@
     /**
      * Enable M3 commands for laser mode inline power planner syncing.
      * This feature enables any M3 S-value to be injected into the block buffers while in
-     * CUTTER_MODE_CONTINUOUS. The option allows M3 laser power to be commited without waiting
-     * for a planner syncronization
+     * CUTTER_MODE_CONTINUOUS. The option allows M3 laser power to be committed without waiting
+     * for a planner synchronization
      */
     //#define LASER_POWER_SYNC
 
@@ -3833,7 +3842,7 @@
  *  - M206 and M428 are disabled.
  *  - G92 will revert to its behavior from Marlin 1.0.
  */
-//#define NO_WORKSPACE_OFFSETS
+//#define NO_WORKSPACE_OFFSETS  // MRiscoC Save flash space and simplify movements
 
 /**
  * CNC G-code options
@@ -4183,7 +4192,7 @@
   #define MAX7219_DEBUG_PROFILE       6   // Display the fraction of CPU time spent in profiled code on this LED matrix
                                           // row. By default idle() is profiled so this shows how "idle" the processor is.
                                           // See class CodeProfiler.
-  //#define MAX7219_DEBUG_MULTISTEPPING 6 // Show multistepping 1 to 128 on this LED matrix row.
+  //#define MAX7219_DEBUG_MULTISTEPPING 6 // Show multi-stepping 1 to 128 on this LED matrix row.
 #endif
 
 /**
@@ -4264,7 +4273,7 @@
 
   // Add an LCD menu for MMU2
   //#define MMU2_MENUS
-  #if EITHER(MMU2_MENUS, HAS_PRUSA_MMU2S)
+
     // Settings for filament load / unload from the LCD menu.
     // This is for Průša MK3-style extruders. Customize for your hardware.
     #define MMU2_FILAMENTCHANGE_EJECT_FEED 80.0
@@ -4287,7 +4296,6 @@
       {  10.0,  700 }, \
       { -10.0,  400 }, \
       { -50.0, 2000 }
-  #endif
 
   /**
    * Using a sensor like the MMU2S

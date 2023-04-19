@@ -197,8 +197,6 @@
  */
 //#define HEPHESTOS2_HEATED_BED_KIT
 #if ENABLED(HEPHESTOS2_HEATED_BED_KIT)
-  #undef TEMP_SENSOR_BED
-  #define TEMP_SENSOR_BED 70
   #define HEATER_BED_INVERTING true
 #endif
 
@@ -326,7 +324,7 @@
    * and/or decrease WATCH_TEMP_INCREASE. WATCH_TEMP_INCREASE should not be set
    * below 2.
    */
-  #define WATCH_TEMP_PERIOD  40               // Seconds  // Ender Configs
+  #define WATCH_TEMP_PERIOD  40               // Seconds
   #define WATCH_TEMP_INCREASE 2               // Degrees Celsius
 #endif
 
@@ -403,7 +401,6 @@
     // Keep in mind that some heaters heat up faster than others.
     //#define THERMAL_PROTECTION_VARIANCE_MONITOR_PERIOD 30  // (s) Override all watch periods
   #endif
-  #define NO_VARIANCE_MONITOR_WARNING
 #endif
 
 #if ENABLED(PIDTEMP)
@@ -919,7 +916,7 @@
 //#define HOMING_BACKOFF_POST_MM { 2, 2, 2 }  // (linear=mm, rotational=°) Backoff from endstops after homing
 //#define XY_COUNTERPART_BACKOFF_MM 0         // (mm) Backoff X after homing Y, and vice-versa
 
-#define QUICK_HOME                            // If G28 contains XY do a diagonal move first  // Ender Configs
+#define QUICK_HOME                            // If G28 contains XY do a diagonal move first
 //#define HOME_Y_BEFORE_X                     // If G28 contains XY home Y before X
 //#define HOME_Z_FIRST                        // Home Z first. Requires a Z-MIN endstop (not a probe).
 //#define CODEPENDENT_XY_HOMING               // If X/Y can't home without homing Y/X first
@@ -1073,7 +1070,7 @@
 //#define ASSISTED_TRAMMING
 #if ENABLED(ASSISTED_TRAMMING)
 
-  // Define positions for probe points.
+  // Define from 3 to 9 points to probe.
   #define TRAMMING_POINT_XY { { 29, 29 }, { 199, 29 }, { 199, 199 }, { 29, 199 } }
 
   // Define position names for probe points.
@@ -1545,11 +1542,13 @@
       #define BOOTSCREEN_TIMEOUT 4000       // (ms) Total Duration to display the boot screen(s)
       #if EITHER(HAS_MARLINUI_U8GLIB, TFT_COLOR_UI)
         #define BOOT_MARLIN_LOGO_SMALL      // Show a smaller Marlin logo on the Boot Screen (saving lots of flash)
-        //#define BOOT_MARLIN_LOGO_ANIMATED   // Choose either small static logo, large animated logo, or BOTH shows small animated logo
       #endif
       #define SHOW_CUSTOM_BOOTSCREEN      // Show the bitmap in Marlin/_Bootscreen.h on startup.
     #endif
     #if HAS_MARLINUI_U8GLIB
+      #if ENABLED(SHOW_BOOTSCREEN)
+        //#define BOOT_MARLIN_LOGO_ANIMATED // Animated Marlin logo. Costs ~3260 (or ~940) bytes of flash.
+      #endif
       //#define CUSTOM_STATUS_SCREEN_IMAGE  // Show the bitmap in Marlin/_Statusscreen.h on the status screen.
     #endif
   #endif
@@ -1694,7 +1693,7 @@
    * an option on the LCD screen to continue the print from the last-known
    * point in the file.
    */
-  //#define POWER_LOSS_RECOVERY  // D9sahle for Aquila w/ UBL + ProUI savemem
+  //#define POWER_LOSS_RECOVERY
   #if ENABLED(POWER_LOSS_RECOVERY)
     #define PLR_ENABLED_DEFAULT   false // Power Loss Recovery enabled by default. (Set with 'M413 Sn' & M500)
     //#define BACKUP_POWER_SUPPLY       // Backup power / UPS to move the steppers on power loss
@@ -3339,7 +3338,7 @@
   /**
    * Step on both rising and falling edge signals (as with a square wave).
    */
-  #define EDGE_STEPPING  // Ender Configs
+  #define EDGE_STEPPING
 
   /**
    * Enable M122 debugging command for TMC stepper drivers.
@@ -4274,7 +4273,7 @@
 
   // Add an LCD menu for MMU2
   //#define MMU2_MENUS
-  #if EITHER(MMU2_MENUS, HAS_PRUSA_MMU2S)
+
     // Settings for filament load / unload from the LCD menu.
     // This is for Průša MK3-style extruders. Customize for your hardware.
     #define MMU2_FILAMENTCHANGE_EJECT_FEED 80.0
@@ -4297,7 +4296,6 @@
       {  10.0,  700 }, \
       { -10.0,  400 }, \
       { -50.0, 2000 }
-  #endif
 
   /**
    * Using a sensor like the MMU2S

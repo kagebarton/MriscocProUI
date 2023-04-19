@@ -62,8 +62,8 @@
 #define Def_Leds_Color      0xFFFFFFFF
 #define Def_CaseLight_Brightness 255
 #define DEF_Z_AFTER_HOMING TERN(Z_AFTER_HOMING, Z_AFTER_HOMING, 0)
-#define DEF_HOTENDPIDT TERN(PREHEAT_1_TEMP_BED, PREHEAT_1_TEMP_HOTEND, 195)
-#define DEF_BEDPIDT TERN(PREHEAT_1_TEMP_BED, PREHEAT_1_TEMP_HOTEND, 60)
+#define DEF_HOTENDPIDT TERN(PREHEAT_1_TEMP_HOTEND, PREHEAT_1_TEMP_HOTEND, 195)
+#define DEF_BEDPIDT TERN(PREHEAT_1_TEMP_BED, PREHEAT_1_TEMP_BED, 70)
 #define DEF_PIDCYCLES 5
 
 //=============================================================================
@@ -85,9 +85,9 @@
   #if HAS_TOOLBAR
     #define TBMaxOpt 5                    // Amount of shortcuts on screen
     #if HAS_BED_PROBE
-      #define DEF_TBOPT {9, 8, 0, 1, 4}   // Default shorcuts for ALB/UBL
+      #define DEF_TBOPT {1, 7, 6, 2, 4}   // Default shorcuts for ALB/UBL
     #else
-      #define DEF_TBOPT {7, 0, 6, 2, 8};  // Default shortcuts for MM
+      #define DEF_TBOPT {1, 5, 4, 2, 3};  // Default shortcuts for MM
     #endif
   #endif
 

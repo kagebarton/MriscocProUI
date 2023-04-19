@@ -1640,7 +1640,7 @@ void MarlinSettings::postprocess() {
     #endif
 
     #if ENABLED(HAS_MESH) && ENABLED(USE_UBL_VIEWER)
-      EEPROM_WRITE(BedLevelTools.view_mesh);
+      EEPROM_WRITE(bedLevelTools.view_mesh);
     #endif
     //
     // Fan tachometer check
@@ -2641,7 +2641,7 @@ void MarlinSettings::postprocess() {
 
       #if ENABLED(HAS_MESH) && ENABLED(USE_UBL_VIEWER)
         _FIELD_TEST(view_mesh);
-        EEPROM_READ(BedLevelTools.view_mesh);
+        EEPROM_READ(bedLevelTools.view_mesh);
       #endif
       //
       // Fan tachometer check
@@ -2919,7 +2919,7 @@ void MarlinSettings::postprocess() {
         #endif
 
         #if ENABLED(DWIN_LCD_PROUI)
-          status = !BedLevelTools.meshvalidate();
+          status = !bedLevelTools.meshvalidate();
           if (status) {
             bedlevel.invalidate();
             LCD_MESSAGE(MSG_UBL_MESH_INVALID);
@@ -3096,7 +3096,7 @@ void MarlinSettings::reset() {
   #endif
 
   #if ENABLED(HAS_MESH) && ENABLED(USE_UBL_VIEWER)
-    BedLevelTools.view_mesh = ENABLED(USE_UBL_VIEWER); //added mesh viewer option
+    bedLevelTools.view_mesh = ENABLED(USE_UBL_VIEWER); //added mesh viewer option
   #endif
 
   //

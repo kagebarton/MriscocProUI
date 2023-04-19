@@ -41,7 +41,7 @@
 #include "dwin_popup.h"
 #include "bedlevel_tools.h"
 
-BedLevelToolsClass BedLevelTools;
+BedLevelToolsClass bedLevelTools;
 
 #if ENABLED(USE_UBL_VIEWER)
   bool BedLevelToolsClass::viewer_asymmetric_range = false;
@@ -149,23 +149,23 @@ void BedLevelToolsClass::manual_move(const uint8_t mesh_x, const uint8_t mesh_y,
 
 // Move / Probe methods. As examples, not yet used.
 void BedLevelToolsClass::MoveToXYZ() {
-  BedLevelTools.goto_mesh_value = true;
-  BedLevelTools.manual_move(BedLevelTools.mesh_x, BedLevelTools.mesh_y, false);
+  bedLevelTools.goto_mesh_value = true;
+  bedLevelTools.manual_move(bedLevelTools.mesh_x, bedLevelTools.mesh_y, false);
 }
 void BedLevelToolsClass::MoveToXY() {
-  BedLevelTools.goto_mesh_value = false;
-  BedLevelTools.manual_move(BedLevelTools.mesh_x, BedLevelTools.mesh_y, false);
+  bedLevelTools.goto_mesh_value = false;
+  bedLevelTools.manual_move(bedLevelTools.mesh_x, bedLevelTools.mesh_y, false);
 }
 void BedLevelToolsClass::MoveToZ() {
-  BedLevelTools.goto_mesh_value = true;
-  BedLevelTools.manual_move(BedLevelTools.mesh_x, BedLevelTools.mesh_y, true);
+  bedLevelTools.goto_mesh_value = true;
+  bedLevelTools.manual_move(bedLevelTools.mesh_x, bedLevelTools.mesh_y, true);
 }
 void BedLevelToolsClass::ProbeXY() {
   const uint16_t Clear = Z_CLEARANCE_DEPLOY_PROBE;
   sprintf_P(cmd, PSTR("G0Z%i\nG30X%sY%s"),
     Clear,
-    dtostrf(bedlevel.get_mesh_x(BedLevelTools.mesh_x), 1, 2, str_1),
-    dtostrf(bedlevel.get_mesh_y(BedLevelTools.mesh_y), 1, 2, str_2)
+    dtostrf(bedlevel.get_mesh_x(bedLevelTools.mesh_x), 1, 2, str_1),
+    dtostrf(bedlevel.get_mesh_y(bedLevelTools.mesh_y), 1, 2, str_2)
   );
   gcode.process_subcommands_now(cmd);
 }

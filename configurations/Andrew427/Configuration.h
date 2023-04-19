@@ -70,7 +70,7 @@
 
 // Choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
-  #define MOTHERBOARD BOARD_CREALITY_V427 // BOARD_CREALITY_V427 BOARD_VOXELAB_AQUILA BOARD_CREALITY_V4
+  #define MOTHERBOARD BOARD_CREALITY_V427 // BOARD_CREALITY_V427/422/4 BOARD_VOXELAB_AQUILA BOARD_AQUILA_X2_H32
 #endif
 
 /**
@@ -1413,7 +1413,7 @@
  * on the right, enable and set TOUCH_MI_DEPLOY_XPOS to the deploy position.
  *
  * Also requires: BABYSTEPPING, BABYSTEP_ZPROBE_OFFSET, Z_SAFE_HOMING,
- *                and a minimum Z_HOMING_HEIGHT of 10.
+ *                and a minimum Z_CLEARANCE_FOR_HOMING of 10.
  */
 //#define TOUCH_MI_PROBE
 #if ENABLED(TOUCH_MI_PROBE)
@@ -1741,10 +1741,10 @@
  */
 #define Z_IDLE_HEIGHT Z_HOME_POS
 
-#define Z_HOMING_HEIGHT  5        // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ...
+#define Z_CLEARANCE_FOR_HOMING  5 // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ...
                                   // Be sure to have this much clearance over your Z_MAX_POS to prevent grinding.
 
-//#define Z_AFTER_HOMING  10      // (mm) Height to move to after homing Z
+//#define Z_AFTER_HOMING       10 // (mm) Height to move to after homing Z
 
 // Direction of endstops when homing; 1=MAX, -1=MIN
 // :[-1,1]
@@ -2662,7 +2662,7 @@
 //
 //  Set this option if CLOCKWISE causes values to DECREASE
 //
-#define REVERSE_ENCODER_DIRECTION
+#define REVERSE_ENCODER_DIRECTION   //Aquila enable -- Ender disable
 
 //
 // This option reverses the encoder direction for navigating LCD menus.
@@ -2713,8 +2713,20 @@
 // Note: Test audio output with the G-Code:
 //  M300 S<frequency Hz> P<duration ms>
 //
-#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2  // Ender Configs
-#define LCD_FEEDBACK_FREQUENCY_HZ 5000  // Ender Configs
+#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
+#define LCD_FEEDBACK_FREQUENCY_HZ 5000
+
+//
+// Tone queue size, used to keep beeps from blocking execution.
+// Default is 4, or override here. Costs 4 bytes of SRAM per entry.
+//
+//#define TONE_QUEUE_LENGTH 4
+
+//
+// A sequence of tones to play at startup, in pairs of tone (Hz), duration (ms).
+// Silence in-between tones.
+//
+//#define STARTUP_TUNE { 698, 300, 0, 50, 523, 50, 0, 25, 494, 50, 0, 25, 523, 100, 0, 50, 554, 300, 0, 100, 523, 300 }
 
 //=============================================================================
 //======================== LCD / Controller Selection =========================
@@ -2985,22 +2997,6 @@
 // BigTreeTech Mini 12864 V1.0 is an alias for FYSETC_MINI_12864_2_1. Type A/B. NeoPixel RGB Backlight.
 //
 //#define BTT_MINI_12864_V1
-
-//
-// Factory display for Creality CR-10
-// https://www.aliexpress.com/item/32833148327.html
-//
-// This is RAMPS-compatible using a single 10-pin connector.
-// (For CR-10 owners who want to replace the Melzi Creality board but retain the display)
-//
-//#define CR10_STOCKDISPLAY    //For DWIN LCD Ender 3 V2 / Voxelab Aquila line --> 3300
-#if ENABLED(CR10_STOCKDISPLAY)
-  #define RET6_12864_LCD
-#endif
-//
-// Ender-2 OEM display, a variant of the MKS_MINI_12864
-//
-//#define ENDER2_STOCKDISPLAY
 
 //
 // ANET and Tronxy Graphical Controller
@@ -3344,7 +3340,7 @@
 //
 // Ender-3 v2 OEM display. A DWIN display with Rotary Encoder.
 //
-// LCD-12864 Ender 3 / CR10_STOCKDISPLAY line --> 2960
+// DWIN / DACAI LCD 4.3" 480x272
 
 //#define DWIN_CREALITY_LCD           // Creality UI
 #define DWIN_LCD_PROUI              // Pro UI by MRiscoC
@@ -3377,6 +3373,25 @@
 //#define DWIN_CREALITY_LCD_JYERSUI   // Jyers UI by Jacob Myers
 //#define DWIN_MARLINUI_PORTRAIT      // MarlinUI (portrait orientation)
 //#define DWIN_MARLINUI_LANDSCAPE     // MarlinUI (landscape orientation)
+
+//
+// Factory display for Creality CR-10
+// https://www.aliexpress.com/item/32833148327.html
+//
+// This is RAMPS-compatible using a single 10-pin connector.
+// (For CR-10 owners who want to replace the Melzi Creality board but retain the display)
+//
+// 2.4" 128x64 LCD
+
+//#define CR10_STOCKDISPLAY    //For Ender-3 / Aquila C2 blue/white monochrome LCD
+#if ENABLED(CR10_STOCKDISPLAY) //BTT_SKR_MINI_E3
+  #define RET6_12864_LCD
+#endif
+
+//
+// Ender-2 OEM display, a variant of the MKS_MINI_12864
+//
+//#define ENDER2_STOCKDISPLAY
 
 //
 // Touch Screen Settings
@@ -3511,7 +3526,7 @@
 // Support for Adafruit NeoPixel LED driver
 //#define NEOPIXEL_LED
 #if ENABLED(NEOPIXEL_LED)
-  #define NEOPIXEL_TYPE          NEO_GRBW // NEO_GRBW, NEO_RGBW, NEO_GRB, NEO_RBG, etc.
+  #define NEOPIXEL_TYPE           NEO_GRB // NEO_GRBW, NEO_RGBW, NEO_GRB, NEO_RBG, etc.
                                           // See https://github.com/adafruit/Adafruit_NeoPixel/blob/master/Adafruit_NeoPixel.h
   #define NEOPIXEL_PIN               PA13 // LED driving pin
   //#define NEOPIXEL2_TYPE  NEOPIXEL_TYPE

@@ -6,12 +6,13 @@ on:
     types: [created]  
 
 jobs:
-  Build-Default:
+  Build-Default-A:
     name: Build Default Files
     runs-on: ubuntu-latest
     strategy:
       matrix:
         chip: [GD32,N32]
+        inshape: [true,false]
     steps:
     - uses: actions/checkout@v2
     - name: Cache pip
@@ -36,17 +37,22 @@ jobs:
     - name: Run PlatformIO
       id: build_configs
       run: |
+        if ($IS); then ISTMP=-IS; else ISTMP=; fi;        
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "filename=ProUI-Default-NP-${AVTMP}.bin" >> $GITHUB_OUTPUT
+        echo "filename=${AVTMP}_Default-NP-ProUI${ISTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/Default-NP/Configuration.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/Default-NP/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/Voxelab\ Aquila/Default-NP/Version.h Marlin/Version.h
         sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
+        if ($IS); then TEMP=; else TEMP='\/\/'; fi;
+        sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
+        sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h        
         pio run
         mkdir temp
         mv .pio/build/STM32F103RC_voxelab_maple_$AQUILA_VER/*.bin temp/build.bin
       env:
         AQUILA_VER: ${{ matrix.chip }}
+        IS: ${{ matrix.inshape }}
     - name: Get release
       id: get_release
       uses: bruceadams/get-release@v1.3.2
@@ -61,74 +67,13 @@ jobs:
         asset_path: temp/build.bin
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
-  # Build-BLTouch:
-  #   name: Build BL-Touch Files
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       chip: [GD32,N32]
-  #       grid: [3,4,5,9]
-  #       highspeed: [true,false]
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - name: Cache pip
-  #     uses: actions/cache@v3
-  #     with:
-  #       path: ~/.cache/pip
-  #       key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-  #       restore-keys: |
-  #         ${{ runner.os }}-pip-
-  #   - name: Cache PlatformIO
-  #     uses: actions/cache@v3
-  #     with:
-  #       path: ~/.platformio
-  #       key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-  #   - name: Set up Python
-  #     uses: actions/setup-python@v3
-  #   - name: Install PlatformIO
-  #     run: |
-  #       python -m pip install --upgrade pip
-  #       pip install --upgrade platformio
-  #   - name: Run PlatformIO
-  #     id: build_configs
-  #     run: |
-  #       if ($HS); then ISTMP=-HS; else ISTMP=; fi;
-  #       if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-  #       echo "::set-output name=filename::BLTouch-${GRID}x${GRID}${ISTMP}-${AVTMP}.bin"
-  #       cp Configuration\ Files/Aquila\ Templates/BLTouch-3x3/Configuration.h Marlin/Configuration.h
-  #       cp Configuration\ Files/Aquila\ Templates/BLTouch-3x3/Configuration_adv.h Marlin/Configuration_adv.h
-  #       sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
-  #       sed -i "s/#define GRID_MAX_POINTS_X.*/#define GRID_MAX_POINTS_X $GRID/g" Marlin/Configuration.h
-  #       if ($HS); then TEMP=; else TEMP='\/\/'; fi;
-  #       sed -i "s/[^ ]*#define BLTOUCH_HS_MODE/$TEMP#define BLTOUCH_HS_MODE/g" Marlin/Configuration_adv.h
-  #       pio run
-  #       mkdir temp
-  #       mv .pio/build/STM32F103RC_voxelab_maple_$AQUILA_VER/*.bin temp/build.bin
-  #     env:
-  #       AQUILA_VER: ${{ matrix.chip }}
-  #       GRID: ${{ matrix.grid }}
-  #       HS: ${{ matrix.highspeed }}
-  #   - name: Get release
-  #     id: get_release
-  #     uses: bruceadams/get-release@v1.3.2
-  #     env:
-  #       GITHUB_TOKEN: ${{ github.token }}
-  #   - name: Upload Release Asset
-  #     uses: actions/upload-release-asset@v1
-  #     env:
-  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #     with:
-  #       upload_url: ${{ steps.get_release.outputs.upload_url }}
-  #       asset_path: temp/build.bin
-  #       asset_name: ${{ steps.build_configs.outputs.filename }}
-  #       asset_content_type: application/x-binary
-  Build-Manual-Mesh:
+  Build-Manual-Mesh-A:
     name: Build Manual-Mesh Files
     runs-on: ubuntu-latest
     strategy:
       matrix:
         chip: [GD32,N32]
-        grid: [3,5,7]
+        inshape: [true,false]
     steps:
     - uses: actions/checkout@v2
     - name: Cache pip
@@ -153,19 +98,22 @@ jobs:
     - name: Run PlatformIO
       id: build_configs
       run: |
+        if ($IS); then ISTMP=-IS; else ISTMP=; fi;        
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "filename=ProUI-MM-${GRID}x${GRID}-${AVTMP}.bin" >> $GITHUB_OUTPUT
+        echo "filename=${AVTMP}-MM-ProUI${ISTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/MM/Configuration.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/MM/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/Voxelab\ Aquila/MM/Version.h Marlin/Version.h
         sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
-        sed -i "s/#define GRID_MAX_POINTS_X.*/#define GRID_MAX_POINTS_X $GRID/g" Marlin/Configuration.h
+        if ($IS); then TEMP=; else TEMP='\/\/'; fi;
+        sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
+        sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h        
         pio run
         mkdir temp
         mv .pio/build/STM32F103RC_voxelab_maple_$AQUILA_VER/*.bin temp/build.bin
       env:
         AQUILA_VER: ${{ matrix.chip }}
-        GRID: ${{ matrix.grid }}
+        IS: ${{ matrix.inshape }}
     - name: Get release
       id: get_release
       uses: bruceadams/get-release@v1.3.2
@@ -180,13 +128,12 @@ jobs:
         asset_path: temp/build.bin
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
-  Build-UBL-BLTouch:
+  Build-UBL-BLTouch-A:
     name: Build BL-Touch UBL Files
     runs-on: ubuntu-latest
     strategy:
       matrix:
         chip: [GD32,N32]
-        grid: [5,7]
         inshape: [true,false]
     steps:
     - uses: actions/checkout@v2
@@ -214,9 +161,71 @@ jobs:
       run: |
         if ($IS); then ISTMP=-IS; else ISTMP=; fi;
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "filename=ProUI-UBL-${GRID}x${GRID}${ISTMP}-${AVTMP}.bin" >> $GITHUB_OUTPUT
+        echo "filename=${AVTMP}_UBL-ProUI${ISTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/UBL/Configuration\ Pro.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/UBL/Configuration_adv\ Pro.h Marlin/Configuration_adv.h
+        cp configurations/Voxelab\ Aquila/UBL/Version.h Marlin/Version.h
+        sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
+        if ($IS); then TEMP=; else TEMP='\/\/'; fi;
+        sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
+        sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h
+        pio run
+        mkdir temp
+        mv .pio/build/STM32F103RC_voxelab_maple_$AQUILA_VER/*.bin temp/build.bin
+      env:
+        AQUILA_VER: ${{ matrix.chip }}
+        IS: ${{ matrix.inshape }}
+    - name: Get release
+      id: get_release
+      uses: bruceadams/get-release@v1.3.2
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.get_release.outputs.upload_url }}
+        asset_path: temp/build.bin
+        asset_name: ${{ steps.build_configs.outputs.filename }}
+        asset_content_type: application/x-binary
+  Build-UBL-BLTouch-A-NP:
+    name: Build BL-Touch UBL Files
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        chip: [GD32,N32]
+        grid: [3,4,5,7]
+        inshape: [true,false]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Cache pip
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v3
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+    - name: Set up Python
+      uses: actions/setup-python@v3
+    - name: Install PlatformIO
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install --upgrade wheel
+        pip install --upgrade platformio
+    - name: Run PlatformIO
+      id: build_configs
+      run: |
+        if ($IS); then ISTMP=-IS; else ISTMP=; fi;
+        if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
+        echo "filename=${AVTMP}_UBL-${GRID}x${GRID}-NoPro${ISTMP}.bin" >> $GITHUB_OUTPUT
+        cp configurations/Voxelab\ Aquila/UBL/Configuration.h Marlin/Configuration.h
+        cp configurations/Voxelab\ Aquila/UBL/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/Voxelab\ Aquila/UBL/Version.h Marlin/Version.h
         sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
         sed -i "s/#define GRID_MAX_POINTS_X.*/#define GRID_MAX_POINTS_X $GRID/g" Marlin/Configuration.h
@@ -244,59 +253,252 @@ jobs:
         asset_path: temp/build.bin
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
-  # Build-UBL-NoProbe:
-  #   name: Build NoProbe UBL Files
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       chip: [GD32,N32]
-  #       grid: [3,5]
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - name: Cache pip
-  #     uses: actions/cache@v3
-  #     with:
-  #       path: ~/.cache/pip
-  #       key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-  #       restore-keys: |
-  #         ${{ runner.os }}-pip-
-  #   - name: Cache PlatformIO
-  #     uses: actions/cache@v3
-  #     with:
-  #       path: ~/.platformio
-  #       key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-  #   - name: Set up Python
-  #     uses: actions/setup-python@v3
-  #   - name: Install PlatformIO
-  #     run: |
-  #       python -m pip install --upgrade pip
-  #       pip install --upgrade platformio
-  #   - name: Run PlatformIO
-  #     id: build_configs
-  #     run: |
-  #       if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-  #       echo "::set-output name=filename::UBL-NoProbe-${GRID}x${GRID}-${AVTMP}.bin"
-  #       cp Configuration\ Files/Aquila\ Templates/UBL-NoProbe-3x3/Configuration.h Marlin/Configuration.h
-  #       cp Configuration\ Files/Aquila\ Templates/UBL-NoProbe-3x3/Configuration_adv.h Marlin/Configuration_adv.h
-  #       sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
-  #       sed -i "s/#define GRID_MAX_POINTS_X.*/#define GRID_MAX_POINTS_X $GRID/g" Marlin/Configuration.h
-  #       pio run
-  #       mkdir temp
-  #       mv .pio/build/STM32F103RC_voxelab_maple_$AQUILA_VER/*.bin temp/build.bin
-  #     env:
-  #       AQUILA_VER: ${{ matrix.chip }}
-  #       GRID: ${{ matrix.grid }}
-  #   - name: Get release
-  #     id: get_release
-  #     uses: bruceadams/get-release@v1.3.2
-  #     env:
-  #       GITHUB_TOKEN: ${{ github.token }}
-  #   - name: Upload Release Asset
-  #     uses: actions/upload-release-asset@v1
-  #     env:
-  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #     with:
-  #       upload_url: ${{ steps.get_release.outputs.upload_url }}
-  #       asset_path: temp/build.bin
-  #       asset_name: ${{ steps.build_configs.outputs.filename }}
-  #       asset_content_type: application/x-binary
+        ################################################## Ender-3
+  Build-Default-E:
+    name: Build Default Files
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        board: [V422,V427]
+        inshape: [true,false]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Cache pip
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v3
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+    - name: Set up Python
+      uses: actions/setup-python@v3
+    - name: Install PlatformIO
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install --upgrade wheel
+        pip install --upgrade platformio
+    - name: Run PlatformIO
+      id: build_configs
+      run: |
+        if ($IS); then ISTMP=-IS; else ISTMP=; fi;        
+        if [ "$BOARD" = V422 ]; then BOARDTMP=422 else BOARDTMP=427; fi;
+        echo "filename=Ender3V2-${BOARDTMP}_Default-NP-ProUI${ISTMP}.bin" >> $GITHUB_OUTPUT
+        cp configurations/Creality\ Ender/Ender3V2-NP/Configuration.h Marlin/Configuration.h
+        cp configurations/Creality\ Ender/Ender3V2-NP/Configuration_adv.h Marlin/Configuration_adv.h
+        cp configurations/Creality\ Ender/Ender3V2-NP/Version.h Marlin/Version.h
+        sed -i "s/#define MOTHERBOARD BOARD_CREALITY_.*/#define MOTHERBOARD BOARD_CREALITY_$BOARD/g" Marlin/Configuration.h
+        sed -i "s/default_envs =.*/default_envs = STM32F103RE_creality/g" platformio.ini
+        if ($IS); then TEMP=; else TEMP='\/\/'; fi;
+        sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
+        sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h        
+        pio run
+        mkdir temp
+        mv .pio/build/STM32F103RE_creality/*.bin temp/build.bin
+      env:
+        BOARD: ${{ matrix.board }}
+        IS: ${{ matrix.inshape }}
+    - name: Get release
+      id: get_release
+      uses: bruceadams/get-release@v1.3.2
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.get_release.outputs.upload_url }}
+        asset_path: temp/build.bin
+        asset_name: ${{ steps.build_configs.outputs.filename }}
+        asset_content_type: application/x-binary
+  Build-Manual-Mesh-E:
+    name: Build Manual-Mesh Files
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        board: [V422,V427]
+        inshape: [true,false]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Cache pip
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v3
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+    - name: Set up Python
+      uses: actions/setup-python@v3
+    - name: Install PlatformIO
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install --upgrade wheel
+        pip install --upgrade platformio
+    - name: Run PlatformIO
+      id: build_configs
+      run: |
+        if ($IS); then ISTMP=-IS; else ISTMP=; fi;        
+        if [ "$BOARD" = V422 ]; then BOARDTMP=422; else BOARDTMP=427; fi;
+        echo "filename=Ender3-${BOARDTMP}-MM-ProUI${ISTMP}.bin" >> $GITHUB_OUTPUT
+        cp configurations/Creality\ Ender/Ender3V2-MM/Configuration.h Marlin/Configuration.h
+        cp configurations/Creality\ Ender/Ender3V2-MM/Configuration_adv.h Marlin/Configuration_adv.h
+        cp configurations/Creality\ Ender/Ender3V2-MM/Version.h Marlin/Version.h
+        sed -i "s/default_envs =.*/default_envs = STM32F103RE_creality/g" platformio.ini
+        if ($IS); then TEMP=; else TEMP='\/\/'; fi;
+        sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
+        sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h        
+        pio run
+        mkdir temp
+        mv .pio/build/STM32F103RE_creality/*.bin temp/build.bin
+      env:
+        BOARD: ${{ matrix.board }}
+        IS: ${{ matrix.inshape }}
+    - name: Get release
+      id: get_release
+      uses: bruceadams/get-release@v1.3.2
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.get_release.outputs.upload_url }}
+        asset_path: temp/build.bin
+        asset_name: ${{ steps.build_configs.outputs.filename }}
+        asset_content_type: application/x-binary
+  Build-UBL-BLTouch-E:
+    name: Build BL-Touch UBL Files
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        board: [V422,V427]
+        inshape: [true,false]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Cache pip
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v3
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+    - name: Set up Python
+      uses: actions/setup-python@v3
+    - name: Install PlatformIO
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install --upgrade wheel
+        pip install --upgrade platformio
+    - name: Run PlatformIO
+      id: build_configs
+      run: |
+        if ($IS); then ISTMP=-IS; else ISTMP=; fi;
+        if [ "$BOARD" = V422 ]; then BOARDTMP=422; else BOARDTMP=427; fi;
+        echo "filename=Ender3-${BOARDTMP}_UBL-ProUI${ISTMP}.bin" >> $GITHUB_OUTPUT
+        cp configurations/Creality\ Ender/Ender3V2-UBL/Configuration\ Pro.h Marlin/Configuration.h
+        cp configurations/Creality\ Ender/Ender3V2-UBL/Configuration_adv\ Pro.h Marlin/Configuration_adv.h
+        cp configurations/Creality\ Ender/Ender3V2-UBL/Version.h Marlin/Version.h
+        sed -i "s/default_envs =.*/default_envs = STM32F103RE_creality/g" platformio.ini
+        if ($IS); then TEMP=; else TEMP='\/\/'; fi;
+        sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
+        sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h
+        pio run
+        mkdir temp
+        mv .pio/build/STM32F103RE_creality/*.bin temp/build.bin
+      env:
+        BOARD: ${{ matrix.board }}
+        IS: ${{ matrix.inshape }}
+    - name: Get release
+      id: get_release
+      uses: bruceadams/get-release@v1.3.2
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.get_release.outputs.upload_url }}
+        asset_path: temp/build.bin
+        asset_name: ${{ steps.build_configs.outputs.filename }}
+        asset_content_type: application/x-binary
+  Build-UBL-BLTouch-E-NP:
+    name: Build BL-Touch UBL Files
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        board: [V422,V427]
+        grid: [3,4,5,6,7]
+        inshape: [true,false]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Cache pip
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v3
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+    - name: Set up Python
+      uses: actions/setup-python@v3
+    - name: Install PlatformIO
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install --upgrade wheel
+        pip install --upgrade platformio
+    - name: Run PlatformIO
+      id: build_configs
+      run: |
+        if ($IS); then ISTMP=-IS; else ISTMP=; fi;
+        if [ "$BOARD" = V422 ]; then BOARDTMP=422; else BOARDTMP=427; fi;
+        echo "filename=Ender3-${BOARDTMP}_UBL-${GRID}x${GRID}-NoPro${ISTMP}.bin" >> $GITHUB_OUTPUT
+        cp configurations/Creality\ Ender/Ender3V2-UBL/Configuration\ Pro.h Marlin/Configuration.h
+        cp configurations/Creality\ Ender/Ender3V2-UBL/Configuration_adv\ Pro.h Marlin/Configuration_adv.h
+        cp configurations/Creality\ Ender/Ender3V2-UBL/Version.h Marlin/Version.h
+        sed -i "s/default_envs =.*/default_envs = STM32F103RE_creality/g" platformio.ini
+        sed -i "s/#define GRID_MAX_POINTS_X.*/#define GRID_MAX_POINTS_X $GRID/g" Marlin/Configuration.h
+        if ($IS); then TEMP=; else TEMP='\/\/'; fi;
+        sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
+        sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h
+        pio run
+        mkdir temp
+        mv .pio/build/STM32F103RE_creality/*.bin temp/build.bin
+      env:
+        BOARD: ${{ matrix.board }}
+        GRID: ${{ matrix.grid }}
+        IS: ${{ matrix.inshape }}
+    - name: Get release
+      id: get_release
+      uses: bruceadams/get-release@v1.3.2
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.get_release.outputs.upload_url }}
+        asset_path: temp/build.bin
+        asset_name: ${{ steps.build_configs.outputs.filename }}
+        asset_content_type: application/x-binary

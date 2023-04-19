@@ -1,4 +1,4 @@
-/** Aquila Manual Mesh
+/** Aquila UBL Mriscoc ProUI
  * Marlin 3D Printer Firmware
  * Copyright (c) 2022 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
@@ -70,7 +70,7 @@
 
 // Choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
-  #define MOTHERBOARD BOARD_CREALITY_V427 // BOARD_CREALITY_V427 BOARD_VOXELAB_AQUILA BOARD_CREALITY_V422
+  #define MOTHERBOARD BOARD_VOXELAB_AQUILA // BOARD_CREALITY_V427 BOARD_VOXELAB_AQUILA BOARD_CREALITY_V4
 #endif
 
 /**
@@ -1333,10 +1333,10 @@
  * The probe replaces the Z-MIN endstop and is used for Z homing.
  * (Automatically enables USE_PROBE_FOR_Z_HOMING.)
  */
-#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN  // Probe connected to BLTouch port
+//#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN  // Probe connected to BLTouch port
 
 // Force the use of the probe for Z-axis homing
-//#define USE_PROBE_FOR_Z_HOMING  // Manual mesh not have a probe
+#define USE_PROBE_FOR_Z_HOMING  // Manual mesh not have a probe
 
 /**
  * Z_MIN_PROBE_PIN
@@ -1365,7 +1365,7 @@
  * Use G29 repeatedly, adjusting the Z height at each point with movement commands
  * or (with LCD_BED_LEVELING) the LCD controller.
  */
-#define PROBE_MANUALLY  // Manual mesh version
+//#define PROBE_MANUALLY  // Manual mesh version
 
 /**
  * A Fix-Mounted Probe either doesn't deploy or needs manual deployment.
@@ -1393,7 +1393,7 @@
 /**
  * The BLTouch probe uses a Hall effect sensor and emulates a servo.
  */
-//#define BLTOUCH  // 3D/CR/BLTouch version
+#define BLTOUCH  // 3D/CR/BLTouch version
 
 /**
  * MagLev V4 probe by MDD
@@ -1611,7 +1611,7 @@
  * A total of 2 does fast/slow probes with a weighted average.
  * A total of 3 or more adds more slow probes, taking the average.
  */
-//#define MULTIPLE_PROBING 1    // Use a value of (1) with ProUIex, otherwise (2)
+#define MULTIPLE_PROBING 1    // Use a value of (1) with ProUIex, otherwise (2)
 //#define EXTRA_PROBING    1
 
 /**
@@ -1628,7 +1628,7 @@
  * Example: `M851 Z-5` with a CLEARANCE of 4  =>  9mm from bed to nozzle.
  *     But: `M851 Z+1` with a CLEARANCE of 2  =>  2mm from bed to nozzle.
  */
-#define Z_CLEARANCE_DEPLOY_PROBE    5 // Z Clearance for Deploy/Stow
+#define Z_CLEARANCE_DEPLOY_PROBE   10 // Z Clearance for Deploy/Stow
 #define Z_CLEARANCE_BETWEEN_PROBES  5 // Z Clearance between probe points
 #define Z_CLEARANCE_MULTI_PROBE     5 // Z Clearance between multiple probes
 //#define Z_AFTER_PROBING           5 // Z position after probing is done
@@ -1640,7 +1640,7 @@
 #define Z_PROBE_OFFSET_RANGE_MAX 20
 
 // Enable the M48 repeatability test to test probe accuracy
-//#define Z_MIN_PROBE_REPEATABILITY_TEST
+#define Z_MIN_PROBE_REPEATABILITY_TEST
 
 // Before deploy/stow pause for user confirmation
 //#define PAUSE_BEFORE_DEPLOY_STOW
@@ -1740,12 +1740,12 @@
  *  - Use a low value (i.e., Z_MIN_POS) if the nozzle falls down to the bed.
  *  - Use a large value (i.e., Z_MAX_POS) if the bed falls down, away from the nozzle.
  */
-//#define Z_IDLE_HEIGHT Z_HOME_POS
+#define Z_IDLE_HEIGHT Z_HOME_POS
 
-//#define Z_CLEARANCE_FOR_HOMING  5 // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ...
+#define Z_CLEARANCE_FOR_HOMING  5 // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ...
                                   // Be sure to have this much clearance over your Z_MAX_POS to prevent grinding.
 
-#define Z_AFTER_HOMING       10 // (mm) Height to move to after homing Z
+//#define Z_AFTER_HOMING       10 // (mm) Height to move to after homing Z
 
 // Direction of endstops when homing; 1=MAX, -1=MIN
 // :[-1,1]
@@ -1769,7 +1769,7 @@
 #define X_MIN_POS 0  // MRiscoC Stock physical limit
 #define Y_MIN_POS 0  // MRiscoC Stock physical limit
 #define Z_MIN_POS 0
-#define X_MAX_POS 220  // MRiscoC Stock physical limit
+#define X_MAX_POS 230  // MRiscoC Stock physical limit
 #define Y_MAX_POS 220  // MRiscoC Stock physical limit
 #define Z_MAX_POS 250  // Ender Configs
 //#define I_MIN_POS 0
@@ -1841,7 +1841,7 @@
  */
 #define FILAMENT_RUNOUT_SENSOR            // MRiscoC Enabled runout sensor support
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-  #define FIL_RUNOUT_ENABLED_DEFAULT false // Enable the sensor on startup. Override with M412 followed by M500.
+  #define FIL_RUNOUT_ENABLED_DEFAULT false// Enable the sensor on startup. Override with M412 followed by M500.
   #define NUM_RUNOUT_SENSORS   1          // Number of sensors, up to one per extruder. Define a FIL_RUNOUT#_PIN for each.
 
   #define FIL_RUNOUT_STATE     HIGH       // Pin state indicating that filament is NOT present.
@@ -1983,8 +1983,8 @@
 //#define AUTO_BED_LEVELING_3POINT
 //#define AUTO_BED_LEVELING_LINEAR
 //#define AUTO_BED_LEVELING_BILINEAR  // MRiscoC BLTouch auto level
-//#define AUTO_BED_LEVELING_UBL
-#define MESH_BED_LEVELING
+#define AUTO_BED_LEVELING_UBL
+//#define MESH_BED_LEVELING
 
 /**
  * Normally G28 leaves leveling disabled on completion. Enable one of
@@ -2052,7 +2052,7 @@
   /**
    * Enable the G26 Mesh Validation Pattern tool.
    */
-  #define G26_MESH_VALIDATION
+  //#define G26_MESH_VALIDATION
   #if ENABLED(G26_MESH_VALIDATION)
     #define MESH_TEST_NOZZLE_SIZE    0.4  // (mm) Diameter of primary nozzle.
     #define MESH_TEST_LAYER_HEIGHT   0.2  // (mm) Default layer height for G26.
@@ -2230,7 +2230,7 @@
  * - Allows Z homing only when XY positions are known and trusted.
  * - If stepper drivers sleep, XY homing may be required again before Z homing.
  */
-//#define Z_SAFE_HOMING  // MRiscoC Homing Z at center of bed
+#define Z_SAFE_HOMING  // MRiscoC Homing Z at center of bed
 
 #if ENABLED(Z_SAFE_HOMING)
   #define Z_SAFE_HOMING_X_POINT X_CENTER  // X point for Z homing
@@ -2319,7 +2319,7 @@
  */
 #define EEPROM_SETTINGS       // Persistent storage with M500 and M501  // Ender Configs
 //#define DISABLE_M503        // Saves ~2700 bytes of flash. Disable for release!
-#define EEPROM_CHITCHAT       // Give feedback on EEPROM commands. Disable to save PROGMEM.
+//#define EEPROM_CHITCHAT     // Give feedback on EEPROM commands. Disable to save PROGMEM.
 #define EEPROM_BOOT_SILENT    // Keep M503 quiet and only give errors during first load
 #if ENABLED(EEPROM_SETTINGS)
   #define EEPROM_AUTO_INIT    // Init EEPROM automatically on any errors.  // Ender Configs
@@ -2367,10 +2367,10 @@
 //#define PREHEAT_2_TEMP_CHAMBER 35
 #define PREHEAT_2_FAN_SPEED     0 // Value from 0 to 255
 
-#define PREHEAT_3_LABEL       "Warmup"
-#define PREHEAT_3_TEMP_HOTEND 200
-#define PREHEAT_3_TEMP_BED     50
-#define PREHEAT_3_FAN_SPEED     0
+//#define PREHEAT_3_LABEL       "Warmup"
+//#define PREHEAT_3_TEMP_HOTEND 200
+//#define PREHEAT_3_TEMP_BED     50
+//#define PREHEAT_3_FAN_SPEED     0
 
 //#define PREHEAT_4_LABEL       "TPU"
 //#define PREHEAT_4_TEMP_HOTEND 230
@@ -2442,7 +2442,7 @@
  *
  *   Caveats: The ending Z should be the same as starting Z.
  */
-#define NOZZLE_CLEAN_FEATURE
+//#define NOZZLE_CLEAN_FEATURE
 
 #if ENABLED(NOZZLE_CLEAN_FEATURE)
   // Default number of pattern repetitions
@@ -2663,7 +2663,7 @@
 //
 //  Set this option if CLOCKWISE causes values to DECREASE
 //
-#define REVERSE_ENCODER_DIRECTION
+#define REVERSE_ENCODER_DIRECTION   //Aquila enable -- Ender disable
 
 //
 // This option reverses the encoder direction for navigating LCD menus.
@@ -2998,22 +2998,6 @@
 // BigTreeTech Mini 12864 V1.0 is an alias for FYSETC_MINI_12864_2_1. Type A/B. NeoPixel RGB Backlight.
 //
 //#define BTT_MINI_12864_V1
-
-//
-// Factory display for Creality CR-10
-// https://www.aliexpress.com/item/32833148327.html
-//
-// This is RAMPS-compatible using a single 10-pin connector.
-// (For CR-10 owners who want to replace the Melzi Creality board but retain the display)
-//
-//#define CR10_STOCKDISPLAY    //For DWIN LCD Ender 3 V2 / Voxelab Aquila line --> 3300
-#if ENABLED(CR10_STOCKDISPLAY)
-  #define RET6_12864_LCD
-#endif
-//
-// Ender-2 OEM display, a variant of the MKS_MINI_12864
-//
-//#define ENDER2_STOCKDISPLAY
 
 //
 // ANET and Tronxy Graphical Controller
@@ -3353,11 +3337,12 @@
 //=============================================================================
 //============================  Other Controllers  ============================
 //=============================================================================
+//@section proui
 
 //
 // Ender-3 v2 OEM display. A DWIN display with Rotary Encoder.
 //
-// LCD-12864 Ender 3 / CR10_STOCKDISPLAY line --> 2960
+// DWIN / DACAI LCD 4.3" 480x272
 
 //#define DWIN_CREALITY_LCD           // Creality UI
 #define DWIN_LCD_PROUI              // Pro UI by MRiscoC
@@ -3366,30 +3351,58 @@
 // Professional firmware features:
 #define ProUIex 1
 #ifdef ProUIex
-  #define HAS_GCODE_PREVIEW 1
+  #define HAS_GCODE_PREVIEW 1  // Enables the option to turn on/off Part Model Preview
   #define HAS_TOOLBAR 1
 #endif
   #define HAS_PLOT 1
-  #define HAS_ESDIAG 1
+  //#define HAS_ESDIAG 1
   #define HAS_CGCODE 1
-  #define HAS_LOCKSCREEN 1
+  //#define HAS_LOCKSCREEN 1
   //#define HAS_SD_EXTENDER 1  // Enable to support SD card extender cables
   #define SHOW_REAL_POS
-  #define ACTIVATE_MESH_ITEM  // Allows temporary enabling of mesh leveling
+  //#define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option
   #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-    #define RUNOUT_TUNE_ITEM
+    #define RUNOUT_TUNE_ITEM  // Filament Runout option in Tune Menu
   #endif
   #if ENABLED(POWER_LOSS_RECOVERY)
-    #define PLR_TUNE_ITEM
+    #define PLR_TUNE_ITEM  // Power-loss Recovery option in Tune Menu
   #endif
-  //#define JD_TUNE_ITEM  // Enable only if Juntion Deviation is enabled
-  #define ADVK_TUNE_ITEM  // Enable only if Linear Advance is enabled
-  #define PLOT_TUNE_ITEM  // Enable only if HAS_PLOT is enabled
-  //#define MEDIASORT_MENU_ITEM  // Allows enable/disable file list sorting
+  #if ENABLED(BLTOUCH)
+    //#define HS_MENU_ITEM  // BLTOUCH_HS_MODE menu option
+  #endif
+  #if ENABLED(HAS_PLOT)
+    #define PLOT_TUNE_ITEM  // Temperature Plot Graph item in Tune Menu
+  #endif
+  #if DISABLED(CLASSIC_JERK)
+    //#define JD_TUNE_ITEM  // Enable only if Juntion Deviation is enabled
+  #endif
+  #define ADVK_TUNE_ITEM  // Linear Advance item in Tune Menu
+  //#define ALTCOLOR_MENU_ITEM   // Alternate Color palette option
+  #define TRAMWIZ_MENU_ITEM      // Enable Tramming Wizard
+  //#define MEDIASORT_MENU_ITEM  // File list sorting option
 
 //#define DWIN_CREALITY_LCD_JYERSUI   // Jyers UI by Jacob Myers
 //#define DWIN_MARLINUI_PORTRAIT      // MarlinUI (portrait orientation)
 //#define DWIN_MARLINUI_LANDSCAPE     // MarlinUI (landscape orientation)
+
+//
+// Factory display for Creality CR-10
+// https://www.aliexpress.com/item/32833148327.html
+//
+// This is RAMPS-compatible using a single 10-pin connector.
+// (For CR-10 owners who want to replace the Melzi Creality board but retain the display)
+//
+// 2.4" 128x64 LCD
+
+//#define CR10_STOCKDISPLAY    //For Ender-3 / Aquila C2 blue/white monochrome LCD
+#if ENABLED(CR10_STOCKDISPLAY) //BTT_SKR_MINI_E3
+  #define RET6_12864_LCD
+#endif
+
+//
+// Ender-2 OEM display, a variant of the MKS_MINI_12864
+//
+//#define ENDER2_STOCKDISPLAY
 
 //
 // Touch Screen Settings
@@ -3524,7 +3537,7 @@
 // Support for Adafruit NeoPixel LED driver
 //#define NEOPIXEL_LED
 #if ENABLED(NEOPIXEL_LED)
-  #define NEOPIXEL_TYPE          NEO_GRBW // NEO_GRBW, NEO_RGBW, NEO_GRB, NEO_RBG, etc.
+  #define NEOPIXEL_TYPE           NEO_GRB // NEO_GRBW, NEO_RGBW, NEO_GRB, NEO_RBG, etc.
                                           // See https://github.com/adafruit/Adafruit_NeoPixel/blob/master/Adafruit_NeoPixel.h
   #define NEOPIXEL_PIN               PA13 // LED driving pin
   //#define NEOPIXEL2_TYPE  NEOPIXEL_TYPE
