@@ -1417,13 +1417,13 @@ float get_move_distance(const xyze_pos_t &diff OPTARG(HAS_ROTATIONAL_AXES, bool 
 
   void idex_set_mirrored_mode(const bool mirr) {
     idex_mirrored_mode = mirr;
-    stepper.set_directions();
+    stepper.apply_directions();
   }
 
   void set_duplication_enabled(const bool dupe, const int8_t tool_index/*=-1*/) {
     extruder_duplication_enabled = dupe;
     if (tool_index >= 0) active_extruder = tool_index;
-    stepper.set_directions();
+    stepper.apply_directions();
   }
 
   void idex_set_parked(const bool park/*=true*/) {
@@ -1469,7 +1469,7 @@ float get_move_distance(const xyze_pos_t &diff OPTARG(HAS_ROTATIONAL_AXES, bool 
               line_to_current_position(fr_zfast);
             }
           }
-          stepper.set_directions();
+          stepper.apply_directions();
 
           idex_set_parked(false);
           if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("idex_set_parked(false)");
@@ -2169,32 +2169,9 @@ void prepare_line_to_destination() {
         // Check for a broken endstop
         EndstopEnum es;
         switch (axis) {
-          default:
-          case X_AXIS: es = X_ENDSTOP; break;
-          #if HAS_Y_AXIS
-            case Y_AXIS: es = Y_ENDSTOP; break;
-          #endif
-          #if HAS_Z_AXIS
-            case Z_AXIS: es = Z_ENDSTOP; break;
-          #endif
-          #if HAS_I_AXIS
-            case I_AXIS: es = I_ENDSTOP; break;
-          #endif
-          #if HAS_J_AXIS
-            case J_AXIS: es = J_ENDSTOP; break;
-          #endif
-          #if HAS_K_AXIS
-            case K_AXIS: es = K_ENDSTOP; break;
-          #endif
-          #if HAS_U_AXIS
-            case U_AXIS: es = U_ENDSTOP; break;
-          #endif
-          #if HAS_V_AXIS
-            case V_AXIS: es = V_ENDSTOP; break;
-          #endif
-          #if HAS_W_AXIS
-            case W_AXIS: es = W_ENDSTOP; break;
-          #endif
+          #define _ESCASE(A) case A##_AXIS: es = A##_ENDSTOP; break;
+          MAIN_AXIS_MAP(_ESCASE)
+          default: break;
         }
         if (TEST(endstops.state(), es)) {
           SERIAL_ECHO_MSG("Bad ", AS_CHAR(AXIS_CHAR(axis)), " Endstop?");

@@ -22,8 +22,8 @@
 #ifndef ENV_VALIDATE_H
 #define ENV_VALIDATE_H
 
-#if NOT_TARGET(STM32G0xx) || NOT_TARGET(STM32G0B1xx)
-  #error "Oops! Select an STM32G0 board in 'Tools > Board.'"
+#if NOT_TARGET(__STM32F1__, STM32F1)
+  #error "Oops! Select an STM32F1 board in 'Tools > Board.'"
 #endif
 
 #endif

@@ -36,7 +36,7 @@
 #include "../../../gcode/gcode.h"
 #include "../../../gcode/queue.h"
 
-#if ENABLED(SDSUPPORT)
+#if HAS_MEDIA
   #include "../../../sd/cardreader.h"
   #include "file_header.h"
 #endif
