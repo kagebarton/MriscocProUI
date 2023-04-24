@@ -21,7 +21,10 @@
  */
 #pragma once
 
-// Created by configs generator for Professional firmware
+// Edited by classicrocker883 for ProUI
+// https://github.com/classicrocker883/MriscocProUI
+
+// Created from Mriscoc's Professional Firmware
 // https://github.com/mriscoc/Ender3V2S1
 
 /**
@@ -3336,6 +3339,7 @@
 //=============================================================================
 //============================  Other Controllers  ============================
 //=============================================================================
+//@section proui
 
 //
 // Ender-3 v2 OEM display. A DWIN display with Rotary Encoder.
@@ -3346,29 +3350,40 @@
 #define DWIN_LCD_PROUI              // Pro UI by MRiscoC
 //#define HAS_DACAI 1
 
-// Professional firmware features:
-#define ProUIex 1
-#ifdef ProUIex
-  #define HAS_GCODE_PREVIEW 1
-  #define HAS_TOOLBAR 1
-#endif
+#if ENABLED(DWIN_LCD_PROUI)
+  // Professional firmware features:
+  #define ProUIex 1
+  #ifdef ProUIex
+    #define HAS_GCODE_PREVIEW 1
+    #define HAS_TOOLBAR 1
+  #endif
   #define HAS_PLOT 1
   #define HAS_ESDIAG 1
   #define HAS_CGCODE 1
   #define HAS_LOCKSCREEN 1
   //#define HAS_SD_EXTENDER 1  // Enable to support SD card extender cables
   #define SHOW_REAL_POS
-  #define ACTIVATE_MESH_ITEM  // Allows temporary enabling of mesh leveling
+  #define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option
   #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-    #define RUNOUT_TUNE_ITEM
+    #define RUNOUT_TUNE_ITEM  // Filament Runout option in Tune Menu
   #endif
   #if ENABLED(POWER_LOSS_RECOVERY)
-    #define PLR_TUNE_ITEM
+    #define PLR_TUNE_ITEM  // Power-loss Recovery option in Tune Menu
   #endif
-  //#define JD_TUNE_ITEM  // Enable only if Juntion Deviation is enabled
-  #define ADVK_TUNE_ITEM  // Enable only if Linear Advance is enabled
-  #define PLOT_TUNE_ITEM  // Enable only if HAS_PLOT is enabled
-  //#define MEDIASORT_MENU_ITEM  // Allows enable/disable file list sorting
+  #if ENABLED(BLTOUCH)
+    #define HS_MENU_ITEM  // BLTOUCH_HS_MODE menu option
+  #endif
+  #if ENABLED(HAS_PLOT)
+    #define PLOT_TUNE_ITEM  // Temperature Plot Graph item in Tune Menu
+  #endif
+  #if DISABLED(CLASSIC_JERK)
+    //#define JD_TUNE_ITEM  // Enable only if Juntion Deviation is enabled
+  #endif
+  #define ADVK_TUNE_ITEM  // Linear Advance item in Tune Menu
+  #define ALTCOLOR_MENU_ITEM   // Alternate Color palette option
+  #define TRAMWIZ_MENU_ITEM      // Enable Tramming Wizard
+  //#define MEDIASORT_MENU_ITEM  // File list sorting option
+#endif
 
 //#define DWIN_CREALITY_LCD_JYERSUI   // Jyers UI by Jacob Myers
 //#define DWIN_MARLINUI_PORTRAIT      // MarlinUI (portrait orientation)
@@ -3526,7 +3541,7 @@
 // Support for Adafruit NeoPixel LED driver
 //#define NEOPIXEL_LED
 #if ENABLED(NEOPIXEL_LED)
-  #define NEOPIXEL_TYPE           NEO_GRB // NEO_GRBW, NEO_RGBW, NEO_GRB, NEO_RBG, etc.
+  #define NEOPIXEL_TYPE          NEO_GRBW // NEO_GRBW, NEO_RGBW, NEO_GRB, NEO_RBG, etc.
                                           // See https://github.com/adafruit/Adafruit_NeoPixel/blob/master/Adafruit_NeoPixel.h
   #define NEOPIXEL_PIN               PA13 // LED driving pin
   //#define NEOPIXEL2_TYPE  NEOPIXEL_TYPE

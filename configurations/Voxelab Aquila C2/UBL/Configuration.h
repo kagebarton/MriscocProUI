@@ -21,8 +21,14 @@
  */
 #pragma once
 
-// Created by configs generator for Professional firmware
+// Edited by classicrocker883 for ProUI
+// https://github.com/classicrocker883/MriscocProUI
+
+// Created from Mriscoc's Professional Firmware
 // https://github.com/mriscoc/Ender3V2S1
+
+// HC32F46x Special Library created by shadow578 for Marlin firmware
+// https://github.com/shadow578/Marlin-H32
 
 /**
  * Configuration.h
@@ -1415,7 +1421,7 @@
  * on the right, enable and set TOUCH_MI_DEPLOY_XPOS to the deploy position.
  *
  * Also requires: BABYSTEPPING, BABYSTEP_ZPROBE_OFFSET, Z_SAFE_HOMING,
- *                and a minimum Z_HOMING_HEIGHT of 10.
+ *                and a minimum Z_CLEARANCE_FOR_HOMING of 10.
  */
 //#define TOUCH_MI_PROBE
 #if ENABLED(TOUCH_MI_PROBE)
@@ -1629,7 +1635,7 @@
  * Example: `M851 Z-5` with a CLEARANCE of 4  =>  9mm from bed to nozzle.
  *     But: `M851 Z+1` with a CLEARANCE of 2  =>  2mm from bed to nozzle.
  */
-#define Z_CLEARANCE_DEPLOY_PROBE    5 // Z Clearance for Deploy/Stow
+#define Z_CLEARANCE_DEPLOY_PROBE   10 // Z Clearance for Deploy/Stow
 #define Z_CLEARANCE_BETWEEN_PROBES  5 // Z Clearance between probe points
 #define Z_CLEARANCE_MULTI_PROBE     5 // Z Clearance between multiple probes
 //#define Z_AFTER_PROBING           5 // Z position after probing is done
@@ -1743,10 +1749,10 @@
  */
 #define Z_IDLE_HEIGHT Z_HOME_POS
 
-#define Z_HOMING_HEIGHT  5        // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ...
+#define Z_CLEARANCE_FOR_HOMING  5 // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ...
                                   // Be sure to have this much clearance over your Z_MAX_POS to prevent grinding.
 
-//#define Z_AFTER_HOMING  10      // (mm) Height to move to after homing Z
+//#define Z_AFTER_HOMING       10 // (mm) Height to move to after homing Z
 
 // Direction of endstops when homing; 1=MAX, -1=MIN
 // :[-1,1]
@@ -1842,7 +1848,7 @@
  */
 #define FILAMENT_RUNOUT_SENSOR            // MRiscoC Enabled runout sensor support
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-  #define FIL_RUNOUT_ENABLED_DEFAULT false // Enable the sensor on startup. Override with M412 followed by M500.
+  #define FIL_RUNOUT_ENABLED_DEFAULT false// Enable the sensor on startup. Override with M412 followed by M500.
   #define NUM_RUNOUT_SENSORS   1          // Number of sensors, up to one per extruder. Define a FIL_RUNOUT#_PIN for each.
 
   #define FIL_RUNOUT_STATE     HIGH       // Pin state indicating that filament is NOT present.
@@ -2715,8 +2721,20 @@
 // Note: Test audio output with the G-Code:
 //  M300 S<frequency Hz> P<duration ms>
 //
-#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2  // Ender Configs
-#define LCD_FEEDBACK_FREQUENCY_HZ 5000  // Ender Configs
+#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
+#define LCD_FEEDBACK_FREQUENCY_HZ 5000
+
+//
+// Tone queue size, used to keep beeps from blocking execution.
+// Default is 4, or override here. Costs 4 bytes of SRAM per entry.
+//
+//#define TONE_QUEUE_LENGTH 4
+
+//
+// A sequence of tones to play at startup, in pairs of tone (Hz), duration (ms).
+// Silence in-between tones.
+//
+//#define STARTUP_TUNE { 698, 300, 0, 50, 523, 50, 0, 25, 494, 50, 0, 25, 523, 100, 0, 50, 554, 300, 0, 100, 523, 300 }
 
 //=============================================================================
 //======================== LCD / Controller Selection =========================
@@ -2987,22 +3005,6 @@
 // BigTreeTech Mini 12864 V1.0 is an alias for FYSETC_MINI_12864_2_1. Type A/B. NeoPixel RGB Backlight.
 //
 //#define BTT_MINI_12864_V1
-
-//
-// Factory display for Creality CR-10
-// https://www.aliexpress.com/item/32833148327.html
-//
-// This is RAMPS-compatible using a single 10-pin connector.
-// (For CR-10 owners who want to replace the Melzi Creality board but retain the display)
-//
-#define CR10_STOCKDISPLAY    //For DWIN LCD Ender 3 V2 / Voxelab Aquila line --> 3300
-#if ENABLED(CR10_STOCKDISPLAY)
-  #define RET6_12864_LCD
-#endif
-//
-// Ender-2 OEM display, a variant of the MKS_MINI_12864
-//
-//#define ENDER2_STOCKDISPLAY
 
 //
 // ANET and Tronxy Graphical Controller
@@ -3342,16 +3344,18 @@
 //=============================================================================
 //============================  Other Controllers  ============================
 //=============================================================================
+//@section proui
 
 //
 // Ender-3 v2 OEM display. A DWIN display with Rotary Encoder.
 //
-// LCD-12864 Ender 3 / CR10_STOCKDISPLAY line --> 2960
+// DWIN / DACAI LCD 4.3" 480x272
 
 //#define DWIN_CREALITY_LCD           // Creality UI
-//#define DWIN_LCD_PROUI              // Pro UI by MRiscoC
+#define DWIN_LCD_PROUI              // Pro UI by MRiscoC
 //#define HAS_DACAI 1
 
+#if ENABLED(DWIN_LCD_PROUI)
 // Professional firmware features:
 //#define ProUIex 1
 #ifdef ProUIex
@@ -3364,21 +3368,50 @@
   #define HAS_LOCKSCREEN 1
   //#define HAS_SD_EXTENDER 1  // Enable to support SD card extender cables
   #define SHOW_REAL_POS
-  #define ACTIVATE_MESH_ITEM  // Allows temporary enabling of mesh leveling
+  #define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option
   #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-    #define RUNOUT_TUNE_ITEM
+    #define RUNOUT_TUNE_ITEM  // Filament Runout option in Tune Menu
   #endif
   #if ENABLED(POWER_LOSS_RECOVERY)
-    #define PLR_TUNE_ITEM
+    #define PLR_TUNE_ITEM  // Power-loss Recovery option in Tune Menu
   #endif
+  #if ENABLED(BLTOUCH)
+    #define HS_MENU_ITEM  // BLTOUCH_HS_MODE menu option
+  #endif
+  #if ENABLED(HAS_PLOT)
+    #define PLOT_TUNE_ITEM  // Temperature Plot Graph item in Tune Menu
+  #endif
+  #if DISABLED(CLASSIC_JERK)
   //#define JD_TUNE_ITEM  // Enable only if Juntion Deviation is enabled
-  #define ADVK_TUNE_ITEM  // Enable only if Linear Advance is enabled
-  #define PLOT_TUNE_ITEM  // Enable only if HAS_PLOT is enabled
-  //#define MEDIASORT_MENU_ITEM  // Allows enable/disable file list sorting
+  #endif
+  #define ADVK_TUNE_ITEM  // Linear Advance item in Tune Menu
+  #define ALTCOLOR_MENU_ITEM   // Alternate Color palette option
+  #define TRAMWIZ_MENU_ITEM      // Enable Tramming Wizard
+  //#define MEDIASORT_MENU_ITEM  // File list sorting option
+#endif
 
 //#define DWIN_CREALITY_LCD_JYERSUI   // Jyers UI by Jacob Myers
 //#define DWIN_MARLINUI_PORTRAIT      // MarlinUI (portrait orientation)
 //#define DWIN_MARLINUI_LANDSCAPE     // MarlinUI (landscape orientation)
+
+//
+// Factory display for Creality CR-10
+// https://www.aliexpress.com/item/32833148327.html
+//
+// This is RAMPS-compatible using a single 10-pin connector.
+// (For CR-10 owners who want to replace the Melzi Creality board but retain the display)
+//
+// 2.4" 128x64 LCD
+
+//#define CR10_STOCKDISPLAY    //For Ender-3 / Aquila C2 blue/white monochrome LCD
+#if ENABLED(CR10_STOCKDISPLAY) //BTT_SKR_MINI_E3
+  #define RET6_12864_LCD
+#endif
+
+//
+// Ender-2 OEM display, a variant of the MKS_MINI_12864
+//
+//#define ENDER2_STOCKDISPLAY
 
 //
 // Touch Screen Settings
