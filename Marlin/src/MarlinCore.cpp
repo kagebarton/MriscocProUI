@@ -158,7 +158,7 @@
   #include "feature/spindle_laser.h"
 #endif
 
-#if ENABLED(SDSUPPORT)
+#if HAS_MEDIA
   CardReader card;
 #endif
 
@@ -361,7 +361,7 @@ void startOrResumeJob() {
   print_job_timer.start();
 }
 
-#if ENABLED(SDSUPPORT)
+#if HAS_MEDIA
 
   inline void abortSDPrinting() {
     IF_DISABLED(NO_SD_AUTOSTART, card.autofile_cancel());
@@ -395,7 +395,7 @@ void startOrResumeJob() {
     }
   }
 
-#endif // SDSUPPORT
+#endif // HAS_MEDIA
 
 /**
  * Minimal management of Marlin's core activities:
@@ -832,7 +832,7 @@ void idle(const bool no_stepper_sleep/*=false*/) {
   #endif
 
   // Handle SD Card insert / remove
-  TERN_(SDSUPPORT, card.manage_media());
+  TERN_(HAS_MEDIA, card.manage_media());
 
   // Handle USB Flash Drive insert / remove
   TERN_(USB_FLASH_DRIVE_SUPPORT, card.diskIODriver()->idle());
@@ -1342,7 +1342,7 @@ void setup() {
     #endif
   #endif
 
-  #if BOTH(SDSUPPORT, SDCARD_EEPROM_EMULATION)
+  #if BOTH(HAS_MEDIA, SDCARD_EEPROM_EMULATION)
     SETUP_RUN(card.mount());          // Mount media with settings before first_load
   #endif
 
@@ -1626,7 +1626,7 @@ void setup() {
   #endif
 
   #if HAS_TFT_LVGL_UI
-    #if ENABLED(SDSUPPORT)
+    #if HAS_MEDIA
       if (!card.isMounted()) SETUP_RUN(card.mount()); // Mount SD to load graphics and fonts
     #endif
     SETUP_RUN(tft_lvgl_init());
@@ -1690,7 +1690,7 @@ void loop() {
   do {
     idle();
 
-    #if ENABLED(SDSUPPORT)
+    #if HAS_MEDIA
       if (card.flag.abort_sd_printing) abortSDPrinting();
       if (marlin_state == MF_SD_COMPLETE) finishSDPrinting();
     #endif

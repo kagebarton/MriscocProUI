@@ -101,10 +101,8 @@ void GcodeSuite::G30() {
     report_current_position();
   }
   else {
-    #if ENABLED(DWIN_LCD_PROUI)
-      SERIAL_ECHOLNF(GET_EN_TEXT_F(MSG_ZPROBE_OUT));
-      LCD_MESSAGE(MSG_ZPROBE_OUT);
-    #endif
+    SERIAL_ECHOLNF(GET_EN_TEXT_F(MSG_ZPROBE_OUT));
+    LCD_MESSAGE(MSG_ZPROBE_OUT);
   }
 
   probe.use_probing_tool(false);
