@@ -36,7 +36,7 @@
   #include "../../../feature/powerloss.h"
 #endif
 
-#if ENABLED(SDSUPPORT)
+#if HAS_MEDIA
   #include "file_header.h"
 #endif
 
@@ -49,7 +49,7 @@ void CError() {
   SERIAL_ECHOLNPGM(" This G-code is not implemented in firmware");
 }
 
-#if ENABLED(SDSUPPORT)
+#if HAS_MEDIA
 // Mark the G-code file as a Configuration file
 void C10() {
   fileprop.isConfig = true;
@@ -110,7 +110,7 @@ void C250() {
 // Special Creality DWIN GCodes
 void custom_gcode(const int16_t codenum) {
   switch(codenum) {
-    #if ENABLED(SDSUPPORT)
+    #if HAS_MEDIA
     case 10: C10(); break;             // Mark the G-code file as a Configuration file
     #endif
     case 11: C11(); break;             // Set color for UI element E
