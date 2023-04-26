@@ -1,10 +1,12 @@
+#MAKEFLAGS += -j8
+
 # Set needed variables.
-AQUILA_VER ?= G32
-AQUILA_CONFIG_TPL_DIR := config/aquila_templates
+AQUILA_VER ?= GD32
+AQUILA_CONFIG_TPL_DIR := configurations/Voxelab\ Aquila
 MARLIN_DIR := Marlin
-MARLIN_CONFIG_DIR := config
+MARLIN_CONFIG_DIR := configurations
 MARLIN_REVERT_TO_DEFAULT_CONFIG := true
-PLATFORMIO := pio
+PLATFORMIO := C:\Users\Andrew\.platformio\penv\Scripts\platformio.exe
 PLATFORMIO_FLAGS =
 PLATFORMIO_MAIN_DIR := .pio
 PLATFORMIO_BUILD_DIR := $(PLATFORMIO_MAIN_DIR)/build
@@ -15,90 +17,104 @@ export FIRMWARE_NAME
 
 # Evaluate HS (High Speed) variable if it's been enabled.
 ifeq ($(IS), true)
- DISABLE_HS_BLTOUCH =
+ DISABLE_IS_X =
+ DISABLE_IS_Y =
 else
- DISABLE_HS_BLTOUCH = \/\/
+ DISABLE_IS_X = \/\/
+ DISABLE_IS_Y = \/\/
 endif
 
-clean:
-	@echo "Cleaning up..."
-	rm -rvf $(ALT_BUILD_OUTPUT_DIR)
-	rm -rvf $(PLATFORMIO_BUILD_DIR)
-	rm -rvf $(PLATFORMIO_MAIN_DIR)
-.PHONY: clean
+# clean:
+# 	@echo "Cleaning up..."
+# 	rm -rvf $(ALT_BUILD_OUTPUT_DIR)
+# 	rm -rvf $(PLATFORMIO_BUILD_DIR)
+# 	rm -rvf $(PLATFORMIO_MAIN_DIR)
+# .PHONY: clean
 
 Default-NoProbe:
 	mkdir -p $(PLATFORMIO_BUILD_DIR)
-	cp $(AQUILA_CONFIG_TPL_DIR)/Default-NoProbe/Configuration.h $(MARLIN_DIR)/Configuration.h
-	cp $(AQUILA_CONFIG_TPL_DIR)/Default-NoProbe/Configuration_adv.h $(MARLIN_DIR)/Configuration_adv.h
-	sed -i 's/default_envs =.*/default_envs = STM32F103RET6_voxelab_aquila_$(AQUILA_VER)/g' $(PLATFORMIO_CONF)
+	cp $(AQUILA_CONFIG_TPL_DIR)/Default-NP/Configuration.h $(MARLIN_DIR)/Configuration.h
+	cp $(AQUILA_CONFIG_TPL_DIR)/Default-NP/Configuration_adv.h $(MARLIN_DIR)/Configuration_adv.h
+	cp $(AQUILA_CONFIG_TPL_DIR)/Default-NP/Version.h $(MARLIN_DIR)/Version.h
+	sed -i 's/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$(AQUILA_VER)/g' $(PLATFORMIO_CONF)
 	cp $(MARLIN_DIR)/Configuration.h  $(PLATFORMIO_BUILD_DIR)/Configuration.h
 	cp $(MARLIN_DIR)/Configuration_adv.h $(PLATFORMIO_BUILD_DIR)/Configuration_adv.h
-	FIMWARE_NAME=$(FIRMWARE_NAME) $(PLATFORMIO) run $(PLATFORMIO_FLAGS)
+	cp $(MARLIN_DIR)/Version.h $(PLATFORMIO_BUILD_DIR)/Version.h
+	C:\Users\Andrew\.platformio\penv\Scripts\platformio.exe run $(PLATFORMIO_FLAGS)
 	@echo ""
 	@echo "Post processing cleanup..."
 	@echo ""
-	if $(MARLIN_REVERT_TO_DEFAULT_CONFIG); then cp -v $(MARLIN_CONFIG_DIR)/default/Configuration.h $(MARLIN_CONFIG_DIR)/default/Configuration_adv.h $(MARLIN_DIR); fi
+	if $(MARLIN_REVERT_TO_DEFAULT_CONFIG); then cp -v $(MARLIN_CONFIG_DIR)/Andrew427/Configuration.h $(MARLIN_CONFIG_DIR)/Andrew427/Configuration_adv.h $(MARLIN_DIR); fi
 .PHONY: Default-NoProbe
 
 BLTouch:
 	mkdir -p $(PLATFORMIO_BUILD_DIR)
-	cp $(AQUILA_CONFIG_TPL_DIR)/BLTouch-3x3/Configuration.h $(MARLIN_DIR)/Configuration.h
-	cp $(AQUILA_CONFIG_TPL_DIR)/BLTouch-3x3/Configuration_adv.h $(MARLIN_DIR)/Configuration_adv.h
-	sed -i 's/default_envs =.*/default_envs = STM32F103RET6_voxelab_aquila_$(AQUILA_VER)/g' $(PLATFORMIO_CONF)
+	cp $(AQUILA_CONFIG_TPL_DIR)/HC32/Configuration.h $(MARLIN_DIR)/Configuration.h
+	cp $(AQUILA_CONFIG_TPL_DIR)/HC32/Configuration_adv.h $(MARLIN_DIR)/Configuration_adv.h
+	cp $(AQUILA_CONFIG_TPL_DIR)/HC32/Version.h $(MARLIN_DIR)/Version.h
+	sed -i 's/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$(AQUILA_VER)/g' $(PLATFORMIO_CONF)
 	sed -i 's/#define GRID_MAX_POINTS_X.*/#define GRID_MAX_POINTS_X $(GRID)/g' $(MARLIN_DIR)/Configuration.h
-	sed -i 's/[^ ]*#define BLTOUCH_HS_MODE/$(DISABLE_HS_BLTOUCH)#define BLTOUCH_HS_MODE/g' Marlin/Configuration_adv.h
+	sed -i 's/[^ ]*#define INPUT_SHAPING_X/$(DISABLE_IS_X)#define INPUT_SHAPING_X/g' Marlin/Configuration_adv.h
+	sed -i 's/[^ ]*#define INPUT_SHAPING_Y/$(DISABLE_IS_Y)#define INPUT_SHAPING_Y/g' Marlin/Configuration_adv.h
 	cp $(MARLIN_DIR)/Configuration.h  $(PLATFORMIO_BUILD_DIR)/Configuration.h
 	cp $(MARLIN_DIR)/Configuration_adv.h $(PLATFORMIO_BUILD_DIR)/Configuration_adv.h
+	cp $(MARLIN_DIR)/Version.h $(PLATFORMIO_BUILD_DIR)/Version.h
 	FIMWARE_NAME=$(FIRMWARE_NAME) $(PLATFORMIO) run $(PLATFORMIO_FLAGS)
 	@echo ""
 	@echo "Post processing cleanup..."
 	@echo ""
-	if $(MARLIN_REVERT_TO_DEFAULT_CONFIG); then cp -v $(MARLIN_CONFIG_DIR)/default/Configuration.h $(MARLIN_CONFIG_DIR)/default/Configuration_adv.h $(MARLIN_DIR); fi
+	if $(MARLIN_REVERT_TO_DEFAULT_CONFIG); then cp -v $(MARLIN_CONFIG_DIR)/Andrew427/Configuration.h $(MARLIN_CONFIG_DIR)/Andrew427/Configuration_adv.h $(MARLIN_DIR); fi
 .PHONY: BLTouch
 
 ManualMesh:
 	mkdir -p $(PLATFORMIO_BUILD_DIR)
-	cp $(AQUILA_CONFIG_TPL_DIR)/ManualMesh-3x3/Configuration.h $(MARLIN_DIR)/Configuration.h
-	cp $(AQUILA_CONFIG_TPL_DIR)/ManualMesh-3x3/Configuration_adv.h $(MARLIN_DIR)/Configuration_adv.h
-	sed -i 's/default_envs =.*/default_envs = STM32F103RET6_voxelab_aquila_$(AQUILA_VER)/g' $(PLATFORMIO_CONF)
+	cp $(AQUILA_CONFIG_TPL_DIR)/MM/Configuration.h $(MARLIN_DIR)/Configuration.h
+	cp $(AQUILA_CONFIG_TPL_DIR)/MM/Configuration_adv.h $(MARLIN_DIR)/Configuration_adv.h
+	cp $(AQUILA_CONFIG_TPL_DIR)/MM/Version.h $(MARLIN_DIR)/Version.h
+	sed -i 's/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$(AQUILA_VER)/g' $(PLATFORMIO_CONF)
 	sed -i 's/#define GRID_MAX_POINTS_X.*/#define GRID_MAX_POINTS_X $(GRID)/g' $(MARLIN_DIR)/Configuration.h
 	cp $(MARLIN_DIR)/Configuration.h  $(PLATFORMIO_BUILD_DIR)/Configuration.h
 	cp $(MARLIN_DIR)/Configuration_adv.h $(PLATFORMIO_BUILD_DIR)/Configuration_adv.h
+	cp $(MARLIN_DIR)/Version.h $(PLATFORMIO_BUILD_DIR)/Version.h
 	FIMWARE_NAME=$(FIRMWARE_NAME) $(PLATFORMIO) run $(PLATFORMIO_FLAGS)
 	@echo ""
 	@echo "Post processing cleanup..."
 	@echo ""
-	if $(MARLIN_REVERT_TO_DEFAULT_CONFIG); then cp -v $(MARLIN_CONFIG_DIR)/default/Configuration.h $(MARLIN_CONFIG_DIR)/default/Configuration_adv.h $(MARLIN_DIR); fi
+	if $(MARLIN_REVERT_TO_DEFAULT_CONFIG); then cp -v $(MARLIN_CONFIG_DIR)/Andrew427/Configuration.h $(MARLIN_CONFIG_DIR)/Andrew427/Configuration_adv.h $(MARLIN_DIR); fi
 .PHONY: Manual-Mesh
 
 UBL-BLTouch:
 	mkdir -p $(PLATFORMIO_BUILD_DIR)
-	cp $(AQUILA_CONFIG_TPL_DIR)/UBL-BLTouch-10x10/Configuration.h $(MARLIN_DIR)/Configuration.h
-	cp $(AQUILA_CONFIG_TPL_DIR)/UBL-BLTouch-10x10/Configuration_adv.h $(MARLIN_DIR)/Configuration_adv.h
-	sed -i 's/default_envs =.*/default_envs = STM32F103RET6_voxelab_aquila_$(AQUILA_VER)/g' $(PLATFORMIO_CONF)
+	cp $(AQUILA_CONFIG_TPL_DIR)/UBL/Configuration\ Pro.h $(MARLIN_DIR)/Configuration.h
+	cp $(AQUILA_CONFIG_TPL_DIR)/UBL/Configuration_adv\ Pro.h $(MARLIN_DIR)/Configuration_adv.h
+	cp $(AQUILA_CONFIG_TPL_DIR)/UBL/Version.h $(MARLIN_DIR)/Version.h
+	sed -i 's/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$(AQUILA_VER)/g' $(PLATFORMIO_CONF)
 	sed -i 's/#define GRID_MAX_POINTS_X.*/#define GRID_MAX_POINTS_X $(GRID)/g' $(MARLIN_DIR)/Configuration.h
-	sed -i 's/[^ ]*#define BLTOUCH_HS_MODE/$(DISABLE_HS_BLTOUCH)#define BLTOUCH_HS_MODE/g' Marlin/Configuration_adv.h
+	sed -i 's/[^ ]*#define INPUT_SHAPING_X/$(DISABLE_IS_X)#define INPUT_SHAPING_X/g' Marlin/Configuration_adv.h
+	sed -i 's/[^ ]*#define INPUT_SHAPING_Y/$(DISABLE_IS_Y)#define INPUT_SHAPING_Y/g' Marlin/Configuration_adv.h	
 	cp $(MARLIN_DIR)/Configuration.h  $(PLATFORMIO_BUILD_DIR)/Configuration.h
 	cp $(MARLIN_DIR)/Configuration_adv.h $(PLATFORMIO_BUILD_DIR)/Configuration_adv.h
+	cp $(MARLIN_DIR)/Version.h $(PLATFORMIO_BUILD_DIR)/Version.h
 	FIMWARE_NAME=$(FIRMWARE_NAME) $(PLATFORMIO) run $(PLATFORMIO_FLAGS)
 	@echo ""
 	@echo "Post processing cleanup..."
 	@echo ""
-	if $(MARLIN_REVERT_TO_DEFAULT_CONFIG); then cp -v $(MARLIN_CONFIG_DIR)/default/Configuration.h $(MARLIN_CONFIG_DIR)/default/Configuration_adv.h $(MARLIN_DIR); fi
+	if $(MARLIN_REVERT_TO_DEFAULT_CONFIG); then cp -v $(MARLIN_CONFIG_DIR)/Andrew427/Configuration.h $(MARLIN_CONFIG_DIR)/Andrew427/Configuration_adv.h $(MARLIN_DIR); fi
 .PHONY: UBL-BLTouch
 
-UBL-NoProbe:
+UBL-NoPro:
 	mkdir -p $(PLATFORMIO_BUILD_DIR)
-	cp $(AQUILA_CONFIG_TPL_DIR)/UBL-NoProbe-3x3/Configuration.h $(MARLIN_DIR)/Configuration.h
-	cp $(AQUILA_CONFIG_TPL_DIR)/UBL-NoProbe-3x3/Configuration_adv.h $(MARLIN_DIR)/Configuration_adv.h
-	sed -i 's/default_envs =.*/default_envs = STM32F103RET6_voxelab_aquila_$(AQUILA_VER)/g' $(PLATFORMIO_CONF)
+	cp $(AQUILA_CONFIG_TPL_DIR)/UBL/Configuration.h $(MARLIN_DIR)/Configuration.h
+	cp $(AQUILA_CONFIG_TPL_DIR)/UBL/Configuration_adv.h $(MARLIN_DIR)/Configuration_adv.h
+	cp $(AQUILA_CONFIG_TPL_DIR)/UBL/Version.h $(MARLIN_DIR)/Version.h
+	sed -i 's/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$(AQUILA_VER)/g' $(PLATFORMIO_CONF)
 	sed -i 's/#define GRID_MAX_POINTS_X.*/#define GRID_MAX_POINTS_X $(GRID)/g' $(MARLIN_DIR)/Configuration.h
 	cp $(MARLIN_DIR)/Configuration.h  $(PLATFORMIO_BUILD_DIR)/Configuration.h
 	cp $(MARLIN_DIR)/Configuration_adv.h $(PLATFORMIO_BUILD_DIR)/Configuration_adv.h
+	cp $(MARLIN_DIR)/Version.h $(PLATFORMIO_BUILD_DIR)/Version.h
 	FIMWARE_NAME=$(FIRMWARE_NAME) $(PLATFORMIO) run $(PLATFORMIO_FLAGS)
 	@echo ""
 	@echo "Post processing cleanup..."
 	@echo ""
-	if $(MARLIN_REVERT_TO_DEFAULT_CONFIG); then cp -v $(MARLIN_CONFIG_DIR)/default/Configuration.h $(MARLIN_CONFIG_DIR)/default/Configuration_adv.h $(MARLIN_DIR); fi
-.PHONY: UBL-NoProbe
+	if $(MARLIN_REVERT_TO_DEFAULT_CONFIG); then cp -v $(MARLIN_CONFIG_DIR)/Andrew427/Configuration.h $(MARLIN_CONFIG_DIR)/Andrew427/Configuration_adv.h $(MARLIN_DIR); fi
+.PHONY: UBL-NoPro
