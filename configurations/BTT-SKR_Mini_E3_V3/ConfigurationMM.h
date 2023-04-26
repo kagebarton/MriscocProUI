@@ -21,7 +21,10 @@
  */
 #pragma once
 
-// Created by configs generator for Professional firmware
+// Edited by classicrocker883 for ProUI
+// https://github.com/classicrocker883/MriscocProUI
+
+// Created from Mriscoc's Professional Firmware
 // https://github.com/mriscoc/Ender3V2S1
 
 /**
@@ -65,26 +68,6 @@
 // Author info of this build printed to the host during boot and M115
 #define STRING_CONFIG_H_AUTHOR "Miguel A. Risco-Castillo (MRiscoC)" // Who made the changes.
 #define CUSTOM_VERSION_FILE Version.h // Path from the root directory (no quotes)
-
-/**
- * *** VENDORS PLEASE READ ***
- *
- * Marlin allows you to add a custom boot image for Graphical LCDs.
- * With this option Marlin will first show your custom screen followed
- * by the standard Marlin logo with version number and web URL.
- *
- * We encourage you to take advantage of this new feature and we also
- * respectfully request that you retain the unmodified Marlin boot screen.
- */
-
-// Show the Marlin bootscreen on startup. ** ENABLE FOR PRODUCTION **
-#define SHOW_BOOTSCREEN
-
-// Show the bitmap in Marlin/_Bootscreen.h on startup.
-#define SHOW_CUSTOM_BOOTSCREEN
-
-// Show the bitmap in Marlin/_Statusscreen.h on the status screen.
-//#define CUSTOM_STATUS_SCREEN_IMAGE
 
 // @section machine
 
@@ -133,6 +116,15 @@
  */
 //#define SERIAL_PORT_3 1
 //#define BAUDRATE_3 250000   // :[2400, 9600, 19200, 38400, 57600, 115200, 250000, 500000, 1000000] Enable to override BAUDRATE
+
+/**
+ * Select a serial port to communicate with RS485 protocol
+ * :[-1, 0, 1, 2, 3, 4, 5, 6, 7]
+ */
+//#define RS485_SERIAL_PORT 1
+#ifdef RS485_SERIAL_PORT
+  //#define RS485_BUS_BUFFER_SIZE 128
+#endif
 
 // Enable the Bluetooth serial interface on AT90USB devices
 //#define BLUETOOTH
@@ -455,78 +447,67 @@
 // @section temperature
 
 /**
- * --NORMAL IS 4.7kΩ PULLUP!-- 1kΩ pullup can be used on hotend sensor, using correct resistor and table
+ * Temperature Sensors:
  *
- * Temperature sensors available:
+ * NORMAL IS 4.7kΩ PULLUP! Hotend sensors can use 1kΩ pullup with correct resistor and table.
  *
- *  SPI RTD/Thermocouple Boards - IMPORTANT: Read the NOTE below!
- *  -------
- *    -5 : MAX31865 with Pt100/Pt1000, 2, 3, or 4-wire  (only for sensors 0-1)
- *                  NOTE: You must uncomment/set the MAX31865_*_OHMS_n defines below.
- *    -3 : MAX31855 with Thermocouple, -200°C to +700°C (only for sensors 0-1)
- *    -2 : MAX6675  with Thermocouple, 0°C to +700°C    (only for sensors 0-1)
- *
- *  NOTE: Ensure TEMP_n_CS_PIN is set in your pins file for each TEMP_SENSOR_n using an SPI Thermocouple. By default,
- *        Hardware SPI on the default serial bus is used. If you have also set TEMP_n_SCK_PIN and TEMP_n_MISO_PIN,
- *        Software SPI will be used on those ports instead. You can force Hardware SPI on the default bus in the
- *        Configuration_adv.h file. At this time, separate Hardware SPI buses for sensors are not supported.
- *
- *  Analog Themocouple Boards
- *  -------
- *    -4 : AD8495 with Thermocouple
- *    -1 : AD595  with Thermocouple
- *
+ * ================================================================
  *  Analog Thermistors - 4.7kΩ pullup - Normal
- *  -------
- *     1 : 100kΩ  EPCOS - Best choice for EPCOS thermistors
- *   331 : 100kΩ  Same as #1, but 3.3V scaled for MEGA
- *   332 : 100kΩ  Same as #1, but 3.3V scaled for DUE
- *     2 : 200kΩ  ATC Semitec 204GT-2
- *   202 : 200kΩ  Copymaster 3D
- *     3 : ???Ω   Mendel-parts thermistor
- *     4 : 10kΩ   Generic Thermistor !! DO NOT use for a hotend - it gives bad resolution at high temp. !!
- *     5 : 100kΩ  ATC Semitec 104GT-2/104NT-4-R025H42G - Used in ParCan, J-Head, and E3D, SliceEngineering 300°C
- *   501 : 100kΩ  Zonestar - Tronxy X3A
- *   502 : 100kΩ  Zonestar - used by hot bed in Zonestar Průša P802M
- *   503 : 100kΩ  Zonestar (Z8XM2) Heated Bed thermistor
- *   504 : 100kΩ  Zonestar P802QR2 (Part# QWG-104F-B3950) Hotend Thermistor
- *   505 : 100kΩ  Zonestar P802QR2 (Part# QWG-104F-3950) Bed Thermistor
- *   512 : 100kΩ  RPW-Ultra hotend
- *     6 : 100kΩ  EPCOS - Not as accurate as table #1 (created using a fluke thermocouple)
- *     7 : 100kΩ  Honeywell 135-104LAG-J01
- *    71 : 100kΩ  Honeywell 135-104LAF-J01
- *     8 : 100kΩ  Vishay 0603 SMD NTCS0603E3104FXT
- *     9 : 100kΩ  GE Sensing AL03006-58.2K-97-G1
- *    10 : 100kΩ  RS PRO 198-961
- *    11 : 100kΩ  Keenovo AC silicone mats, most Wanhao i3 machines - beta 3950, 1%
- *    12 : 100kΩ  Vishay 0603 SMD NTCS0603E3104FXT (#8) - calibrated for Makibox hot bed
- *    13 : 100kΩ  Hisens up to 300°C - for "Simple ONE" & "All In ONE" hotend - beta 3950, 1%
- *    15 : 100kΩ  Calibrated for JGAurora A5 hotend
- *    18 : 200kΩ  ATC Semitec 204GT-2 Dagoma.Fr - MKS_Base_DKU001327
- *    22 : 100kΩ  GTM32 Pro vB - hotend - 4.7kΩ pullup to 3.3V and 220Ω to analog input
- *    23 : 100kΩ  GTM32 Pro vB - bed - 4.7kΩ pullup to 3.3v and 220Ω to analog input
- *    30 : 100kΩ  Kis3d Silicone heating mat 200W/300W with 6mm precision cast plate (EN AW 5083) NTC100K - beta 3950
- *    60 : 100kΩ  Maker's Tool Works Kapton Bed Thermistor - beta 3950
- *    61 : 100kΩ  Formbot/Vivedino 350°C Thermistor - beta 3950
- *    66 : 4.7MΩ  Dyze Design / Trianglelab T-D500 500°C High Temperature Thermistor
- *    67 : 500kΩ  SliceEngineering 450°C Thermistor
- *    68 : PT100 amplifier board from Dyze Design
- *    70 : 100kΩ  bq Hephestos 2
- *    75 : 100kΩ  Generic Silicon Heat Pad with NTC100K MGB18-104F39050L32
- *  2000 : 100kΩ  Ultimachine Rambo TDK NTCG104LH104KT1 NTC100K motherboard Thermistor
+ * ================================================================
+ *     1 : 100kΩ EPCOS - Best choice for EPCOS thermistors
+ *   331 : 100kΩ Same as #1, but 3.3V scaled for MEGA
+ *   332 : 100kΩ Same as #1, but 3.3V scaled for DUE
+ *     2 : 200kΩ ATC Semitec 204GT-2
+ *   202 : 200kΩ Copymaster 3D
+ *     3 : ???Ω  Mendel-parts thermistor
+ *     4 : 10kΩ  Generic Thermistor !! DO NOT use for a hotend - it gives bad resolution at high temp. !!
+ *     5 : 100kΩ ATC Semitec 104GT-2/104NT-4-R025H42G - Used in ParCan, J-Head, and E3D, SliceEngineering 300°C
+ *   501 : 100kΩ Zonestar - Tronxy X3A
+ *   502 : 100kΩ Zonestar - used by hot bed in Zonestar Průša P802M
+ *   503 : 100kΩ Zonestar (Z8XM2) Heated Bed thermistor
+ *   504 : 100kΩ Zonestar P802QR2 (Part# QWG-104F-B3950) Hotend Thermistor
+ *   505 : 100kΩ Zonestar P802QR2 (Part# QWG-104F-3950) Bed Thermistor
+ *   512 : 100kΩ RPW-Ultra hotend
+ *     6 : 100kΩ EPCOS - Not as accurate as table #1 (created using a fluke thermocouple)
+ *     7 : 100kΩ Honeywell 135-104LAG-J01
+ *    71 : 100kΩ Honeywell 135-104LAF-J01
+ *     8 : 100kΩ Vishay 0603 SMD NTCS0603E3104FXT
+ *     9 : 100kΩ GE Sensing AL03006-58.2K-97-G1
+ *    10 : 100kΩ RS PRO 198-961
+ *    11 : 100kΩ Keenovo AC silicone mats, most Wanhao i3 machines - beta 3950, 1%
+ *    12 : 100kΩ Vishay 0603 SMD NTCS0603E3104FXT (#8) - calibrated for Makibox hot bed
+ *    13 : 100kΩ Hisens up to 300°C - for "Simple ONE" & "All In ONE" hotend - beta 3950, 1%
+ *    15 : 100kΩ Calibrated for JGAurora A5 hotend
+ *    18 : 200kΩ ATC Semitec 204GT-2 Dagoma.Fr - MKS_Base_DKU001327
+ *    22 : 100kΩ GTM32 Pro vB - hotend - 4.7kΩ pullup to 3.3V and 220Ω to analog input
+ *    23 : 100kΩ GTM32 Pro vB - bed - 4.7kΩ pullup to 3.3v and 220Ω to analog input
+ *    30 : 100kΩ Kis3d Silicone heating mat 200W/300W with 6mm precision cast plate (EN AW 5083) NTC100K - beta 3950
+ *    60 : 100kΩ Maker's Tool Works Kapton Bed Thermistor - beta 3950
+ *    61 : 100kΩ Formbot/Vivedino 350°C Thermistor - beta 3950
+ *    66 : 4.7MΩ Dyze Design / Trianglelab T-D500 500°C High Temperature Thermistor
+ *    67 : 500kΩ SliceEngineering 450°C Thermistor
+ *    68 : PT100 Smplifier board from Dyze Design
+ *    70 : 100kΩ bq Hephestos 2
+ *    75 : 100kΩ Generic Silicon Heat Pad with NTC100K MGB18-104F39050L32
+ *  2000 : 100kΩ Ultimachine Rambo TDK NTCG104LH104KT1 NTC100K motherboard Thermistor
  *
- *  Analog Thermistors - 1kΩ pullup - Atypical, and requires changing out the 4.7kΩ pullup for 1kΩ.
- *  -------                           (but gives greater accuracy and more stable PID)
- *    51 : 100kΩ  EPCOS (1kΩ pullup)
- *    52 : 200kΩ  ATC Semitec 204GT-2 (1kΩ pullup)
- *    55 : 100kΩ  ATC Semitec 104GT-2 - Used in ParCan & J-Head (1kΩ pullup)
+ * ================================================================
+ *  Analog Thermistors - 1kΩ pullup
+ *   Atypical, and requires changing out the 4.7kΩ pullup for 1kΩ.
+ *   (but gives greater accuracy and more stable PID)
+ * ================================================================
+ *    51 : 100kΩ EPCOS (1kΩ pullup)
+ *    52 : 200kΩ ATC Semitec 204GT-2 (1kΩ pullup)
+ *    55 : 100kΩ ATC Semitec 104GT-2 - Used in ParCan & J-Head (1kΩ pullup)
  *
+ * ================================================================
  *  Analog Thermistors - 10kΩ pullup - Atypical
- *  -------
- *    99 : 100kΩ  Found on some Wanhao i3 machines with a 10kΩ pull-up resistor
+ * ================================================================
+ *    99 : 100kΩ Found on some Wanhao i3 machines with a 10kΩ pull-up resistor
  *
+ * ================================================================
  *  Analog RTDs (Pt100/Pt1000)
- *  -------
+ * ================================================================
  *   110 : Pt100  with 1kΩ pullup (atypical)
  *   147 : Pt100  with 4.7kΩ pullup
  *  1010 : Pt1000 with 1kΩ pullup (atypical)
@@ -538,15 +519,34 @@
  *                NOTE: ADC pins are not 5V tolerant. Not recommended because it's possible to damage the CPU by going over 500°C.
  *   201 : Pt100  with circuit in Overlord, similar to Ultimainboard V2.x
  *
+ * ================================================================
+ *  SPI RTD/Thermocouple Boards
+ * ================================================================
+ *    -5 : MAX31865 with Pt100/Pt1000, 2, 3, or 4-wire  (only for sensors 0-1)
+ *                  NOTE: You must uncomment/set the MAX31865_*_OHMS_n defines below.
+ *    -3 : MAX31855 with Thermocouple, -200°C to +700°C (only for sensors 0-1)
+ *    -2 : MAX6675  with Thermocouple, 0°C to +700°C    (only for sensors 0-1)
+ *
+ *  NOTE: Ensure TEMP_n_CS_PIN is set in your pins file for each TEMP_SENSOR_n using an SPI Thermocouple. By default,
+ *        Hardware SPI on the default serial bus is used. If you have also set TEMP_n_SCK_PIN and TEMP_n_MISO_PIN,
+ *        Software SPI will be used on those ports instead. You can force Hardware SPI on the default bus in the
+ *        Configuration_adv.h file. At this time, separate Hardware SPI buses for sensors are not supported.
+ *
+ * ================================================================
+ *  Analog Thermocouple Boards
+ * ================================================================
+ *    -4 : AD8495 with Thermocouple
+ *    -1 : AD595  with Thermocouple
+ *
+ * ================================================================
  *  Custom/Dummy/Other Thermal Sensors
- *  ------
+ * ================================================================
  *     0 : not used
  *  1000 : Custom - Specify parameters in Configuration_adv.h
  *
  *   !!! Use these for Testing or Development purposes. NEVER for production machine. !!!
  *   998 : Dummy Table that ALWAYS reads 25°C or the temperature defined below.
  *   999 : Dummy Table that ALWAYS reads 100°C or the temperature defined below.
- *
  */
 #define TEMP_SENSOR_0 1
 #define TEMP_SENSOR_1 0
@@ -561,6 +561,7 @@
 #define TEMP_SENSOR_CHAMBER 0
 #define TEMP_SENSOR_COOLER 0
 #define TEMP_SENSOR_BOARD 0
+#define TEMP_SENSOR_SOC 0
 #define TEMP_SENSOR_REDUNDANT 0
 
 // Dummy thermistor constant temperature readings, for use with 998 and 999
@@ -1277,9 +1278,9 @@
  *   M204 I    Angular Acceleration
  *   M204 J    Angular Travel Acceleration
  */
-#define DEFAULT_ACCELERATION                   800  // X, Y, Z ... and E acceleration for printing moves
+#define DEFAULT_ACCELERATION                   800  // X, Y, Z and E acceleration for printing moves
 #define DEFAULT_RETRACT_ACCELERATION           800  // E acceleration for retracts
-#define DEFAULT_TRAVEL_ACCELERATION           1000  // X, Y, Z ... acceleration for travel (non printing) moves
+#define DEFAULT_TRAVEL_ACCELERATION           1000  // X, Y, Z acceleration for travel (non printing) moves
 #if ENABLED(AXIS4_ROTATES)
   #define DEFAULT_ANGULAR_ACCELERATION        3000  // I, J, K acceleration for rotational-only printing moves
   #define DEFAULT_ANGULAR_TRAVEL_ACCELERATION 3000  // I, J, K acceleration for rotational-only travel (non printing) moves
@@ -1433,7 +1434,7 @@
  * on the right, enable and set TOUCH_MI_DEPLOY_XPOS to the deploy position.
  *
  * Also requires: BABYSTEPPING, BABYSTEP_ZPROBE_OFFSET, Z_SAFE_HOMING,
- *                and a minimum Z_HOMING_HEIGHT of 10.
+ *                and a minimum Z_CLEARANCE_FOR_HOMING of 10.
  */
 //#define TOUCH_MI_PROBE
 #if ENABLED(TOUCH_MI_PROBE)
@@ -1752,7 +1753,7 @@
 // @section homing
 
 //#define NO_MOTION_BEFORE_HOMING // Inhibit movement until all axes have been homed. Also enable HOME_AFTER_DEACTIVATE for extra safety.
-#define HOME_AFTER_DEACTIVATE   // Require rehoming after steppers are deactivated. Also enable NO_MOTION_BEFORE_HOMING for extra safety.  // MRiscoC Enabled for safety
+#define HOME_AFTER_DEACTIVATE   // Require rehoming after steppers are deactivated. Also enable NO_MOTION_BEFORE_HOMING for extra safety.
 
 /**
  * Set Z_IDLE_HEIGHT if the Z-Axis moves on its own when steppers are disabled.
@@ -1761,10 +1762,10 @@
  */
 //#define Z_IDLE_HEIGHT Z_HOME_POS
 
-//#define Z_HOMING_HEIGHT  5        // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ...
-                                  // Be sure to have this much clearance over your Z_MAX_POS to prevent grinding.
+//#define Z_CLEARANCE_FOR_HOMING  5 // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ...
+                                    // Be sure to have this much clearance over your Z_MAX_POS to prevent grinding.
 
-#define Z_AFTER_HOMING  5      // (mm) Height to move to after homing Z
+#define Z_AFTER_HOMING           10 // (mm) Height to move to after homing Z
 
 // Direction of endstops when homing; 1=MAX, -1=MIN
 // :[-1,1]
@@ -1860,7 +1861,7 @@
  */
 #define FILAMENT_RUNOUT_SENSOR            // MRiscoC Enabled runout sensor support
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-  #define FIL_RUNOUT_ENABLED_DEFAULT false // Enable the sensor on startup. Override with M412 followed by M500.
+  #define FIL_RUNOUT_ENABLED_DEFAULT false// Enable the sensor on startup. Override with M412 followed by M500.
   #define NUM_RUNOUT_SENSORS   1          // Number of sensors, up to one per extruder. Define a FIL_RUNOUT#_PIN for each.
 
   #define FIL_RUNOUT_STATE     LOW        // Pin state indicating that filament is NOT present.
@@ -1910,7 +1911,7 @@
   // After a runout is detected, continue printing this length of filament
   // before executing the runout script. Useful for a sensor at the end of
   // a feed tube. Requires 4 bytes SRAM per sensor, plus 4 bytes overhead.
-  #define FILAMENT_RUNOUT_DISTANCE_MM 25  // MRiscoC Customizable by menu
+  #define FILAMENT_RUNOUT_DISTANCE_MM 25 // MRiscoC Customizable by menu
 
   #ifdef FILAMENT_RUNOUT_DISTANCE_MM
     // Enable this option to use an encoder disc that toggles the runout pin
@@ -2464,23 +2465,31 @@
 #define NOZZLE_CLEAN_FEATURE
 
 #if ENABLED(NOZZLE_CLEAN_FEATURE)
-  // Default number of pattern repetitions
-  #define NOZZLE_CLEAN_STROKES  12
+  #define NOZZLE_CLEAN_PATTERN_LINE     // Provide 'G12 P0' - a simple linear cleaning pattern
+  #define NOZZLE_CLEAN_PATTERN_ZIGZAG   // Provide 'G12 P1' - a zigzag cleaning pattern
+  #define NOZZLE_CLEAN_PATTERN_CIRCLE   // Provide 'G12 P2' - a circular cleaning pattern
 
-  // Default number of triangles
-  #define NOZZLE_CLEAN_TRIANGLES  3
+  // Default pattern to use when 'P' is not provided to G12. One of the enabled options above.
+  #define NOZZLE_CLEAN_DEFAULT_PATTERN 0
+
+  #if ENABLED(NOZZLE_CLEAN_PATTERN_LINE)
+    #define NOZZLE_CLEAN_STROKES   12   // Default number of pattern repetitions
+  #endif
+
+  #if ENABLED(NOZZLE_CLEAN_PATTERN_ZIGZAG)
+    #define NOZZLE_CLEAN_TRIANGLES  3   // Default number of triangles
+  #endif
 
   // Specify positions for each tool as { { X, Y, Z }, { X, Y, Z } }
   // Dual hotend system may use { {  -20, (Y_BED_SIZE / 2), (Z_MIN_POS + 1) },  {  420, (Y_BED_SIZE / 2), (Z_MIN_POS + 1) }}
   #define NOZZLE_CLEAN_START_POINT { {  30, 30, (Z_MIN_POS + 1) } }
   #define NOZZLE_CLEAN_END_POINT   { { 100, 60, (Z_MIN_POS + 1) } }
 
-  // Circular pattern radius
-  #define NOZZLE_CLEAN_CIRCLE_RADIUS 6.5
-  // Circular pattern circle fragments number
-  #define NOZZLE_CLEAN_CIRCLE_FN 10
-  // Middle point of circle
-  #define NOZZLE_CLEAN_CIRCLE_MIDDLE NOZZLE_CLEAN_START_POINT
+  #if ENABLED(NOZZLE_CLEAN_PATTERN_CIRCLE)
+    #define NOZZLE_CLEAN_CIRCLE_RADIUS 6.5                      // (mm) Circular pattern radius
+    #define NOZZLE_CLEAN_CIRCLE_FN 10                           // Circular pattern circle number of segments
+    #define NOZZLE_CLEAN_CIRCLE_MIDDLE NOZZLE_CLEAN_START_POINT // Middle point of circle
+  #endif
 
   // Move the nozzle to the initial position after cleaning
   #define NOZZLE_CLEAN_GOBACK
@@ -2574,7 +2583,7 @@
   #define PASSWORD_ON_STARTUP
   #define PASSWORD_UNLOCK_GCODE             // Unlock with the M511 P<password> command. Disable to prevent brute-force attack.
   #define PASSWORD_CHANGE_GCODE             // Change the password with M512 P<old> S<new>.
-  //#define PASSWORD_ON_SD_PRINT_MENU       // This does not prevent gcodes from running
+  //#define PASSWORD_ON_SD_PRINT_MENU       // This does not prevent G-codes from running
   //#define PASSWORD_AFTER_SD_PRINT_END
   //#define PASSWORD_AFTER_SD_PRINT_ABORT
   //#include "Configuration_Secure.h"       // External file with PASSWORD_DEFAULT_VALUE
@@ -2733,8 +2742,20 @@
 // Note: Test audio output with the G-Code:
 //  M300 S<frequency Hz> P<duration ms>
 //
-#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2  // Ender Configs
-#define LCD_FEEDBACK_FREQUENCY_HZ 5000  // Ender Configs
+#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
+#define LCD_FEEDBACK_FREQUENCY_HZ 5000
+
+//
+// Tone queue size, used to keep beeps from blocking execution.
+// Default is 4, or override here. Costs 4 bytes of SRAM per entry.
+//
+//#define TONE_QUEUE_LENGTH 4
+
+//
+// A sequence of tones to play at startup, in pairs of tone (Hz), duration (ms).
+// Silence in-between tones.
+//
+//#define STARTUP_TUNE { 698, 300, 0, 50, 523, 50, 0, 25, 494, 50, 0, 25, 523, 100, 0, 50, 554, 300, 0, 100, 523, 300 }
 
 //=============================================================================
 //======================== LCD / Controller Selection =========================
@@ -3007,22 +3028,6 @@
 //#define BTT_MINI_12864_V1
 
 //
-// Factory display for Creality CR-10
-// https://www.aliexpress.com/item/32833148327.html
-//
-// This is RAMPS-compatible using a single 10-pin connector.
-// (For CR-10 owners who want to replace the Melzi Creality board but retain the display)
-//
-#define CR10_STOCKDISPLAY    //For DWIN LCD Ender 3 V2 / Voxelab Aquila line --> 3300
-#if ENABLED(CR10_STOCKDISPLAY)
-  #define RET6_12864_LCD
-#endif
-//
-// Ender-2 OEM display, a variant of the MKS_MINI_12864
-//
-//#define ENDER2_STOCKDISPLAY
-
-//
 // ANET and Tronxy Graphical Controller
 //
 // Anet 128x64 full graphics lcd with rotary encoder as used on Anet A6
@@ -3151,6 +3156,8 @@
  *  - Download files as specified for your type of display.
  *  - Plug the microSD card into the back of the display.
  *  - Boot the display and wait for the update to complete.
+ *
+ * :[ 'ORIGIN', 'FYSETC', 'HYPRECY', 'MKS', 'RELOADED', 'IA_CREALITY' ]
  */
 //#define DGUS_LCD_UI ORIGIN
 #if DGUS_UI_IS(MKS)
@@ -3332,9 +3339,9 @@
   /**
    * TFT Font for Color_UI. Choose one of the following:
    *
-   * NOTOSANS  - Default font with antialiasing. Supports Latin Extended and non-Latin characters.
-   * UNIFONT   - Lightweight font, no antialiasing. Supports Latin Extended and non-Latin characters.
-   * HELVETICA - Lightweight font, no antialiasing. Supports Basic Latin (0x0020-0x007F) and Latin-1 Supplement (0x0080-0x00FF) characters only.
+   * NOTOSANS  - Default font with anti-aliasing. Supports Latin Extended and non-Latin characters.
+   * UNIFONT   - Lightweight font, no anti-aliasing. Supports Latin Extended and non-Latin characters.
+   * HELVETICA - Lightweight font, no anti-aliasing. Supports Basic Latin (0x0020-0x007F) and Latin-1 Supplement (0x0080-0x00FF) characters only.
    */
   #define TFT_FONT  NOTOSANS
 
@@ -3358,38 +3365,69 @@
 //=============================================================================
 //============================  Other Controllers  ============================
 //=============================================================================
+//@section proui
 
 //
 // Ender-3 v2 OEM display. A DWIN display with Rotary Encoder.
 //
-// LCD-12864 Ender 3 / CR10_STOCKDISPLAY line --> 2960
+// DWIN / DACAI LCD 4.3" 480x272
 
-//#define DWIN_CREALITY_LCD           // Creality UI
 //#define DWIN_LCD_PROUI              // Pro UI by MRiscoC
 //#define HAS_DACAI 1
 
-// Professional firmware features:
-//#define ProUIex 1
-#ifdef ProUIex
-  #define HAS_GCODE_PREVIEW 1
-  #define HAS_TOOLBAR 1
-#endif
+#if ENABLED(DWIN_LCD_PROUI)
+  // Professional firmware features:
+  #define ProUIex 1
+  #ifdef ProUIex
+    #define HAS_GCODE_PREVIEW 1
+    #define HAS_TOOLBAR 1
+  #endif
   #define HAS_PLOT 1
   #define HAS_ESDIAG 1
   #define HAS_CGCODE 1
   #define HAS_LOCKSCREEN 1
   //#define HAS_SD_EXTENDER 1  // Enable to support SD card extender cables
   #define SHOW_REAL_POS
-  #define ACTIVATE_MESH_ITEM  // Allows temporary enabling of mesh leveling
-  #define RUNOUT_TUNE_ITEM
-  #define PLR_TUNE_ITEM
-  //#define JD_TUNE_ITEM  // Enable only if Juntion Deviation is enabled
-  #define ADVK_TUNE_ITEM  // Enable only if Linear Advance is enabled
-  //#define MEDIASORT_MENU_ITEM  // Allows enable/disable file list sorting
+  #define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option
+  #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+    #define RUNOUT_TUNE_ITEM  // Filament Runout option in Tune Menu
+  #endif
+  #if ENABLED(POWER_LOSS_RECOVERY)
+    #define PLR_TUNE_ITEM  // Power-loss Recovery option in Tune Menu
+  #endif
+  #if ENABLED(BLTOUCH)
+    #define HS_MENU_ITEM  // BLTOUCH_HS_MODE menu option
+  #endif
+  #if ENABLED(HAS_PLOT)
+    #define PLOT_TUNE_ITEM  // Temperature Plot Graph item in Tune Menu
+  #endif
+  #if DISABLED(CLASSIC_JERK)
+    //#define JD_TUNE_ITEM  // Enable only if Juntion Deviation is enabled
+  #endif
+  #define ADVK_TUNE_ITEM  // Linear Advance item in Tune Menu
+  //#define ALTCOLOR_MENU_ITEM   // Alternate Color palette option
+  #define TRAMWIZ_MENU_ITEM      // Enable Tramming Wizard
+  //#define MEDIASORT_MENU_ITEM  // File list sorting option
+#endif
 
-//#define DWIN_CREALITY_LCD_JYERSUI   // Jyers UI by Jacob Myers
-//#define DWIN_MARLINUI_PORTRAIT      // MarlinUI (portrait orientation)
-//#define DWIN_MARLINUI_LANDSCAPE     // MarlinUI (landscape orientation)
+//
+// Factory display for Creality CR-10
+// https://www.aliexpress.com/item/32833148327.html
+//
+// This is RAMPS-compatible using a single 10-pin connector.
+// (For CR-10 owners who want to replace the Melzi Creality board but retain the display)
+//
+// 2.4" 128x64 LCD
+
+//#define CR10_STOCKDISPLAY    //For Ender-3 / Aquila C2 blue/white monochrome LCD
+#if ENABLED(CR10_STOCKDISPLAY) //BTT_SKR_MINI_E3
+  #define RET6_12864_LCD
+#endif
+
+//
+// Ender-2 OEM display, a variant of the MKS_MINI_12864
+//
+//#define ENDER2_STOCKDISPLAY
 
 //
 // Touch Screen Settings
