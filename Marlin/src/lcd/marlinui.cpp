@@ -1211,7 +1211,7 @@ void MarlinUI::init() {
             neo.show();
           //#elif PIN_EXIST(LCD_BACKLIGHT) && ENABLED(CR10_STOCKDISPLAY)
             WRITE(LCD_BACKLIGHT_PIN, LOW); // Backlight off
-	  #endif
+          #endif
           // TODO: Backlight off (add function to turn off backlight for LCD-12864)
           backlight_off_ms = 0;
         }

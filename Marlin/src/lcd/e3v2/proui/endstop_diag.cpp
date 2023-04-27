@@ -56,7 +56,7 @@ void draw_es_state(const bool is_hit) {
 }
 
 void ESDiagClass::Draw() {
-  Title.ShowCaption(F("End-stops Diagnostic"));
+  Title.ShowCaption(F("End-stops Diagnostic"));  // Title.ShowCaption(GET_TEXT_F(MSG_ENDSTOP_TEST));
   DWINUI::ClearMainArea();
   Draw_Popup_Bkgd();
   DWINUI::Draw_Button(BTN_Continue, 86, 250);
@@ -80,6 +80,13 @@ void ESDiagClass::Draw() {
   //#if USES_Z_MIN_PROBE_PIN
   //  draw_es_label(F(STR_Z_PROBE));
   //#endif
+
+/*
+  TERN_(HAS_X_MIN,     ES_LABEL(X_MIN)); TERN_(HAS_X_MAX, ES_LABEL(X_MAX));
+  TERN_(HAS_Y_MIN,     ES_LABEL(Y_MIN)); TERN_(HAS_Y_MAX, ES_LABEL(Y_MAX));
+  TERN_(HAS_Z_MIN_PIN, ES_LABEL(Z_MIN)); TERN_(HAS_Z_MAX, ES_LABEL(Z_MAX));
+  TERN_(HAS_FILAMENT_SENSOR, draw_es_label(F(STR_FILAMENT)));
+*/
   Update();
 }
 
@@ -107,6 +114,13 @@ void ESDiagClass::Update() {
   //#if USES_Z_MIN_PROBE_PIN
   //  draw_es_state(READ(Z_MIN_PROBE_PIN) != Z_MIN_PROBE_ENDSTOP_INVERTING);
   //#endif
+/*
+  TERN_(HAS_X_MIN,     ES_REPORT(X_MIN)); TERN_(HAS_X_MAX, ES_REPORT(X_MAX));
+  TERN_(HAS_Y_MIN,     ES_REPORT(Y_MIN)); TERN_(HAS_Y_MAX, ES_REPORT(Y_MAX));
+  TERN_(HAS_Z_MIN_PIN, ES_REPORT(Z_MIN)); TERN_(HAS_Z_MAX, ES_REPORT(Z_MAX));
+  TERN_(HAS_FILAMENT_SENSOR, draw_es_state(READ(FIL_RUNOUT1_PIN) != FIL_RUNOUT1_STATE));
+
+*/
   DWIN_UpdateLCD();
 }
 
