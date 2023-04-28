@@ -23,7 +23,7 @@
 
 #if ENABLED(DWIN_LCD_PROUI)
 
-#include "../../fontutils.h"
+#include "../../utf8.h"
 #include "../../marlinui.h"
 #include "../../../MarlinCore.h"
 #include "../../../core/serial.h"
@@ -161,7 +161,11 @@
 #define DWIN_VAR_UPDATE_INTERVAL         500
 #define DWIN_UPDATE_INTERVAL             1000
 
-#define BABY_Z_VAR TERN(HAS_BED_PROBE, probe.offset.z, HMI_data.ManualZOffset)
+#if HAS_MESH && HAS_BED_PROBE
+  #define BABY_Z_VAR probe.offset.z
+#else
+  #define BABY_Z_VAR HMI_data.ManualZOffset
+#endif
 
 #if ENABLED(MEDIASORT_MENU_ITEM) && DISABLED(SDCARD_SORT_ALPHA)
   #error "MEDIASORT_MENU_ITEM requires SDCARD_SORT_ALPHA."
@@ -1843,7 +1847,7 @@ void DWIN_SetDataDefaults() {
     #if HAS_MESH
       PRO_data.grid_max_points = DEF_GRID_MAX_POINTS;
       PRO_data.mesh_min_x = DEF_MESH_MIN_X;
-      PRO_data.mesh_max_x = DEF_MESH_MAX_X;
+      PRO_data.mesh_max_x = DEF_MESH_MAX_X; //TODO + abs(probe.offset.x);
       PRO_data.mesh_min_y = DEF_MESH_MIN_Y;
       PRO_data.mesh_max_y = DEF_MESH_MAX_Y;
     #endif

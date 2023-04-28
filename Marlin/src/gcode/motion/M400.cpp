@@ -19,44 +19,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-#pragma once
 
-//
-// Prefix header for all Marlin sources
-//
+#include "../gcode.h"
+#include "../../module/planner.h"
 
-#include "MarlinConfigPre.h"
+/**
+ * M400: Finish all moves
+ */
+void GcodeSuite::M400() {
 
-#ifdef __MARLIN_DEPS__
-  #include "../HAL/shared/fauxpins.h"
-#else
-  #include "../HAL/HAL.h"
-#endif
+  planner.synchronize();
 
-#include "../pins/pins.h"
-
-#ifndef __MARLIN_DEPS__
-  #include HAL_PATH(.., timers.h)
-  #include HAL_PATH(.., spi_pins.h)
-#endif
-
-#include "Conditionals_post.h"
-
-#ifndef __MARLIN_DEPS__
-
-  #include HAL_PATH(.., inc/Conditionals_post.h)
-
-  #include "../core/types.h"  // Ahead of sanity-checks
-
-  #include "Changes.h"
-  #include "SanityCheck.h"
-  #include HAL_PATH(.., inc/SanityCheck.h)
-
-  // Include all core headers
-  #include "../core/language.h"
-  #include "../core/utility.h"
-  #include "../core/serial.h"
-
-#endif
-
-#include "../core/multi_language.h"
+}

@@ -64,7 +64,7 @@ constexpr int8_t DEF_GRID_MAX_POINTS = TERN(HAS_MESH, GRID_MAX_POINTS_X, 3);
   #define MESH_MAX_Y  Y_BED_SIZE - (MESH_INSET)
 #endif
 constexpr int16_t DEF_MESH_MIN_X = MESH_MIN_X;
-constexpr int16_t DEF_MESH_MAX_X = MESH_MAX_X;
+constexpr int16_t DEF_MESH_MAX_X = MESH_MAX_X; // TODO
 constexpr int16_t DEF_MESH_MIN_Y = MESH_MIN_Y;
 constexpr int16_t DEF_MESH_MAX_Y = MESH_MAX_Y;
 #define MIN_MESH_INSET 0
@@ -88,7 +88,7 @@ typedef struct {
   int16_t z_max_pos  = DEF_Z_MAX_POS;
   uint8_t grid_max_points = DEF_GRID_MAX_POINTS;
   float mesh_min_x = DEF_MESH_MIN_X;
-  float mesh_max_x = DEF_MESH_MAX_X;
+  float mesh_max_x = DEF_MESH_MAX_X; // TODO
   float mesh_min_y = DEF_MESH_MIN_Y;
   float mesh_max_y = DEF_MESH_MAX_Y;
   uint16_t zprobefeedslow = DEF_Z_PROBE_FEEDRATE_SLOW;

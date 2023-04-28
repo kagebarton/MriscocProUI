@@ -128,13 +128,12 @@ jobs:
         asset_path: temp/build.bin
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
-  Build-UBL-BLTouch-A:
+  Build-UBL-BLTouch-A-Pro:
     name: Build BL-Touch UBL Files
     runs-on: ubuntu-latest
     strategy:
       matrix:
         chip: [GD32,N32]
-        inshape: [true,false]
     steps:
     - uses: actions/checkout@v2
     - name: Cache pip
@@ -159,22 +158,17 @@ jobs:
     - name: Run PlatformIO
       id: build_configs
       run: |
-        if ($IS); then ISTMP=-IS; else ISTMP=; fi;
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "filename=${AVTMP}_UBL-ProUI${ISTMP}.bin" >> $GITHUB_OUTPUT
+        echo "filename=${AVTMP}_UBL-ProUI.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/UBL/Configuration\ Pro.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/UBL/Configuration_adv\ Pro.h Marlin/Configuration_adv.h
         cp configurations/Voxelab\ Aquila/UBL/Version.h Marlin/Version.h
         sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
-        if ($IS); then TEMP=; else TEMP='\/\/'; fi;
-        sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
-        sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h
         pio run
         mkdir temp
         mv .pio/build/STM32F103RC_voxelab_maple_$AQUILA_VER/*.bin temp/build.bin
       env:
         AQUILA_VER: ${{ matrix.chip }}
-        IS: ${{ matrix.inshape }}
     - name: Get release
       id: get_release
       uses: bruceadams/get-release@v1.3.2
