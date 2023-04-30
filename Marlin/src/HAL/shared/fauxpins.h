@@ -201,16 +201,16 @@
 //
 // LPC Pin Names
 //
-#define P0_0  100
-#define P0_1  101
-#define P0_2  102
-#define P0_3  103
-#define P0_4  104
-#define P0_5  105
-#define P0_6  106
-#define P0_7  107
-#define P0_8  108
-#define P0_9  109
+#define P0_00 100
+#define P0_01 101
+#define P0_02 102
+#define P0_03 103
+#define P0_04 104
+#define P0_05 105
+#define P0_06 106
+#define P0_07 107
+#define P0_08 108
+#define P0_09 109
 #define P0_10 110
 #define P0_11 111
 #define P0_12 112
