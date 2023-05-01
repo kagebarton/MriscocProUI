@@ -136,5 +136,8 @@
     #define Z_PROBE_FEEDRATE_SLOW PRO_data.zprobefeedslow
   #endif
   #define INVERT_E0_DIR PRO_data.Invert_E0
-
+#else
+  #include <stddef.h>
+  #include "../../../core/types.h"
+  #include "proui.h"
 #endif  // ProUIex

@@ -36,10 +36,6 @@
 #include "../../../gcode/gcode.h"
 #include "../../../gcode/queue.h"
 
-#if !ProUIex
-  #include "proui.h"
-#endif
-
 #if HAS_MEDIA
   #include "../../../sd/cardreader.h"
   #include "file_header.h"
