@@ -234,16 +234,16 @@
 #define P0_30 130
 #define P0_31 131
 
-#define P1_0  200
-#define P1_1  201
-#define P1_2  202
-#define P1_3  203
-#define P1_4  204
-#define P1_5  205
-#define P1_6  206
-#define P1_7  207
-#define P1_8  208
-#define P1_9  209
+#define P1_00 200
+#define P1_01 201
+#define P1_02 202
+#define P1_03 203
+#define P1_04 204
+#define P1_05 205
+#define P1_06 206
+#define P1_07 207
+#define P1_08 208
+#define P1_09 209
 #define P1_10 210
 #define P1_11 211
 #define P1_12 212

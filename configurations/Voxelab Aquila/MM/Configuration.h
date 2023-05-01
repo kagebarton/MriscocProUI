@@ -3390,7 +3390,7 @@
   #if DISABLED(CLASSIC_JERK)
     //#define JD_TUNE_ITEM  // Enable only if Juntion Deviation is enabled
   #endif
-  #define ADVK_TUNE_ITEM  // Linear Advance item in Tune Menu
+  #define ADVK_TUNE_ITEM         // Linear Advance item in Tune Menu
   //#define ALTCOLOR_MENU_ITEM   // Alternate Color palette option
   //#define TRAMWIZ_MENU_ITEM    // Enable Tramming Wizard
   //#define MEDIASORT_MENU_ITEM  // File list sorting option
