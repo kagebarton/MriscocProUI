@@ -3375,7 +3375,7 @@
   //#define HAS_LOCKSCREEN 1
   //#define HAS_SD_EXTENDER 1  // Enable to support SD card extender cables
   #define SHOW_REAL_POS
-  #define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option
+  //#define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option
   #if ENABLED(FILAMENT_RUNOUT_SENSOR)
     #define RUNOUT_TUNE_ITEM  // Filament Runout option in Tune Menu
   #endif
