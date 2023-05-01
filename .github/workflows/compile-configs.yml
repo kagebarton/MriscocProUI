@@ -15,7 +15,7 @@ jobs:
         chip: [GD32,N32]
         inshape: [true,false]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Cache pip
       uses: actions/cache@v3
       with:
@@ -29,7 +29,9 @@ jobs:
         path: ~/.platformio
         key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10' 
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
@@ -76,7 +78,7 @@ jobs:
         chip: [GD32,N32]
         inshape: [true,false]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Cache pip
       uses: actions/cache@v3
       with:
@@ -90,7 +92,9 @@ jobs:
         path: ~/.platformio
         key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10' 
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
@@ -130,13 +134,13 @@ jobs:
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
   Build-UBL-BLTouch-A-Pro:
-    name: Build BL-Touch UBL Files
+    name: Build UBL Pro Files
     runs-on: ubuntu-latest
     strategy:
       matrix:
         chip: [GD32,N32]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Cache pip
       uses: actions/cache@v3
       with:
@@ -150,7 +154,9 @@ jobs:
         path: ~/.platformio
         key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10' 
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
@@ -185,7 +191,7 @@ jobs:
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
   Build-UBL-BLTouch-A-NP:
-    name: Build BL-Touch UBL Files
+    name: Build UBL NoPro Files
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -193,7 +199,7 @@ jobs:
         grid: [3,4,5,7]
         inshape: [true,false]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Cache pip
       uses: actions/cache@v3
       with:
@@ -207,7 +213,9 @@ jobs:
         path: ~/.platformio
         key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
@@ -256,7 +264,7 @@ jobs:
         chip: [GD32,N32]
         inshape: [true,false]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Cache pip
       uses: actions/cache@v3
       with:
@@ -270,7 +278,9 @@ jobs:
         path: ~/.platformio
         key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
