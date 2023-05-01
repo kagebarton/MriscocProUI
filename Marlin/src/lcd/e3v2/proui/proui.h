@@ -49,7 +49,7 @@ constexpr int8_t DEF_GRID_MAX_POINTS = TERN(HAS_MESH, GRID_MAX_POINTS_X, 3);
 #define GRID_MIN 3
 #define GRID_LIMIT 9
 #ifndef MESH_INSET
-  #define MESH_INSET 25
+  #define MESH_INSET 10
 #endif
 #ifndef MESH_MIN_X
   #define MESH_MIN_X MESH_INSET

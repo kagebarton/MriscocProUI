@@ -1,4 +1,4 @@
-/** Aquila UBL Mriscoc NoProUI
+/** Aquila BLT Mriscoc ProUI
  * Marlin 3D Printer Firmware
  * Copyright (c) 2022 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
@@ -1615,7 +1615,7 @@
  * A total of 2 does fast/slow probes with a weighted average.
  * A total of 3 or more adds more slow probes, taking the average.
  */
-#define MULTIPLE_PROBING 2    // Use a value of (1) with ProUIex, otherwise (2)
+#define MULTIPLE_PROBING 1    // Use a value of (1) with ProUIex, otherwise (2)
 //#define EXTRA_PROBING    1
 
 /**
@@ -1986,8 +1986,8 @@
  */
 //#define AUTO_BED_LEVELING_3POINT
 //#define AUTO_BED_LEVELING_LINEAR
-//#define AUTO_BED_LEVELING_BILINEAR  // MRiscoC BLTouch auto level
-#define AUTO_BED_LEVELING_UBL
+#define AUTO_BED_LEVELING_BILINEAR  // MRiscoC BLTouch auto level
+//#define AUTO_BED_LEVELING_UBL
 //#define MESH_BED_LEVELING
 
 /**
@@ -3364,7 +3364,7 @@
 
 #if ENABLED(DWIN_LCD_PROUI)
   // Professional firmware features:
-  //#define ProUIex 1
+  #define ProUIex 1
   #ifdef ProUIex
     #define HAS_GCODE_PREVIEW 1
     #define HAS_TOOLBAR 1

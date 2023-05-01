@@ -383,7 +383,7 @@
 #endif
 
 #ifndef MESH_INSET
-  #define MESH_INSET 0
+  #define MESH_INSET 10
 #endif
 
 /**

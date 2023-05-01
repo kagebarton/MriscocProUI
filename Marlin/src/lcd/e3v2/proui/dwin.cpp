@@ -36,6 +36,10 @@
 #include "../../../gcode/gcode.h"
 #include "../../../gcode/queue.h"
 
+#if !ProUIex
+  #include "proui.h"
+#endif
+
 #if HAS_MEDIA
   #include "../../../sd/cardreader.h"
   #include "file_header.h"
@@ -1932,7 +1936,7 @@ void DWIN_InitScreen() {
   hash_changed = true;
   DWIN_DrawStatusLine();
   DWIN_Draw_Dashboard();
-  #if HAS_BED_PROBE
+  #if ENABLED(AUTO_BED_LEVELING_UBL)
     if (bedlevel.storage_slot < 0) bedlevel.storage_slot = 0;
     settings.load_mesh(bedlevel.storage_slot);
   #endif
@@ -2638,7 +2642,7 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
       queue.inject(cmd);
 
     #endif // HAS_BED_PROBE
-  }
+  } // Bed Tramming Tram()
 
   void TramFL() { Tram(0); }
   void TramFR() { Tram(1); }
@@ -2966,8 +2970,9 @@ void AutoLevStart() { Goto_Popup(PopUp_StartAutoLev, onClick_StartAutoLev); }
     void Popup_ZeroMesh() { DWIN_Popup_ConfirmCancel(ICON_Info_0, F("Zero Current Mesh?")); }
     void OnClick_ZeroMesh() {
       if (HMI_flag.select_flag) {
-      ZERO(bedlevel.z_values);
-      DONE_BUZZ(true);
+        bedlevel.reset();
+        //ZERO(bedlevel.z_values);
+        DONE_BUZZ(true);
       }
       HMI_ReturnScreen();
     }

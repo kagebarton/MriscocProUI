@@ -2074,6 +2074,7 @@
   // Set the number of grid points per dimension.
   #define GRID_MAX_POINTS_X 5  // MRiscoC Customizable by menu
   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
+  #define MESH_EDIT_MENU            // Add a menu to edit mesh points
 
   // Probe along the Y axis, advancing X after each column
   //#define PROBE_Y_FIRST
@@ -3374,7 +3375,7 @@
   //#define HAS_LOCKSCREEN 1
   //#define HAS_SD_EXTENDER 1  // Enable to support SD card extender cables
   #define SHOW_REAL_POS
-  //#define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option
+  #define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option
   #if ENABLED(FILAMENT_RUNOUT_SENSOR)
     #define RUNOUT_TUNE_ITEM  // Filament Runout option in Tune Menu
   #endif
