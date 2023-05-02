@@ -947,7 +947,7 @@ void onClickSDItem() {
 void onDrawFileName(MenuItemClass* menuitem, int8_t line) {
   const bool is_subdir = !card.flag.workDirIsRoot;
   if (is_subdir && menuitem->pos == 1) {
-    Draw_Menu_Line(line, ICON_Back, ".. BACK");
+    Draw_Menu_Line(line, ICON_ReadEEPROM, ".. BACK");
   }
   else {
     uint8_t icon;
@@ -962,7 +962,7 @@ void Draw_Print_File_Menu() {
   checkkey = Menu;
   if (card.isMounted()) {
     if (SET_MENU(FileMenu, MSG_MEDIA_MENU, nr_sd_menu_items() + 1)) {
-      MenuItemAdd(ICON_ReadEEPROM, F("Exit to Main Menu"), onDrawMenuItem, Goto_Main_Menu);
+      MenuItemAdd(ICON_Back, F("Exit to Main Menu"), onDrawMenuItem, Goto_Main_Menu);
       LOOP_L_N(i, nr_sd_menu_items()) {
         MenuItemAdd(onDrawFileName, onClickSDItem);
       }
@@ -1793,6 +1793,14 @@ void DWIN_SetColorDefaults() {
   }
 #endif
 
+  void SetMeshArea() {
+    PRO_data.mesh_min_x = MESH_INSET;
+    PRO_data.mesh_max_x = X_BED_SIZE - MESH_INSET;
+    PRO_data.mesh_min_y = MESH_INSET;
+    PRO_data.mesh_max_y = Y_BED_SIZE - MESH_INSET;
+    ProEx.ApplyMeshLimits();
+  }
+
 void DWIN_SetDataDefaults() {
   DEBUG_ECHOLNPGM("DWIN_SetDataDefaults");
   DWIN_SetColorDefaults();
@@ -1936,6 +1944,7 @@ void DWIN_InitScreen() {
     if (bedlevel.storage_slot < 0) bedlevel.storage_slot = 0;
     settings.load_mesh(bedlevel.storage_slot);
   #endif
+  SetMeshArea();
   LCD_MESSAGE(WELCOME_MSG);
   Goto_Main_Menu();
 }
@@ -3793,10 +3802,10 @@ void Draw_Steps_Menu() {
       // PRO_data.mesh_min_y = _MAX(PROBING_MARGIN_FRONT, probe.offset.y);
       // PRO_data.mesh_max_y = _MIN(Y_BED_SIZE - PROBING_MARGIN_BACK, Y_MAX_POS + probe.offset.y);
       //#else
-        PRO_data.mesh_min_x = PROBING_MARGIN_LEFT;
-        PRO_data.mesh_max_x = X_BED_SIZE - PROBING_MARGIN_RIGHT;
-        PRO_data.mesh_min_y = PROBING_MARGIN_FRONT;
-        PRO_data.mesh_max_y = Y_BED_SIZE - PROBING_MARGIN_BACK;
+        PRO_data.mesh_min_x = MESH_INSET;
+        PRO_data.mesh_max_x = X_BED_SIZE - MESH_INSET;
+        PRO_data.mesh_min_y = MESH_INSET;
+        PRO_data.mesh_max_y = Y_BED_SIZE - MESH_INSET;
       //#endif
       ProEx.ApplyMeshLimits();
       ReDrawMenu();

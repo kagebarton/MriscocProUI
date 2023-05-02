@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
   release:
     types: [created]
-    tags: -'2.1.3c'
+    tags: 
+      - '2.1.3c'
 
 jobs:
   Build-Default-A:
@@ -256,71 +257,71 @@ jobs:
         asset_path: temp/build.bin
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
-  Build-BLTouch-A:
-    name: Build BL-Touch Files
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        chip: [GD32,N32]
-        inshape: [true,false]
-    steps:
-    - uses: actions/checkout@v3
-    - name: Cache pip
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-    - name: Cache PlatformIO
-      uses: actions/cache@v3
-      with:
-        path: ~/.platformio
-        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-    - name: Install PlatformIO
-      run: |
-        python3 -m pip install --upgrade pip
-        pip install --upgrade wheel
-        pip install --upgrade platformio
-    - name: Run PlatformIO
-      id: build_configs
-      run: |
-        if ($IS); then ISTMP=-IS; else ISTMP=; fi;
-        if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "filename=${AVTMP}_BLT-ProUI${ISTMP}.bin" >> $GITHUB_OUTPUT
-        cp configurations/Voxelab\ Aquila/BLT/Configuration.h Marlin/Configuration.h
-        cp configurations/Voxelab\ Aquila/BLT/Configuration_adv.h Marlin/Configuration_adv.h
-        cp configurations/Voxelab\ Aquila/BLT/Version.h Marlin/Version.h
-        sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
-        sed -i "s/#define GRID_MAX_POINTS_X.*/#define GRID_MAX_POINTS_X $GRID/g" Marlin/Configuration.h
-        if ($IS); then TEMP=; else TEMP='\/\/'; fi;
-        sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
-        sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h
-        pio run
-        mkdir temp
-        mv .pio/build/STM32F103RC_voxelab_maple_$AQUILA_VER/*.bin temp/build.bin
-      env:
-        AQUILA_VER: ${{ matrix.chip }}
-        GRID: ${{ matrix.grid }}
-        IS: ${{ matrix.inshape }}
-    - name: Get release
-      id: get_release
-      uses: bruceadams/get-release@v1.3.2
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1.0.2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.get_release.outputs.upload_url }}
-        asset_path: temp/build.bin
-        asset_name: ${{ steps.build_configs.outputs.filename }}
-        asset_content_type: application/x-binary
+  # Build-BLTouch-A:
+  #   name: Build BL-Touch Files
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       chip: [GD32,N32]
+  #       inshape: [true,false]
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - name: Cache pip
+  #     uses: actions/cache@v3
+  #     with:
+  #       path: ~/.cache/pip
+  #       key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+  #       restore-keys: |
+  #         ${{ runner.os }}-pip-
+  #   - name: Cache PlatformIO
+  #     uses: actions/cache@v3
+  #     with:
+  #       path: ~/.platformio
+  #       key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+  #   - name: Set up Python
+  #     uses: actions/setup-python@v4
+  #     with:
+  #       python-version: '3.10'
+  #   - name: Install PlatformIO
+  #     run: |
+  #       python3 -m pip install --upgrade pip
+  #       pip install --upgrade wheel
+  #       pip install --upgrade platformio
+  #   - name: Run PlatformIO
+  #     id: build_configs
+  #     run: |
+  #       if ($IS); then ISTMP=-IS; else ISTMP=; fi;
+  #       if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
+  #       echo "filename=${AVTMP}_BLT-ProUI${ISTMP}.bin" >> $GITHUB_OUTPUT
+  #       cp configurations/Voxelab\ Aquila/BLT/Configuration.h Marlin/Configuration.h
+  #       cp configurations/Voxelab\ Aquila/BLT/Configuration_adv.h Marlin/Configuration_adv.h
+  #       cp configurations/Voxelab\ Aquila/BLT/Version.h Marlin/Version.h
+  #       sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
+  #       sed -i "s/#define GRID_MAX_POINTS_X.*/#define GRID_MAX_POINTS_X $GRID/g" Marlin/Configuration.h
+  #       if ($IS); then TEMP=; else TEMP='\/\/'; fi;
+  #       sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
+  #       sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h
+  #       pio run
+  #       mkdir temp
+  #       mv .pio/build/STM32F103RC_voxelab_maple_$AQUILA_VER/*.bin temp/build.bin
+  #     env:
+  #       AQUILA_VER: ${{ matrix.chip }}
+  #       GRID: ${{ matrix.grid }}
+  #       IS: ${{ matrix.inshape }}
+  #   - name: Get release
+  #     id: get_release
+  #     uses: bruceadams/get-release@v1.3.2
+  #     env:
+  #       GITHUB_TOKEN: ${{ github.token }}
+  #   - name: Upload Release Asset
+  #     uses: actions/upload-release-asset@v1.0.2
+  #     env:
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     with:
+  #       upload_url: ${{ steps.get_release.outputs.upload_url }}
+  #       asset_path: temp/build.bin
+  #       asset_name: ${{ steps.build_configs.outputs.filename }}
+  #       asset_content_type: application/x-binary
 
 
 
