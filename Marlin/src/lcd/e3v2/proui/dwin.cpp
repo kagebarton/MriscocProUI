@@ -1793,6 +1793,14 @@ void DWIN_SetColorDefaults() {
   }
 #endif
 
+// Max X Mesh Inset does not save after restart - it is limited by Probe offset. TODO: this is just a temp workaround,
+ #if ProUIex && HAS_MESH
+  void SetMeshArea() {
+    PRO_data.mesh_max_x = X_BED_SIZE - MESH_INSET;
+    ProEx.ApplyMeshLimits();
+  }
+#endif
+
 void DWIN_SetDataDefaults() {
   DEBUG_ECHOLNPGM("DWIN_SetDataDefaults");
   DWIN_SetColorDefaults();
@@ -1935,6 +1943,9 @@ void DWIN_InitScreen() {
   #if ENABLED(AUTO_BED_LEVELING_UBL)
     if (bedlevel.storage_slot < 0) bedlevel.storage_slot = 0;
     settings.load_mesh(bedlevel.storage_slot);
+  #endif
+  #if ProUIex && HAS_MESH
+    SetMeshArea();
   #endif
   LCD_MESSAGE(WELCOME_MSG);
   Goto_Main_Menu();
