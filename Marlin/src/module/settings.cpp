@@ -544,7 +544,9 @@ typedef struct SettingsDataStruct {
     touch_calibration_t touch_calibration_data;
   #endif
 
+  //
   // Ethernet settings
+  //
   #if HAS_ETHERNET
     bool ethernet_hardware_enabled;                     // M552 S
     uint32_t ethernet_ip,                               // M552 P
@@ -561,12 +563,15 @@ typedef struct SettingsDataStruct {
     bool no_tick; //encoder beep
   #endif
 
+  //
+  // 2nd Mesh Viewer
+  //
   #if ENABLED(HAS_MESH) && ENABLED(USE_UBL_VIEWER)
     bool view_mesh;
   #endif
 
   //
-  //BED_SCREW_INSET
+  // Bed corner screw inset position
   //
   #ifdef BED_SCREW_INSET
     float screw_pos;
@@ -589,6 +594,9 @@ typedef struct SettingsDataStruct {
     celsius_t mks_min_extrusion_temp;                   // Min E Temp (shadow M302 value)
   #endif
 
+  //
+  // If LCD has Language > 1
+  //
   #if HAS_MULTI_LANGUAGE
     uint8_t ui_language;                                // M414 S
   #endif
