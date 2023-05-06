@@ -63,28 +63,31 @@ void ESDiagClass::Draw() {
   Draw_Select_Box(86, 250);
   DWINUI::cursor.y = 80;
   #define ES_LABEL(S) draw_es_label(F(STR_##S))
-  #if HAS_X_MIN
+  #if USE_X_MIN
     ES_LABEL(X_MIN);
   #endif
-  #if HAS_Y_MIN
+  TERN_(USE_X_MAX, ES_LABEL(X_MAX));
+  #if USE_Y_MIN
     ES_LABEL(Y_MIN);
   #endif
-  #if !USES_Z_MIN_PROBE_PIN
-    #if HAS_Z_MIN
+  TERN_(USE_Y_MAX, ES_LABEL(Y_MAX));
+  #if !USE_Z_MIN_PROBE //HAS_Z_MIN_PIN
+    #if HAS_Z_MIN_PIN
       ES_LABEL(Z_MIN);
     #endif
+    TERN_(USE_Z_MAX, ES_LABEL(Z_MAX));
   #endif
   #if HAS_FILAMENT_SENSOR
     draw_es_label(F(STR_FILAMENT));
   #endif
-  //#if USES_Z_MIN_PROBE_PIN
+  //#if USE_Z_MIN_PROBE
   //  draw_es_label(F(STR_Z_PROBE));
   //#endif
 
 /*
-  TERN_(HAS_X_MIN,     ES_LABEL(X_MIN)); TERN_(HAS_X_MAX, ES_LABEL(X_MAX));
-  TERN_(HAS_Y_MIN,     ES_LABEL(Y_MIN)); TERN_(HAS_Y_MAX, ES_LABEL(Y_MAX));
-  TERN_(HAS_Z_MIN_PIN, ES_LABEL(Z_MIN)); TERN_(HAS_Z_MAX, ES_LABEL(Z_MAX));
+  TERN_(USE_X_MIN,     ES_LABEL(X_MIN)); TERN_(USE_X_MAX, ES_LABEL(X_MAX));
+  TERN_(USE_Y_MIN,     ES_LABEL(Y_MIN)); TERN_(USE_Y_MAX, ES_LABEL(Y_MAX));
+  TERN_(HAS_Z_MIN_PIN, ES_LABEL(Z_MIN)); TERN_(USE_Z_MAX, ES_LABEL(Z_MAX));
   TERN_(HAS_FILAMENT_SENSOR, draw_es_label(F(STR_FILAMENT)));
 */
   Update();
@@ -93,16 +96,19 @@ void ESDiagClass::Draw() {
 void ESDiagClass::Update() {
   DWINUI::cursor.y = 80;
   #define ES_REPORT(S) draw_es_state(READ(S##_PIN) == S##_ENDSTOP_HIT_STATE)
-  #if HAS_X_MIN
+  #if USE_X_MIN
     ES_REPORT(X_MIN);
   #endif
-  #if HAS_Y_MIN
+  TERN_(USE_X_MAX, ES_REPORT(X_MAX));
+  #if USE_Y_MIN
     ES_REPORT(Y_MIN);
   #endif
-  #if !USES_Z_MIN_PROBE_PIN
-    #if HAS_Z_MIN
+  TERN_(USE_Y_MAX, ES_REPORT(Y_MAX));
+  #if !USE_Z_MIN_PROBE
+    #if HAS_Z_MIN_PIN
       ES_REPORT(Z_MIN);
     #endif
+    TERN_(USE_Z_MAX, ES_REPORT(Z_MAX));
   #endif
   #if HAS_FILAMENT_SENSOR
     #if ProUIex
@@ -111,13 +117,13 @@ void ESDiagClass::Update() {
       draw_es_state(READ(FIL_RUNOUT1_PIN) != FIL_RUNOUT1_STATE);
     #endif
   #endif
-  //#if USES_Z_MIN_PROBE_PIN
+  //#if USE_Z_MIN_PROBE
   //  draw_es_state(READ(Z_MIN_PROBE_PIN) != Z_MIN_PROBE_ENDSTOP_INVERTING);
   //#endif
 /*
-  TERN_(HAS_X_MIN,     ES_REPORT(X_MIN)); TERN_(HAS_X_MAX, ES_REPORT(X_MAX));
-  TERN_(HAS_Y_MIN,     ES_REPORT(Y_MIN)); TERN_(HAS_Y_MAX, ES_REPORT(Y_MAX));
-  TERN_(HAS_Z_MIN_PIN, ES_REPORT(Z_MIN)); TERN_(HAS_Z_MAX, ES_REPORT(Z_MAX));
+  TERN_(USE_X_MIN,     ES_REPORT(X_MIN)); TERN_(USE_X_MAX, ES_REPORT(X_MAX));
+  TERN_(USE_Y_MIN,     ES_REPORT(Y_MIN)); TERN_(USE_Y_MAX, ES_REPORT(Y_MAX));
+  TERN_(HAS_Z_MIN_PIN, ES_REPORT(Z_MIN)); TERN_(USE_Z_MAX, ES_REPORT(Z_MAX));
   TERN_(HAS_FILAMENT_SENSOR, draw_es_state(READ(FIL_RUNOUT1_PIN) != FIL_RUNOUT1_STATE));
 
 */
