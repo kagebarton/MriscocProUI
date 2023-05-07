@@ -206,7 +206,7 @@ class FilamentSensorBase {
       #define  INIT_RUNOUT_PIN(N) _INIT_RUNOUT_PIN(FIL_RUNOUT##N##_PIN, FIL_RUNOUT##N##_STATE, FIL_RUNOUT##N##_PULLUP, FIL_RUNOUT##N##_PULLDOWN);
       REPEAT_1(NUM_RUNOUT_SENSORS, INIT_RUNOUT_PIN)
       #if ProUIex && HAS_FILAMENT_SENSOR
-        ProEx.SetRunoutState(FIL_RUNOUT1_PIN)
+        ProEx.SetRunoutState(FIL_RUNOUT1_PIN);
       #endif
       #undef INIT_RUNOUT_PIN
 
