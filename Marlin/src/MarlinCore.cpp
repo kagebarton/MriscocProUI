@@ -75,9 +75,7 @@
 
 #if HAS_DWIN_E3V2
   #include "lcd/e3v2/common/encoder.h"
-  #if ENABLED(DWIN_CREALITY_LCD)
-    #include "lcd/e3v2/creality/dwin.h"
-  #elif ENABLED(DWIN_LCD_PROUI)
+  #if ENABLED(DWIN_LCD_PROUI)
     #include "lcd/e3v2/proui/dwin.h"
   #endif
 #endif
