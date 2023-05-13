@@ -1769,7 +1769,7 @@ void DWIN_SetColorDefaults() {
   HMI_data.Bottom_Color     = Def_TitleBg_Color;
 }
 
-#if ALTCOLOR_MENU_ITEM
+#if ENABLED(ALTCOLOR_MENU_ITEM)
   void DWIN_SetAltColor() {
     HMI_data.Background_Color = Def_Background_Color;
     HMI_data.Cursor_Color     = Def_Cursor_Color;
@@ -3230,7 +3230,7 @@ void Draw_SelectColors_Menu() {
   checkkey = Menu;
   if (SET_MENU(SelectColorMenu, MSG_COLORS_SELECT, 22)) {
     BACK_ITEM(Draw_Control_Menu);
-    #if ALTCOLOR_MENU_ITEM
+    #if ENABLED(ALTCOLOR_MENU_ITEM)
       MENU_ITEM_F(ICON_ResumeEEPROM, "Set Alt Colors", onDrawMenuItem, SetAltColor);
     #endif
     MENU_ITEM(ICON_ResumeEEPROM, MSG_RESTORE_DEFAULTS, onDrawMenuItem, RestoreDefaultColors);
