@@ -7,10 +7,10 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG DEBCONF_NOWARNINGS="yes"
 
 # Upgrade pip
-RUN pip install --upgrade pip
+RUN python3 -m pip install --upgrade pip
 
 # Install platformio toolchain / framework and pyyaml
-RUN pip install -U platformio PyYaml
+RUN pip install -U platformio PyYaml wheel
 
 # Upgrade platformio using development version / branch
 RUN pio upgrade --dev
