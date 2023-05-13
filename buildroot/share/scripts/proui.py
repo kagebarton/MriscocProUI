@@ -9,7 +9,9 @@
 import shutil
 
 libpath = "Marlin/lib/proui/"
-
+from SCons.Script import Import
+from SCons.Script import DefaultEnvironment
+env = DefaultEnvironment()
 Import("env")
 
 def _GetMarlinEnv(marlinEnv, feature):

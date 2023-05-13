@@ -12,18 +12,18 @@ on:
 jobs:
   bump_date:
     name: Bump Distribution Date
-    if: github.repository == 'MarlinFirmware/Marlin'
+    if: github.repository == 'classicrocker883/MriscocProUI'
 
     runs-on: ubuntu-latest
 
     steps:
 
-    - name: Check out bugfix-2.1.x
+    - name: Check out 2023-May
       uses: actions/checkout@v3
       with:
-        ref: bugfix-2.1.x
+        ref: 2023-May
 
-    - name: Bump Date (bugfix-2.1.x)
+    - name: Bump Date (2023-May)
       run: |
         # Inline Bump Script
         if [[ ! "$( git log -1 --pretty=%B )" =~ ^\[cron\] ]]; then

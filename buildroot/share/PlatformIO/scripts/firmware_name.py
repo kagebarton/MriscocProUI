@@ -1,3 +1,6 @@
+from SCons.Script import Import
+from SCons.Script import DefaultEnvironment
+env = DefaultEnvironment()
 Import("env")
 
 import os,datetime
