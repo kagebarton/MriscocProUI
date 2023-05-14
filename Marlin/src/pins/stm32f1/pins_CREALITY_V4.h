@@ -301,9 +301,9 @@
 #define UART5_RX_PIN                        PD2   // default uses sdcard SDIO_CMD
 
 // SDIO pins
-#define BOARD_SDIO_D0                         PC8
-#define BOARD_SDIO_D1                         PC9
-#define BOARD_SDIO_D2                         PC10
-#define BOARD_SDIO_D3                         PC11
-#define BOARD_SDIO_CK                         PC12
-#define BOARD_SDIO_CMD                        PD2
+#define BOARD_SDIO_D0                       PC8
+#define BOARD_SDIO_D1                       PC9
+#define BOARD_SDIO_D2                       PC10
+#define BOARD_SDIO_D3                       PC11
+#define BOARD_SDIO_CK                       PC12
+#define BOARD_SDIO_CMD                      PD2
