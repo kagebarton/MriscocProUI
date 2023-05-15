@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2023 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -19,29 +19,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-#pragma once
 
-#include <stdint.h>
-#include "../../../core/millis_t.h"
+#include "../../inc/MarlinConfigPre.h"
 
-typedef struct { int8_t x, y; } pos_t;
+#if ENABLED(ONE_CLICK_PRINT)
 
-// Simple 8:8 fixed-point
-typedef int16_t fixed_t;
-#define FTOF(F) fixed_t((F)*256.0f)
-#define PTOF(P) (float(P)*(1.0f/256.0f))
-#define BTOF(X) (fixed_t(X)<<8)
-#define FTOB(X) int8_t(fixed_t(X)>>8)
+#include "menu.h"
 
-class MarlinGame {
-protected:
-  static int score;
-  static uint8_t game_state;
-  static millis_t next_frame;
+void one_click_print() {
+  ui.goto_screen([]{
+    char * const filename = card.longest_filename();
+    MenuItem_confirm::select_screen(
+      GET_TEXT_F(MSG_BUTTON_PRINT), GET_TEXT_F(MSG_BUTTON_CANCEL),
+      []{
+        card.openAndPrintFile(card.filename);
+        ui.return_to_status();
+        ui.reset_status();
+      }, nullptr,
+      GET_TEXT_F(MSG_START_PRINT), filename, F("?")
+    );
+  });
+}
 
-  static bool game_frame();
-  static void draw_game_over();
-  static void exit_game();
-public:
-  static void init_game(const uint8_t init_state, const screenFunc_t screen);
-};
+#endif // ONE_CLICK_PRINT
