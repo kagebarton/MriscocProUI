@@ -3379,6 +3379,7 @@
   #define HAS_CGCODE 1
   #define HAS_LOCKSCREEN 1
   //#define HAS_SD_EXTENDER 1  // Enable to support SD card extender cables
+  #define USE_UBL_VIEWER 1     // Enable two graph types to view mesh
   #define SHOW_REAL_POS
   #define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option
   #if ENABLED(FILAMENT_RUNOUT_SENSOR)
