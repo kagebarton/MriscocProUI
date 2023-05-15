@@ -663,9 +663,12 @@
 #endif
 
 /**
- * Use one of the PWM fans as a redundant part-cooling fan
+ * Assign more PWM fans for part cooling, synchronized with Fan 0
  */
-//#define REDUNDANT_PART_COOLING_FAN 2  // Index of the fan to sync with FAN 0.
+//#define REDUNDANT_PART_COOLING_FAN 1  // Index of the first fan to synchronize with Fan 0
+#ifdef REDUNDANT_PART_COOLING_FAN
+  //#define NUM_REDUNDANT_FANS 1        // Number of sequential fans to synchronize with Fan 0
+#endif
 
 // @section extruder
 
@@ -1683,6 +1686,7 @@
   //#define NO_SD_AUTOSTART                 // Remove auto#.g file support completely to save some Flash, SRAM
   //#define MENU_ADDAUTOSTART               // Add a menu option to run auto#.g files
 
+  //#define ONE_CLICK_PRINT                 // Prompt to print the newest file on inserted media
   //#define BROWSE_MEDIA_ON_INSERT          // Open the file browser when media is inserted
 
   //#define MEDIA_MENU_AT_TOP               // Force the media menu to be listed on the top of the main menu
