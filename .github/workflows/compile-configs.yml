@@ -14,6 +14,7 @@ jobs:
     strategy:
       matrix:
         chip: [GD32,N32]
+        temp: [true,false]
         inshape: [true,false]
     steps:
     - uses: actions/checkout@v3
@@ -41,21 +42,27 @@ jobs:
     - name: Run PlatformIO
       id: build_configs
       run: |
-        if ($IS); then ISTMP=-IS; else ISTMP=; fi;        
+        if ($TP); then TPTMP=-MPC; else TPTMP=; fi;
+        if ($IS); then ISTMP=-IS; else ISTMP=; fi;
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "filename=${AVTMP}_Default-NP-ProUI${ISTMP}.bin" >> $GITHUB_OUTPUT
+        echo "filename=${AVTMP}_Default-NP-ProUI${ISTMP}${TPTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/Default-NP/Configuration.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/Default-NP/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/Voxelab\ Aquila/Default-NP/Version.h Marlin/Version.h
         sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
         if ($IS); then TEMP=; else TEMP='\/\/'; fi;
         sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
-        sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h        
+        sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h
+        if ($TP); then PTEMP='\/\/'; else PTEMP=; fi;
+        sed -i "s/[^ ]*#define PIDTEMP/$PTEMP#define PIDTEMP/g" Marlin/Configuration.h
+        if ($TP); then MTEMP=; else MTEMP='\/\/'; fi;
+        sed -i "s/[^ ]*#define MPCTEMP/$MTEMP#define MPCTEMP/g" Marlin/Configuration.h
         pio run
         mkdir temp
         mv .pio/build/STM32F103RC_voxelab_maple_$AQUILA_VER/*.bin temp/build.bin
       env:
         AQUILA_VER: ${{ matrix.chip }}
+        TP: ${{ matrix.temp }}
         IS: ${{ matrix.inshape }}
     - name: Get release
       id: get_release
@@ -77,6 +84,7 @@ jobs:
     strategy:
       matrix:
         chip: [GD32,N32]
+        temp: [true,false]
         inshape: [true,false]
     steps:
     - uses: actions/checkout@v3
@@ -104,21 +112,27 @@ jobs:
     - name: Run PlatformIO
       id: build_configs
       run: |
-        if ($IS); then ISTMP=-IS; else ISTMP=; fi;        
+        if ($TP); then TPTMP=-MPC; else TPTMP=; fi;
+        if ($IS); then ISTMP=-IS; else ISTMP=; fi;
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "filename=${AVTMP}-MM-ProUI${ISTMP}.bin" >> $GITHUB_OUTPUT
+        echo "filename=${AVTMP}-MM-ProUI${ISTMP}${TPTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/MM/Configuration.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/MM/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/Voxelab\ Aquila/MM/Version.h Marlin/Version.h
         sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
         if ($IS); then TEMP=; else TEMP='\/\/'; fi;
         sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
-        sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h        
+        sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h
+        if ($TP); then PTEMP='\/\/'; else PTEMP=; fi;
+        sed -i "s/[^ ]*#define PIDTEMP/$PTEMP#define PIDTEMP/g" Marlin/Configuration.h
+        if ($TP); then MTEMP=; else MTEMP='\/\/'; fi;
+        sed -i "s/[^ ]*#define MPCTEMP/$MTEMP#define MPCTEMP/g" Marlin/Configuration.h
         pio run
         mkdir temp
         mv .pio/build/STM32F103RC_voxelab_maple_$AQUILA_VER/*.bin temp/build.bin
       env:
         AQUILA_VER: ${{ matrix.chip }}
+        TP: ${{ matrix.temp }}
         IS: ${{ matrix.inshape }}
     - name: Get release
       id: get_release
@@ -134,7 +148,7 @@ jobs:
         asset_path: temp/build.bin
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
-  Build-UBL-BLTouch-A-Pro:
+  Build-UBL-BLTouch-Pro-A:
     name: Build UBL Pro Files
     runs-on: ubuntu-latest
     strategy:
@@ -191,13 +205,14 @@ jobs:
         asset_path: temp/build.bin
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
-  Build-UBL-BLTouch-A-NP:
+  Build-UBL-BLTouch-NP-A:
     name: Build UBL NoPro Files
     runs-on: ubuntu-latest
     strategy:
       matrix:
         chip: [GD32,N32]
         grid: [3,4,5,7]
+        temp: [true,false]
         inshape: [true,false]
     steps:
     - uses: actions/checkout@v3
@@ -225,9 +240,10 @@ jobs:
     - name: Run PlatformIO
       id: build_configs
       run: |
+        if ($TP); then TPTMP=-MPC; else TPTMP=; fi;
         if ($IS); then ISTMP=-IS; else ISTMP=; fi;
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "filename=${AVTMP}_UBL-${GRID}x${GRID}-NoPro${ISTMP}.bin" >> $GITHUB_OUTPUT
+        echo "filename=${AVTMP}_UBL-${GRID}x${GRID}-NoPro${ISTMP}${TPTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/UBL/Configuration.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/UBL/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/Voxelab\ Aquila/UBL/Version.h Marlin/Version.h
@@ -236,12 +252,17 @@ jobs:
         if ($IS); then TEMP=; else TEMP='\/\/'; fi;
         sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
         sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h
+        if ($TP); then PTEMP='\/\/'; else PTEMP=; fi;
+        sed -i "s/[^ ]*#define PIDTEMP/$PTEMP#define PIDTEMP/g" Marlin/Configuration.h
+        if ($TP); then MTEMP=; else MTEMP='\/\/'; fi;
+        sed -i "s/[^ ]*#define MPCTEMP/$MTEMP#define MPCTEMP/g" Marlin/Configuration.h
         pio run
         mkdir temp
         mv .pio/build/STM32F103RC_voxelab_maple_$AQUILA_VER/*.bin temp/build.bin
       env:
         AQUILA_VER: ${{ matrix.chip }}
         GRID: ${{ matrix.grid }}
+        TP: ${{ matrix.temp }}
         IS: ${{ matrix.inshape }}
     - name: Get release
       id: get_release
@@ -334,6 +355,7 @@ jobs:
       matrix:
         chip: [GD32,N32]
         grid: [3,4,5,7]
+        temp: [true,false]
         inshape: [true,false]
     steps:
     - uses: actions/checkout@v3
@@ -361,9 +383,10 @@ jobs:
     - name: Run PlatformIO
       id: build_configs
       run: |
+        if ($TP); then TPTMP=-MPC; else TPTMP=; fi;
         if ($IS); then ISTMP=-IS; else ISTMP=; fi;
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "filename=${AVTMP}_BLT-${GRID}x${GRID}-ProUI${ISTMP}.bin" >> $GITHUB_OUTPUT
+        echo "filename=${AVTMP}_BLT-${GRID}x${GRID}-NoPro${ISTMP}${TPTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/BLT/Configuration.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/BLT/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/Voxelab\ Aquila/BLT/Version.h Marlin/Version.h
@@ -372,12 +395,17 @@ jobs:
         if ($IS); then TEMP=; else TEMP='\/\/'; fi;
         sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
         sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h
+        if ($TP); then PTEMP='\/\/'; else PTEMP=; fi;
+        sed -i "s/[^ ]*#define PIDTEMP/$PTEMP#define PIDTEMP/g" Marlin/Configuration.h
+        if ($TP); then MTEMP=; else MTEMP='\/\/'; fi;
+        sed -i "s/[^ ]*#define MPCTEMP/$MTEMP#define MPCTEMP/g" Marlin/Configuration.h
         pio run
         mkdir temp
         mv .pio/build/STM32F103RC_voxelab_maple_$AQUILA_VER/*.bin temp/build.bin
       env:
         AQUILA_VER: ${{ matrix.chip }}
         GRID: ${{ matrix.grid }}
+        TP: ${{ matrix.temp }}
         IS: ${{ matrix.inshape }}
     - name: Get release
       id: get_release
