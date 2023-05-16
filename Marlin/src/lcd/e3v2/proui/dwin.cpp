@@ -201,7 +201,6 @@ enum SelectItem : uint8_t {
   PAGE_TOOLBAR,
 #endif
   PAGE_COUNT,
-
   PRINT_SETUP = 0,
   PRINT_PAUSE_RESUME,
   PRINT_STOP,
@@ -1629,7 +1628,7 @@ void DWIN_LevelingDone() {
         break;
       case MPC_INTERRUPTED:
         checkkey = last_checkkey;
-        DWIN_Popup_Confirm(ICON_TempTooHigh, GET_TEXT_F(MSG_ERROR), F(STR_MPC_AUTOTUNE STR_MPC_AUTOTUNE_INTERRUPTED));
+        DWIN_Popup_Confirm(ICON_TempTooHigh, GET_TEXT_F(MSG_ERROR), F(STR_MPC_AUTOTUNE_INTERRUPTED));
         ui.reset_alert_level();
         break;
       case AUTOTUNE_DONE:
@@ -3547,10 +3546,10 @@ void Draw_Temperature_Menu() {
     #if HAS_FAN
       FanSpeedItem = EDIT_ITEM(ICON_FanSpeed, MSG_FAN_SPEED, onDrawPInt8Menu, SetFanSpeed, &thermalManager.fan_speed[0]);
     #endif
-    #if ENABLED(PIDTEMP)
-      MENU_ITEM_F(ICON_Temperature, STR_HOTEND_PID " Settings", onDrawSubMenu, Draw_HotendPID_Menu);
-    #elif ENABLED(PIDTEMP) && ENABLED(PIDTEMPBED)
+    #if ENABLED(PIDTEMP) && ENABLED(PIDTEMPBED)
       MENU_ITEM_F(ICON_Temperature, "PID Settings", onDrawSubMenu, Draw_PID_Menu);
+    #elif ENABLED(PIDTEMP)
+      MENU_ITEM_F(ICON_Temperature, STR_HOTEND_PID " Settings", onDrawSubMenu, Draw_HotendPID_Menu);
     #endif
     #if ENABLED(MPCTEMP)
       MENU_ITEM_F(ICON_MPCNozzle, STR_MPC_AUTOTUNE " Settings", onDrawSubMenu, Draw_HotendMPC_Menu);

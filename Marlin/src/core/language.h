@@ -231,9 +231,9 @@
 #define STR_PID_DEBUG_OUTPUT                " Output "
 #define STR_INVALID_EXTRUDER_NUM            " - Invalid extruder number !"
 #define STR_MPC_AUTOTUNE                    "MPC Autotune"
-#define STR_MPC_AUTOTUNE_START              " start for " STR_E
-#define STR_MPC_AUTOTUNE_INTERRUPTED        " interrupted!"
-#define STR_MPC_AUTOTUNE_FINISHED           " finished! Put the constants below into Configuration.h"
+#define STR_MPC_AUTOTUNE_START              "MPC Autotune start for " STR_E
+#define STR_MPC_AUTOTUNE_INTERRUPTED        "MPC Autotune interrupted!"
+#define STR_MPC_AUTOTUNE_FINISHED           "MPC Autotune finished! Put the constants below into Configuration.h"
 #define STR_MPC_COOLING_TO_AMBIENT          "Cooling to ambient"
 #define STR_MPC_HEATING_PAST_200            "Heating to over 200C"
 #define STR_MPC_MEASURING_AMBIENT           "Measuring ambient heatloss at "
@@ -278,6 +278,7 @@
 // Settings Report Strings
 #define STR_Z_AUTO_ALIGN                    "Z Auto-Align"
 #define STR_BACKLASH_COMPENSATION           "Backlash compensation"
+#define STR_FT_MOTION                       "Fixed-Time Motion"
 #define STR_S_SEG_PER_SEC                   "S<seg-per-sec>"
 #define STR_DELTA_SETTINGS                  "Delta (L<diagonal-rod> R<radius> H<height> S<seg-per-sec> XYZ<tower-angle-trim> ABC<rod-trim>)"
 #define STR_SCARA_SETTINGS                  "SCARA"
