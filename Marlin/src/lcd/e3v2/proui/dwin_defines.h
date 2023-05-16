@@ -22,7 +22,6 @@
 #pragma once
 
 // #define DEBUG_DWIN 1
-// #define NEED_HEX_PRINT 1
 
 #if MB(CREALITY_V24S1_301, CREALITY_V24S1_301F4)
   #define DASH_REDRAW 1
