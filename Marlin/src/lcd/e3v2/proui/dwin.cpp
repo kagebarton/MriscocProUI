@@ -2379,7 +2379,7 @@ void SetMoveZ() { HMI_value.axis = Z_AXIS; SetPFloatOnClick(Z_MIN_POS, Z_MAX_POS
   }
 #endif
 
-#if ENABLED(USE_UBL_VIEWER)
+#if HAS_MESH && USE_UBL_VIEWER
   void SetViewMesh() {
     Toggle_Chkb_Line(bedLevelTools.view_mesh);
   }

@@ -5,7 +5,7 @@ on:
   release:
     types: [created]
     tags:
-      - '2.1.3c-test'
+      - '2.1.3c-test2'
 
 jobs:
   Build-Default-A:
@@ -258,7 +258,7 @@ jobs:
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
   Build-BLTouch-A:
-    name: Build BL-Touch Files
+    name: Build BLT Pro Files
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -295,8 +295,8 @@ jobs:
         if ($IS); then ISTMP=-IS; else ISTMP=; fi;
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
         echo "filename=${AVTMP}_BLT-ProUI${ISTMP}${TPTMP}.bin" >> $GITHUB_OUTPUT
-        cp configurations/Voxelab\ Aquila/BLT/Configuration.h Marlin/Configuration.h
-        cp configurations/Voxelab\ Aquila/BLT/Configuration_adv.h Marlin/Configuration_adv.h
+        cp configurations/Voxelab\ Aquila/BLT/ConfigurationPro.h Marlin/Configuration.h
+        cp configurations/Voxelab\ Aquila/BLT/Configuration_advPro.h Marlin/Configuration_adv.h
         cp configurations/Voxelab\ Aquila/BLT/Version.h Marlin/Version.h
         sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
         if ($IS); then TEMP=; else TEMP='\/\/'; fi;
@@ -328,7 +328,7 @@ jobs:
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
   Build-BLTouch-NP-A:
-    name: Build BL-Touch Files
+    name: Build BLT NoPro Files
     runs-on: ubuntu-latest
     strategy:
       matrix:
