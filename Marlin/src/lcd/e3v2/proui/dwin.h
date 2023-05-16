@@ -274,7 +274,7 @@ inline void DWIN_Gcode(const int16_t codenum) { TERN_(HAS_CGCODE, custom_gcode(c
   void DWIN_UnLockScreen();
   void HMI_LockScreen();
 #endif
-#if HAS_MESH
+#if HAS_MESH && USE_UBL_VIEWER
   void DWIN_MeshViewer();
 #endif
 #if HAS_ESDIAG
@@ -312,9 +312,6 @@ void Draw_Tune_Menu();
 void Draw_Motion_Menu();
 #if ENABLED(ADVANCED_PAUSE_FEATURE)
   void Draw_FilamentMan_Menu();
-#endif
-#if ENABLED(MESH_BED_LEVELING)
-  void Draw_ManualMesh_Menu();
 #endif
 void Draw_Temperature_Menu();
 void Draw_PID_Menu();

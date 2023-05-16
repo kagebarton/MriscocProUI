@@ -1487,7 +1487,7 @@ void DWIN_LevelingStart() {
       TERN_(HAS_HEATED_BED, thermalManager.wait_for_bed_heating());
     #endif
   #elif ENABLED(MESH_BED_LEVELING)
-    Draw_ManualMesh_Menu();
+    Draw_AdvancedSettings_Menu();
   #endif
 }
 
@@ -2049,7 +2049,7 @@ void DWIN_RedrawScreen() {
 
 #endif // ADVANCED_PAUSE_FEATURE
 
-#if HAS_MESH
+#if HAS_MESH && USE_UBL_VIEWER
 
   void DWIN_MeshViewer() {
     if (!leveling_is_valid())
@@ -3503,23 +3503,6 @@ void Draw_Motion_Menu() {
 
 #endif // ADVANCED_PAUSE_FEATURE
 
-#if ENABLED(MESH_BED_LEVELING)
-
-  void Draw_ManualMesh_Menu() {
-    checkkey = Menu;
-    if (SET_MENU(ManualMesh, MSG_UBL_MANUAL_MESH, 6)) {
-      BACK_ITEM(Draw_Prepare_Menu);
-      MENU_ITEM(ICON_ManualMesh, MSG_LEVEL_BED, onDrawMenuItem, ManualMeshStart);
-      MMeshMoveZItem = EDIT_ITEM(ICON_Zoffset, MSG_MOVE_Z, onDrawPFloat2Menu, SetMMeshMoveZ, &current_position.z);
-      MENU_ITEM(ICON_Axis, MSG_UBL_CONTINUE_MESH, onDrawMenuItem, ManualMeshContinue);
-      MENU_ITEM(ICON_MeshViewer, MSG_MESH_VIEW, onDrawSubMenu, DWIN_MeshViewer);
-      MENU_ITEM(ICON_MeshSave, MSG_UBL_SAVE_MESH, onDrawMenuItem, ManualMeshSave);
-    }
-    UpdateMenu(ManualMesh);
-  }
-
-#endif // MESH_BED_LEVELING
-
 #if HAS_PREHEAT
 
   void Draw_Preheat_Menu(bool NotCurrent) {
@@ -4064,8 +4047,8 @@ void Draw_AdvancedSettings_Menu() {
       #if ENABLED(MESH_EDIT_MENU)
         MENU_ITEM(ICON_UBLActive, MSG_EDIT_MESH, onDrawSubMenu, Draw_EditMesh_Menu);
       #endif
-        MENU_ITEM(ICON_MeshViewer, MSG_MESH_VIEW, onDrawSubMenu, DWIN_MeshViewer);
       #if ENABLED(USE_UBL_VIEWER)
+        MENU_ITEM(ICON_MeshViewer, MSG_MESH_VIEW, onDrawSubMenu, DWIN_MeshViewer);
         EDIT_ITEM_F(ICON_PrintSize, "Change Mesh Viewer", onDrawChkbMenu, SetViewMesh, &bedLevelTools.view_mesh);
       #endif
       EDIT_ITEM(ICON_UBLSlot, MSG_UBL_STORAGE_SLOT, onDrawUBLSlot, SetUBLSlot, &bedlevel.storage_slot);
@@ -4091,16 +4074,16 @@ void Draw_AdvancedSettings_Menu() {
       #if HAS_BED_PROBE
         MENU_ITEM(ICON_ProbeSet, MSG_ZPROBE_SETTINGS, onDrawSubMenu, Draw_ProbeSet_Menu);
       #endif
-        MENU_ITEM(ICON_PrintSize, MSG_MESH_LEVELING, onDrawSubMenu, Draw_MeshSet_Menu);
-        MENU_ITEM(ICON_MeshViewer, MSG_MESH_VIEW, onDrawSubMenu, DWIN_MeshViewer);
+      MENU_ITEM(ICON_PrintSize, MSG_MESH_LEVELING, onDrawSubMenu, Draw_MeshSet_Menu);
       #if ENABLED(USE_UBL_VIEWER)
+        MENU_ITEM(ICON_MeshViewer, MSG_MESH_VIEW, onDrawSubMenu, DWIN_MeshViewer);
         EDIT_ITEM_F(ICON_PrintSize, "Change Mesh Viewer", onDrawChkbMenu, SetViewMesh, &bedLevelTools.view_mesh);
       #endif
       #if ENABLED(MESH_EDIT_MENU)
         MENU_ITEM(ICON_UBLActive, MSG_EDIT_MESH, onDrawSubMenu, Draw_EditMesh_Menu);
       #endif
-        MENU_ITEM(ICON_Level, MSG_AUTO_MESH, onDrawMenuItem, AutoLev);
-        MENU_ITEM_F(ICON_SetZOffset, "Zero Current Mesh", onDrawMenuItem, ZeroCurrentMesh);
+      MENU_ITEM(ICON_Level, MSG_AUTO_MESH, onDrawMenuItem, AutoLev);
+      MENU_ITEM_F(ICON_SetZOffset, "Zero Current Mesh", onDrawMenuItem, ZeroCurrentMesh);
     #endif
   }
   ui.reset_status(true);
@@ -4116,8 +4099,8 @@ void Draw_AdvancedSettings_Menu() {
     MMeshMoveZItem = EDIT_ITEM(ICON_Zoffset, MSG_MESH_EDIT_Z, onDrawPFloat2Menu, SetMMeshMoveZ, &current_position.z);
     MENU_ITEM(ICON_Axis, MSG_LEVEL_BED_NEXT_POINT, onDrawMenuItem, ManualMeshContinue);
     MENU_ITEM(ICON_PrintSize, MSG_MESH_LEVELING, onDrawSubMenu, Draw_MeshSet_Menu);
-    MENU_ITEM(ICON_MeshViewer, MSG_MESH_VIEW, onDrawSubMenu, DWIN_MeshViewer);
     #if ENABLED(USE_UBL_VIEWER)
+      MENU_ITEM(ICON_MeshViewer, MSG_MESH_VIEW, onDrawSubMenu, DWIN_MeshViewer);
       EDIT_ITEM_F(ICON_PrintSize, "Change Mesh Viewer", onDrawChkbMenu, SetViewMesh, &bedLevelTools.view_mesh);
     #endif
     #if ENABLED(MESH_EDIT_MENU)
