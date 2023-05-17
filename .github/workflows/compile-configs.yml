@@ -285,7 +285,6 @@ jobs:
       matrix:
         chip: [GD32,N32]
         temp: [true,false]
-        inshape: [true,false]
     steps:
     - uses: actions/checkout@v3
     - name: Cache pip
@@ -313,27 +312,23 @@ jobs:
       id: build_configs
       run: |
         if ($TP); then TPTMP=-MPC; else TPTMP=; fi;
-        if ($IS); then ISTMP=-IS; else ISTMP=; fi;
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "filename=${AVTMP}_BLT-ProUI${ISTMP}${TPTMP}.bin" >> $GITHUB_OUTPUT
+        echo "filename=${AVTMP}_BLT-ProUI${TPTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/BLT/ConfigurationPro.h Marlin/Configuration.h
-        cp configurations/Voxelab\ Aquila/BLT/Configuration_advPro.h Marlin/Configuration_adv.h
+        cp configurations/Voxelab\ Aquila/BLT/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/Voxelab\ Aquila/BLT/Version.h Marlin/Version.h
         sed -i "s/default_envs =.*/default_envs = STM32F103RC_voxelab_maple_$AQUILA_VER/g" platformio.ini
-        if ($IS); then TEMP=; else TEMP='\/\/'; fi;
-        sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
-        sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h
         if ($TP); then PTEMP='\/\/'; else PTEMP=; fi;
-        sed -i "s/[^ ]*#define PIDTEMP/$PTEMP#define PIDTEMP/g" Marlin/Configuration.h
         if ($TP); then MTEMP=; else MTEMP='\/\/'; fi;
+        sed -i "s/[^ ]*#define PIDTEMP/$PTEMP#define PIDTEMP/g" Marlin/Configuration.h
         sed -i "s/[^ ]*#define MPCTEMP/$MTEMP#define MPCTEMP/g" Marlin/Configuration.h
+        sed -i "s/[^ ]*#define NOZZLE_CLEAN_FEATURE/$PTEMP#define NOZZLE_CLEAN_FEATURE/g" Marlin/Configuration.h
         pio run
         mkdir temp
         mv .pio/build/STM32F103RC_voxelab_maple_$AQUILA_VER/*.bin temp/build.bin
       env:
         AQUILA_VER: ${{ matrix.chip }}
         TP: ${{ matrix.temp }}
-        IS: ${{ matrix.inshape }}
     - name: Get release
       id: get_release
       uses: bruceadams/get-release@v1.3.2

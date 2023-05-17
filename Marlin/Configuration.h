@@ -673,8 +673,8 @@
  * PIDTEMP : PID temperature control (~4.1K)
  * MPCTEMP : Predictive Model temperature control. (~1.8K without auto-tune)
  */
-//#define PIDTEMP           // See the PID Tuning Guide at https://reprap.org/wiki/PID_Tuning
-#define MPCTEMP         // ** EXPERIMENTAL ** See https://marlinfw.org/docs/features/model_predictive_control.html
+#define PIDTEMP           // See the PID Tuning Guide at https://reprap.org/wiki/PID_Tuning
+//#define MPCTEMP         // ** EXPERIMENTAL ** See https://marlinfw.org/docs/features/model_predictive_control.html
 
 #define PID_MAX  255      // Limit hotend current while PID is active (see PID_FUNCTIONAL_RANGE below); 255=full current
 #define PID_K1 0.95       // Smoothing factor within any PID loop
@@ -3381,7 +3381,7 @@
   //#define HAS_SD_EXTENDER 1  // Enable to support SD card extender cables
   #define USE_UBL_VIEWER 1     // Enable two graph types to view mesh
   #define SHOW_REAL_POS
-  //#define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option
+  #define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option
   #if ENABLED(FILAMENT_RUNOUT_SENSOR)
     #define RUNOUT_TUNE_ITEM  // Filament Runout option in Tune Menu
   #endif

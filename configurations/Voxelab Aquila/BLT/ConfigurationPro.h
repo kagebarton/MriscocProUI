@@ -3381,7 +3381,7 @@
   //#define HAS_SD_EXTENDER 1  // Enable to support SD card extender cables
   #define USE_UBL_VIEWER 1     // Enable two graph types to view mesh
   #define SHOW_REAL_POS
-  #define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option
+  //#define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option
   #if ENABLED(FILAMENT_RUNOUT_SENSOR)
     #define RUNOUT_TUNE_ITEM  // Filament Runout option in Tune Menu
   #endif
@@ -3389,7 +3389,7 @@
     #define PLR_TUNE_ITEM  // Power-loss Recovery option in Tune Menu
   #endif
   #if ENABLED(BLTOUCH)
-    #define HS_MENU_ITEM  // BLTOUCH_HS_MODE menu option
+    //#define HS_MENU_ITEM  // BLTOUCH_HS_MODE menu option
   #endif
   #if ENABLED(HAS_PLOT)
     #define PLOT_TUNE_ITEM  // Temperature Plot Graph item in Tune Menu
