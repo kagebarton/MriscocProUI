@@ -3199,7 +3199,7 @@ void Draw_FilSet_Menu() {
     void Draw_ParkPos_Menu() {
       checkkey = Menu;
       if (SET_MENU(ParkPosMenu, MSG_FILAMENT_PARK_ENABLED, 4)) {
-        BACK_ITEM(Draw_HomeOffset_Menu);
+        BACK_ITEM(Draw_Homing_Menu);
         EDIT_ITEM(ICON_ParkPosX, MSG_PARK_XPOSITION, onDrawPIntMenu, SetParkPosX, &PRO_data.Park_point.x);
         EDIT_ITEM(ICON_ParkPosY, MSG_PARK_YPOSITION, onDrawPIntMenu, SetParkPosY, &PRO_data.Park_point.y);
         EDIT_ITEM(ICON_ParkPosZ, MSG_PARK_ZRAISE, onDrawPIntMenu, SetParkZRaise, &PRO_data.Park_point.z);
