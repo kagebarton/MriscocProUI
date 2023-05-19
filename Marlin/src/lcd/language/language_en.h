@@ -849,6 +849,10 @@ namespace Language_en {
   #endif
   LSTR MSG_TMC_DRIVERS                    = _UxGT("TMC Drivers");
   LSTR MSG_TMC_CURRENT                    = _UxGT("Driver Current");
+  LSTR MSG_TMC_ACURRENT                   = STR_A _UxGT("Driver Current");
+  LSTR MSG_TMC_BCURRENT                   = STR_B _UxGT("Driver Current");
+  LSTR MSG_TMC_CCURRENT                   = STR_C _UxGT("Driver Current");
+  LSTR MSG_TMC_ECURRENT                   = _UxGT("E Driver Current");
   LSTR MSG_TMC_HYBRID_THRS                = _UxGT("Hybrid Threshold");
   LSTR MSG_TMC_HOMING_THRS                = _UxGT("Sensorless Homing");
   LSTR MSG_TMC_STEPPING_MODE              = _UxGT("Stepping Mode");
