@@ -5,7 +5,9 @@ import pioutil
 if pioutil.is_pio_build():
     import shutil,marlin
     from pathlib import Path
-
+    from SCons.Script import Import
+    from SCons.Script import DefaultEnvironment
+    env = DefaultEnvironment()
     Import("env")
     platform = env.PioPlatform()
     board = env.BoardConfig()

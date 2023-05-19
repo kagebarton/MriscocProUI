@@ -1,8 +1,8 @@
 /**
  * Custom G-code implementation for PRO UI
  * Author: Miguel A. Risco-Castillo (MRISCOC)
- * Version: 1.1.0
- * Date: 2022/05/22
+ * Version: 1.3.0
+ * Date: 2023/03/06
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,16 +30,18 @@
 #include "../../marlinui.h"
 
 #include "dwin.h"
-#include "dwinui.h"
-#include "dwin_lcd.h"
 #include "custom_gcodes.h"
 
 #if ENABLED(POWER_LOSS_RECOVERY)
   #include "../../../feature/powerloss.h"
 #endif
 
+#if HAS_MEDIA
+  #include "file_header.h"
+#endif
+
 //=============================================================================
-// Extended G-CODES
+// Extended G-CODES 
 //=============================================================================
 
 void CError() {
@@ -47,13 +49,15 @@ void CError() {
   SERIAL_ECHOLNPGM(" This G-code is not implemented in firmware");
 }
 
+#if HAS_MEDIA
 // Mark the G-code file as a Configuration file
 void C10() {
-  HMI_flag.config_flag = true;
+  fileprop.isConfig = true;
   TERN_(POWER_LOSS_RECOVERY, if (card.isPrinting()) recovery.cancel());
   ui.reset_alert_level();
   if (checkkey == PrintProcess) Goto_Main_Menu();
 }
+#endif
 
 // C11 Set color for UI element E
 void C11() {
@@ -76,6 +80,16 @@ void C108() {
   DONE_BUZZ(true);
 }
 
+// Enable or disable preview screen
+#if ENABLED(HAS_GCODE_PREVIEW)
+void C250() {
+  if (parser.seenval('P')) {
+    HMI_data.EnablePreview = !!parser.value_byte();
+  }
+  SERIAL_ECHOLNPGM(F("PREVIEW:"), HMI_data.EnablePreview);
+}
+#endif
+
 // lock/unlock screen
 #if HAS_LOCKSCREEN
   void C510() {
@@ -87,12 +101,6 @@ void C108() {
 #if DEBUG_DWIN
   #include "../../../module/planner.h"
   void C997() {
-    #if ENABLED(POWER_LOSS_RECOVERY)
-      if (IS_SD_PRINTING() && recovery.enabled) {
-        planner.synchronize();
-        recovery.save(true);
-      }
-    #endif
     DWIN_RebootScreen();
     SERIAL_ECHOLNPGM("Simulating a printer freeze");
     while (1) {};
@@ -102,9 +110,14 @@ void C108() {
 // Special Creality DWIN GCodes
 void custom_gcode(const int16_t codenum) {
   switch(codenum) {
+    #if HAS_MEDIA
     case 10: C10(); break;             // Mark the G-code file as a Configuration file
+    #endif
     case 11: C11(); break;             // Set color for UI element E
     case 108: C108(); break;           // Cancel a Wait for User without an Emergecy Parser
+    #if ENABLED(HAS_GCODE_PREVIEW)
+      case 250: C250(); break;         // Enable or disable preview screen
+    #endif
     #if HAS_LOCKSCREEN
       case 510: C510(); break;         // lock screen
     #endif
@@ -138,12 +151,12 @@ void custom_gcode(const int16_t codenum) {
 
 void custom_gcode_report(const bool forReplay/*=true*/) {
   #if ProUIex
-    #if HAS_MESH
-      ProEx.C29_report(forReplay);
-    #endif
     ProEx.C100_report(forReplay);
     ProEx.C101_report(forReplay);
     ProEx.C102_report(forReplay);
+    #if HAS_MESH
+      ProEx.C29_report(forReplay);
+    #endif
     ProEx.C104_report(forReplay);
     #if ENABLED(NOZZLE_PARK_FEATURE)
       ProEx.C125_report(forReplay);

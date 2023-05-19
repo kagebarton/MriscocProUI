@@ -59,7 +59,7 @@ void unified_bed_leveling::report_current_mesh() {
 
 void unified_bed_leveling::report_state() {
   echo_name();
-  SERIAL_ECHO_TERNARY(planner.leveling_active, " System v" UBL_VERSION " ", "", "in", "active\n");
+  serial_ternary(F(" System v" UBL_VERSION " "), planner.leveling_active, nullptr, F("in"), F("active\n"));
   serial_delay(50);
 }
 
@@ -71,6 +71,7 @@ int8_t unified_bed_leveling::storage_slot;
   float unified_bed_leveling::z_values[GRID_MAX_POINTS_X][GRID_MAX_POINTS_Y];
 #endif
 
+#define _GRIDPOS(A,N) (MESH_MIN_##A + N * (MESH_##A##_DIST))
 
 #if DISABLED(ProUIex)
   #define _GRIDPOS(A,N) (MESH_MIN_##A + N * (MESH_##A##_DIST))

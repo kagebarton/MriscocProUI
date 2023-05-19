@@ -7,49 +7,29 @@ name: Bump Distribution Date
 
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 12 */1 * *'
 
 jobs:
   bump_date:
     name: Bump Distribution Date
-    if: github.repository == 'MarlinFirmware/Marlin'
+    if: github.repository == 'classicrocker883/MriscocProUI'
 
     runs-on: ubuntu-latest
 
     steps:
 
-    - name: Check out bugfix-2.1.x
-      uses: actions/checkout@v2
+    - name: Check out 2023-May
+      uses: actions/checkout@v3
       with:
-        ref: bugfix-2.1.x
+        ref: 2023-May
 
-    - name: Bump Date (bugfix-2.0.x)
+    - name: Bump Date (2023-May)
       run: |
         # Inline Bump Script
         if [[ ! "$( git log -1 --pretty=%B )" =~ ^\[cron\] ]]; then
           DIST=$( date +"%Y-%m-%d" )
           eval "sed -E -i 's/(#define +STRING_DISTRIBUTION_DATE) .*$/\1 \"$DIST\"/g' Marlin/src/inc/Version.h" && \
-          eval "sed -E -i 's/(#define +STRING_DISTRIBUTION_DATE) .*$/\1 \"$DIST\"/g' Marlin/Version.h" && \
-          git config user.name "${GITHUB_ACTOR}" && \
-          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com" && \
-          git add . && \
-          git commit -m "[cron] Bump distribution date ($DIST)" && \
-          git push
-        fi
-        exit 0
-
-    - name: Check out bugfix-2.1.x
-      uses: actions/checkout@v2
-      with:
-        ref: bugfix-2.1.x
-
-    - name: Bump Date (bugfix-2.1.x)
-      run: |
-        # Inline Bump Script
-        if [[ ! "$( git log -1 --pretty=%B )" =~ ^\[cron\] ]]; then
-          DIST=$( date +"%Y-%m-%d" )
-          eval "sed -E -i 's/(#define +STRING_DISTRIBUTION_DATE) .*$/\1 \"$DIST\"/g' Marlin/src/inc/Version.h" && \
-          eval "sed -E -i 's/(#define +STRING_DISTRIBUTION_DATE) .*$/\1 \"$DIST\"/g' Marlin/Version.h" && \
+          eval "sed -E -i 's/(//#define +STRING_DISTRIBUTION_DATE) .*$/\1 \"$DIST\"/g' Marlin/Version.h" && \
           git config user.name "${GITHUB_ACTOR}" && \
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com" && \
           git add . && \

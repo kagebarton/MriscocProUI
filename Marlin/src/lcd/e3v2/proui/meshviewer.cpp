@@ -25,14 +25,12 @@
 
 #include "../../../core/types.h"
 #include "../../marlinui.h"
-#include "dwin_lcd.h"
-#include "dwinui.h"
 #include "dwin.h"
 #include "dwin_popup.h"
 #include "../../../feature/bedlevel/bedlevel.h"
 #include "meshviewer.h"
 
-#if ENABLED(AUTO_BED_LEVELING_UBL)
+#if ENABLED(USE_UBL_VIEWER)
   #include "bedlevel_tools.h"
 #endif
 
@@ -112,14 +110,16 @@ void MeshViewerClass::DrawMesh(bed_mesh_t zval, const uint8_t csizex, const uint
 void MeshViewerClass::Draw(bool withsave /*=false*/, bool redraw /*=true*/) {
   Title.ShowCaption(GET_TEXT_F(MSG_MESH_VIEWER));
   #if ENABLED(USE_UBL_VIEWER)
-  if(BedLevelTools.view_mesh) {
+  if(bedLevelTools.view_mesh) {
     DWINUI::ClearMainArea();
-    BedLevelTools.viewer_print_value = true;
-    BedLevelTools.Draw_Bed_Mesh(-1, 1, 8, 10 + TITLE_HEIGHT);}
+    bedLevelTools.viewer_print_value = true;
+    bedLevelTools.Draw_Bed_Mesh(-1, 1, 8, 10 + TITLE_HEIGHT);}
     else
       if (redraw) DrawMesh(bedlevel.z_values, GRID_MAX_POINTS_X, GRID_MAX_POINTS_Y);
+      else DWINUI::Draw_Box(1, HMI_data.Background_Color, {89,305,99,38});
   #else
     if (redraw) DrawMesh(bedlevel.z_values, GRID_MAX_POINTS_X, GRID_MAX_POINTS_Y);
+    else DWINUI::Draw_Box(1, HMI_data.Background_Color, {89,305,99,38});
   #endif
   if (withsave) {
     DWINUI::Draw_Button(BTN_Save, 26, 305);
@@ -131,8 +131,8 @@ void MeshViewerClass::Draw(bool withsave /*=false*/, bool redraw /*=true*/) {
     Draw_Select_Box(86, 305);
   }
   #if ENABLED(USE_UBL_VIEWER)
-    if(BedLevelTools.view_mesh) {
-      BedLevelTools.Set_Mesh_Viewer_Status();}
+    if(bedLevelTools.view_mesh) {
+      bedLevelTools.Set_Mesh_Viewer_Status();}
     else {
     char str_1[6], str_2[6] = "";
     ui.status_printf(0, F("minZ: %s | maxZ: +%s"),

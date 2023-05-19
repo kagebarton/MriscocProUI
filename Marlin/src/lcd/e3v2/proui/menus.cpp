@@ -24,8 +24,6 @@
 #if ENABLED(DWIN_LCD_PROUI)
 
 #include "../common/encoder.h"
-#include "dwin_lcd.h"
-#include "dwinui.h"
 #include "dwin.h"
 #include "menus.h"
 

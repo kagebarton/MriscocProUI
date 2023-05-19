@@ -24,6 +24,7 @@
 // R25 = 100 kOhm, beta25 = 4092 K, 4.7 kOhm pull-up, bed thermistor
 constexpr temp_entry_t temptable_1[] PROGMEM = {
 
+
 // Extended table from SteinhartHart curvefit
   { OV( 13.55), 350 },
   { OV( 14.29), 345 },

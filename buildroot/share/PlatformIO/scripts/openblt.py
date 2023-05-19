@@ -4,7 +4,9 @@
 import pioutil
 if pioutil.is_pio_build():
     from os.path import join
-
+    from SCons.Script import Import
+    from SCons.Script import DefaultEnvironment
+    env = DefaultEnvironment()
     Import("env")
 
     board = env.BoardConfig()

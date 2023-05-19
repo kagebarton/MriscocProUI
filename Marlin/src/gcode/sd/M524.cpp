@@ -22,7 +22,7 @@
 
 #include "../../inc/MarlinConfig.h"
 
-#if ENABLED(SDSUPPORT)
+#if HAS_MEDIA
 
 #include "../gcode.h"
 #include "../../sd/cardreader.h"
@@ -37,7 +37,9 @@
 void GcodeSuite::M524() {
 
   #if ENABLED(DWIN_LCD_PROUI)
+
     ui.abort_print();
+
   #else
 
     if (IS_SD_PRINTING())
@@ -49,4 +51,4 @@ void GcodeSuite::M524() {
 
 }
 
-#endif // SDSUPPORT
+#endif // HAS_MEDIA

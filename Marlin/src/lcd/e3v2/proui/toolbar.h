@@ -23,7 +23,7 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#include "dwinui.h"
+#include "dwin.h"
 #include "menus.h"
 
 #define TBHeight 28
@@ -38,8 +38,8 @@ typedef struct {
   FSTR_P caption = nullptr;
   void (*onClick)() = nullptr;
 } TBItem_t;
-extern TBItem_t TBItem;
-extern TBItem_t TBItemA[];
+extern const TBItem_t *TBItem;
+extern const TBItem_t TBItemA[];
 
 class ToolBarClass : public MenuClass {
 public:

@@ -3,7 +3,7 @@
 #
 import pioutil
 if pioutil.is_pio_build():
-
+    from SCons.Script import Import
     Import("env", "projenv")
 
     flash_size = 0

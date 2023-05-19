@@ -4,7 +4,9 @@ import os
 import time
 import random
 import serial
-
+from SCons.Script import Import
+from SCons.Script import DefaultEnvironment
+env = DefaultEnvironment()
 Import("env")
 
 # Needed (only) for compression, but there are problems with pip install heatshrink

@@ -25,6 +25,7 @@
 
 #include "dwin_api.h"
 #include "dwin_set.h"
+#include "dwin_font.h"
 
 #include "../../../inc/MarlinConfig.h"
 
@@ -275,7 +276,7 @@ void DWIN_ICON_Show(bool IBD, bool BIR, bool BFI, uint8_t libID, uint8_t picID, 
 //  addr: SRAM address
 void DWIN_ICON_Show(bool IBD, bool BIR, bool BFI, uint16_t x, uint16_t y, uint16_t addr) {
   NOMORE(x, DWIN_WIDTH - 1);
-  NOMORE(y, DWIN_HEIGHT - 1); // -- ozy -- srl
+  NOMORE(y, DWIN_HEIGHT - 1);
   size_t i = 0;
   DWIN_Byte(i, 0x24);
   DWIN_Word(i, x);

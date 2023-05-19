@@ -22,7 +22,6 @@
 #pragma once
 
 // #define DEBUG_DWIN 1
-// #define NEED_HEX_PRINT 1
 
 #if MB(CREALITY_V24S1_301, CREALITY_V24S1_301F4)
   #define DASH_REDRAW 1
@@ -36,7 +35,7 @@
   #define JUST_BABYSTEP 1
 #endif
 
-#if ANY(BABYSTEPPING, HAS_BED_PROBE, HAS_WORKSPACE_OFFSET)
+#if ANY(BABYSTEPPING, HAS_BED_PROBE)
   #define HAS_ZOFFSET_ITEM 1
 #endif
 
@@ -61,13 +60,9 @@
 #define Def_Bottom_Color      Color_Silver //
 #define Def_Leds_Color      0xFFFFFFFF
 #define Def_CaseLight_Brightness 255
-#ifdef Z_AFTER_HOMING
-  #define DEF_Z_AFTER_HOMING Z_AFTER_HOMING
-#else
-  #define DEF_Z_AFTER_HOMING 0
-#endif
-#define DEF_HOTENDPIDT TERN(PREHEAT_1_TEMP_BED, PREHEAT_1_TEMP_HOTEND, 200)
-#define DEF_BEDPIDT TERN(PREHEAT_1_TEMP_BED, PREHEAT_1_TEMP_HOTEND, 60)
+#define DEF_Z_AFTER_HOMING TERN(Z_AFTER_HOMING, Z_AFTER_HOMING, 10)
+#define DEF_HOTENDPIDT TERN(PREHEAT_1_TEMP_HOTEND, PREHEAT_1_TEMP_HOTEND, 200)
+#define DEF_BEDPIDT TERN(PREHEAT_1_TEMP_BED, PREHEAT_1_TEMP_BED, 70)
 #define DEF_PIDCYCLES 5
 
 //=============================================================================
@@ -75,7 +70,7 @@
 //=============================================================================
 
 #if ENABLED(HAS_GCODE_PREVIEW) && DISABLED(ProUIex)
-  //#error "HAS_GCODE_PREVIEW requires ProUIex."
+  #error "HAS_GCODE_PREVIEW requires ProUIex."
 #endif
 #if ENABLED(HAS_TOOLBAR) && DISABLED(ProUIex)
   #error "HAS_TOOLBAR requires ProUIex."
@@ -89,9 +84,9 @@
   #if HAS_TOOLBAR
     #define TBMaxOpt 5                    // Amount of shortcuts on screen
     #if HAS_BED_PROBE
-      #define DEF_TBOPT {9, 8, 0, 1, 4}   // Default shorcuts for ALB/UBL
+      #define DEF_TBOPT {1, 7, 6, 2, 4}   // Default shorcuts for ALB/UBL
     #else
-      #define DEF_TBOPT {7, 0, 6, 2, 8};  // Default shortcuts for MM
+      #define DEF_TBOPT {1, 5, 4, 2, 3};  // Default shortcuts for MM
     #endif
   #endif
 
@@ -140,5 +135,8 @@
     #define Z_PROBE_FEEDRATE_SLOW PRO_data.zprobefeedslow
   #endif
   #define INVERT_E0_DIR PRO_data.Invert_E0
-
+#else
+  #include <stddef.h>
+  #include "../../../core/types.h"
+  #include "proui.h"
 #endif  // ProUIex

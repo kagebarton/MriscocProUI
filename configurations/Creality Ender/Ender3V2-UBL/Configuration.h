@@ -1640,7 +1640,7 @@
 // @section extruder
 
 #define DISABLE_E false             // Disable the extruder when not stepping
-#define DISABLE_INACTIVE_EXTRUDER   // Keep only the active extruder enabled
+#define DISABLE_OTHER_EXTRUDERS   // Keep only the active extruder enabled
 
 // @section motion
 
@@ -3192,7 +3192,7 @@
 #ifdef ProUIex
   #define HAS_GCODE_PREVIEW 1
   #define HAS_TOOLBAR 1
-  #define HAS_PIDPLOT 1
+  #define HAS_PLOT 1
   #define HAS_ESDIAG 1
   #define HAS_CGCODE 1
   #define HAS_LOCKSCREEN 1
@@ -3200,7 +3200,7 @@
   //#define HAS_SD_EXTENDER 1  // Enable it to support SD card extender cables
 #elif ENABLED(DWIN_LCD_PROUI)
   //#define HAS_GCODE_PREVIEW 1
-  #define HAS_PIDPLOT 1
+  #define HAS_PLOT 1
   #define HAS_ESDIAG 1
   #define HAS_CGCODE 1
   #define HAS_LOCKSCREEN 1

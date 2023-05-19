@@ -43,9 +43,7 @@
   #include "../feature/pause.h"
 #endif
 
-#if ENABLED(DWIN_CREALITY_LCD)
-  #include "e3v2/creality/dwin.h"
-#elif ENABLED(DWIN_LCD_PROUI)
+#if ENABLED(DWIN_LCD_PROUI)
   #include "e3v2/proui/dwin.h"
 #endif
 
@@ -84,7 +82,7 @@ typedef bool (*statusResetFunc_t)();
 
 #endif // HAS_WIRED_LCD
 
-#if EITHER(HAS_WIRED_LCD, DWIN_CREALITY_LCD_JYERSUI)
+#if HAS_WIRED_LCD
   #define LCD_WITH_BLINK 1
   #define LCD_UPDATE_INTERVAL TERN(HAS_TOUCH_BUTTONS, 50, 100)
 #endif
@@ -231,7 +229,7 @@ public:
   #endif
 
   #if USE_MARLINUI_BUZZER
-    static void buzz(const long duration, const uint16_t freq);
+    static void buzz(const long duration, const uint16_t freq=0);
   #endif
 
   static void chirp() {
@@ -251,7 +249,7 @@ public:
     }
   #endif
 
-  #if ENABLED(SDSUPPORT)
+  #if HAS_MEDIA
     #define MEDIA_MENU_GATEWAY TERN(PASSWORD_ON_SD_PRINT_MENU, password.media_gatekeeper, menu_media)
     static void media_changed(const uint8_t old_stat, const uint8_t stat);
   #endif
@@ -470,8 +468,9 @@ public:
         FORCE_INLINE static void refresh_contrast() { set_contrast(contrast); }
       #endif
 
-      #if BOTH(FILAMENT_LCD_DISPLAY, SDSUPPORT)
+      #if BOTH(FILAMENT_LCD_DISPLAY, HAS_MEDIA)
         static millis_t next_filament_display;
+        static void pause_filament_display(const millis_t ms=millis()) { next_filament_display = ms + 5000UL; }
       #endif
 
       #if HAS_TOUCH_SLEEP
@@ -506,10 +505,9 @@ public:
 
     #if IS_DWIN_MARLINUI
       static bool did_first_redraw;
-      static bool old_is_printing;
     #endif
 
-    #if EITHER(BABYSTEP_ZPROBE_GFX_OVERLAY, MESH_EDIT_GFX_OVERLAY)
+    #if EITHER(BABYSTEP_GFX_OVERLAY, MESH_EDIT_GFX_OVERLAY)
       static void zoffset_overlay(const int8_t dir);
       static void zoffset_overlay(const_float_t zvalue);
     #endif
@@ -527,7 +525,12 @@ public:
 
   #endif
 
-  #if ENABLED(SDSUPPORT)
+  #if !HAS_WIRED_LCD
+    static void quick_feedback(const bool=true) {}
+    static void completion_feedback(const bool=true) {}
+  #endif
+
+  #if HAS_MEDIA
     #if BOTH(SCROLL_LONG_FILENAMES, HAS_MARLINUI_MENU)
       #define MARLINUI_SCROLL_NAME 1
     #endif
@@ -652,7 +655,7 @@ public:
     static bool use_click() { return false; }
   #endif
 
-  #if ENABLED(ADVANCED_PAUSE_FEATURE) && ANY(HAS_MARLINUI_MENU, EXTENSIBLE_UI, DWIN_LCD_PROUI, DWIN_CREALITY_LCD_JYERSUI)
+  #if ENABLED(ADVANCED_PAUSE_FEATURE) && ANY(HAS_MARLINUI_MENU, EXTENSIBLE_UI, DWIN_LCD_PROUI)
     static void pause_show_message(const PauseMessage message, const PauseMode mode=PAUSE_MODE_SAME, const uint8_t extruder=active_extruder);
   #else
     static void _pause_show_message() {}
@@ -807,5 +810,7 @@ private:
 
 #define LCD_MESSAGE_F(S)       ui.set_status(F(S))
 #define LCD_MESSAGE(M)         ui.set_status(GET_TEXT_F(M))
+#define LCD_MESSAGE_MIN(M)     ui.set_status(GET_TEXT_F(M), -1)
+#define LCD_MESSAGE_MAX(M)     ui.set_status(GET_TEXT_F(M), 99)
 #define LCD_ALERTMESSAGE_F(S)  ui.set_alert_status(F(S))
 #define LCD_ALERTMESSAGE(M)    ui.set_alert_status(GET_TEXT_F(M))

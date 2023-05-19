@@ -26,10 +26,13 @@
 #include "dwin.h"
 #include "toolbar.h"
 
-TBItem_t TBItemA[] = {
+const TBItem_t TBItemA[] = {
+  {0, GET_TEXT_F(MSG_OPTION_DISABLED), nullptr},
   {ICON_Homing, GET_TEXT_F(MSG_AUTO_HOME), AutoHome},
   #if HAS_BED_PROBE
-    {ICON_BedTramming, GET_TEXT_F(MSG_TRAMMING_WIZARD), Trammingwizard},
+    #if ENABLED(TRAMWIZ_MENU_ITEM)
+      {ICON_BedTramming, GET_TEXT_F(MSG_TRAMMING_WIZARD), Trammingwizard},
+    #endif
     {ICON_SetZOffset, GET_TEXT_F(MSG_PROBE_WIZARD), Draw_ZOffsetWiz_Menu},
     {ICON_Level, GET_TEXT_F(MSG_AUTO_MESH), AutoLev},
   #else

@@ -3,7 +3,7 @@
  * Extended by: Miguel A. Risco-Castillo (MRISCOC)
  * Version: 2.1.0
  * Date: 2022/08/27
- * 
+ *
  * Based on the original work of: Henri-J-Norden
  * https://github.com/Jyers/Marlin/pull/126
  *
@@ -24,8 +24,6 @@
 #pragma once
 
 #include "../../../inc/MarlinConfigPre.h"
-
-#define USE_UBL_VIEWER 1
 
 #define UBL_Z_OFFSET_MIN -3.0
 #define UBL_Z_OFFSET_MAX  3.0
@@ -62,6 +60,4 @@ public:
   #endif
 };
 
-extern BedLevelToolsClass BedLevelTools;
-
-void Goto_MeshViewer();
+extern BedLevelToolsClass bedLevelTools;

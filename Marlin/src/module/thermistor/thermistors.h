@@ -109,6 +109,9 @@ typedef struct { raw_adc_t value; celsius_t celsius; } temp_entry_t;
 #if ANY_THERMISTOR_IS(13) // beta25 = 4100 K, R25 = 100 kOhm, Pull-up = 4.7 kOhm, "Hisens"
   #include "thermistor_13.h"
 #endif
+#if ANY_THERMISTOR_IS(14) // beta25 = 4092 K, R25 = 100 kOhm, Pull-up = 4.7 kOhm, "EPCOS" for hot bed
+  #include "thermistor_14.h"
+#endif
 #if ANY_THERMISTOR_IS(15) // JGAurora A5 thermistor calibration
   #include "thermistor_15.h"
 #endif
@@ -166,7 +169,7 @@ typedef struct { raw_adc_t value; celsius_t celsius; } temp_entry_t;
 #if ANY_THERMISTOR_IS(75) // beta25 = 4100 K, R25 = 100 kOhm, Pull-up = 4.7 kOhm, "MGB18-104F39050L32 thermistor"
   #include "thermistor_75.h"
 #endif
-#if ANY_THERMISTOR_IS(98) // 100k bed thermistor with a 10K pull-up resistor (on some Wanhao i3 models)
+#if ANY_THERMISTOR_IS(98) // beta25 = 3950 K, R25 = 100 kOhm, Pull-up = 4.7 kOhm, "HT-NTC-100k 300ºC)
   #include "thermistor_98.h"
 #endif
 #if ANY_THERMISTOR_IS(99) // 100k bed thermistor with a 10K pull-up resistor (on some Wanhao i3 models)
@@ -534,6 +537,10 @@ static_assert(255 > TEMPTABLE_0_LEN || 255 > TEMPTABLE_1_LEN || 255 > TEMPTABLE_
     #define TEMP_SENSOR_BOARD_RAW_HI_TEMP 0
     #define TEMP_SENSOR_BOARD_RAW_LO_TEMP MAX_RAW_THERMISTOR_VALUE
   #endif
+#endif
+#ifndef TEMP_SENSOR_SOC_RAW_HI_TEMP
+  #define TEMP_SENSOR_SOC_RAW_LO_TEMP 0
+  #define TEMP_SENSOR_SOC_RAW_HI_TEMP MAX_RAW_THERMISTOR_VALUE
 #endif
 #ifndef TEMP_SENSOR_REDUNDANT_RAW_HI_TEMP
   #if TT_REVRAW(REDUNDANT)

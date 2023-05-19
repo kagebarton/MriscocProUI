@@ -2,7 +2,8 @@
 
 ![GitHub contributors](https://img.shields.io/github/contributors/classicrocker883/MriscocProUI.svg)
 ![GitHub Release Date](https://img.shields.io/github/release-date/classicrocker883/MriscocProUI.svg)
-[![Build Status](https://github.com/classicrocker883/MriscocProUI/workflows/CI/badge.svg?branch=MriscocProUI)](https://github.com/classicrocker883/MriscocProUI/actions)
+[![Build Status](https://github.com/classicrocker883/MriscocProUI/workflows/CI/badge.svg)](https://github.com/classicrocker883/MriscocProUI/actions)
+[![Build Configs](https://github.com/classicrocker883/MriscocProUI/actions/workflows/compile-configs.yml/badge.svg?event=release)](https://github.com/classicrocker883/MriscocProUI/releases)
 
 ## Universal RET6/RCT6 chips: G32, N32, (working on H32), Creality 4.2.7 and 4.2.2 boards
 
@@ -69,7 +70,11 @@ The Issue Queue is reserved for Bug Reports and Feature Requests. To get help wi
 
 ## Credits
 
-My Reddit u/[TBA]
+Thanks to Reddit u/schuh8 for donating his board to help test the firmware.
+<br>
+and I*_U*1
+</br>
+
 
 
 Find me on [Facebook](https://www.facebook.com/yoboyyy) 
