@@ -33,18 +33,21 @@ namespace Language_zh_CN {
   constexpr uint8_t CHARSIZE              = 3;
   LSTR LANGUAGE                           = _UxGT("Simplified Chinese");
 
-  LSTR WELCOME_MSG                        = MACHINE_NAME _UxGT("已就绪.");     // " ready."
+  LSTR WELCOME_MSG                        = MACHINE_NAME _UxGT("已就绪");     // " ready."
   LSTR MSG_MARLIN                         = _UxGT("马林");
   LSTR MSG_YES                            = _UxGT("是");
   LSTR MSG_NO                             = _UxGT("否");
+  LSTR MSG_HIGH                           = _UxGT("高");
+  LSTR MSG_LOW                            = _UxGT("低");
   LSTR MSG_BACK                           = _UxGT("返回");     // ”Back“
-  LSTR MSG_MEDIA_ABORTING                 = _UxGT("放弃中...");
+  LSTR MSG_ERROR                          = _UxGT("错误");
+  LSTR MSG_MEDIA_ABORTING                 = _UxGT("存储卡中止...");
   LSTR MSG_MEDIA_INSERTED                 = _UxGT("存储卡已插入");     // "Card inserted"
   LSTR MSG_MEDIA_REMOVED                  = _UxGT("存储卡被拔出");     // "Card removed"
   LSTR MSG_MEDIA_WAITING                  = _UxGT("等待存储器");
-  LSTR MSG_MEDIA_READ_ERROR               = _UxGT("存储器读取错误");
+  LSTR MSG_MEDIA_READ_ERROR               = _UxGT("卡读卡器错误");
   LSTR MSG_MEDIA_USB_REMOVED              = _UxGT("USB设备已弹出");
-  LSTR MSG_MEDIA_USB_FAILED               = _UxGT("USB启动错误");
+  LSTR MSG_MEDIA_USB_FAILED               = _UxGT("USB读取失败");
   LSTR MSG_KILL_SUBCALL_OVERFLOW          = _UxGT("子响应溢出");
   LSTR MSG_LCD_ENDSTOPS                   = _UxGT("挡块");     // "Endstops" // Max length 8 characters
   LSTR MSG_LCD_SOFT_ENDSTOPS              = _UxGT("软挡块");
@@ -76,7 +79,14 @@ namespace Language_zh_CN {
     LSTR MSG_PREHEAT_1_ALL                = _UxGT("预热 ") PREHEAT_1_LABEL _UxGT(" 全部");     //MSG_PREHEAT_1 " All"
     LSTR MSG_PREHEAT_1_BEDONLY            = _UxGT("预热 ") PREHEAT_1_LABEL _UxGT(" 热床");     //MSG_PREHEAT_1 " Bed"
     LSTR MSG_PREHEAT_1_SETTINGS           = _UxGT("预热 ") PREHEAT_1_LABEL _UxGT(" 设置");     //MSG_PREHEAT_1 " conf"
-
+    #ifdef PREHEAT_2_LABEL
+      LSTR MSG_PREHEAT_2                  = _UxGT("预热 ") PREHEAT_2_LABEL;
+      LSTR MSG_PREHEAT_2_SETTINGS         = _UxGT("预热 ") PREHEAT_2_LABEL _UxGT(" 设置");
+    #endif
+    #ifdef PREHEAT_3_LABEL
+      LSTR MSG_PREHEAT_3                  = _UxGT("预热 ");
+      LSTR MSG_PREHEAT_3_SETTINGS         = _UxGT("预热 ") _UxGT("设置");
+    #endif
     LSTR MSG_PREHEAT_M                    = _UxGT("预热 $");     // "Preheat PREHEAT_2_LABEL"
     LSTR MSG_PREHEAT_M_H                  = _UxGT("预热 $ ~");     // "Preheat PREHEAT_2_LABEL"
     LSTR MSG_PREHEAT_M_END                = _UxGT("预热 $ 喷嘴");     //MSG_PREHEAT_1 " "
@@ -112,6 +122,7 @@ namespace Language_zh_CN {
   LSTR MSG_CUSTOM_COMMANDS                = _UxGT("定制命令");     // "Custom Commands"
   LSTR MSG_M48_TEST                       = _UxGT("M48探测");
   LSTR MSG_M48_POINT                      = _UxGT("M48点");
+  LSTR MSG_M48_OUT_OF_BOUNDS              = _UxGT("探测器越界");
   LSTR MSG_M48_DEVIATION                  = _UxGT("M48偏差");
   LSTR MSG_IDEX_MENU                      = _UxGT("IDEX模式");
   LSTR MSG_OFFSETS_MENU                   = _UxGT("工具偏移量");
@@ -125,7 +136,11 @@ namespace Language_zh_CN {
   LSTR MSG_UBL_TOOLS                      = _UxGT("UBL工具");     // "UBL Tools"
   LSTR MSG_UBL_LEVEL_BED                  = _UxGT("统一热床调平(UBL)");     // "Unified Bed Leveling"
   LSTR MSG_LCD_TILTING_MESH               = _UxGT("倾斜點");
+  LSTR MSG_UBL_TILT_MESH                  = _UxGT("倾斜网格");
+  LSTR MSG_UBL_TILTING_GRID               = _UxGT("倾斜网格尺寸");
+  LSTR MSG_UBL_MESH_TILTED                = _UxGT("网格倾斜");
   LSTR MSG_UBL_MANUAL_MESH                = _UxGT("手工创设网格");     // "Manually Build Mesh"
+  LSTR MSG_UBL_MESH_WIZARD                = _UxGT("网格精灵(UBL)");
   LSTR MSG_UBL_BC_INSERT                  = _UxGT("放置垫片并测量");     // "Place shim & measure"
   LSTR MSG_UBL_BC_INSERT2                 = _UxGT("测量");     // "Measure"
   LSTR MSG_UBL_BC_REMOVE                  = _UxGT("移除并测量热床");     // "Remove & measure bed"
@@ -182,8 +197,10 @@ namespace Language_zh_CN {
   LSTR MSG_UBL_STORAGE_SLOT               = _UxGT("存储槽");     // "Memory Slot"
   LSTR MSG_UBL_LOAD_MESH                  = _UxGT("装载热床网格");     // "Load Bed Mesh"
   LSTR MSG_UBL_SAVE_MESH                  = _UxGT("保存热床网格");     // "Save Bed Mesh"
+  LSTR MSG_UBL_INVALID_SLOT               = _UxGT("首先选择一个网格槽");
   LSTR MSG_MESH_LOADED                    = _UxGT("网格 %i 已装载");     // "Mesh %i loaded"
   LSTR MSG_MESH_SAVED                     = _UxGT("网格 %i 已保存");     // "Mesh %i saved"
+  LSTR MSG_MESH_ACTIVE                    = _UxGT("网格 %i 激活");
   LSTR MSG_UBL_NO_STORAGE                 = _UxGT("没有存储");     // "No storage"
   LSTR MSG_UBL_SAVE_ERROR                 = _UxGT("错误: UBL保存");     // "Err: UBL Save"
   LSTR MSG_UBL_RESTORE_ERROR              = _UxGT("错误: UBL还原");     // "Err: UBL Restore"
@@ -317,9 +334,9 @@ namespace Language_zh_CN {
   LSTR MSG_LOAD_EEPROM                    = _UxGT("装载设置");     // "Load memory"
   LSTR MSG_RESTORE_DEFAULTS               = _UxGT("恢复安全值");     // "Restore Defaults"
   LSTR MSG_INIT_EEPROM                    = _UxGT("初始化设置");     // "Initialize EEPROM"
-  LSTR MSG_ERR_EEPROM_CRC                 = _UxGT("EEPROM CRC 错误");
-  LSTR MSG_ERR_EEPROM_INDEX               = _UxGT("EEPROM Index 错误");
-  LSTR MSG_ERR_EEPROM_VERSION             = _UxGT("EEPROM Version 错误");
+  LSTR MSG_ERR_EEPROM_CRC                 = _UxGT("EEPROM 校验和 错误");
+  LSTR MSG_ERR_EEPROM_SIZE                = _UxGT("EEPROM 尺寸 错误");
+  LSTR MSG_ERR_EEPROM_VERSION             = _UxGT("EEPROM 版本 错误");
   LSTR MSG_SETTINGS_STORED                = _UxGT("设置已保存");
   LSTR MSG_MEDIA_UPDATE                   = _UxGT("存储器更新");
   LSTR MSG_RESET_PRINTER                  = _UxGT("复位打印机");

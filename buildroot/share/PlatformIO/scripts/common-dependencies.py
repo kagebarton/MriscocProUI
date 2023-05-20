@@ -62,7 +62,7 @@ if pioutil.is_pio_build():
         # Take care to convert Windows '\' paths to Unix-style '/'.
         # Add common options to the features config under construction.
         # For lib_deps replace a previous instance of the same library.
-        atoms = re.sub(r',\s*', '\n', flines.replace('\\', '/')).strip().split('\n')    
+        atoms = re.sub(r',\s*', '\n', flines.replace('\\', '/')).strip().split('\n')
         for line in atoms:
             parts = line.split('=')
             name = parts.pop(0)
