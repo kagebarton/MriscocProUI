@@ -391,8 +391,9 @@ namespace Language_en {
   LSTR MSG_MPC_AMBIENT_XFER_COEFF_FAN_E   = _UxGT("Fan coeff. *");
   LSTR MSG_SELECT                         = _UxGT("Select");
   LSTR MSG_SELECT_E                       = _UxGT("Select *");
-  LSTR MSG_ACC                            = _UxGT("Accel");
+  LSTR MSG_ACC                            = _UxGT("Max Accel (mm/s²)");
   LSTR MSG_JERK                           = _UxGT("Jerk");
+  LSTR MSG_MAX_JERK                       = _UxGT("Max Jerk (mm/s)");
   LSTR MSG_VA_JERK                        = _UxGT("Max ") STR_A _UxGT(" Jerk");
   LSTR MSG_VB_JERK                        = _UxGT("Max ") STR_B _UxGT(" Jerk");
   LSTR MSG_VC_JERK                        = _UxGT("Max ") STR_C _UxGT(" Jerk");
@@ -435,8 +436,8 @@ namespace Language_en {
   LSTR MSG_A_STEPS                        = STR_A _UxGT(" Steps/mm");
   LSTR MSG_B_STEPS                        = STR_B _UxGT(" Steps/mm");
   LSTR MSG_C_STEPS                        = STR_C _UxGT(" Steps/mm");
-  LSTR MSG_N_STEPS                        = _UxGT("@ steps/mm");
-  LSTR MSG_E_STEPS                        = _UxGT("E steps/mm");
+  LSTR MSG_N_STEPS                        = _UxGT("@ Steps/mm");
+  LSTR MSG_E_STEPS                        = _UxGT("E Steps/mm");
   LSTR MSG_EN_STEPS                       = _UxGT("* Steps/mm");
   LSTR MSG_TEMPERATURE                    = _UxGT("Temperature");
   LSTR MSG_MOTION                         = _UxGT("Motion");

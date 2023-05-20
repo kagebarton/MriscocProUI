@@ -513,7 +513,7 @@ void menu_backlash();
     BACK_ITEM(MSG_ADVANCED_SETTINGS);
 
     // M204 P Acceleration
-    EDIT_ITEM_FAST(float5_25, MSG_ACC, &planner.settings.acceleration, 25, max_accel);
+    EDIT_ITEM_FAST(float5_25, MSG_ACCELERATION, &planner.settings.acceleration, 25, max_accel);
 
     #if HAS_EXTRUDERS
       // M204 R Retract Acceleration
