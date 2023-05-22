@@ -62,7 +62,7 @@
 #define Def_CaseLight_Brightness 255
 #define DEF_Z_AFTER_HOMING TERN(Z_AFTER_HOMING, Z_AFTER_HOMING, 10)
 #define DEF_HOTENDPIDT TERN(PREHEAT_1_TEMP_HOTEND, PREHEAT_1_TEMP_HOTEND, 200)
-#define DEF_BEDPIDT TERN(PREHEAT_1_TEMP_BED, PREHEAT_1_TEMP_BED, 70)
+#define DEF_BEDPIDT TERN(PREHEAT_1_TEMP_BED, PREHEAT_1_TEMP_BED, 60)
 #define DEF_PIDCYCLES 5
 
 //=============================================================================
@@ -126,10 +126,10 @@
     #define GRID_MAX_POINTS_X PRO_data.grid_max_points
     #define GRID_MAX_POINTS_Y PRO_data.grid_max_points
     #define GRID_MAX_POINTS (PRO_data.grid_max_points * PRO_data.grid_max_points)
-    #define MESH_MIN_X PRO_data.mesh_min_x
-    #define MESH_MAX_X PRO_data.mesh_max_x
-    #define MESH_MIN_Y PRO_data.mesh_min_y
-    #define MESH_MAX_Y PRO_data.mesh_max_y
+    #define MESH_MIN_X (float)PRO_data.mesh_min_x
+    #define MESH_MAX_X (float)PRO_data.mesh_max_x
+    #define MESH_MIN_Y (float)PRO_data.mesh_min_y
+    #define MESH_MAX_Y (float)PRO_data.mesh_max_y
   #endif
   #if HAS_BED_PROBE
     #define Z_PROBE_FEEDRATE_SLOW PRO_data.zprobefeedslow

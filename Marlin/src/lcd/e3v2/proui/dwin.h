@@ -25,7 +25,6 @@
 #include "dwin_defines.h"
 #include "dwinui.h"
 #include "../common/encoder.h"
-#include "../common/limits.h"
 #include "../../../libs/BL24CXX.h"
 
 #if HAS_CGCODE
@@ -254,7 +253,6 @@ void DWIN_Print_Aborted();
 #endif
 void DWIN_Print_Header(const char *text);
 void DWIN_SetColorDefaults();
-void DWIN_SetAltColor();
 void DWIN_ApplyColor();
 void DWIN_ApplyColor(const int8_t element, const bool ldef=false);
 void DWIN_CopySettingsTo(char * const buff);

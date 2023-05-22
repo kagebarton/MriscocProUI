@@ -1746,30 +1746,8 @@ void DWIN_Print_Aborted() {
   void DWIN_FilamentRunout(const uint8_t extruder) { LCD_MESSAGE(MSG_RUNOUT_SENSOR); }
 #endif
 
-void DWIN_SetColorDefaults() {
-  HMI_data.Background_Color = Def_Background_Color;
-  HMI_data.Cursor_Color     = Def_Text_Color;
-  HMI_data.TitleBg_Color    = Def_TitleBg_Color;
-  HMI_data.TitleTxt_Color   = Def_TitleTxt_Color;
-  HMI_data.Text_Color       = Def_Text_Color;
-  HMI_data.Selected_Color   = Def_Selected_Color;
-  HMI_data.SplitLine_Color  = Def_SplitLine_Color;
-  HMI_data.Highlight_Color  = Def_Highlight_Color;
-  HMI_data.StatusBg_Color   = Def_StatusBg_Color;
-  HMI_data.StatusTxt_Color  = Def_StatusTxt_Color;
-  HMI_data.PopupBg_Color    = Def_PopupBg_Color;
-  HMI_data.PopupTxt_Color   = Def_PopupTxt_Color;
-  HMI_data.AlertBg_Color    = Def_AlertBg_Color;
-  HMI_data.AlertTxt_Color   = Def_AlertTxt_Color;
-  HMI_data.PercentTxt_Color = Def_PercentTxt_Color;
-  HMI_data.Barfill_Color    = Def_Barfill_Color;
-  HMI_data.Indicator_Color  = Def_Text_Color;
-  HMI_data.Coordinate_Color = Def_Text_Color;
-  HMI_data.Bottom_Color     = Def_TitleBg_Color;
-}
-
-#if ENABLED(ALTCOLOR_MENU_ITEM)
-  void DWIN_SetAltColor() {
+#if (ALTCOLOR_MENU_ITEM == 1)
+  void DWIN_SetColorDefaults() {
     HMI_data.Background_Color = Def_Background_Color;
     HMI_data.Cursor_Color     = Def_Cursor_Color;
     HMI_data.TitleBg_Color    = Def_TitleBg_Color;
@@ -1790,18 +1768,67 @@ void DWIN_SetColorDefaults() {
     HMI_data.Coordinate_Color = Def_Coordinate_Color;
     HMI_data.Bottom_Color     = Def_Bottom_Color;
   }
-
-  void SetAltColor(){
-    DWIN_SetAltColor();
-    DWIN_RedrawScreen();
+#elif (ALTCOLOR_MENU_ITEM == 2) 
+  void DWIN_SetColorDefaults() {
+    #undef Def_Background_Color
+    #undef Def_Text_Color
+    #undef Def_TitleBg_Color
+    #define Def_Background_Color RGB( 1, 12, 8)
+    #define Def_Text_Color       RGB(20, 49, 31)
+    #define Def_TitleBg_Color    RGB( 0, 23, 16)
+    HMI_data.Background_Color = Def_Background_Color;
+    HMI_data.Cursor_Color     = Def_Text_Color;
+    HMI_data.TitleBg_Color    = Def_TitleBg_Color;
+    HMI_data.TitleTxt_Color   = Color_White;
+    HMI_data.Text_Color       = Color_White;
+    HMI_data.Selected_Color   = Select_Color;
+    HMI_data.SplitLine_Color  = RGB( 0, 23, 16);
+    HMI_data.Highlight_Color  = Color_White;
+    HMI_data.StatusBg_Color   = RGB( 0, 23, 16);
+    HMI_data.StatusTxt_Color  = Color_Yellow;
+    HMI_data.PopupBg_Color    = Color_Bg_Window;
+    HMI_data.PopupTxt_Color   = Popup_Text_Color;
+    HMI_data.AlertBg_Color    = Color_Bg_Red;
+    HMI_data.AlertTxt_Color   = Color_Yellow;
+    HMI_data.PercentTxt_Color = Percent_Color;
+    HMI_data.Barfill_Color    = BarFill_Color;
+    HMI_data.Indicator_Color  = Color_White;
+    HMI_data.Coordinate_Color = Color_White;
+    HMI_data.Bottom_Color     = RGB( 0, 23, 16);
+  }
+#else
+  void DWIN_SetColorDefaults() {
+    HMI_data.Background_Color = Def_Background_Color;
+    HMI_data.Cursor_Color     = Def_Text_Color;
+    HMI_data.TitleBg_Color    = Def_TitleBg_Color;
+    HMI_data.TitleTxt_Color   = Def_TitleTxt_Color;
+    HMI_data.Text_Color       = Def_Text_Color;
+    HMI_data.Selected_Color   = Def_Selected_Color;
+    HMI_data.SplitLine_Color  = Def_SplitLine_Color;
+    HMI_data.Highlight_Color  = Def_Highlight_Color;
+    HMI_data.StatusBg_Color   = Def_StatusBg_Color;
+    HMI_data.StatusTxt_Color  = Def_StatusTxt_Color;
+    HMI_data.PopupBg_Color    = Def_PopupBg_Color;
+    HMI_data.PopupTxt_Color   = Def_PopupTxt_Color;
+    HMI_data.AlertBg_Color    = Def_AlertBg_Color;
+    HMI_data.AlertTxt_Color   = Def_AlertTxt_Color;
+    HMI_data.PercentTxt_Color = Def_PercentTxt_Color;
+    HMI_data.Barfill_Color    = Def_Barfill_Color;
+    HMI_data.Indicator_Color  = Def_Text_Color;
+    HMI_data.Coordinate_Color = Def_Text_Color;
+    HMI_data.Bottom_Color     = Def_TitleBg_Color;
   }
 #endif
 
 // Max X Mesh Inset does not save after restart - it is limited by Probe offset. TODO: this is just a temp workaround,
  #if ProUIex && HAS_MESH
   void SetMeshArea() {
-    PRO_data.mesh_max_x = X_BED_SIZE - MESH_INSET;
+    PRO_data.mesh_min_x = ui.mesh_inset_min_x;
+    PRO_data.mesh_max_x = ui.mesh_inset_max_x;
+    PRO_data.mesh_min_y = ui.mesh_inset_min_y;
+    PRO_data.mesh_max_y = ui.mesh_inset_max_y;
     ProEx.ApplyMeshLimits();
+    ReDrawMenu();
   }
 #endif
 
@@ -1937,7 +1964,7 @@ void DWIN_InitScreen() {
     safe_delay(2000);
   #endif
   DWINUI::init();
-  DWINUI::SetColors(HMI_data.Text_Color, HMI_data.Background_Color, HMI_data.TitleBg_Color);
+  //DWINUI::SetColors(HMI_data.Text_Color, HMI_data.Background_Color, HMI_data.TitleBg_Color);
   DWINUI::onTitleDraw = Draw_Title;
   InitMenu();
   checkkey = 255;
@@ -3227,11 +3254,8 @@ void Draw_FilSet_Menu() {
 
 void Draw_SelectColors_Menu() {
   checkkey = Menu;
-  if (SET_MENU(SelectColorMenu, MSG_COLORS_SELECT, 22)) {
+  if (SET_MENU(SelectColorMenu, MSG_COLORS_SELECT, 21)) {
     BACK_ITEM(Draw_Control_Menu);
-    #if ENABLED(ALTCOLOR_MENU_ITEM)
-      MENU_ITEM_F(ICON_ResumeEEPROM, "Set Alt Colors", onDrawMenuItem, SetAltColor);
-    #endif
     MENU_ITEM(ICON_ResumeEEPROM, MSG_RESTORE_DEFAULTS, onDrawMenuItem, RestoreDefaultColors);
     EDIT_ITEM_F(0, "Screen Background", onDrawSelColorItem, SelColor, &HMI_data.Background_Color);
     EDIT_ITEM_F(0, "Cursor", onDrawSelColorItem, SelColor, &HMI_data.Cursor_Color);
@@ -3627,8 +3651,11 @@ void Draw_Steps_Menu() {
 
   void Draw_PID_Menu() {
     checkkey = Menu;
-    if (SET_MENU_F(PIDMenu, "PID Settings", 3)) {
+    if (SET_MENU_F(PIDMenu, "PID Settings", 4)) {
       BACK_ITEM(Draw_Temperature_Menu);
+    #if ENABLED(EEPROM_SETTINGS)
+      MENU_ITEM(ICON_WriteEEPROM, MSG_STORE_EEPROM, onDrawMenuItem, WriteEeprom);
+    #endif
     #ifdef PIDTEMP
       MENU_ITEM_F(ICON_PIDNozzle, STR_HOTEND_PID " Settings", onDrawSubMenu, Draw_HotendPID_Menu);
     #endif
@@ -3651,9 +3678,6 @@ void Draw_Steps_Menu() {
       EDIT_ITEM_F(ICON_PIDValue, "Set" STR_KD, onDrawPIDd, SetKd, &thermalManager.temp_hotend[0].pid.Kd);
       EDIT_ITEM(ICON_Temperature, MSG_TEMPERATURE, onDrawPIntMenu, SetHotendPidT, &HMI_data.HotendPidT);
       EDIT_ITEM(ICON_PIDCycles, MSG_PID_CYCLE, onDrawPIntMenu, SetPidCycles, &HMI_data.PidCycles);
-      #if ENABLED(EEPROM_SETTINGS)
-        MENU_ITEM(ICON_WriteEEPROM, MSG_STORE_EEPROM, onDrawMenuItem, WriteEeprom);
-      #endif
     }
     UpdateMenu(HotendPIDMenu);
   }
@@ -3712,9 +3736,6 @@ void Draw_Steps_Menu() {
       EDIT_ITEM_F(ICON_PIDValue, "Set" STR_KD, onDrawPIDd, SetKd, &thermalManager.temp_bed.pid.Kd);
       EDIT_ITEM(ICON_Temperature, MSG_TEMPERATURE, onDrawPIntMenu, SetBedPidT, &HMI_data.BedPidT);
       EDIT_ITEM(ICON_PIDCycles, MSG_PID_CYCLE, onDrawPIntMenu, SetPidCycles, &HMI_data.PidCycles);
-      #if ENABLED(EEPROM_SETTINGS)
-        MENU_ITEM(ICON_WriteEEPROM, MSG_STORE_EEPROM, onDrawMenuItem, WriteEeprom);
-      #endif
     }
     UpdateMenu(BedPIDMenu);
   }
@@ -3791,31 +3812,24 @@ void Draw_Steps_Menu() {
       SetOnClick(SetIntNoDraw, GRID_MIN, GRID_LIMIT, 0, PRO_data.grid_max_points, ApplyMeshPoints, LiveMeshPoints);
       ProEx.DrawMeshPoints(true, CurrentMenu->line(), PRO_data.grid_max_points);
     }
-    void SetMeshInset()  { SetPFloatOnClick(MIN_MESH_INSET, MAX_MESH_INSET, UNITFDIGITS, ProEx.ApplyMeshLimits); }
+    void SetMeshInset()  { SetPFloatOnClick(MIN_MESH_INSET, MAX_MESH_INSET, UNITFDIGITS, SetMeshArea, ProEx.ApplyMeshLimits);  }
     void MaxMeshArea() {
-      //#if HAS_BED_PROBE
-      // PRO_data.mesh_min_x = _MAX(PROBING_MARGIN_LEFT, probe.offset.x);
-      // PRO_data.mesh_max_x = _MIN(X_BED_SIZE - PROBING_MARGIN_RIGHT, X_MAX_POS + probe.offset.x);
-      // PRO_data.mesh_min_y = _MAX(PROBING_MARGIN_FRONT, probe.offset.y);
-      // PRO_data.mesh_max_y = _MIN(Y_BED_SIZE - PROBING_MARGIN_BACK, Y_MAX_POS + probe.offset.y);
-      //#else
-        PRO_data.mesh_min_x = MESH_INSET;
-        PRO_data.mesh_max_x = X_BED_SIZE - MESH_INSET;
-        PRO_data.mesh_min_y = MESH_INSET;
-        PRO_data.mesh_max_y = Y_BED_SIZE - MESH_INSET;
-      //#endif
+      PRO_data.mesh_min_x = ui.mesh_inset_min_x = 0;
+      PRO_data.mesh_max_x = ui.mesh_inset_max_x = X_BED_SIZE;
+      PRO_data.mesh_min_y = ui.mesh_inset_min_y = 0;
+      PRO_data.mesh_max_y = ui.mesh_inset_max_y = Y_BED_SIZE;
       ProEx.ApplyMeshLimits();
       ReDrawMenu();
     }
     void CenterMeshArea() {
-      float max = PRO_data.mesh_min_x;
-      if (max < X_BED_SIZE - PRO_data.mesh_max_x) max = X_BED_SIZE - PRO_data.mesh_max_x;
-      if (max < PRO_data.mesh_min_y) max = PRO_data.mesh_min_y;
-      if (max < Y_BED_SIZE - PRO_data.mesh_max_y) max = Y_BED_SIZE - PRO_data.mesh_max_y;
-      PRO_data.mesh_min_x = max;
-      PRO_data.mesh_max_x = X_BED_SIZE - max;
-      PRO_data.mesh_min_y = max;
-      PRO_data.mesh_max_y = Y_BED_SIZE - max;
+      float max = ui.mesh_inset_min_x;
+      if (max < X_BED_SIZE - ui.mesh_inset_max_x) max = X_BED_SIZE - ui.mesh_inset_max_x;
+      if (max < ui.mesh_inset_min_y) max = ui.mesh_inset_min_y;
+      if (max < Y_BED_SIZE - ui.mesh_inset_max_y) max = Y_BED_SIZE - ui.mesh_inset_max_y;
+      ui.mesh_inset_min_x = max;
+      ui.mesh_inset_max_x = X_BED_SIZE - max;
+      ui.mesh_inset_min_y = max;
+      ui.mesh_inset_max_y = Y_BED_SIZE - max;
       ProEx.ApplyMeshLimits();
       ReDrawMenu();
     }
@@ -3959,14 +3973,15 @@ void Draw_Steps_Menu() {
       checkkey = Menu;
       if (SET_MENU(MeshInsetMenu, MSG_MESH_INSET, 7)) {
         BACK_ITEM(Draw_MeshSet_Menu);
-        EDIT_ITEM(ICON_ProbeMargin, MSG_MESH_MIN_X, onDrawPFloatMenu, SetMeshInset, &PRO_data.mesh_min_x);
-        EDIT_ITEM(ICON_ProbeMargin, MSG_MESH_MAX_X, onDrawPFloatMenu, SetMeshInset, &PRO_data.mesh_max_x);
-        EDIT_ITEM(ICON_ProbeMargin, MSG_MESH_MIN_Y, onDrawPFloatMenu, SetMeshInset, &PRO_data.mesh_min_y);
-        EDIT_ITEM(ICON_ProbeMargin, MSG_MESH_MAX_Y, onDrawPFloatMenu, SetMeshInset, &PRO_data.mesh_max_y);
+        EDIT_ITEM(ICON_Box, MSG_MESH_MIN_X, onDrawPFloatMenu, SetMeshInset, &ui.mesh_inset_min_x);
+        EDIT_ITEM(ICON_ProbeMargin, MSG_MESH_MAX_X, onDrawPFloatMenu, SetMeshInset, &ui.mesh_inset_max_x);
+        EDIT_ITEM(ICON_Box, MSG_MESH_MIN_Y, onDrawPFloatMenu, SetMeshInset, &ui.mesh_inset_min_y);
+        EDIT_ITEM(ICON_ProbeMargin, MSG_MESH_MAX_Y, onDrawPFloatMenu, SetMeshInset, &ui.mesh_inset_max_y);
         MENU_ITEM(ICON_Axis, MSG_MESH_AMAX, onDrawMenuItem, MaxMeshArea);
         MENU_ITEM(ICON_SetHome, MSG_MESH_CENTER, onDrawMenuItem, CenterMeshArea);
       }
       UpdateMenu(MeshInsetMenu);
+      LCD_MESSAGE_F("..Center Area sets mesh equidistant by side of largest inset value");
     }
   #endif
 

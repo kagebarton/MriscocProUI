@@ -162,8 +162,8 @@
 #define STR_ENDSTOP_HIT                     "TRIGGERED"
 #define STR_ENDSTOP_OPEN                    "open"
 #define STR_DUPLICATION_MODE                "Duplication mode: "
-#define STR_SOFT_MIN                        "  Min: "
-#define STR_SOFT_MAX                        "  Max: "
+#define STR_SOFT_MIN                        " Min: "
+#define STR_SOFT_MAX                        " Max: "
 
 #define STR_SAVED_POS                       "Position saved"
 #define STR_RESTORING_POS                   "Restoring position"

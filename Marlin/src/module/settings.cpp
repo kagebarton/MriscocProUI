@@ -586,10 +586,17 @@ typedef struct SettingsDataStruct {
   #endif
 
   //
-  // Bed corner screw inset position
+  // Bed corner screw position and Mesh inset
   //
   #ifdef BED_SCREW_INSET
     float screw_pos;
+  #endif
+
+  #if ProUIex && HAS_MESH
+    float mesh_inset_min_x;
+    float mesh_inset_max_x;
+    float mesh_inset_min_y;
+    float mesh_inset_max_y;
   #endif
 
   //
@@ -1647,10 +1654,20 @@ void MarlinSettings::postprocess() {
     #endif
 
     //
-    //BED_SCREW_INSET
+    // BED_SCREW_INSET
     //
     #ifdef BED_SCREW_INSET
       EEPROM_WRITE(ui.screw_pos);
+    #endif
+
+    //
+    // MESH_INSET workaround
+    //
+    #if ProUIex && HAS_MESH
+      EEPROM_WRITE(ui.mesh_inset_min_x);
+      EEPROM_WRITE(ui.mesh_inset_max_x);
+      EEPROM_WRITE(ui.mesh_inset_min_y);
+      EEPROM_WRITE(ui.mesh_inset_max_y);
     #endif
 
     //
@@ -2730,6 +2747,20 @@ void MarlinSettings::postprocess() {
       #endif
 
       //
+      // MESH_INSET workaround
+      //
+      #if ProUIex && HAS_MESH
+        _FIELD_TEST(mesh_inset_min_x);
+        EEPROM_READ(ui.mesh_inset_min_x);
+        _FIELD_TEST(mesh_inset_max_x);
+        EEPROM_READ(ui.mesh_inset_max_x);
+        _FIELD_TEST(mesh_inset_min_y);
+        EEPROM_READ(ui.mesh_inset_min_y);
+        _FIELD_TEST(mesh_inset_max_y);
+        EEPROM_READ(ui.mesh_inset_max_y); 
+      #endif
+
+      //
       // Case Light Brightness
       //
       #if CASELIGHT_USES_BRIGHTNESS
@@ -3236,6 +3267,16 @@ void MarlinSettings::reset() {
   //
   #ifdef BED_SCREW_INSET
     ui.screw_pos = BED_SCREW_INSET; 
+  #endif
+
+  //
+  // MESH_INSET workaround
+  //
+  #if ProUIex && HAS_MESH
+    ui.mesh_inset_min_x = MESH_INSET;
+    ui.mesh_inset_max_x = X_BED_SIZE - MESH_INSET;
+    ui.mesh_inset_min_y = MESH_INSET;
+    ui.mesh_inset_max_y = Y_BED_SIZE - MESH_INSET;
   #endif
 
   //

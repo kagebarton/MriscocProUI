@@ -197,8 +197,17 @@ public:
   MarlinUI() {
     TERN_(HAS_MARLINUI_MENU, currentScreen = status_screen);
   }
+  
+  #ifdef BED_SCREW_INSET
+    static float screw_pos; // bed corner screw inset
+  #endif
 
-  static float screw_pos; //changed added
+  #if ProUIex && HAS_MESH
+    static float mesh_inset_min_x;
+    static float mesh_inset_max_x;
+    static float mesh_inset_min_y;
+    static float mesh_inset_max_y;
+  #endif 
 
   static void init();
 
