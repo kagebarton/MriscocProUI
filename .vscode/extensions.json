@@ -3,9 +3,9 @@
     // for the documentation about the extensions.json format
     "recommendations": [
         "marlinfirmware.auto-build",
-        "platformio.platformio-ide"
-    ],
-    "unwantedRecommendations": [
+        "platformio.platformio-ide",
+        "classicrocker883.kazikame-dark",
         "ms-vscode.cpptools-extension-pack"
-    ]
+    ],
+    "unwantedRecommendations": []
 }
