@@ -42,7 +42,7 @@ struct mesh_index_pair;
 #define MESH_Y_DIST (float((MESH_MAX_Y) - (MESH_MIN_Y)) / (GRID_MAX_CELLS_Y))
 
 #if ENABLED(OPTIMIZED_MESH_STORAGE)
-  #if ProUIex
+  #if PROUI_EX
     typedef int16_t mesh_store_t[GRID_LIMIT][GRID_LIMIT];
   #else
     typedef int16_t mesh_store_t[GRID_MAX_POINTS_X][GRID_MAX_POINTS_Y];
@@ -121,7 +121,7 @@ public:
     static void set_store_from_mesh(const bed_mesh_t &in_values, mesh_store_t &stored_values);
     static void set_mesh_from_store(const mesh_store_t &stored_values, bed_mesh_t &out_values);
   #endif
-  #if DISABLED(ProUIex)
+  #if DISABLED(PROUI_EX)
     static const float _mesh_index_to_xpos[GRID_MAX_POINTS_X],
                        _mesh_index_to_ypos[GRID_MAX_POINTS_Y];
   #endif
@@ -296,7 +296,7 @@ public:
 
   static constexpr float get_z_offset() { return 0.0f; }
 
-  #if ProUIex
+  #if PROUI_EX
     static float get_mesh_x(const uint8_t i);
     static float get_mesh_y(const uint8_t i);
   #else

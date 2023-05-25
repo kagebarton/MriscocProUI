@@ -1,8 +1,8 @@
 /**
  * DWIN general defines and data structs for PRO UI
  * Author: Miguel A. Risco-Castillo (MRISCOC)
- * Version: 3.12.3
- * Date: 2022/08/08
+ * Version: 3.13.3
+ * Date: 2022/05/18
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -58,25 +58,32 @@
 #define Def_Indicator_Color   Color_Cyan //
 #define Def_Coordinate_Color  Color_Brown //
 #define Def_Bottom_Color      Color_Silver //
-#define Def_Leds_Color      0xFFFFFFFF
+#define Def_Leds_Color        0xFFFFFFFF
 #define Def_CaseLight_Brightness 255
-#define DEF_Z_AFTER_HOMING TERN(Z_AFTER_HOMING, Z_AFTER_HOMING, 10)
-#define DEF_HOTENDPIDT TERN(PREHEAT_1_TEMP_HOTEND, PREHEAT_1_TEMP_HOTEND, 200)
-#define DEF_BEDPIDT TERN(PREHEAT_1_TEMP_BED, PREHEAT_1_TEMP_BED, 60)
+#ifdef Z_AFTER_HOMING
+  #define DEF_Z_AFTER_HOMING Z_AFTER_HOMING
+#else
+  #define DEF_Z_AFTER_HOMING 0
+#endif
+#define DEF_HOTENDPIDT PREHEAT_1_TEMP_HOTEND
+#define DEF_BEDPIDT PREHEAT_1_TEMP_BED
 #define DEF_PIDCYCLES 5
 
 //=============================================================================
 // Only for Professional Firmware UI extensions
 //=============================================================================
 
-#if ENABLED(HAS_GCODE_PREVIEW) && DISABLED(ProUIex)
-  #error "HAS_GCODE_PREVIEW requires ProUIex."
+#if ENABLED(HAS_GCODE_PREVIEW) && DISABLED(PROUI_EX)
+  #error "HAS_GCODE_PREVIEW requires PROUI_EX."
 #endif
-#if ENABLED(HAS_TOOLBAR) && DISABLED(ProUIex)
-  #error "HAS_TOOLBAR requires ProUIex."
+#if ENABLED(HAS_TOOLBAR) && DISABLED(PROUI_EX)
+  #error "HAS_TOOLBAR requires PROUI_EX."
+#endif
+#if ENABLED(CV_LASER_MODULE) && DISABLED(PROUI_EX)
+  #error "CV_LASER_MODULE requires PROUI_EX."
 #endif
 
-#if ProUIex
+#if PROUI_EX
 
   #include <stddef.h>
   #include "../../../core/types.h"
@@ -139,4 +146,4 @@
   #include <stddef.h>
   #include "../../../core/types.h"
   #include "proui.h"
-#endif  // ProUIex
+#endif  // PROUI_EX

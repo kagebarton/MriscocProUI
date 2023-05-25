@@ -839,8 +839,8 @@
   #define PID_FUNCTIONAL_RANGE 10 // If the temperature difference between the target temperature and the actual temperature
                                   // is more than PID_FUNCTIONAL_RANGE then the PID will be shut off and the heater will be set to min/max.
 
-  //#define PID_EDIT_MENU         // Add PID editing to the "Advanced Settings" menu. (~700 bytes of flash)
-  //#define PID_AUTOTUNE_MENU     // Add PID auto-tuning to the "Advanced Settings" menu. (~250 bytes of flash)
+  #define PID_EDIT_MENU         // Add PID editing to the "Advanced Settings" menu. (~700 bytes of flash)
+  #define PID_AUTOTUNE_MENU     // Add PID auto-tuning to the "Advanced Settings" menu. (~250 bytes of flash)
 #endif
 
 // @section safety
@@ -1233,6 +1233,11 @@
  *                                      X, Y, Z [, I [, J [, K...]]], E0 [, E1[, E2...]]
  */
 #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 98 }
+
+//#define LIMITED_MAX_STEPS_EDITING
+#if ENABLED(LIMITED_MAX_STEPS_EDITING)
+  #define MAX_STEPS_EDIT_VALUES       { 200, 200, 2000, 2000 }
+#endif
 
 /**
  * Default Max Feed Rate (linear=mm/s, rotational=°/s)
@@ -2179,7 +2184,6 @@
 
 // Add a menu item to move between bed corners for manual bed adjustment
 //#define LCD_BED_TRAMMING
-#define BED_SCREW_INSET 35 // distance the knob screw is from corners
 
 #if ENABLED(LCD_BED_TRAMMING)
   #define BED_TRAMMING_HEIGHT      0.0        // (mm) Z height of nozzle at tramming points
@@ -2213,6 +2217,8 @@
    *  LF --------- RF   LF --------- RF    LF --------- RF   LF --------- RF
    */
   #define BED_TRAMMING_LEVELING_ORDER { LF, RF, RB, LB }
+#else
+  #define BED_SCREW_INSET 35 // Distance the knob screw is from corners.
 #endif
 
 /**
@@ -3366,22 +3372,24 @@
 // DWIN / DACAI LCD 4.3" 480x272
 
 #define DWIN_LCD_PROUI              // Pro UI by MRiscoC
+#define USE_STOCK_DWIN_SET
 //#define HAS_DACAI 1
 
 #if ENABLED(DWIN_LCD_PROUI)
   // Professional firmware features:
-  #define ProUIex 1
-  #ifdef ProUIex
+  #define PROUI_EX 1
+  #ifdef PROUI_EX
     #define HAS_GCODE_PREVIEW 1
     #define HAS_TOOLBAR 1
   #endif
-  #define HAS_PLOT 1
-  //#define HAS_ESDIAG 1
-  #define HAS_CGCODE 1
-  //#define HAS_LOCKSCREEN 1
-  //#define HAS_SD_EXTENDER 1  // Enable to support SD card extender cables
-  //#define USE_UBL_VIEWER 1     // Enable two graph types to view mesh
-  #define SHOW_REAL_POS
+  #define HAS_PLOT 1            // Graph Temp as grid plot - PID/MPC Tuning
+  //#define HAS_ESDIAG 1        // View End-stop switch continuity
+  #define HAS_CGCODE 1          // Extra Gcode options
+  //#define HAS_LOCKSCREEN 1    // Simple lockscreen as to not accidentally change something
+  //#define HAS_SD_EXTENDER 1   // Enable to support SD card extender cables
+  #define USE_GRID_MESHVIEWER 1    // Enable two graph types to view mesh
+  #define HAS_CUSTOM_COLORS 1   // Able to change display colors
+  #define ALTCOLOR_MENU_ITEM 1  // Color palette options => Disabled or 0 = Voxelab Default | 1 = Alternate Aquila | 2 = Ender3v2 Default
   #if ENABLED(AUTO_BED_LEVELING_UBL)
     #define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option
   #endif
@@ -3400,10 +3408,18 @@
   #if DISABLED(CLASSIC_JERK)
     //#define JD_TUNE_ITEM  // Enable only if Juntion Deviation is enabled
   #endif
-  #define ADVK_TUNE_ITEM         // Linear Advance item in Tune Menu
-  #define ALTCOLOR_MENU_ITEM 1   // Color palette options => Disabled or 0: Voxelab Default | 1: Alternate Aquila | 2: Ender3v2 Default
-  #define TRAMWIZ_MENU_ITEM      // Enable Tramming Wizard
-  //#define MEDIASORT_MENU_ITEM  // File list sorting option
+  #if ENABLED(LIN_ADVANCE)
+    #define ADVK_TUNE_ITEM  // Linear Advance item in Tune Menu
+  #endif
+  #define SHOW_REAL_POS
+  #define TRAMWIZ_MENU_ITEM        // Enable Tramming Wizard
+  #define MEDIASORT_MENU_ITEM       // Allows enable/disable file list sorting
+  #define CCLOUD_PRINT_SUPPORT      // Allows enable/disable Creality Cloud Print Support
+  //#define SMOOTH_ENCODER_MENUITEMS  // Menu items value faster/smooth change rate --- VERY SLOW!!
+  #define SHOW_SPEED_IND         // Show the axes speed in mm/s intermittently with the speed percentage
+  //#define NO_BLINK_IND          // Disables dashboard icon background blink indicator
+  //#define ZHOME_BEFORE_LEVELING
+
 #endif
 
 //

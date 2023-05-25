@@ -202,7 +202,7 @@ public:
     static float screw_pos; // bed corner screw inset
   #endif
 
-  #if ProUIex && HAS_MESH
+  #if PROUI_EX && HAS_MESH // workaround for mesh inset not saving on restart
     static float mesh_inset_min_x;
     static float mesh_inset_max_x;
     static float mesh_inset_min_y;
@@ -236,7 +236,7 @@ public:
 
   #if ENABLED(SOUND_MENU_ITEM)
     static bool sound_on; // Initialized by settings.load()
-    static bool no_tick; //changed added
+    static bool no_tick; // added to disable encoder tick/beep while keeping sound on
   #else
     static constexpr bool sound_on = true;
   #endif

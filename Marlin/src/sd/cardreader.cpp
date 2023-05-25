@@ -351,7 +351,7 @@ void CardReader::printListing(MediaFile parent, const char * const prepend, cons
 //
 // List all files on the SD card
 //
-void CardReader::ls(const uint8_t lsflags) {
+void CardReader::ls(const uint8_t lsflags/*=0*/) {
   if (flag.mounted) {
     root.rewind();
     printListing(root, nullptr, lsflags);
@@ -498,7 +498,7 @@ void CardReader::mount() {
     cdroot();
   else {
     #if EITHER(HAS_SD_DETECT, USB_FLASH_DRIVE_SUPPORT)
-      if (marlin_state != MF_INITIALIZING) LCD_ALERTMESSAGE(MSG_MEDIA_INIT_FAIL);
+      if (marlin_state != MF_INITIALIZING) LCD_MESSAGE(MSG_MEDIA_INIT_FAIL);
     #endif
   }
 
@@ -551,13 +551,13 @@ void CardReader::manage_media() {
 
   // First mount on boot? Load emulated EEPROM and look for PLR file.
   if (old_stat == 2) {
-  DEBUG_ECHOLNPGM("First mount.");
+    DEBUG_ECHOLNPGM("First mount.");
 
-  // Load settings the first time media is inserted (not just during init)
-  TERN_(SDCARD_EEPROM_EMULATION, settings.first_load());
+    // Load settings the first time media is inserted (not just during init)
+    TERN_(SDCARD_EEPROM_EMULATION, settings.first_load());
 
     // Check for PLR file. Skip One-Click and auto#.g if found
-  TERN_(POWER_LOSS_RECOVERY, if (recovery.check()) do_auto = false);
+    TERN_(POWER_LOSS_RECOVERY, if (recovery.check()) do_auto = false);
   }
 
   // Find the newest file and prompt to print it.
@@ -566,9 +566,9 @@ void CardReader::manage_media() {
   // Also for the first mount run auto#.g for machine init.
   // (Skip if PLR or One-Click Print was invoked.)
   if (old_stat == 2) {
-  // Look for auto0.g on the next idle()
-  IF_DISABLED(NO_SD_AUTOSTART, if (do_auto) autofile_begin());
-}
+    // Look for auto0.g on the next idle()
+    IF_DISABLED(NO_SD_AUTOSTART, if (do_auto) autofile_begin());
+  }
 }
 
 /**
@@ -717,6 +717,10 @@ void CardReader::openFileRead(const char * const path, const uint8_t subcall_typ
         break;
 
     #endif
+
+    #if PROUI_EX
+       case 100: break;  // Reserved for read file header.
+    #endif
   }
 
   abortFilePrintNow();
@@ -737,6 +741,7 @@ void CardReader::openFileRead(const char * const path, const uint8_t subcall_typ
 
     selectFileByName(fname);
     ui.set_status(longFilename[0] ? longFilename : fname);
+    TERN_(DWIN_LCD_PROUI, DWIN_Print_Header(longFilename[0] ? longFilename : fname));
   }
   else
     openFailed(fname);

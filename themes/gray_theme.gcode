@@ -1,5 +1,8 @@
-;Gray theme file
-;
+; Gray theme file
+; Professional Firmware Theme File
+;=====================================================
+C10                  ; Mark as a configuration/theme file
+;-----------------------------------------------------
 C11 E2  R4 G8 B4     ;Screen Background
 C11 E3  R20 G40 B20  ;Cursor
 C11 E4  R10 G20 B10  ;Title Background
@@ -18,4 +21,9 @@ C11 E16 R31 G63 B31  ;Percent Text
 C11 E17 R10 G20 B10  ;Bar Fill
 C11 E18 R26 G52 B26  ;Indicator value
 C11 E19 R26 G52 B26  ;Coordinate value;
+;
 C11 E0  ;Preview changes
+;-----------------------------------------------------
+G4 S1                ; Wait a second
+M300 P200            ; Beep
+M117 Theme Applied

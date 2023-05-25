@@ -138,6 +138,10 @@ Stepper stepper; // Singleton
   #include "../feature/spindle_laser.h"
 #endif
 
+#if BOTH(DWIN_LCD_PROUI, CV_LASER_MODULE)
+  #include "../lcd/e3v2/proui/dwin.h"
+#endif
+
 #if ENABLED(EXTENSIBLE_UI)
   #include "../lcd/extui/ui_api.h"
 #endif
@@ -2270,6 +2274,9 @@ hal_timer_t Stepper::block_phase_isr() {
   if (current_block) {
     // If current block is finished, reset pointer and finalize state
     if (step_events_completed >= step_event_count) {
+      #if ENABLED(CV_LASER_MODULE)
+        if(laser_device.is_laser_device()) cutter.apply_power(0);
+      #endif
       #if ENABLED(DIRECT_STEPPING)
         // Direct stepping is currently not ready for HAS_I_AXIS
         #if STEPPER_PAGE_FORMAT == SP_4x4D_128

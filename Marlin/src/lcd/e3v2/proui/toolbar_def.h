@@ -1,8 +1,8 @@
 /**
  * ToolBar for PRO UI
  * Author: Miguel A. Risco-Castillo (MRISCOC)
- * version: 1.3.1
- * Date: 2022/08/05
+ * version: 1.4.1
+ * Date: 2023/04/28
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -46,5 +46,6 @@ const TBItem_t TBItemA[] = {
   #endif
   {ICON_Box, GET_TEXT_F(MSG_BRIGHTNESS_OFF), TurnOffBacklight},
   {ICON_Reboot, GET_TEXT_F(MSG_RESET_PRINTER), RebootPrinter},
-  {ICON_WriteEEPROM, GET_TEXT_F(MSG_STORE_EEPROM), WriteEeprom}
+  {ICON_WriteEEPROM, GET_TEXT_F(MSG_STORE_EEPROM), WriteEeprom},
+  {ICON_Park, GET_TEXT_F(MSG_FILAMENT_PARK_ENABLED), ParkHead}
 };

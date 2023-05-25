@@ -155,7 +155,7 @@ void reset_bed_level() {
       #endif
       LOOP_L_N(x, sx) {
         SERIAL_CHAR(' ');
-        #if ProUIex
+        #if PROUI_EX
           const float offset = ProEx.getZvalues(sy, x, y, values);
         #else
           const float offset = values[x * sy + y];

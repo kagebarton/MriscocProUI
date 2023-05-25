@@ -1,8 +1,8 @@
 /**
  * DWIN End Stops diagnostic page for PRO UI
  * Author: Miguel A. Risco-Castillo (MRISCOC)
- * Version: 1.3.3
- * Date: 2022/10/07
+ * Version: 1.4.3
+ * Date: 2023/05/10
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -56,7 +56,7 @@ void draw_es_state(const bool is_hit) {
 }
 
 void ESDiagClass::Draw() {
-  Title.ShowCaption(F("End-stops Diagnostic"));  // Title.ShowCaption(GET_TEXT_F(MSG_ENDSTOP_TEST));
+  Title.ShowCaption(GET_TEXT_F(MSG_ENDSTOP_TEST));
   DWINUI::ClearMainArea();
   Draw_Popup_Bkgd();
   DWINUI::Draw_Button(BTN_Continue, 86, 250);
@@ -111,7 +111,7 @@ void ESDiagClass::Update() {
     TERN_(USE_Z_MAX, ES_REPORT(Z_MAX));
   #endif
   #if HAS_FILAMENT_SENSOR
-    #if ProUIex
+    #if PROUI_EX
       draw_es_state(!FilamentSensorDevice::poll_runout_state(0));
     #else
       draw_es_state(READ(FIL_RUNOUT1_PIN) != FIL_RUNOUT1_STATE);

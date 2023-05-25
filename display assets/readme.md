@@ -1,3 +1,5 @@
+# Display firmware, boot image and icons compilations
+
 If you have the stock icons and display assets you don't need to update the display to use this firmware. Currently Creality provides several types of screen units:
 
 **DWIN display**, originally found in Ender 3V2  
@@ -21,7 +23,7 @@ This page list the display assets compilations compatible with [Professional fir
 ## How to install
 1. Get an µSD card of 8GB or less.
 1. Format the µSD card MBR, FAT32 and with a 4 KB sector size
-1. Copy the `DWIN_SET`(DWIN) or `private`(DACAI) folder in the Root of SD
+1. Copy the `DWIN_SET`(DWIN) or the `private`(DACAI) folder in the Root of SD
 1. Turn off your printer
 1. Disconnect and disassembly the screen unit
 1. Install the µSD card into the slot of the screen unit
@@ -36,11 +38,15 @@ If you want to change only the icons of the DWIN screen, then you can leave only
 inside of the DWIN_SET folder.  
 If you weren't able to update the display, verify the format of the µSD Card
 (MBR, FAT32 and allocation unit of 4096 bytes) and the CRC of the files.
+
   
 <img src="https://raw.githubusercontent.com/mriscoc/Ender3V2S1/Ender3V2S1-Released/display%20assets/DWIN_SET-folder.jpg" height="350" />  
 
 Be sure to leave **only** the `DWIN_SET` or `private` folder at the root of the card.  
-  
+
+### DACAI firmware update
+In order to use all the features of this firmware with DACAI screens it has to be updated.
+If you can't see preview images with this [g-code test file](https://github.com/mriscoc/Ender3V2S1/raw/Ender3V2S1-Released/slicer%20scripts/cura/SimpleCuraTest.gcode) update your [DACAI screen firmware](dacai_update.zip).
 <br>
   
 ---
@@ -63,4 +69,3 @@ Be sure to leave **only** the `DWIN_SET` or `private` folder at the root of the 
 
 ### Updating printer firmware
 For update your printer firmware and get the latest version go here: <https://github.com/mriscoc/Ender3V2S1/releases/latest>  
-

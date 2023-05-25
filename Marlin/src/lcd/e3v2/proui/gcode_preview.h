@@ -1,8 +1,8 @@
 /**
  * DWIN G-code thumbnail preview
  * Author: Miguel A. Risco-Castillo
- * version: 3.3.3
- * Date: 2023/03/05
+ * version: 3.5.3
+ * Date: 2023/04/25
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,5 +25,4 @@
 void Preview_DrawFromSD();
 void Preview_Invalidate();
 bool Preview_Valid();
-void Preview_Reset();
 void Preview_Show();

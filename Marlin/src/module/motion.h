@@ -131,7 +131,7 @@ extern int16_t feedrate_percentage;
 inline float pgm_read_any(const float *p)   { return TERN(__IMXRT1062__, *p, pgm_read_float(p)); }
 inline int8_t pgm_read_any(const int8_t *p) { return TERN(__IMXRT1062__, *p, pgm_read_byte(p)); }
 
-#if ProUIex
+#if PROUI_EX
   #define XYZ_DEFS(T, NAME, OPT) \
     inline T NAME(const AxisEnum axis) { \
       const XYZval<T> Value = NUM_AXIS_ARRAY(X_##OPT, Y_##OPT, Z_##OPT, I_##OPT, J_##OPT, K_##OPT, U_##OPT, V_##OPT, W_##OPT); \
@@ -428,12 +428,12 @@ void restore_feedrate_and_scaling();
   #else
     #define Z_POST_CLEARANCE Z_CLEARANCE_FOR_HOMING
   #endif
-  void do_z_clearance(const_float_t zclear, const bool lower_allowed=false);
+  void do_z_clearance(const_float_t zclear, const bool with_probe=true, const bool lower_allowed=false);
   void do_z_clearance_by(const_float_t zclear);
   void do_move_after_z_homing();
   inline void do_z_post_clearance() { do_z_clearance(Z_POST_CLEARANCE); }
 #else
-  inline void do_z_clearance(float, bool=false) {}
+  inline void do_z_clearance(float, bool=true, bool=false) {}
   inline void do_z_clearance_by(float) {}
 #endif
 

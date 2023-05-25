@@ -346,6 +346,4 @@ _iconNames = {
     203 : "ICON_Mesh",              
     204 : "ICON_Tilt",              
     205 : "ICON_Brightness"        
-
-
     }

@@ -700,6 +700,10 @@ private:
     static void M78();
   #endif
 
+  #if ENABLED(CCLOUD_PRINT_SUPPORT)
+    static void M79();
+  #endif
+
   #if ENABLED(PSU_CONTROL)
     static void M80();
   #endif
@@ -930,6 +934,10 @@ private:
 
   #if ENABLED(BABYSTEPPING)
     static void M290();
+    #if ENABLED(EP_BABYSTEPPING)
+      static void M293();
+      static void M294();
+    #endif
   #endif
 
   #if HAS_SOUND

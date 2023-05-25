@@ -1,5 +1,8 @@
-;Blue theme file
-;
+; Blue theme file
+; Professional Firmware Theme File
+;=====================================================
+C10                  ; Mark as a configuration/theme file
+;-----------------------------------------------------
 C11 E2  R2 G4 B6     ;Screen Background
 C11 E3  R0 G31 B31   ;Cursor
 C11 E4  R0 G20 B20   ;Title Background
@@ -20,3 +23,7 @@ C11 E18 R18 G63 B31  ;Indicator value
 C11 E19 R18 G63 B31  ;Coordinate value
 ;
 C11 E0  ;Preview changes
+;-----------------------------------------------------
+G4 S1                ; Wait a second
+M300 P200            ; Beep
+M117 Theme Applied

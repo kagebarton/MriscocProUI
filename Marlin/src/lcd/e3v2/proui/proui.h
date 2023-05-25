@@ -1,8 +1,8 @@
 /**
  * Professional Firmware UI extensions
  * Author: Miguel A. Risco-Castillo
- * Version: 1.8.0
- * Date: 2022/12/30
+ * Version: 1.10.0
+ * Date: 2023/05/18
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,6 @@
  * For commercial applications additional licenses can be requested
  */
 #pragma once
-
-//#include "../../../inc/MarlinConfigPre.h"
 
 #ifndef LOW
   #define LOW 0x0
@@ -115,6 +113,9 @@ public:
   static bool QuitLeveling();
   static void MeshUpdate(const int8_t x, const int8_t y, const_float_t zval);
   static void LevelingDone();
+#endif
+#if HAS_MEDIA
+  static void C10();
 #endif
 #if HAS_FILAMENT_SENSOR
   static void SetRunoutState(uint32_t ulPin);

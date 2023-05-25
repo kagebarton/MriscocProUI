@@ -1,8 +1,8 @@
 /**
  * ToolBar for PRO UI
  * Author: Miguel A. Risco-Castillo (MRISCOC)
- * version: 1.3.1
- * Date: 2022/08/05
+ * version: 1.4.1
+ * Date: 2023/05/18
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -39,13 +39,13 @@ void onDrawTBItem(MenuItemClass* menuitem, int8_t line) {
   const bool focused = (checkkey == Menu);
   const int8_t sel = ToolBar.selected;
   const uint8_t tw = focused ? MENU_CHR_W * TBMaxCaptionWidth : 0;
-  const uint8_t xoff = (DWIN_WIDTH - (B_XPos * ToolBar.count() + tw)) / 2;
-  const uint8_t xp = xoff + line * B_XPos + (line > sel ? tw : 0);
+  const uint8_t xoff = (DWIN_WIDTH - (B_XPOS * ToolBar.count() + tw)) / 2;
+  const uint8_t xp = xoff + line * B_XPOS + (line > sel ? tw : 0);
   if (focused && (line == sel)) {
-    DWIN_Draw_Box(1, Color_Bg_Window, xp - 2, TBYPos, B_XPos, TBHeight);
-    DWINUI::Draw_String(xp + B_XPos, B_YPos + 1, menuitem->caption);
+    DWIN_Draw_Box(1, Color_Bg_Window, xp - 2, TBYPOS, B_XPOS, TBHEIGHT);
+    DWINUI::Draw_String(xp + B_XPOS, B_YPOS + 1, menuitem->caption);
   }
-  DWINUI::Draw_Icon(menuitem->icon, xp, B_YPos);
+  DWINUI::Draw_Icon(menuitem->icon, xp, B_YPOS);
 };
 
 void Draw_ToolBar(bool force /*=false*/) {
@@ -70,7 +70,7 @@ void UpdateTBSetupItem(MenuItemClass* menuitem, uint8_t val) {
 void DrawTBSetupItem(bool focused) {
   const uint8_t line = CurrentMenu->line();
   const uint16_t ypos = MYPOS(line) + 1;
-  DWINUI::Draw_Box(1, focused ? Color_Bg_Window : HMI_data.Background_Color, {15, ypos, DWIN_WIDTH - 15, MLINE - 1});
+  DWINUI::Draw_Box(1, focused ? Color_Bg_Window : HMI_data.Background_Color, { 15, ypos, DWIN_WIDTH - 15, MLINE - 1 });
   onDrawMenuItem(static_cast<MenuItemClass*>(CurrentMenu->SelectedItem()), line);
   if (focused) DWINUI::Draw_Char(VALX + 24, MBASE(line), 18);
 }

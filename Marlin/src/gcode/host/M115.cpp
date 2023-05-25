@@ -54,6 +54,9 @@
  * M115: Capabilities string and extended capabilities report
  *       If a capability is not reported, hosts should assume
  *       the capability is not present.
+ *
+ * NOTE: Always make sure to add new capabilities to the RepRap Wiki
+ *       at https://reprap.org/wiki/Firmware_Capabilities_Protocol
  */
 void GcodeSuite::M115() {
   SERIAL_ECHOPGM("FIRMWARE_NAME:Marlin"
@@ -201,6 +204,9 @@ void GcodeSuite::M115() {
     // BABYSTEPPING (M290)
     cap_line(F("BABYSTEPPING"), ENABLED(BABYSTEPPING));
 
+    // EP_BABYSTEP (M293, M294)
+    cap_line(F("EP_BABYSTEP"), ENABLED(EP_BABYSTEPPING));
+
     // CHAMBER_TEMPERATURE (M141, M191)
     cap_line(F("CHAMBER_TEMPERATURE"), ENABLED(HAS_HEATED_CHAMBER));
 
@@ -215,7 +221,7 @@ void GcodeSuite::M115() {
 
     // Machine Geometry
     #if ENABLED(M115_GEOMETRY_REPORT)
-      TERN(ProUIex, const, constexpr) xyz_pos_t bmin{0},
+      TERN(PROUI_EX, const, constexpr) xyz_pos_t bmin{0},
                           bmax = NUM_AXIS_ARRAY(X_BED_SIZE, Y_BED_SIZE, Z_MAX_POS, I_MAX_POS, J_MAX_POS, K_MAX_POS, U_MAX_POS, V_MAX_POS, W_MAX_POS),
                           dmin = NUM_AXIS_ARRAY(X_MIN_POS,  Y_MIN_POS,  Z_MIN_POS, I_MIN_POS, J_MIN_POS, K_MIN_POS, U_MIN_POS, V_MIN_POS, W_MIN_POS),
                           dmax = NUM_AXIS_ARRAY(X_MAX_POS,  Y_MAX_POS,  Z_MAX_POS, I_MAX_POS, J_MAX_POS, K_MAX_POS, U_MAX_POS, V_MAX_POS, W_MAX_POS);

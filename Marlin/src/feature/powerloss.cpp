@@ -70,6 +70,7 @@ uint32_t PrintJobRecovery::cmd_sdpos, // = 0
 #include "../core/debug_out.h"
 
 #if ENABLED(DWIN_LCD_PROUI)
+  #include "../lcd/e3v2/proui/dwin.h"
   #include "../lcd/e3v2/proui/dwin_popup.h"
 #endif
 
@@ -126,6 +127,15 @@ void PrintJobRecovery::changed() {
  * If a saved state exists send 'M1000 S' to initiate job recovery.
  */
 bool PrintJobRecovery::check() {
+
+  // 激光暂不做断电续打 107011 -20211015
+  #if ENABLED(CV_LASER_MODULE)
+    if(laser_device.is_laser_device()) {// 激光模式下不做断电续打
+      purge();
+      return false;
+    }
+  #endif
+
   //if (!card.isMounted()) card.mount();
   bool success = false;
   if (card.isMounted()) {
@@ -173,6 +183,10 @@ void PrintJobRecovery::prepare() {
 void PrintJobRecovery::save(const bool force/*=false*/, const float zraise/*=POWER_LOSS_ZRAISE*/, const bool raised/*=false*/) {
 
   // We don't check IS_SD_PRINTING here so a save may occur during a pause
+
+  #if ENABLED(CV_LASER_MODULE)
+    if (laser_device.is_laser_device()) return;
+  #endif
 
   #if SAVE_INFO_INTERVAL_MS > 0
     static millis_t next_save_ms; // = 0
@@ -593,18 +607,22 @@ void PrintJobRecovery::resume() {
     dtostrf(info.current_position.y, 1, 3, str_2)
   );
   PROCESS_SUBCOMMANDS_NOW(cmd);
+  DEBUG_ECHOLNPGM("Move XY : ",cmd);
 
   // Move back down to the saved Z for printing
   sprintf_P(cmd, PSTR("G1Z%sF600"), dtostrf(z_print, 1, 3, str_1));
   PROCESS_SUBCOMMANDS_NOW(cmd);
+  DEBUG_ECHOLNPGM("Move Z : ",cmd);
 
   // Restore the feedrate
   sprintf_P(cmd, PSTR("G1F%d"), info.feedrate);
   PROCESS_SUBCOMMANDS_NOW(cmd);
+  DEBUG_ECHOLNPGM("Feedrate: ",cmd);
 
   // Restore E position with G92.9
   sprintf_P(cmd, PSTR("G92.9E%s"), dtostrf(info.current_position.e, 1, 3, str_1));
   PROCESS_SUBCOMMANDS_NOW(cmd);
+  DEBUG_ECHOLNPGM("Extruder : ",cmd);
 
   TERN_(GCODE_REPEAT_MARKERS, repeat = info.stored_repeat);
   TERN_(HAS_HOME_OFFSET, home_offset = info.home_offset);

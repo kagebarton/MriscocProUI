@@ -38,7 +38,6 @@
   #include "../lcd/marlinui.h"
 #endif
 
-
 #if ENABLED(POLAR)
   #include "polar.h"
 #endif
@@ -792,11 +791,12 @@ void do_blocking_move_to(const xyze_pos_t &raw, const_feedRate_t fr_mm_s/*=0.0f*
       fr_mm_s
     );
   }
-  void do_z_clearance(const_float_t zclear, const bool lower_allowed/*=false*/) {
+  void do_z_clearance(const_float_t zclear, const bool with_probe/*=true*/, const bool lower_allowed/*=false*/) {
+    UNUSED(with_probe);
     float zdest = zclear;
-    TERN_(HAS_BED_PROBE, if (probe.offset.z < 0) zdest -= probe.offset.z);
+    TERN_(HAS_BED_PROBE, if (with_probe && probe.offset.z < 0) zdest -= probe.offset.z);
     NOMORE(zdest, Z_MAX_POS);
-    if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("do_z_clearance(", zclear, ", ", lower_allowed, ")");
+    if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("do_z_clearance(", zclear, " [", current_position.z, " to ", zdest, "], ", lower_allowed, ")");
     if ((!lower_allowed && zdest < current_position.z) || zdest == current_position.z) return;
     do_blocking_move_to_z(zdest, TERN(HAS_BED_PROBE, z_probe_fast_mm_s, homing_feedrate(Z_AXIS)));
   }
@@ -807,7 +807,7 @@ void do_blocking_move_to(const xyze_pos_t &raw, const_feedRate_t fr_mm_s/*=0.0f*
   void do_move_after_z_homing() {
     DEBUG_SECTION(mzah, "do_move_after_z_homing", DEBUGGING(LEVELING));
     #if defined(Z_AFTER_HOMING) || ALL(DWIN_LCD_PROUI, INDIVIDUAL_AXIS_HOMING_SUBMENU, MESH_BED_LEVELING)
-      do_z_clearance(Z_POST_CLEARANCE, true);
+      do_z_clearance(Z_POST_CLEARANCE, true, true);
     #elif ENABLED(USE_PROBE_FOR_Z_HOMING)
       probe.move_z_after_probing();
     #endif
@@ -856,7 +856,7 @@ void restore_feedrate_and_scaling() {
     OPTARG(HAS_HOTEND_OFFSET, const uint8_t old_tool_index/*=0*/, const uint8_t new_tool_index/*=0*/)
   ) {
 
-    #if ProUIex
+    #if PROUI_EX
 
       ProEx.UpdateAxis(axis);
 

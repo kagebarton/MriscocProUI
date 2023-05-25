@@ -532,7 +532,7 @@ struct HeaterWatch {
 #endif
 
 // Temperature sensor read value ranges
-#if ProUIex
+#if PROUI_EX
   typedef struct { raw_adc_t raw_min, raw_max; celsius_t mintemp, maxtemp, tablemax; } temp_range_t;
 #else
   typedef struct { raw_adc_t raw_min, raw_max; celsius_t mintemp, maxtemp; } temp_range_t;
@@ -606,7 +606,7 @@ class Temperature {
 
     #if HAS_HOTEND
       static hotend_info_t temp_hotend[HOTENDS];
-      #if ProUIex
+      #if PROUI_EX
         static celsius_t hotend_maxtemp[HOTENDS];
         static temp_range_t temp_range[HOTENDS];
       #else
@@ -744,7 +744,7 @@ class Temperature {
       static hotend_watch_t watch_hotend[HOTENDS];
     #endif
 
-    #if HAS_HOTEND && !ProUIex
+    #if HAS_HOTEND && DISABLED(PROUI_EX)
       static temp_range_t temp_range[HOTENDS];
     #endif
 

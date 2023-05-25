@@ -2,7 +2,7 @@
  * DWIN Enhanced implementation for PRO UI
  * Author: Miguel A. Risco-Castillo (MRISCOC)
  * Version: 3.21.1
- * Date: 2022/12/02
+ * Date: 2023/03/21
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -51,7 +51,6 @@
 #define ICON_BedTramming       CI(1,ICON_SetHome)
 #define ICON_Binary            CI(1,ICON_Contact)
 #define ICON_BltouchReset      CI(1,ICON_StockConfiguration)
-//#define ICON_Brightness        CI(1,ICON_Motion)
 #define ICON_Cancel            CI(1,ICON_StockConfiguration)
 #define ICON_CustomPreheat     CI(1,ICON_SetBedTemp)
 #define ICON_Error             CI(1,ICON_TempTooHigh)
@@ -59,6 +58,7 @@
 #define ICON_ExtrudeMinT       CI(1,ICON_HotendTemp)
 #define ICON_FilLoad           CI(1,ICON_WriteEEPROM)
 #define ICON_FilMan            CI(1,ICON_ResumeEEPROM)
+#define ICON_FilRunOut         CI(1,ICON_MaxAccE)
 #define ICON_FilSet            CI(1,ICON_ResumeEEPROM)
 #define ICON_FilUnload         CI(1,ICON_ReadEEPROM)
 #define ICON_Flow              CI(1,ICON_StepE)
@@ -94,6 +94,7 @@
 #define ICON_MeshEditZ         CI(1,ICON_MoveZ)
 #define ICON_MeshNext          CI(1,ICON_Axis)
 #define ICON_MeshPoints        CI(1,ICON_SetEndTemp)
+#define ICON_MeshReset         CI(1,ICON_StockConfiguration)
 #define ICON_MeshSave          CI(1,ICON_WriteEEPROM)
 #define ICON_MeshViewer        CI(1,ICON_HotendTemp)
 #define ICON_MoveZ0            CI(1,ICON_SetEndTemp)
@@ -161,6 +162,13 @@
 #define ICON_UBLTiltGrid       CI(1,ICON_PrintSize)
 #define ICON_UBLSmartFill      CI(1,ICON_StockConfiguration)
 #define ICON_ZAfterHome        CI(1,ICON_SetEndTemp)
+
+//LASER CRC
+#define ICON_LaserFocus        CI(1,ICON_MoveZ)
+#define ICON_LaserPrint        CI(1,ICON_StockConfiguration)
+#define ICON_LaserRunRange     CI(1,ICON_PrintSize)
+#define ICON_LaserSet          CI(1,ICON_StockConfiguration)
+#define ICON_LaserToggle       CI(1,ICON_Motion)
 
 //LED Lights
 #define ICON_CaseLight         CI(1,ICON_Motion)

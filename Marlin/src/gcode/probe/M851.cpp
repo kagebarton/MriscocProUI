@@ -80,7 +80,7 @@ void GcodeSuite::M851() {
   }
 
   // Save the new offsets
-  #if ProUIex
+  #if PROUI_EX
     if (ok) {
       probe.offset = offs;
       ProEx.ApplyPhySet();

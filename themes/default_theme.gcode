@@ -1,5 +1,8 @@
-;Default theme file
-;
+; Default theme file
+; Professional Firmware Theme File
+;=====================================================
+C10                  ; Mark as a configuration/theme file
+;-----------------------------------------------------
 C11 E2  R1 G2 B1     ;Screen Background
 C11 E3  R29 G49 B15  ;Cursor
 C11 E4  R2 G9 B5     ;Title Background
@@ -19,5 +22,8 @@ C11 E17 R2 G7 B4     ;Bar Fill
 C11 E18 R31 G63 B31  ;Indicator value
 C11 E19 R31 G63 B31  ;Coordinate value
 ;
-M500 ;Save to EEPROM
-M997 ;Reboot
+C11 E0  ;Preview changes
+;-----------------------------------------------------
+G4 S1                ; Wait a second
+M300 P200            ; Beep
+M117 Theme Applied

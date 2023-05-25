@@ -312,6 +312,9 @@ void unified_bed_leveling::G29() {
     planner.synchronize();
     // Send 'N' to force homing before G29 (internal only)
     if (axes_should_home() || parser.seen_test('N')) gcode.home_all_axes();
+    #if BOTH(DWIN_LCD_PROUI, ZHOME_BEFORE_LEVELING)
+      else gcode.process_subcommands_now(F("G28ZL"));
+    #endif
     probe.use_probing_tool();
 
     // Position bed horizontally and Z probe vertically.
@@ -786,7 +789,8 @@ void unified_bed_leveling::shift_mesh_height() {
         }
       #endif
 
-      TERN_(ProUIex, if (ProEx.QuitLeveling()) return DWIN_LevelingDone(););
+      TERN_(PROUI_EX, if (ProEx.QuitLeveling()) return DWIN_LevelingDone(););
+
       best = do_furthest
         ? find_furthest_invalid_mesh_point()
         : find_closest_mesh_point_of_type(INVALID, nearby, true);
@@ -799,7 +803,7 @@ void unified_bed_leveling::shift_mesh_height() {
           ExtUI::onMeshUpdate(best.pos, ExtUI::G29_POINT_FINISH);
           ExtUI::onMeshUpdate(best.pos, measured_z);
         #endif
-        TERN_(ProUIex, ProEx.MeshUpdate(best.pos.x, best.pos.y, measured_z));
+        TERN_(PROUI_EX, ProEx.MeshUpdate(best.pos.x, best.pos.y, measured_z));
       }
       SERIAL_FLUSH(); // Prevent host M105 buffer overrun.
 
@@ -816,7 +820,7 @@ void unified_bed_leveling::shift_mesh_height() {
 
     restore_ubl_active_state_and_leave();
 
-    #if ProUIex
+    #if PROUI_EX
       if (count) ui.status_printf(0, F("Found %i unreachable points"), count);
       safe_delay(500);
       LOOP_L_N(x, GRID_LIMIT) bedlevel.smart_fill_mesh();
@@ -1190,20 +1194,25 @@ bool unified_bed_leveling::G29_parse_parameters() {
     #endif
   }
 
-  param.XY_seen.x = parser.seenval('X');
-  float sx = param.XY_seen.x ? parser.value_float() : current_position.x;
-  param.XY_seen.y = parser.seenval('Y');
-  float sy = param.XY_seen.y ? parser.value_float() : current_position.y;
+  #if PROUI_EX // Always start from the center of the bed
+    float sx = X_CENTER - TERN0(HAS_BED_PROBE, probe.offset.x);
+    float sy = Y_CENTER - TERN0(HAS_BED_PROBE, probe.offset.y);
+  #else
+    param.XY_seen.x = parser.seenval('X');
+    float sx = param.XY_seen.x ? parser.value_float() : current_position.x;
+    param.XY_seen.y = parser.seenval('Y');
+    float sy = param.XY_seen.y ? parser.value_float() : current_position.y;
 
-  if (param.XY_seen.x != param.XY_seen.y) {
-    SERIAL_ECHOLNPGM("Both X & Y locations must be specified.\n");
-    err_flag = true;
-  }
+    if (param.XY_seen.x != param.XY_seen.y) {
+      SERIAL_ECHOLNPGM("Both X & Y locations must be specified.\n");
+      err_flag = true;
+    }
 
-  // If X or Y are not valid, use center of the bed values
-  // (for UBL_HILBERT_CURVE default to lower-left corner instead)
-  if (!COORDINATE_OKAY(sx, X_MIN_BED, X_MAX_BED)) sx = TERN(UBL_HILBERT_CURVE, 0, X_CENTER);
-  if (!COORDINATE_OKAY(sy, Y_MIN_BED, Y_MAX_BED)) sy = TERN(UBL_HILBERT_CURVE, 0, Y_CENTER);
+    // If X or Y are not valid, use center of the bed values
+    // (for UBL_HILBERT_CURVE default to lower-left corner instead)
+    if (!COORDINATE_OKAY(sx, X_MIN_BED, X_MAX_BED)) sx = TERN(UBL_HILBERT_CURVE, 0, X_CENTER);
+    if (!COORDINATE_OKAY(sy, Y_MIN_BED, Y_MAX_BED)) sy = TERN(UBL_HILBERT_CURVE, 0, Y_CENTER);
+  #endif
 
   if (err_flag) return UBL_ERR;
 
@@ -1445,7 +1454,7 @@ bool unified_bed_leveling::smart_fill_one(const uint8_t x, const uint8_t y, cons
   return false;
 }
 
-#if DISABLED(ProUIex)
+#if DISABLED(PROUI_EX)
   typedef struct { uint8_t sx, ex, sy, ey; bool yfirst; } smart_fill_info;
 
   void unified_bed_leveling::smart_fill_mesh() {
@@ -1531,13 +1540,20 @@ bool unified_bed_leveling::smart_fill_one(const uint8_t x, const uint8_t y, cons
     }
     else { // !do_3_pt_leveling
 
-      #ifndef G29J_MESH_TILT_MARGIN
-        #define G29J_MESH_TILT_MARGIN 0
+      #if PROUI_EX
+        const float x_min = probe.min_x(),
+                    x_max = probe.max_x(),
+                    y_min = probe.min_y(),
+                    y_max = probe.max_y(),
+      #else
+        #ifndef G29J_MESH_TILT_MARGIN
+          #define G29J_MESH_TILT_MARGIN 0
+        #endif
+        const float x_min = _MAX((X_MIN_POS) + (G29J_MESH_TILT_MARGIN), MESH_MIN_X, probe.min_x()),
+                    x_max = _MIN((X_MAX_POS) - (G29J_MESH_TILT_MARGIN), MESH_MAX_X, probe.max_x()),
+                    y_min = _MAX((Y_MIN_POS) + (G29J_MESH_TILT_MARGIN), MESH_MIN_Y, probe.min_y()),
+                    y_max = _MIN((Y_MAX_POS) - (G29J_MESH_TILT_MARGIN), MESH_MAX_Y, probe.max_y()),
       #endif
-      const float x_min = _MAX((X_MIN_POS) + (G29J_MESH_TILT_MARGIN), MESH_MIN_X, probe.min_x()),
-                  x_max = _MIN((X_MAX_POS) - (G29J_MESH_TILT_MARGIN), MESH_MAX_X, probe.max_x()),
-                  y_min = _MAX((Y_MIN_POS) + (G29J_MESH_TILT_MARGIN), MESH_MIN_Y, probe.min_y()),
-                  y_max = _MIN((Y_MAX_POS) - (G29J_MESH_TILT_MARGIN), MESH_MAX_Y, probe.max_y()),
                   dx = (x_max - x_min) / (param.J_grid_size - 1),
                   dy = (y_max - y_min) / (param.J_grid_size - 1);
 
@@ -1715,7 +1731,7 @@ bool unified_bed_leveling::smart_fill_one(const uint8_t x, const uint8_t y, cons
     // being extrapolated so that nearby points will have greater influence on
     // the point being extrapolated.  Then extrapolate the mesh point from WLSF.
 
-    #if ProUIex
+    #if PROUI_EX
       static_assert((GRID_LIMIT) <= 16, "GRID_MAX_POINTS_Y too big");
     #else
       static_assert((GRID_MAX_POINTS_Y) <= 16, "GRID_MAX_POINTS_Y too big");

@@ -121,12 +121,12 @@
      * Move the Z probe (or just the nozzle) to the safe homing point
      * (Z is already at the right height)
      */
-    TERN(ProUIex, , constexpr) xy_float_t safe_homing_xy = { Z_SAFE_HOMING_X_POINT, Z_SAFE_HOMING_Y_POINT };
+    TERN(PROUI_EX, , constexpr) xy_float_t safe_homing_xy = { Z_SAFE_HOMING_X_POINT, Z_SAFE_HOMING_Y_POINT };
     #if HAS_HOME_OFFSET && DISABLED(Z_SAFE_HOMING_POINT_ABSOLUTE)
       xy_float_t okay_homing_xy = safe_homing_xy;
       okay_homing_xy -= home_offset;
     #else
-      TERN(ProUIex, , constexpr) xy_float_t okay_homing_xy = safe_homing_xy;
+      TERN(PROUI_EX, , constexpr) xy_float_t okay_homing_xy = safe_homing_xy;
     #endif
 
     destination.set(okay_homing_xy, current_position.z);
@@ -420,8 +420,13 @@ void GcodeSuite::G28() {
         // Use raise given by 'R' or Z_CLEARANCE_FOR_HOMING (above the probe trigger point)
         float z_homing_height = seenR ? parser.value_linear_units() : Z_CLEARANCE_FOR_HOMING;
 
-        // Check for any lateral motion that might require clearance
-        const bool may_skate = seenR NUM_AXIS_GANG(|| doX, || doY, || TERN0(Z_SAFE_HOMING, doZ), || doI, || doJ, || doK, || doU, || doV, || doW);
+        #if ENABLED(CV_LASER_MODULE)
+          // Check for any lateral motion that might require clearance
+          const bool may_skate = !laser_device.is_laser_device() && (seenR || NUM_AXIS_GANG(doX, || doY, || TERN0(Z_SAFE_HOMING, doZ), || doI, || doJ, || doK, || doU, || doV, || doW));
+        #else
+          // Check for any lateral motion that might require clearance
+          const bool may_skate = seenR || NUM_AXIS_GANG(doX, || doY, || TERN0(Z_SAFE_HOMING, doZ), || doI, || doJ, || doK, || doU, || doV, || doW);
+        #endif
 
         if (seenR && z_homing_height == 0) {
           if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("R0 = No Z raise");
@@ -511,7 +516,7 @@ void GcodeSuite::G28() {
 
         // Home Z last if homing towards the bed
         #if DISABLED(HOME_Z_FIRST)
-          if (doZ) {
+          if (doZ && TERN1(CV_LASER_MODULE, !laser_device.is_laser_device())) {
             #if EITHER(Z_MULTI_ENDSTOPS, Z_STEPPER_AUTO_ALIGN)
               stepper.set_all_z_lock(false);
               stepper.set_separate_multi_axis(false);

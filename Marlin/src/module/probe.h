@@ -33,10 +33,6 @@
   #include "../feature/bltouch.h"
 #endif
 
-#if ENABLED(DWIN_LCD_PROUI)
-  #include "../lcd/e3v2/proui/dwin.h"
-#endif
-
 #define DEBUG_OUT ENABLED(DEBUG_LEVELING_FEATURE)
 #include "../core/debug_out.h"
 
@@ -89,7 +85,7 @@ public:
 
     static void probe_error_stop();
 
-    static bool set_deployed(const bool deploy);
+    static bool set_deployed(const bool deploy, const bool no_return=false);
 
     #if IS_KINEMATIC
 
@@ -184,7 +180,7 @@ public:
 
     static constexpr xyz_pos_t offset = xyz_pos_t(NUM_AXIS_ARRAY_1(0)); // See #16767
 
-    static bool set_deployed(const bool) { return false; }
+    static bool set_deployed(const bool, const bool=false) { return false; }
 
     static bool can_reach(const_float_t rx, const_float_t ry, const bool=true) { return position_is_reachable(TERN_(HAS_X_AXIS, rx) OPTARG(HAS_Y_AXIS, ry)); }
 
@@ -219,8 +215,8 @@ public:
     static constexpr xy_pos_t offset_xy = xy_pos_t({ 0, 0 });   // See #16767
   #endif
 
-  static bool deploy() { return set_deployed(true); }
-  static bool stow()   { return set_deployed(false); }
+  static bool deploy(const bool no_return=false) { return set_deployed(true, no_return); }
+  static bool stow(const bool no_return=false)   { return set_deployed(false, no_return); }
 
   #if HAS_BED_PROBE || HAS_LEVELING
     #if IS_KINEMATIC
@@ -238,7 +234,7 @@ public:
      * close it can get the RIGHT edge of the bed (unless the nozzle is able move
      * far enough past the right edge).
      */
-    #if ProUIex
+    #if PROUI_EX
       static float _min_x(const xy_pos_t &probe_offset_xy = TERN(HAS_BED_PROBE,offset_xy,{0}));
       static float _max_x(const xy_pos_t &probe_offset_xy = TERN(HAS_BED_PROBE,offset_xy,{0}));
       static float _min_y(const xy_pos_t &probe_offset_xy = TERN(HAS_BED_PROBE,offset_xy,{0}));
@@ -287,7 +283,7 @@ public:
       static constexpr xy_pos_t default_probe_xy_offset = xy_pos_t({ default_probe_xyz_offset.x,  default_probe_xyz_offset.y });
 
     public:
-      TERN(ProUIex, static, static constexpr) bool can_reach(float x, float y) {
+      TERN(PROUI_EX, static, static constexpr) bool can_reach(float x, float y) {
         #if IS_KINEMATIC
           return HYPOT2(x, y) <= sq(probe_radius(default_probe_xy_offset));
         #else
@@ -296,7 +292,7 @@ public:
         #endif
       }
 
-      TERN(ProUIex, static, static constexpr) bool can_reach(const xy_pos_t &point) { return can_reach(point.x, point.y); }
+      TERN(PROUI_EX, static, static constexpr) bool can_reach(const xy_pos_t &point) { return can_reach(point.x, point.y); }
     };
 
     #if NEEDS_THREE_PROBE_POINTS
@@ -317,7 +313,7 @@ public:
             points[0] = xy_float_t({ (X_CENTER) + probe_radius() * COS0,   (Y_CENTER) + probe_radius() * SIN0 });
             points[1] = xy_float_t({ (X_CENTER) + probe_radius() * COS120, (Y_CENTER) + probe_radius() * SIN120 });
             points[2] = xy_float_t({ (X_CENTER) + probe_radius() * COS240, (Y_CENTER) + probe_radius() * SIN240 });
-          #elif ENABLED(AUTO_BED_LEVELING_UBL)
+          #elif ENABLED(AUTO_BED_LEVELING_UBL) && DISABLED(PROUI_EX)
             points[0] = xy_float_t({ _MAX(float(MESH_MIN_X), min_x()), _MAX(float(MESH_MIN_Y), min_y()) });
             points[1] = xy_float_t({ _MIN(float(MESH_MAX_X), max_x()), _MAX(float(MESH_MIN_Y), min_y()) });
             points[2] = xy_float_t({ (_MAX(float(MESH_MIN_X), min_x()) + _MIN(float(MESH_MAX_X), max_x())) / 2, _MIN(float(MESH_MAX_Y), max_y()) });
@@ -353,11 +349,7 @@ public:
 
 private:
   static bool probe_down_to_z(const_float_t z, const_feedRate_t fr_mm_s);
-  #if !ProUIex
-    static float run_z_probe(const bool sanity_check=true, const_float_t z_min_point=Z_PROBE_LOW_POINT, const_float_t z_clearance=Z_TWEEN_SAFE_CLEARANCE);
-  #else
-    static float run_z_probe(const bool sanity_check=true);
-  #endif
+  static float run_z_probe(const bool sanity_check=true, const_float_t z_min_point=Z_PROBE_LOW_POINT, const_float_t z_clearance=Z_TWEEN_SAFE_CLEARANCE);
 };
 
 extern Probe probe;

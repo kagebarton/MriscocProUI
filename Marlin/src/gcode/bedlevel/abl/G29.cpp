@@ -104,7 +104,7 @@ public:
   #elif ENABLED(AUTO_BED_LEVELING_3POINT)
     static constexpr grid_count_t abl_points = 3;
   #elif ABL_USES_GRID
-    TERN(ProUIex, const, static constexpr) grid_count_t abl_points = GRID_MAX_POINTS;
+    TERN(PROUI_EX, const, static constexpr) grid_count_t abl_points = GRID_MAX_POINTS;
   #endif
 
   #if ABL_USES_GRID
@@ -120,7 +120,7 @@ public:
       bool                topography_map;
       xy_uint8_t          grid_points;
     #else // Bilinear
-      #if ProUIex
+      #if PROUI_EX
         xy_uint8_t grid_points = { GRID_MAX_POINTS_X, GRID_MAX_POINTS_Y };
       #else
         static constexpr xy_uint8_t grid_points = { GRID_MAX_POINTS_X, GRID_MAX_POINTS_Y };
@@ -142,7 +142,7 @@ public:
 };
 
 #if ABL_USES_GRID && EITHER(AUTO_BED_LEVELING_3POINT, AUTO_BED_LEVELING_BILINEAR)
-  #if !ProUIex
+  #if DISABLED(PROUI_EX)
     constexpr xy_uint8_t G29_State::grid_points;
     constexpr grid_count_t G29_State::abl_points;
   #endif
@@ -255,9 +255,13 @@ G29_TYPE GcodeSuite::G29() {
     G29_RETURN(false, false);
   }
 
-  // Send 'N' to force homing before G29 (internal only)
-  if (parser.seen_test('N'))
-    process_subcommands_now(TERN(CAN_SET_LEVELING_AFTER_G28, F("G28L0"), FPSTR(G28_STR)));
+  #if BOTH(DWIN_LCD_PROUI, ZHOME_BEFORE_LEVELING)
+    process_subcommands_now(F("G28Z"));
+  #else
+    // Send 'N' to force homing before G29 (internal only)
+    if (parser.seen_test('N'))
+      process_subcommands_now(TERN(CAN_SET_LEVELING_AFTER_G28, F("G28L0"), FPSTR(G28_STR)));
+  #endif
 
   // Don't allow auto-leveling without homing first
   if (homing_needed_error()) G29_RETURN(false, false);
@@ -667,7 +671,7 @@ G29_TYPE GcodeSuite::G29() {
 
         int8_t inStart, inStop, inInc;
 
-        TERN_(ProUIex, if (ProEx.QuitLeveling()) break; )
+        TERN_(PROUI_EX, if (ProEx.QuitLeveling()) break; )
 
         if (zig) {                      // Zig away from origin
           inStart = 0;                  // Left or front
@@ -721,13 +725,13 @@ G29_TYPE GcodeSuite::G29() {
             const float z = abl.measured_z + abl.Z_offset;
             abl.z_values[abl.meshCount.x][abl.meshCount.y] = z;
             TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(abl.meshCount, z));
-            TERN_(ProUIex, ProEx.MeshUpdate(abl.meshCount.x, abl.meshCount.y, z));
+            TERN_(PROUI_EX, ProEx.MeshUpdate(abl.meshCount.x, abl.meshCount.y, z));
 
           #endif
 
           abl.reenable = false; // Don't re-enable after modifying the mesh
           idle_no_sleep();
-          TERN_(ProUIex, if (ProEx.QuitLeveling()) break; )
+          TERN_(PROUI_EX, if (ProEx.QuitLeveling()) break; )
 
         } // inner
       } // outer

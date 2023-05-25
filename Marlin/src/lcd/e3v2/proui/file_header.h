@@ -1,8 +1,8 @@
 /**
  * DWIN G-code File header utility
  * Author: Miguel A. Risco-Castillo
- * version: 1.1.3
- * Date: 2023/03/05
+ * version: 2.2.3
+ * Date: 2023/05/04
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,6 +25,7 @@
 typedef struct {
   char name[13];      //8.3
   bool isConfig;
+  bool isLaser;
   uint32_t thumbstart;
   uint16_t thumbsize;
   uint8_t thumbheight;
@@ -41,10 +42,12 @@ typedef struct {
   float maxz;
   float width() { return maxx - minx; };
   float length() { return maxy - miny; };
-  float height() { return maxz - minz; };
+  float height() { return maxz - minz + layer; };
   void setname(const char * const fn);
   void clear();
 } fileprop_t;
 extern fileprop_t fileprop;
 
+void getLine(char *buf, const uint8_t bufsize);
+bool getValue(char *buf, const char * const key, float &value);
 void getFileHeader();

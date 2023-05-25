@@ -28,6 +28,10 @@
 #include "../../feature/spindle_laser.h"
 #include "../../module/planner.h"
 
+#if BOTH(DWIN_LCD_PROUI, CV_LASER_MODULE)
+  #include "../../lcd/e3v2/proui/dwin.h"
+#endif
+
 /**
  * Laser:
  *  M3 - Laser ON/Power (Ramped power)
@@ -85,6 +89,7 @@ void GcodeSuite::M3_M4(const bool is_M4) {
 
   #if ENABLED(LASER_FEATURE)
     if (parser.seen_test('I')) {
+      TERN_(CV_LASER_MODULE, LaserOn(true));
       cutter.cutter_mode = is_M4 ? CUTTER_MODE_DYNAMIC : CUTTER_MODE_CONTINUOUS;
       cutter.inline_power(0);
       cutter.set_enabled(true);
@@ -92,10 +97,18 @@ void GcodeSuite::M3_M4(const bool is_M4) {
   #endif
 
   auto get_s_power = [] {
-    float u;
+    #if ENABLED(CV_LASER_MODULE)
+      float u = cutter.unitPower;
+    #else
+      float u;
+    #endif
     if (parser.seenval('S')) {
       const float v = parser.value_float();
-      u = TERN(LASER_POWER_TRAP, v, cutter.power_to_range(v));
+      #if ENABLED(CV_LASER_MODULE)
+        u = laser_device.power16_to_8(v);
+      #else
+        u = TERN(LASER_POWER_TRAP, v, cutter.power_to_range(v));
+      #endif
     }
     else if (cutter.cutter_mode == CUTTER_MODE_STANDARD)
       u = cutter.cpwr_to_upwr(SPEED_POWER_STARTUP);

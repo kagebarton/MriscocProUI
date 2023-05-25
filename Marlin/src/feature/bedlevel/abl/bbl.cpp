@@ -112,7 +112,7 @@ void LevelingBilinear::set_grid(const xy_pos_t& _grid_spacing, const xy_pos_t& _
   grid_factor = grid_spacing.reciprocal();
 }
 
-#if !ProUIex
+#if DISABLED(PROUI_EX)
 /**
  * Fill in the unprobed points (corners of circular print surface)
  * using linear extrapolation, away from the center.
