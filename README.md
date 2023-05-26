@@ -8,18 +8,13 @@
 ## Universal RET6/RCT6 chips: G32, N32, (working on H32), Creality 4.2.7 and 4.2.2 boards
 
 ### - Please read this: -
-When you first turn on the printer and on the Main Menu, go to `Level / Mesh Settings / Mesh Inset`. You will see `Mesh X Maximum`,
-set this to the value that is `Mesh Y Maximum` (or another value as to not hit the bed clips).
+Many Updates have been included in the most recent MriscocProUI since the May 2023 release.
+A list will be provided, but for now most of these are [addressed here](https://github.com/mriscoc/Ender3V2S1/releases/tag/20230522)
 
-This next part may be optional, but its recommended to do anyway...
-Go back to the `Level` menu, look for `Load Bed Mesh` and select it. A status message should then confirm it's loaded. 
-(Before that, select which Mesh to load from the `Memory Slot`).
+#### One important note is Mesh Inset now saves upon restart, it is working as normal.
 
-***Mesh Inset doesnt actually save after restart, so it must be done after the printer is turned on every time (until the issue is fixed)*.***
-
-So when you start printing and it says Advance Pause with Runout enabled, you may have to change the pull-up to HIGH, or LOW (depending on what is already selected). This is found in the Prepare menu/ Filament Management/ Filament Settings. 
-If you encounter any issues please feel free to post it on the issues tab, or if anything is going well please leavd a comment. 
-
+If when you start printing and it says Advance Pause with Runout enabled, you may have to change the pull-up to HIGH, or LOW (depending on what is already selected). This is found in the Prepare menu/ Filament Management/ Filament Settings. 
+If you encounter any issues please feel free to post it on the issues tab, or if anything is going well please leave a comment. 
 
 I will be working on more upgrades and features and tweaks along the way. Enjoy using this fork of Marlin as I intend it to be the best. It is easy to use and convenient. So far I really enjoy the new settings and toolbar for the main menu. There is a variety of parameters and options that can be changed without having to reflash the firmware. 
 
