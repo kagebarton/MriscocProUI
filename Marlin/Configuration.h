@@ -3412,12 +3412,12 @@
     #define ADVK_TUNE_ITEM  // Linear Advance item in Tune Menu
   #endif
   #define SHOW_REAL_POS
-  #define TRAMWIZ_MENU_ITEM        // Enable Tramming Wizard
-  #define MEDIASORT_MENU_ITEM       // Allows enable/disable file list sorting
-  #define CCLOUD_PRINT_SUPPORT      // Allows enable/disable Creality Cloud Print Support
-  //#define SMOOTH_ENCODER_MENUITEMS  // Menu items value faster/smooth change rate --- VERY SLOW!!
-  #define SHOW_SPEED_IND         // Show the axes speed in mm/s intermittently with the speed percentage
-  //#define NO_BLINK_IND          // Disables dashboard icon background blink indicator
+  #define CCLOUD_PRINT_SUPPORT   // Menu item: enable/disable Creality Cloud Print Support
+  #define TRAMWIZ_MENU_ITEM      // Menu item: enable Tramming Wizard
+  #define MEDIASORT_MENU_ITEM    // Menu item: enable/disable file list sorting
+  #define ENC_MENU_ITEM          // Menu item: faster/slower encoder rate
+  #define SHOW_SPEED_IND         // Menu item: blink speed in mm/s along with speed percentage
+  //#define NO_BLINK_IND         // Disables dashboard icon blink indicator highlighted background
   //#define ZHOME_BEFORE_LEVELING
 
 #endif

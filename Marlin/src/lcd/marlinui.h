@@ -209,6 +209,11 @@ public:
     static float mesh_inset_max_y;
   #endif 
 
+  #if ENABLED(ENCODER_RATE_MULTIPLIER) && ENABLED(ENC_MENU_ITEM)
+    static int enc_rateA;
+    static int enc_rateB;
+  #endif
+
   static void init();
 
   #if HAS_DISPLAY || HAS_DWIN_E3V2

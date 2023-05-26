@@ -586,17 +586,28 @@ typedef struct SettingsDataStruct {
   #endif
 
   //
-  // Bed corner screw position and Mesh inset
+  // Bed corner screw position
   //
   #ifdef BED_SCREW_INSET
     float screw_pos;
   #endif
 
+  //
+  // MESH_INSET workaround
+  //
   #if PROUI_EX && HAS_MESH
     float mesh_inset_min_x;
     float mesh_inset_max_x;
     float mesh_inset_min_y;
     float mesh_inset_max_y;
+  #endif
+
+  //
+  // Encoder Rate
+  //
+  #if ENABLED(ENCODER_RATE_MULTIPLIER) && ENABLED(ENC_MENU_ITEM)
+    int enc_rateA;
+    int enc_rateB;
   #endif
 
   //
@@ -1668,6 +1679,14 @@ void MarlinSettings::postprocess() {
       EEPROM_WRITE(ui.mesh_inset_max_x);
       EEPROM_WRITE(ui.mesh_inset_min_y);
       EEPROM_WRITE(ui.mesh_inset_max_y);
+    #endif
+
+    //
+    // Encoder Rate
+    //
+    #if ENABLED(ENCODER_RATE_MULTIPLIER) && ENABLED(ENC_MENU_ITEM)
+      EEPROM_WRITE(ui.enc_rateA);
+      EEPROM_WRITE(ui.enc_rateB);
     #endif
 
     //
@@ -2761,6 +2780,16 @@ void MarlinSettings::postprocess() {
       #endif
 
       //
+      // Encoder Rate
+      //
+      #if ENABLED(ENCODER_RATE_MULTIPLIER) && ENABLED(ENC_MENU_ITEM)
+        _FIELD_TEST(enc_rateA);
+        EEPROM_READ(ui.enc_rateA);
+        _FIELD_TEST(enc_rateB);
+        EEPROM_READ(ui.enc_rateB);
+      #endif
+
+      //
       // Case Light Brightness
       //
       #if CASELIGHT_USES_BRIGHTNESS
@@ -3280,6 +3309,14 @@ void MarlinSettings::reset() {
   #endif
 
   //
+  // Encoder Rate
+  //
+  #if ENABLED(ENCODER_RATE_MULTIPLIER) && ENABLED(ENC_MENU_ITEM)
+    ui.enc_rateA = 150;
+    ui.enc_rateB = 50;
+  #endif
+
+  //
   // Case Light Brightness
   //
   TERN_(CASELIGHT_USES_BRIGHTNESS, caselight.brightness = CASE_LIGHT_DEFAULT_BRIGHTNESS);
@@ -3298,7 +3335,7 @@ void MarlinSettings::reset() {
   #endif
 
   #if ENABLED(HAS_MESH) && ENABLED(USE_GRID_MESHVIEWER)
-    bedLevelTools.view_mesh = ENABLED(USE_GRID_MESHVIEWER); //added mesh viewer option
+    bedLevelTools.view_mesh = false; //added mesh viewer option
   #endif
 
   //

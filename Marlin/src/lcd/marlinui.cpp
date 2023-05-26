@@ -74,6 +74,11 @@ constexpr uint8_t epps = ENCODER_PULSES_PER_STEP;
   float MarlinUI::mesh_inset_max_y = Y_BED_SIZE - MESH_INSET;
 #endif
 
+#if ENABLED(ENCODER_RATE_MULTIPLIER) && ENABLED(ENC_MENU_ITEM)
+  int MarlinUI::enc_rateA;
+  int MarlinUI::enc_rateB;
+#endif
+
 #if HAS_STATUS_MESSAGE
   #if ENABLED(STATUS_MESSAGE_SCROLLING) && EITHER(HAS_WIRED_LCD, DWIN_LCD_PROUI)
     uint8_t MarlinUI::status_scroll_offset; // = 0

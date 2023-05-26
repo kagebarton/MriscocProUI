@@ -121,7 +121,7 @@ typedef struct {
   #endif
   bool Baud250K;
   bool CalcAvg = true;
-  bool SpdInd = true;
+  bool SpdInd = false;
   bool FullManualTramming;
   bool MediaSort;
   bool MediaAutoMount;

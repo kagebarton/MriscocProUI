@@ -130,7 +130,10 @@ EncoderState Encoder_ReceiveAnalyze() {
     #endif
 
     #if ENABLED(ENCODER_RATE_MULTIPLIER)
-
+      #if ENABLED(ENC_MENU_ITEM)
+        int a = ui.enc_rateA;
+        int b = ui.enc_rateB;
+      #endif
       millis_t ms = millis();
       int32_t encoderMultiplier = 1;
 
@@ -142,8 +145,8 @@ EncoderState Encoder_ReceiveAnalyze() {
           // Note that the rate is always calculated between two passes through the
           // loop and that the abs of the temp_diff value is tracked.
           const float encoderStepRate = encoderMovementSteps / float(ms - EncoderRate.lastEncoderTime) * 1000;
-               if (encoderStepRate >= ENCODER_100X_STEPS_PER_SEC) encoderMultiplier = 1100;
-          else if (encoderStepRate >= ENCODER_10X_STEPS_PER_SEC)  encoderMultiplier = 220;
+               if (encoderStepRate >= ENCODER_100X_STEPS_PER_SEC) encoderMultiplier = TERN(ENC_MENU_ITEM, a, 150);
+          else if (encoderStepRate >= ENCODER_10X_STEPS_PER_SEC)  encoderMultiplier = TERN(ENC_MENU_ITEM, b, 50);
           #if ENCODER_5X_STEPS_PER_SEC
             else if (encoderStepRate >= ENCODER_5X_STEPS_PER_SEC) encoderMultiplier = 10;
           #endif

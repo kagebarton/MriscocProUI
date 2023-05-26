@@ -45,8 +45,8 @@ BedLevelToolsClass bedLevelTools;
 
 #if ENABLED(USE_GRID_MESHVIEWER)
   bool BedLevelToolsClass::viewer_asymmetric_range = false;
-  bool BedLevelToolsClass::viewer_print_value = false;
-  bool BedLevelToolsClass::view_mesh = true;
+  bool BedLevelToolsClass::viewer_print_value = true;
+  bool BedLevelToolsClass::view_mesh = false;
 #endif
 bool BedLevelToolsClass::goto_mesh_value = false;
 uint8_t BedLevelToolsClass::mesh_x = 0;

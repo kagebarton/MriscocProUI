@@ -74,7 +74,7 @@ typedef TFilamentMonitor<
             FilamentSensorDevice
           #else
             FilamentSensor
-	        #endif
+          #endif
         > FilamentMonitor;
 
 extern FilamentMonitor runout;
