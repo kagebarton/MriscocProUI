@@ -277,7 +277,7 @@ bool BedLevelToolsClass::meshvalidate() {
     if (v_min > 3e+10F) v_min = 0.0000001;
     if (v_max > 3e+10F) v_max = 0.0000001;
     if (range > 3e+10F) range = 0.0000001;
-    char msg[46];
+    char msg[47];
     if (viewer_asymmetric_range) {
       dtostrf(-v_min, 1, 2, str_1);
       dtostrf( v_max, 1, 2, str_2);

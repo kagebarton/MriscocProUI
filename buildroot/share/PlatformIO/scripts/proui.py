@@ -61,5 +61,5 @@ if "MARLIN_FEATURES" in env:
          print("Unified Mesh Bed Leveling detected")
          shutil.copy(libpath+arch+'libproui_ubl.a', libfile)
       else:
-         print("Error: can't detect a supported leveling system")
-         exit()
+         print("Default-No Probe detected")
+         shutil.copy(libpath+arch+'libproui_mbl.a', libfile)
