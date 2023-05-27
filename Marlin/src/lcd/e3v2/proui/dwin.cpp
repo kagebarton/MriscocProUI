@@ -762,7 +762,8 @@ void _draw_ZOffsetIcon() {
 
 void _draw_feedrate() {
   #if ENABLED(SHOW_SPEED_IND)
-    if (HMI_data.SpdInd) {  
+    static bool _should_redraw;
+    if (HMI_data.SpdInd) {
       int16_t _value;
       if (blink) {
         _value = feedrate_percentage;
@@ -773,11 +774,12 @@ void _draw_feedrate() {
         DWIN_Draw_Box(1, HMI_data.Background_Color, 116 + 5 * STAT_CHR_W + 2, 384, 20, 20);
       }
       DWINUI::Draw_Int(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 3, 116 + 2 * STAT_CHR_W, 384, _value);
+      _should_redraw = true;
     } 
     else {
       static int16_t _feedrate = 100;
-      if (blink) {
-        DWIN_Draw_Box(1, HMI_data.Background_Color, 116 + 5 * STAT_CHR_W + 2, 384, 20, 20);
+      if (blink && _should_redraw == true) {
+        //DWIN_Draw_Box(1, HMI_data.Background_Color, 116 + 5 * STAT_CHR_W + 2, 384, 20, 20);
         DWINUI::Draw_String(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 116 + 4 * STAT_CHR_W + 2, 384, F(" %"));
         DWINUI::Draw_Int(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 3, 116 + 2 * STAT_CHR_W, 384, feedrate_percentage);
       }
@@ -795,53 +797,6 @@ void _draw_feedrate() {
     }
   #endif
 }
-
-/*
-void _draw_feedrate2() {
-  static int16_t _feedrate = 100;
-  if (blink) {
-    DWIN_Draw_Box(1, HMI_data.Background_Color, 116 + 5 * STAT_CHR_W + 2, 384, 20, 20);
-    DWINUI::Draw_String(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 116 + 4 * STAT_CHR_W + 2, 384, F(" %"));
-    DWINUI::Draw_Int(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 3, 116 + 2 * STAT_CHR_W, 384, feedrate_percentage);
-    }
-  else if (_feedrate != feedrate_percentage) {
-    _feedrate = feedrate_percentage;
-    DWINUI::Draw_String(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 116 + 4 * STAT_CHR_W + 2, 384, F(" %"));
-    DWINUI::Draw_Int(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 3, 116 + 2 * STAT_CHR_W, 384, _feedrate);
-  }
-}
-
-
-void _draw_feedrate() {
-  #if ENABLED(SHOW_SPEED_IND)
-  int16_t currentValue = HMI_data.SpdInd ? CEIL(feedrate_mm_s * feedrate_percentage / 100) : feedrate_percentage;
-  if (HMI_data.SpdInd) {
-    if (blink) {
-      currentValue = feedrate_percentage;
-      DWINUI::Draw_String(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 116 + 4 * STAT_CHR_W + 2, 384, F(" %"));
-    } 
-    else {
-      DWIN_Draw_Box(1, HMI_data.Background_Color, 116 + 5 * STAT_CHR_W + 2, 384, 20, 20);
-    }
-    DWINUI::Draw_Int(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 3, 116 + 2 * STAT_CHR_W, 384, currentValue);
-  }
-  else {
-     static int16_t _feedrate = 100;
-     if (_feedrate != currentValue) {
-      DWIN_Draw_Box(1, HMI_data.Background_Color, 116 + 5 * STAT_CHR_W + 2, 384, 20, 20);
-      DWINUI::Draw_String(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 116 + 4 * STAT_CHR_W + 2, 384, F(" %"));
-      DWINUI::Draw_Int(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 3, 116 + 2 * STAT_CHR_W, 384, currentValue);
-    }
-  }
-  #else
-    static int16_t _feedrate = 100;
-    if (_feedrate != feedrate_percentage) {
-      _feedrate = feedrate_percentage;
-      DWINUI::Draw_Int(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 3, 116 + 2 * STAT_CHR_W, 384, _feedrate);
-    }
-  #endif
-}
-*/
 
 void _draw_xyz_position(const bool force) {
   _update_axis_value(X_AXIS,  27, 457, force);
@@ -3002,7 +2957,7 @@ void ApplyMaxAccel() { planner.set_max_acceleration(HMI_value.axis, MenuData.Val
 
 #if ENABLED(ENC_MENU_ITEM)
 void SetEncRateA() { SetPIntOnClick( ui.enc_rateB + 1, 1000 ); }
-void SetEncRateB() { SetPIntOnClick( 10, ui.enc_rateA - 1); }
+void SetEncRateB() { SetPIntOnClick( 11, ui.enc_rateA - 1); }
 #endif
 
 #if HAS_TOOLBAR
@@ -3580,16 +3535,16 @@ void Draw_Motion_Menu() {
     checkkey = Menu;
     if (SET_MENU(FilamentMenu, MSG_FILAMENT_MAN, 8)) {
       BACK_ITEM(Draw_Prepare_Menu);
+      MENU_ITEM(ICON_FilSet, MSG_FILAMENT_SET, onDrawSubMenu, Draw_FilSet_Menu);
+      #if ENABLED(FWRETRACT)
+        MENU_ITEM(ICON_FWRetract, MSG_FWRETRACT, onDrawSubMenu, Draw_FWRetract_Menu);
+      #endif
+      EDIT_ITEM(ICON_Speed, MSG_SPEED, onDrawPIntMenu, SetSpeed, &feedrate_percentage);
+      EDIT_ITEM(ICON_Flow, MSG_FLOW, onDrawPIntMenu, SetFlow, &planner.flow_percentage[0]);
       MENU_ITEM(ICON_FilMan, MSG_FILAMENTCHANGE, onDrawMenuItem, ChangeFilament);
       #if ENABLED(FILAMENT_LOAD_UNLOAD_GCODES)
         MENU_ITEM(ICON_FilUnload, MSG_FILAMENTUNLOAD, onDrawMenuItem, UnloadFilament);
         MENU_ITEM(ICON_FilLoad, MSG_FILAMENTLOAD, onDrawMenuItem, LoadFilament);
-      #endif
-      EDIT_ITEM(ICON_Speed, MSG_SPEED, onDrawPIntMenu, SetSpeed, &feedrate_percentage);
-      EDIT_ITEM(ICON_Flow, MSG_FLOW, onDrawPIntMenu, SetFlow, &planner.flow_percentage[0]);
-      MENU_ITEM(ICON_FilSet, MSG_FILAMENT_SET, onDrawSubMenu, Draw_FilSet_Menu);
-      #if ENABLED(FWRETRACT)
-        MENU_ITEM(ICON_FWRetract, MSG_FWRETRACT, onDrawSubMenu, Draw_FWRetract_Menu);
       #endif
     }
     UpdateMenu(FilamentMenu);
@@ -4413,7 +4368,7 @@ void Draw_GetColor_Menu() {
   }
 #endif
 
-#ifdef AUTO_BED_LEVELING_UBL
+#if ENABLED(AUTO_BED_LEVELING_UBL)
 void Draw_AdvancedSettings_Menu() {
   checkkey = Menu;
   if (SET_MENU(AdvancedSettings, MSG_UBL_LEVELING, 14)) {
@@ -4446,7 +4401,7 @@ void Draw_AdvancedSettings_Menu() {
   UpdateMenu(AdvancedSettings);
 }
 
-#elif defined(AUTO_BED_LEVELING_BILINEAR)
+#elif ENABLED(AUTO_BED_LEVELING_BILINEAR)
 void Draw_AdvancedSettings_Menu() {
   checkkey = Menu;
   if (SET_MENU(AdvancedSettings, MSG_BILINEAR_LEVELING, 9)) {
@@ -4474,7 +4429,7 @@ void Draw_AdvancedSettings_Menu() {
   UpdateMenu(AdvancedSettings);
 }
 
-#elif defined(MESH_BED_LEVELING)
+#elif ENABLED(MESH_BED_LEVELING)
 void Draw_AdvancedSettings_Menu() {
   checkkey = Menu;
   if (SET_MENU(AdvancedSettings, MSG_UBL_MESH_LEVELING, 10)) {
@@ -4497,32 +4452,33 @@ void Draw_AdvancedSettings_Menu() {
   UpdateMenu(AdvancedSettings);
 }
 
-#else
+#else // Default-No Probe
 void Draw_AdvancedSettings_Menu() {
   checkkey = Menu;
   if (SET_MENU(AdvancedSettings, MSG_ADVANCED_SETTINGS, 18)) {
     BACK_ITEM(Goto_Main_Menu);
+    #if ENABLED(EEPROM_SETTINGS)
+      MENU_ITEM(ICON_ReadEEPROM, MSG_LOAD_EEPROM, onDrawMenuItem, ReadEeprom);
+      MENU_ITEM(ICON_ResumeEEPROM, MSG_RESTORE_DEFAULTS, onDrawMenuItem, ResetEeprom);
+    #endif
     #if HAS_LCD_BRIGHTNESS
       EDIT_ITEM(ICON_Brightness, MSG_BRIGHTNESS, onDrawPInt8Menu, SetBrightness, &ui.brightness);
     #endif
     #if LCD_BACKLIGHT_TIMEOUT_MINS
-      EDIT_ITEM(ICON_Box, MSG_SCREEN_TIMEOUT, onDrawPIntMenu, SetTimer, &ui.backlight_timeout_minutes); //added
+      EDIT_ITEM(ICON_Box, MSG_SCREEN_TIMEOUT, onDrawPIntMenu, SetTimer, &ui.backlight_timeout_minutes);
+    #endif
+    #if BED_SCREW_INSET
+      EDIT_ITEM_F(ICON_ProbeMargin, "Bed Screw Inset", onDrawPFloatMenu, SetRetractSpeed, &ui.screw_pos);
     #endif
     #if ENABLED(PLR_TUNE_ITEM) && ENABLED(POWER_LOSS_RECOVERY)
       EDIT_ITEM(ICON_Pwrlossr, MSG_OUTAGE_RECOVERY, onDrawChkbMenu, SetPwrLossr, &recovery.enabled);
     #endif
-    #if HAS_MESH
-      MENU_ITEM(ICON_ProbeSet, MSG_MESH_LEVELING, onDrawSubMenu, Draw_MeshSet_Menu);
-    #endif
-    #if HAS_BED_PROBE
-      MENU_ITEM(ICON_ProbeSet, MSG_ZPROBE_SETTINGS, onDrawSubMenu, Draw_ProbeSet_Menu);
-    #endif
-    #if BED_SCREW_INSET
-      EDIT_ITEM_F(ICON_ProbeMargin, "Bed Screw Inset", onDrawPFloatMenu, SetRetractSpeed, &ui.screw_pos); //changed
+    #if ENABLED(SHOW_SPEED_IND)
+      EDIT_ITEM_F(ICON_MaxSpeed, "Speed Indicator", onDrawChkbMenu, SetSpdInd, &HMI_data.SpdInd);
     #endif
     #if ENABLED(SOUND_MENU_ITEM)
-      EDIT_ITEM(ICON_Sound, MSG_TICK, onDrawChkbMenu, SetEnableTick, &ui.no_tick); //changed
-      EDIT_ITEM(ICON_Sound, MSG_SOUND, onDrawChkbMenu, SetEnableSound, &ui.sound_on); //changed
+      EDIT_ITEM(ICON_Sound, MSG_TICK, onDrawChkbMenu, SetEnableTick, &ui.no_tick);
+      EDIT_ITEM(ICON_Sound, MSG_SOUND, onDrawChkbMenu, SetEnableSound, &ui.sound_on);
     #endif
     #if HAS_GCODE_PREVIEW
       EDIT_ITEM(ICON_File, MSG_HAS_PREVIEW, onDrawChkbMenu, SetPreview, &HMI_data.EnablePreview);
@@ -4542,20 +4498,20 @@ void Draw_AdvancedSettings_Menu() {
     #if HAS_TRINAMIC_CONFIG
       MENU_ITEM(ICON_TMCSet, MSG_TMC_DRIVERS, onDrawSubMenu, Draw_TrinamicConfig_menu);
     #endif
-    #if ENABLED(EEPROM_SETTINGS)
-      MENU_ITEM(ICON_ReadEEPROM, MSG_LOAD_EEPROM, onDrawMenuItem, ReadEeprom);
-      MENU_ITEM(ICON_ResumeEEPROM, MSG_RESTORE_DEFAULTS, onDrawMenuItem, ResetEeprom);
-    #endif
     #if ENABLED(PRINTCOUNTER)
       MENU_ITEM(ICON_PrintStatsReset, MSG_INFO_PRINT_COUNT_RESET, onDrawSubMenu, PrintStatsReset);
     #endif
+    #if ENABLED(ENCODER_RATE_MULTIPLIER) && ENABLED(ENC_MENU_ITEM)
+      EDIT_ITEM_F(ICON_Motion, "Enc steps/sec 100x", onDrawPIntMenu, SetEncRateA, &ui.enc_rateA);
+      EDIT_ITEM_F(ICON_Motion, "Enc steps/sec 10x", onDrawPIntMenu, SetEncRateB, &ui.enc_rateB);
+    #endif 
   }
   ui.reset_status(true);
   UpdateMenu(AdvancedSettings);
 }
 #endif
 
-void Draw_Advanced_Menu() { // Control --> Advaned Settings Menu
+void Draw_Advanced_Menu() { // From Control Menu || Default-NP Advaned Settings Menu
   checkkey = Menu;
   if (SET_MENU(AdvancedMenu, MSG_ADVANCED_SETTINGS, 19)) {
     BACK_ITEM(Draw_Control_Menu);
@@ -4567,10 +4523,10 @@ void Draw_Advanced_Menu() { // Control --> Advaned Settings Menu
       EDIT_ITEM(ICON_Brightness, MSG_BRIGHTNESS, onDrawPInt8Menu, SetBrightness, &ui.brightness);
     #endif
     #if LCD_BACKLIGHT_TIMEOUT_MINS
-      EDIT_ITEM(ICON_Box, MSG_SCREEN_TIMEOUT, onDrawPIntMenu, SetTimer, &ui.backlight_timeout_minutes); //added
+      EDIT_ITEM(ICON_Box, MSG_SCREEN_TIMEOUT, onDrawPIntMenu, SetTimer, &ui.backlight_timeout_minutes);
     #endif
     #if BED_SCREW_INSET
-      EDIT_ITEM_F(ICON_ProbeMargin, "Bed Screw Inset", onDrawPFloatMenu, SetRetractSpeed, &ui.screw_pos); //changed
+      EDIT_ITEM_F(ICON_ProbeMargin, "Bed Screw Inset", onDrawPFloatMenu, SetRetractSpeed, &ui.screw_pos);
     #endif
     #if ENABLED(PLR_TUNE_ITEM) && ENABLED(POWER_LOSS_RECOVERY)
       EDIT_ITEM(ICON_Pwrlossr, MSG_OUTAGE_RECOVERY, onDrawChkbMenu, SetPwrLossr, &recovery.enabled);
@@ -4579,8 +4535,8 @@ void Draw_Advanced_Menu() { // Control --> Advaned Settings Menu
       EDIT_ITEM_F(ICON_MaxSpeed, "Speed Indicator", onDrawChkbMenu, SetSpdInd, &HMI_data.SpdInd);
     #endif
     #if ENABLED(SOUND_MENU_ITEM)
-      EDIT_ITEM(ICON_Sound, MSG_TICK, onDrawChkbMenu, SetEnableTick, &ui.no_tick); //changed
-      EDIT_ITEM(ICON_Sound, MSG_SOUND, onDrawChkbMenu, SetEnableSound, &ui.sound_on); //changed
+      EDIT_ITEM(ICON_Sound, MSG_TICK, onDrawChkbMenu, SetEnableTick, &ui.no_tick);
+      EDIT_ITEM(ICON_Sound, MSG_SOUND, onDrawChkbMenu, SetEnableSound, &ui.sound_on);
     #endif
     #if HAS_GCODE_PREVIEW
       EDIT_ITEM(ICON_File, MSG_HAS_PREVIEW, onDrawChkbMenu, SetPreview, &HMI_data.EnablePreview);

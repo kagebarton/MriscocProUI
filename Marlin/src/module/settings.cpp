@@ -3312,8 +3312,8 @@ void MarlinSettings::reset() {
   // Encoder Rate
   //
   #if ENABLED(ENCODER_RATE_MULTIPLIER) && ENABLED(ENC_MENU_ITEM)
-    ui.enc_rateA = 150;
-    ui.enc_rateB = 50;
+    ui.enc_rateA = 135;
+    ui.enc_rateB = 25;
   #endif
 
   //

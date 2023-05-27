@@ -3371,13 +3371,13 @@
 //
 // DWIN / DACAI LCD 4.3" 480x272
 
-#define DWIN_LCD_PROUI              // Pro UI by MRiscoC
-#define USE_STOCK_DWIN_SET
+#define DWIN_LCD_PROUI          // Pro UI by MRiscoC
+#define USE_STOCK_DWIN_SET      // Enabled ? 9.ICO : 7.ICO | in DWIN_SET
 //#define HAS_DACAI 1
 
 #if ENABLED(DWIN_LCD_PROUI)
-  // Professional firmware features:
-  #define PROUI_EX 1
+// Professional firmware features:
+  #define PROUI_EX 1            // Extended UI features
   #ifdef PROUI_EX
     #define HAS_GCODE_PREVIEW 1
     #define HAS_TOOLBAR 1
@@ -3387,37 +3387,37 @@
   #define HAS_CGCODE 1          // Extra Gcode options
   //#define HAS_LOCKSCREEN 1    // Simple lockscreen as to not accidentally change something
   //#define HAS_SD_EXTENDER 1   // Enable to support SD card extender cables
-  #define USE_GRID_MESHVIEWER 1    // Enable two graph types to view mesh
+  #define USE_GRID_MESHVIEWER 1 // Enable two graph types to view mesh : one
   #define HAS_CUSTOM_COLORS 1   // Able to change display colors
   #define ALTCOLOR_MENU_ITEM 1  // Color palette options => Disabled or 0 = Voxelab Default | 1 = Alternate Aquila | 2 = Ender3v2 Default
   #if ENABLED(AUTO_BED_LEVELING_UBL)
     #define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option
   #endif
   #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-    #define RUNOUT_TUNE_ITEM  // Filament Runout option in Tune Menu
+    #define RUNOUT_TUNE_ITEM    // Filament Runout option in Tune Menu
   #endif
   #if ENABLED(POWER_LOSS_RECOVERY)
-    #define PLR_TUNE_ITEM  // Power-loss Recovery option in Tune Menu
+    #define PLR_TUNE_ITEM       // Power-loss Recovery option in Tune Menu
   #endif
   #if ENABLED(BLTOUCH)
-    //#define HS_MENU_ITEM  // BLTOUCH_HS_MODE menu option
+    //#define HS_MENU_ITEM      // BLTOUCH_HS_MODE menu option
   #endif
   #if ENABLED(HAS_PLOT)
-    #define PLOT_TUNE_ITEM  // Temperature Plot Graph item in Tune Menu
+    #define PLOT_TUNE_ITEM      // Temperature Plot Graph item in Tune Menu
   #endif
   #if DISABLED(CLASSIC_JERK)
-    //#define JD_TUNE_ITEM  // Enable only if Juntion Deviation is enabled
+    //#define JD_TUNE_ITEM      // Enable only if Juntion Deviation is enabled
   #endif
   #if ENABLED(LIN_ADVANCE)
-    #define ADVK_TUNE_ITEM  // Linear Advance item in Tune Menu
+    #define ADVK_TUNE_ITEM      // Linear Advance item in Tune Menu
   #endif
   #define SHOW_REAL_POS
-  #define CCLOUD_PRINT_SUPPORT   // Menu item: enable/disable Creality Cloud Print Support
-  #define TRAMWIZ_MENU_ITEM      // Menu item: enable Tramming Wizard
-  #define MEDIASORT_MENU_ITEM    // Menu item: enable/disable file list sorting
-  #define ENC_MENU_ITEM          // Menu item: faster/slower encoder rate
-  #define SHOW_SPEED_IND         // Menu item: blink speed in mm/s along with speed percentage
-  //#define NO_BLINK_IND         // Disables dashboard icon blink indicator highlighted background
+  #define CCLOUD_PRINT_SUPPORT  // Menu item: enable/disable Creality Cloud Print Support
+  #define TRAMWIZ_MENU_ITEM     // Menu item: enable Tramming Wizard
+  #define MEDIASORT_MENU_ITEM   // Menu item: enable/disable file list sorting
+  #define ENC_MENU_ITEM         // Menu item: faster/slower encoder rate
+  #define SHOW_SPEED_IND        // Menu item: blink speed in mm/s along with speed percentage
+  //#define NO_BLINK_IND        // Disables dashboard icon blink indicator highlighted background
   //#define ZHOME_BEFORE_LEVELING
 
 #endif
