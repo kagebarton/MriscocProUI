@@ -839,8 +839,8 @@
   #define PID_FUNCTIONAL_RANGE 10 // If the temperature difference between the target temperature and the actual temperature
                                   // is more than PID_FUNCTIONAL_RANGE then the PID will be shut off and the heater will be set to min/max.
 
-  //#define PID_EDIT_MENU         // Add PID editing to the "Advanced Settings" menu. (~700 bytes of flash)
-  //#define PID_AUTOTUNE_MENU     // Add PID auto-tuning to the "Advanced Settings" menu. (~250 bytes of flash)
+  #define PID_EDIT_MENU           // Add PID editing to the "Advanced Settings" menu. (~700 bytes of flash)
+  #define PID_AUTOTUNE_MENU       // Add PID auto-tuning to the "Advanced Settings" menu. (~250 bytes of flash)
 #endif
 
 // @section safety
@@ -1233,6 +1233,11 @@
  *                                      X, Y, Z [, I [, J [, K...]]], E0 [, E1[, E2...]]
  */
 #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 98 }
+
+//#define LIMITED_MAX_STEPS_EDITING
+#if ENABLED(LIMITED_MAX_STEPS_EDITING)
+  #define MAX_STEPS_EDIT_VALUES       { 200, 200, 2000, 2000 }
+#endif
 
 /**
  * Default Max Feed Rate (linear=mm/s, rotational=°/s)
@@ -2079,9 +2084,10 @@
 #if EITHER(AUTO_BED_LEVELING_LINEAR, AUTO_BED_LEVELING_BILINEAR)
 
   // Set the number of grid points per dimension.
-  #define GRID_MAX_POINTS_X 5  // MRiscoC Customizable by menu
+  #define GRID_MAX_POINTS_X 5       // Don't use more than 9 points per axis, implementation limited
   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
   #define MESH_EDIT_MENU            // Add a menu to edit mesh points
+  #define MESH_INSET 10             // Set Mesh bounds as an inset region of the bed
 
   // Probe along the Y axis, advancing X after each column
   //#define PROBE_Y_FIRST
@@ -2113,8 +2119,8 @@
   //#define MESH_EDIT_GFX_OVERLAY   // Display a graphics overlay while editing the mesh
   #define MESH_EDIT_MENU            // Add a menu to edit mesh points
 
-  #define MESH_INSET 10             // Set Mesh bounds as an inset region of the bed  // MRiscoC Center mesh
-  #define GRID_MAX_POINTS_X 7       // Don't use more than 15 points per axis, implementation limited.  // MRiscoC Customizable by menu
+  #define MESH_INSET 10             // Set Mesh bounds as an inset region of the bed
+  #define GRID_MAX_POINTS_X 7       // Don't use more than 9 points per axis, implementation limited
   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
 
   #define UBL_HILBERT_CURVE         // Use Hilbert distribution for less travel when probing multiple points
@@ -2178,7 +2184,6 @@
 
 // Add a menu item to move between bed corners for manual bed adjustment
 //#define LCD_BED_TRAMMING
-#define BED_SCREW_INSET 35 // distance the knob screw is from corners
 
 #if ENABLED(LCD_BED_TRAMMING)
   #define BED_TRAMMING_HEIGHT      0.0        // (mm) Z height of nozzle at tramming points
@@ -2212,6 +2217,8 @@
    *  LF --------- RF   LF --------- RF    LF --------- RF   LF --------- RF
    */
   #define BED_TRAMMING_LEVELING_ORDER { LF, RF, RB, LB }
+#else
+  #define BED_SCREW_INSET 35 // Distance the knob screw is from corners.
 #endif
 
 /**
@@ -2329,15 +2336,15 @@
  *
  *   M500 - Store settings to EEPROM.
  *   M501 - Read settings from EEPROM. (i.e., Throw away unsaved changes)
- *   M502 - Revert settings to "factory" defaults. (Follow with M500 to init the EEPROM.)
+ *   M502 - Revert settings to "factory" defaults (Follow with M500 to init the EEPROM.)
  */
 #define EEPROM_SETTINGS       // Persistent storage with M500 and M501  // Ender Configs
 //#define DISABLE_M503        // Saves ~2700 bytes of flash. Disable for release!
-#define EEPROM_CHITCHAT       // Give feedback on EEPROM commands. Disable to save PROGMEM.
+#define EEPROM_CHITCHAT       // Give feedback on EEPROM commands. Disable to save PROGMEM. 1008 bytes
 #define EEPROM_BOOT_SILENT    // Keep M503 quiet and only give errors during first load
 #if ENABLED(EEPROM_SETTINGS)
-  #define EEPROM_AUTO_INIT    // Init EEPROM automatically on any errors.  // Ender Configs
-  #define EEPROM_INIT_NOW     // Init EEPROM on first boot after a new build.  // MRiscoC Reset EEPROM on first boot
+  #define EEPROM_AUTO_INIT    // Init EEPROM automatically on any errors  // Ender Configs
+  #define EEPROM_INIT_NOW     // Init EEPROM on first boot after a new build  // MRiscoC Reset EEPROM on first boot
 #endif
 
 // @section host
@@ -3364,43 +3371,55 @@
 //
 // DWIN / DACAI LCD 4.3" 480x272
 
-#define DWIN_LCD_PROUI              // Pro UI by MRiscoC
+#define DWIN_LCD_PROUI          // Pro UI by MRiscoC
+#define USE_STOCK_DWIN_SET      // Enabled ? 9.ICO : 7.ICO | in DWIN_SET
 //#define HAS_DACAI 1
 
 #if ENABLED(DWIN_LCD_PROUI)
-  // Professional firmware features:
-  //#define ProUIex 1
-  #ifdef ProUIex
+// Professional firmware features:
+  //#define PROUI_EX 1            // Extended UI features (272 bytes of flash)
+  #ifdef PROUI_EX
     #define HAS_GCODE_PREVIEW 1
     #define HAS_TOOLBAR 1
   #endif
-  #define HAS_PLOT 1
-  #define HAS_ESDIAG 1
-  #define HAS_CGCODE 1
-  #define HAS_LOCKSCREEN 1
-  //#define HAS_SD_EXTENDER 1  // Enable to support SD card extender cables
-  #define USE_GRID_MESHVIEWER 1     // Enable two graph types to view mesh
-  #define SHOW_REAL_POS
-  #define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option
+  #define HAS_PLOT 1            // Graph Temp as grid plot - PID/MPC Tuning
+  #define HAS_ESDIAG 1          // View End-stop switch continuity (560 bytes of flash)
+  #define HAS_CGCODE 1          // Extra Gcode options
+  #define HAS_LOCKSCREEN 1      // Simple lockscreen as to not accidentally change something (  bytes of flash)
+  #define HAS_SD_EXTENDER 1     // Enable to support SD card extender cables (48 bytes of flash)
+  #define USE_GRID_MESHVIEWER 1 // Enable two mesh graph types : one (  bytes of flash)
+  #define HAS_CUSTOM_COLORS 1   // Able to change display colors
+  #define ALTCOLOR_MENU_ITEM 0  // Color palette options => Disabled or 0 = Voxelab Default | 1 = Alternate Aquila | 2 = Ender3V2 Default
+  #if ENABLED(AUTO_BED_LEVELING_UBL)
+    #define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option (  bytes of flash)
+  #endif
   #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-    #define RUNOUT_TUNE_ITEM  // Filament Runout option in Tune Menu
+    #define RUNOUT_TUNE_ITEM    // Filament Runout option in Tune Menu (  bytes of flash)
   #endif
   #if ENABLED(POWER_LOSS_RECOVERY)
-    #define PLR_TUNE_ITEM  // Power-loss Recovery option in Tune Menu
+    #define PLR_TUNE_ITEM       // Power-loss Recovery option in Tune Menu (  bytes of flash)
   #endif
   #if ENABLED(BLTOUCH)
-    #define HS_MENU_ITEM  // BLTOUCH_HS_MODE menu option
+    #define HS_MENU_ITEM        // BLTOUCH_HS_MODE menu option (  bytes of flash)
   #endif
   #if ENABLED(HAS_PLOT)
-    #define PLOT_TUNE_ITEM  // Temperature Plot Graph item in Tune Menu
+    #define PLOT_TUNE_ITEM      // Temperature Plot Graph item in Tune Menu (688 bytes of flash)
   #endif
   #if DISABLED(CLASSIC_JERK)
-    //#define JD_TUNE_ITEM  // Enable only if Juntion Deviation is enabled
+    //#define JD_TUNE_ITEM      // Enable only if Juntion Deviation is enabled
   #endif
-  #define ADVK_TUNE_ITEM         // Linear Advance item in Tune Menu
-  //#define ALTCOLOR_MENU_ITEM   // Alternate Color palette option
-  #define TRAMWIZ_MENU_ITEM      // Enable Tramming Wizard
-  //#define MEDIASORT_MENU_ITEM  // File list sorting option
+  #if ENABLED(LIN_ADVANCE)
+    #define ADVK_TUNE_ITEM      // Linear Advance item in Tune Menu
+  #endif
+  #define SHOW_REAL_POS
+  #define CCLOUD_PRINT_SUPPORT  // Menu item: enable/disable Creality Cloud Print Support (192 bytes of flash)
+  #define TRAMWIZ_MENU_ITEM     // Menu item: enable Tramming Wizard (2304 bytes of flash)
+  #define MEDIASORT_MENU_ITEM   // Menu item: enable/disable file list sorting (104 bytes of flash)
+  #define ENC_MENU_ITEM         // Menu item: faster/slower encoder rate (272 bytes of flash)
+  #define SHOW_SPEED_IND        // Menu item: blink speed in mm/s along with speed percentage (296 bytes of flash)
+  //#define NO_BLINK_IND        // Disables dashboard icon blink indicator highlighted background
+  //#define ZHOME_BEFORE_LEVELING
+
 #endif
 
 //

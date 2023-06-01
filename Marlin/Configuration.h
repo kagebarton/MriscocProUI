@@ -1,4 +1,4 @@
-/** Aquila BLT Mriscoc ProUI
+/** Aquila UBL Mriscoc ProUI
  * Marlin 3D Printer Firmware
  * Copyright (c) 2022 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
@@ -2162,8 +2162,8 @@
   //===========================================================================
   #define MESH_EDIT_MENU         // Add a menu to edit mesh points
 
-  #define MESH_INSET 10          // Set Mesh bounds as an inset region of the bed
-  #define GRID_MAX_POINTS_X 5    // Don't use more than 7 points per axis, implementation limited
+  #define MESH_INSET 10          // Set Mesh bounds as an inset region of the bed  // MRiscoC Center mesh
+  #define GRID_MAX_POINTS_X 5    // Don't use more than 7 points per axis, implementation limited.  // MRiscoC Customizable by menu
   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
 
   //#define MESH_G28_REST_ORIGIN // After homing all axes ('G28' or 'G28 XYZ') rest Z at Z_MIN_POS
@@ -2336,15 +2336,15 @@
  *
  *   M500 - Store settings to EEPROM.
  *   M501 - Read settings from EEPROM. (i.e., Throw away unsaved changes)
- *   M502 - Revert settings to "factory" defaults. (Follow with M500 to init the EEPROM.)
+ *   M502 - Revert settings to "factory" defaults (Follow with M500 to init the EEPROM.)
  */
 #define EEPROM_SETTINGS       // Persistent storage with M500 and M501  // Ender Configs
 //#define DISABLE_M503        // Saves ~2700 bytes of flash. Disable for release!
-//#define EEPROM_CHITCHAT     // Give feedback on EEPROM commands. Disable to save PROGMEM.
+#define EEPROM_CHITCHAT     // Give feedback on EEPROM commands. Disable to save PROGMEM. 1008 bytes
 #define EEPROM_BOOT_SILENT    // Keep M503 quiet and only give errors during first load
 #if ENABLED(EEPROM_SETTINGS)
-  #define EEPROM_AUTO_INIT    // Init EEPROM automatically on any errors.  // Ender Configs
-  #define EEPROM_INIT_NOW     // Init EEPROM on first boot after a new build.  // MRiscoC Reset EEPROM on first boot
+  #define EEPROM_AUTO_INIT    // Init EEPROM automatically on any errors  // Ender Configs
+  #define EEPROM_INIT_NOW     // Init EEPROM on first boot after a new build  // MRiscoC Reset EEPROM on first boot
 #endif
 
 // @section host
@@ -3377,33 +3377,33 @@
 
 #if ENABLED(DWIN_LCD_PROUI)
 // Professional firmware features:
-  #define PROUI_EX 1            // Extended UI features
+  #define PROUI_EX 1            // Extended UI features (272 bytes of flash)
   #ifdef PROUI_EX
     #define HAS_GCODE_PREVIEW 1
     #define HAS_TOOLBAR 1
   #endif
   #define HAS_PLOT 1            // Graph Temp as grid plot - PID/MPC Tuning
-  //#define HAS_ESDIAG 1        // View End-stop switch continuity
+  #define HAS_ESDIAG 1          // View End-stop switch continuity (560 bytes of flash)
   #define HAS_CGCODE 1          // Extra Gcode options
-  //#define HAS_LOCKSCREEN 1    // Simple lockscreen as to not accidentally change something
-  //#define HAS_SD_EXTENDER 1   // Enable to support SD card extender cables
-  #define USE_GRID_MESHVIEWER 1 // Enable two graph types to view mesh : one
+  #define HAS_LOCKSCREEN 1      // Simple lockscreen as to not accidentally change something (  bytes of flash)
+  #define HAS_SD_EXTENDER 1     // Enable to support SD card extender cables (48 bytes of flash)
+  #define USE_GRID_MESHVIEWER 1 // Enable two mesh graph types : one (  bytes of flash)
   #define HAS_CUSTOM_COLORS 1   // Able to change display colors
-  #define ALTCOLOR_MENU_ITEM 1  // Color palette options => Disabled or 0 = Voxelab Default | 1 = Alternate Aquila | 2 = Ender3v2 Default
+  #define ALTCOLOR_MENU_ITEM 0  // Color palette options => Disabled or 0 = Voxelab Default | 1 = Alternate Aquila | 2 = Ender3V2 Default
   #if ENABLED(AUTO_BED_LEVELING_UBL)
-    #define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option
+    #define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option (  bytes of flash)
   #endif
   #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-    #define RUNOUT_TUNE_ITEM    // Filament Runout option in Tune Menu
+    #define RUNOUT_TUNE_ITEM    // Filament Runout option in Tune Menu (  bytes of flash)
   #endif
   #if ENABLED(POWER_LOSS_RECOVERY)
-    #define PLR_TUNE_ITEM       // Power-loss Recovery option in Tune Menu
+    #define PLR_TUNE_ITEM       // Power-loss Recovery option in Tune Menu (  bytes of flash)
   #endif
   #if ENABLED(BLTOUCH)
-    //#define HS_MENU_ITEM      // BLTOUCH_HS_MODE menu option
+    //#define HS_MENU_ITEM      // BLTOUCH_HS_MODE menu option (  bytes of flash)
   #endif
   #if ENABLED(HAS_PLOT)
-    #define PLOT_TUNE_ITEM      // Temperature Plot Graph item in Tune Menu
+    #define PLOT_TUNE_ITEM      // Temperature Plot Graph item in Tune Menu (688 bytes of flash)
   #endif
   #if DISABLED(CLASSIC_JERK)
     //#define JD_TUNE_ITEM      // Enable only if Juntion Deviation is enabled
@@ -3412,11 +3412,11 @@
     #define ADVK_TUNE_ITEM      // Linear Advance item in Tune Menu
   #endif
   #define SHOW_REAL_POS
-  #define CCLOUD_PRINT_SUPPORT  // Menu item: enable/disable Creality Cloud Print Support
-  #define TRAMWIZ_MENU_ITEM     // Menu item: enable Tramming Wizard
-  #define MEDIASORT_MENU_ITEM   // Menu item: enable/disable file list sorting
-  #define ENC_MENU_ITEM         // Menu item: faster/slower encoder rate
-  #define SHOW_SPEED_IND        // Menu item: blink speed in mm/s along with speed percentage
+  #define CCLOUD_PRINT_SUPPORT  // Menu item: enable/disable Creality Cloud Print Support (192 bytes of flash)
+  #define TRAMWIZ_MENU_ITEM     // Menu item: enable Tramming Wizard (2304 bytes of flash)
+  #define MEDIASORT_MENU_ITEM   // Menu item: enable/disable file list sorting (104 bytes of flash)
+  #define ENC_MENU_ITEM         // Menu item: faster/slower encoder rate (272 bytes of flash)
+  #define SHOW_SPEED_IND        // Menu item: blink speed in mm/s along with speed percentage (296 bytes of flash)
   //#define NO_BLINK_IND        // Disables dashboard icon blink indicator highlighted background
   //#define ZHOME_BEFORE_LEVELING
 
