@@ -133,8 +133,8 @@ jobs:
         #- STM32F103RC_btt_maple
         #- STM32F103RE_creality_maple
         #- STM32F103RC_creality_maple
-        - STM32F103RET6_voxelab_maple_GD32
-        - STM32F103RET6_voxelab_maple_N32
+        - GD32F103RET6_voxelab_maple
+        - N32F103RET6_voxelab_maple
         # LPC176x - Lengthy tests
         - LPC1768
         - LPC1769

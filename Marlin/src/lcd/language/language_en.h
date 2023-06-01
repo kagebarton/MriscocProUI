@@ -42,7 +42,7 @@
 #endif
 #undef en
 
-#define MEDIA_TYPE_EN "Media"
+#define MEDIA_TYPE_EN "SD Card"
 
 namespace Language_en {
   constexpr uint8_t CHARSIZE              = 2;
@@ -65,7 +65,7 @@ namespace Language_en {
   LSTR MSG_MEDIA_USB_REMOVED              = _UxGT("USB device removed");
   LSTR MSG_MEDIA_USB_FAILED               = _UxGT("USB start failed");
   LSTR MSG_MEDIA_SORT                     = _UxGT("Sort ") MEDIA_TYPE_EN;
-  LSTR MSG_MEDIA_UPDATE                   = MEDIA_TYPE_EN _UxGT(" Update");
+  LSTR MSG_MEDIA_UPDATE                   = MEDIA_TYPE_EN _UxGT(" Auto Mount");
   LSTR MSG_KILL_SUBCALL_OVERFLOW          = _UxGT("Subcall Overflow");
   LSTR MSG_LCD_ENDSTOPS                   = _UxGT("Endstops"); // Max length 8 characters
   LSTR MSG_LCD_SOFT_ENDSTOPS              = _UxGT("Soft Endstops");
@@ -475,7 +475,7 @@ namespace Language_en {
   LSTR MSG_ERR_EEPROM_VERSION             = _UxGT("Err: EEPROM Version");
   LSTR MSG_ERR_EEPROM_CORRUPT             = _UxGT("Err: EEPROM Corrupt");
   LSTR MSG_SETTINGS_STORED                = _UxGT("Settings Stored");
-  LSTR MSG_HAS_PREVIEW                    = _UxGT("Has Preview");
+  LSTR MSG_HAS_PREVIEW                    = _UxGT("Gcode Preview");
   LSTR MSG_RESET_PRINTER                  = _UxGT("Restart Printer");
   LSTR MSG_REFRESH                        = LCD_STR_REFRESH _UxGT("Refresh");
   LSTR MSG_INFO_SCREEN                    = _UxGT("Info Screen");

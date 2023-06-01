@@ -82,7 +82,7 @@ endif
 
 # Arduino source install directory, and version number
 # On most linuxes this will be /usr/share/arduino
-ARDUINO_INSTALL_DIR  ?= ${HOME}/Arduino
+ARDUINO_INSTALL_DIR  ?= ${HOME}/Arduino         # C:/Users/$User/AppData/Local/Arduino
 ARDUINO_VERSION      ?= 106
 
 # The installed Libraries are in the User folder
@@ -656,18 +656,18 @@ ifeq ($(HARDWARE_VARIANT), $(filter $(HARDWARE_VARIANT),arduino Teensy Sanguino)
   # Old libraries (avr-core 1.6.21 < / Arduino < 1.6.8)
   VPATH += $(ARDUINO_INSTALL_DIR)/hardware/arduino/avr/libraries/SPI
   # New libraries (avr-core >= 1.6.21 / Arduino >= 1.6.8)
-  VPATH += $(ARDUINO_INSTALL_DIR)/hardware/arduino/avr/libraries/SPI/src
+  VPATH += $(ARDUINO_INSTALL_DIR)/hardware/arduino/avr/1.8.6/libraries/SPI/src
 endif
 
 ifeq ($(IS_MCU),1)
-  VPATH += $(ARDUINO_INSTALL_DIR)/hardware/arduino/avr/cores/arduino
+  VPATH += $(ARDUINO_INSTALL_DIR)/hardware/arduino/avr/1.8.6/cores/arduino
 
   # Old libraries (avr-core 1.6.21 < / Arduino < 1.6.8)
   VPATH += $(ARDUINO_INSTALL_DIR)/hardware/arduino/avr/libraries/SPI
   VPATH += $(ARDUINO_INSTALL_DIR)/hardware/arduino/avr/libraries/SoftwareSerial
   # New libraries (avr-core >= 1.6.21 / Arduino >= 1.6.8)
-  VPATH += $(ARDUINO_INSTALL_DIR)/hardware/arduino/avr/libraries/SPI/src
-  VPATH += $(ARDUINO_INSTALL_DIR)/hardware/arduino/avr/libraries/SoftwareSerial/src
+  VPATH += $(ARDUINO_INSTALL_DIR)/hardware/arduino/avr/1.8.6/libraries/SPI/src
+  VPATH += $(ARDUINO_INSTALL_DIR)/hardware/arduino/avr/1.8.6/libraries/SoftwareSerial/src
 endif
 
 VPATH += $(ARDUINO_INSTALL_DIR)/libraries/LiquidCrystal/src
@@ -681,14 +681,14 @@ ifeq ($(WIRE), 1)
   VPATH += $(ARDUINO_INSTALL_DIR)/hardware/arduino/avr/libraries/Wire
   VPATH += $(ARDUINO_INSTALL_DIR)/hardware/arduino/avr/libraries/Wire/utility
   # New libraries (avr-core >= 1.6.21 / Arduino >= 1.6.8)
-  VPATH += $(ARDUINO_INSTALL_DIR)/hardware/arduino/avr/libraries/Wire/src
-  VPATH += $(ARDUINO_INSTALL_DIR)/hardware/arduino/avr/libraries/Wire/src/utility
+  VPATH += $(ARDUINO_INSTALL_DIR)/packages/arduino/hardware/avr/1.8.6/libraries/Wire/src
+  VPATH += $(ARDUINO_INSTALL_DIR)/packages/arduino/hardware/avr/1.8.6/libraries/Wire/src/utility
 endif
 ifeq ($(NEOPIXEL), 1)
 VPATH += $(ARDUINO_INSTALL_DIR)/libraries/Adafruit_NeoPixel
 endif
 ifeq ($(U8GLIB), 1)
-VPATH += $(ARDUINO_INSTALL_DIR)/libraries/U8glib
+VPATH += $(ARDUINO_INSTALL_DIR)/libraries/U8glib-HAL
 VPATH += $(ARDUINO_INSTALL_DIR)/libraries/U8glib/csrc
 VPATH += $(ARDUINO_INSTALL_DIR)/libraries/U8glib/cppsrc
 VPATH += $(ARDUINO_INSTALL_DIR)/libraries/U8glib/fntsrc
@@ -700,9 +700,9 @@ endif
 
 ifeq ($(HARDWARE_VARIANT), arduino)
   HARDWARE_SUB_VARIANT ?= mega
-  VPATH += $(ARDUINO_INSTALL_DIR)/hardware/arduino/avr/variants/$(HARDWARE_SUB_VARIANT)
+  VPATH += $(ARDUINO_INSTALL_DIR)/hardware/arduino/avr/1.8.6/variants/$(HARDWARE_SUB_VARIANT)
 else ifeq ($(HARDWARE_VARIANT), Sanguino)
-  VPATH += $(ARDUINO_INSTALL_DIR)/hardware/marlin/avr/variants/sanguino
+  VPATH += $(ARDUINO_INSTALL_DIR)/hardware/marlin/avr/1.8.6/variants/sanguino
 else ifeq ($(HARDWARE_VARIANT), archim)
   VPATH   += $(ARDUINO_INSTALL_DIR)/packages/ultimachine/hardware/sam/1.6.9-b/system/libsam
   VPATH   += $(ARDUINO_INSTALL_DIR)/packages/ultimachine/hardware/sam/1.6.9-b/system/CMSIS/CMSIS/Include/
