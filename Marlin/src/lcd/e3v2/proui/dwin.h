@@ -180,7 +180,7 @@ uint32_t GetHash(char * str);
 #endif
 void RebootPrinter();
 void DisableMotors();
-void AutoLev();
+void AutoLevStart();
 void AutoHome();
 #if HAS_PREHEAT
   #define _DOPREHEAT(N) void DoPreheat##N();

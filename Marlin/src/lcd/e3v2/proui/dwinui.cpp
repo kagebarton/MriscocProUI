@@ -28,7 +28,7 @@
 #include "dwin.h"
 
 xy_int_t DWINUI::cursor = { 0 };
-uint16_t DWINUI::pencolor = Color_White;
+//uint16_t DWINUI::pencolor = Color_White;
 uint16_t DWINUI::textcolor = HMI_data.Text_Color;
 uint16_t DWINUI::backcolor = HMI_data.Background_Color;
 uint16_t DWINUI::buttoncolor = HMI_data.TitleBg_Color;
@@ -39,7 +39,7 @@ void (*DWINUI::onTitleDraw)(TitleClass* title) = nullptr;
 
 void DWINUI::init() {
   cursor.reset();
-  pencolor = Color_White;
+  //pencolor = Color_White;
   textcolor = HMI_data.Text_Color;
   backcolor = HMI_data.Background_Color;
   buttoncolor = HMI_data.TitleBg_Color;
@@ -210,6 +210,12 @@ void DWINUI::ICON_Show(bool BG, uint8_t icon, uint16_t x, uint16_t y) {
 
 // ------------------------- Buttons ------------------------------//
 
+void DWINUI::Draw_Select_Box(uint16_t xpos, uint16_t ypos) {
+  const uint16_t c1 = HMI_data.Cursor_Color;
+  DWIN_Draw_Rectangle(0, c1, xpos - 1, ypos - 1, xpos + 100, ypos + 38);
+  DWIN_Draw_Rectangle(0, c1, xpos - 2, ypos - 2, xpos + 101, ypos + 39);
+}
+
 void DWINUI::Draw_Button(uint16_t color, uint16_t bcolor, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, const char * const caption) {
   DWIN_Draw_Rectangle(1, bcolor, x1, y1, x2, y2);
   Draw_CenteredString(0, fontid, color, bcolor, x1, x2, (y2 + y1 - fontHeight())/2, caption);
@@ -227,6 +233,18 @@ void DWINUI::Draw_Button(uint8_t id, uint16_t x, uint16_t y) {
   }
 }
 
+void DWINUI::Draw_Button(uint8_t id, uint16_t x, uint16_t y, bool sel) {
+  if (sel) Draw_Select_Box(x, y);
+  switch (id) {
+    case BTN_Cancel  : Draw_Button(GET_TEXT_F(MSG_BUTTON_CANCEL), x, y); break;
+    case BTN_Confirm : Draw_Button(GET_TEXT_F(MSG_BUTTON_CONFIRM), x, y); break;
+    case BTN_Continue: Draw_Button(GET_TEXT_F(MSG_BUTTON_CONTINUE), x, y); break;
+    case BTN_Print   : Draw_Button(GET_TEXT_F(MSG_BUTTON_PRINT), x, y); break;
+    case BTN_Save    : Draw_Button(GET_TEXT_F(MSG_BUTTON_SAVE), x, y); break;
+    case BTN_Purge   : Draw_Button(GET_TEXT_F(MSG_BUTTON_PURGE), x, y); break;
+    default: break;
+  }
+}
 // -------------------------- Extra -------------------------------//
 
 // Draw a circle
@@ -290,12 +308,17 @@ uint16_t DWINUI::RainbowInt(int16_t val, int16_t minv, int16_t maxv) {
   uint8_t B, G, R;
   const uint8_t maxB = 28, maxR = 28, maxG = 38;
   const int16_t limv = _MAX(abs(minv), abs(maxv));
-  float n = minv >= 0 ? (float)(val - minv) / (maxv - minv) : (float)val / limv;
+  float n = (minv >= 0) ? (float)(val - minv) / (maxv - minv) : (float)val / limv;
   LIMIT(n, -1, 1);
-  if (n < 0) {
+  if (n <= -0.5) {
     R = 0;
-    G = (1 + n) * maxG;
-    B = (-n) * maxB;
+    G = maxG * (1 + n);
+    B = maxB;
+  }
+  else if (n <= 0) {
+    R = 0;
+    G = maxG;
+    B = maxB * (-n) * 2;
   }
   else if (n < 0.5) {
     R = maxR * n * 2;

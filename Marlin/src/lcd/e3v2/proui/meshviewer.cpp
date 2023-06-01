@@ -63,9 +63,9 @@ void MeshViewerClass::DrawMeshGrid(const uint8_t csizex, const uint8_t csizey) {
   min = 100;
   max = -100;
   DWINUI::ClearMainArea();
-  DWIN_Draw_Rectangle(0, HMI_data.SplitLine_Color, px(0), py(0), px(sizex - 1), py(sizey - 1));
-  LOOP_S_L_N(x, 1, sizex - 1) DWIN_Draw_VLine(HMI_data.SplitLine_Color, px(x), py(sizey - 1), width);
-  LOOP_S_L_N(y, 1, sizey - 1) DWIN_Draw_HLine(HMI_data.SplitLine_Color, px(0), py(y), width);
+  DWIN_Draw_Rectangle(0, HMI_data.PopupTxt_Color, px(0), py(0), px(sizex - 1), py(sizey - 1));
+  LOOP_S_L_N(x, 1, sizex - 1) DWIN_Draw_VLine(HMI_data.PopupBg_Color, px(x), py(sizey - 1), width);
+  LOOP_S_L_N(y, 1, sizey - 1) DWIN_Draw_HLine(HMI_data.PopupBg_Color, px(0), py(y), width);
 }
 
 void MeshViewerClass::DrawMeshPoint(const uint8_t x, const uint8_t y, const float z) {
@@ -129,13 +129,13 @@ void MeshViewerClass::Draw(bool withsave /*=false*/, bool redraw /*=true*/) {
     else DWINUI::Draw_Box(1, HMI_data.Background_Color, {89,305,99,38});
   #endif
   if (withsave) {
-    DWINUI::Draw_Button(BTN_Save, 26, 305);
-    DWINUI::Draw_Button(BTN_Continue, 146, 305);
+    DWINUI::Draw_Button(BTN_Save, 26, 305, false);
+    DWINUI::Draw_Button(BTN_Continue, 146, 305, false);
     Draw_Select_Highlight(HMI_flag.select_flag, 305);
   }
   else {
-    DWINUI::Draw_Button(BTN_Continue, 86, 305);
-    Draw_Select_Box(86, 305);
+    DWINUI::Draw_Button(BTN_Continue, 86, 305, true);
+    //Draw_Select_Box(86, 305);
   }
   #if ENABLED(USE_GRID_MESHVIEWER)
     if(bedLevelTools.view_mesh) {

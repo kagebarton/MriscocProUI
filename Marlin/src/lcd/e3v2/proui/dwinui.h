@@ -262,7 +262,7 @@ extern TitleClass Title;
 
 namespace DWINUI {
   extern xy_int_t cursor;
-  extern uint16_t pencolor;
+  //extern uint16_t pencolor;
   extern uint16_t textcolor;
   extern uint16_t backcolor;
   extern uint16_t buttoncolor;
@@ -310,7 +310,7 @@ namespace DWINUI {
   void MoveBy(int16_t x, int16_t y);
   void MoveBy(xy_int_t point);
 
-  // Draw a line from the cursor to xy position
+  /*/ Draw a line from the cursor to xy position
   //  color: Line segment color
   //  x/y: End point
   inline void LineTo(uint16_t color, uint16_t x, uint16_t y) {
@@ -319,7 +319,7 @@ namespace DWINUI {
   inline void LineTo(uint16_t x, uint16_t y) {
     DWIN_Draw_Line(pencolor, cursor.x, cursor.y, x, y);
   }
-
+  */
   // Extend a frame box
   //  v: value to extend
   inline frame_rect_t ExtendFrame(frame_rect_t frame, uint8_t v) {
@@ -587,6 +587,8 @@ namespace DWINUI {
   uint16_t ColorInt(int16_t val, int16_t minv, int16_t maxv, uint16_t color1, uint16_t color2);
 
   // ------------------------- Buttons ------------------------------//
+  
+  void Draw_Select_Box(uint16_t xpos, uint16_t ypos);
 
   void Draw_Button(uint16_t color, uint16_t bcolor, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, const char * const caption);
   inline void Draw_Button(uint16_t color, uint16_t bcolor, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, FSTR_P caption) {
@@ -595,7 +597,10 @@ namespace DWINUI {
   inline void Draw_Button(FSTR_P caption, uint16_t x, uint16_t y) {
     Draw_Button(textcolor, buttoncolor, x, y, x + 99, y + 37, caption);
   }
+
   void Draw_Button(uint8_t id, uint16_t x, uint16_t y);
+
+  void Draw_Button(uint8_t id, uint16_t x, uint16_t y, bool sel);
 
   // -------------------------- Extra -------------------------------//
 

@@ -59,8 +59,8 @@ void ESDiagClass::Draw() {
   Title.ShowCaption(GET_TEXT_F(MSG_ENDSTOP_TEST));
   DWINUI::ClearMainArea();
   Draw_Popup_Bkgd();
-  DWINUI::Draw_Button(BTN_Continue, 86, 250);
-  Draw_Select_Box(86, 250);
+  DWINUI::Draw_Button(BTN_Continue, 86, 250, true);
+  //Draw_Select_Box(86, 250);
   DWINUI::cursor.y = 80;
   #define ES_LABEL(S) draw_es_label(F(STR_##S))
   #if USE_X_MIN

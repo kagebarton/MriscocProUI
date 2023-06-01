@@ -470,10 +470,10 @@ void Popup_window_PauseOrStop() {
 
 #if HAS_HOTEND || HAS_HEATED_BED
   void DWIN_Popup_Temperature(const int_fast8_t heater_id, const bool toohigh) {
-    FSTR_P heaterstr = heater_id == H_BED ? F("Bed temperature") : F("Nozzle temperature");
+    FSTR_P heaterstr = (heater_id == H_BED) ? F("Bed temperature") : F("Nozzle temperature");
     FSTR_P lowhighstr = toohigh ? F("is too high") : F("is too low");
     HMI_SaveProcessID(WaitResponse);
-    DWIN_Show_Popup(toohigh ? ICON_TempTooHigh : ICON_TempTooLow, heaterstr, lowhighstr, BTN_Continue);
+    DWIN_Show_Popup((toohigh ? ICON_TempTooHigh : ICON_TempTooLow), heaterstr, lowhighstr, BTN_Continue);
   }
 #endif
 
@@ -640,8 +640,8 @@ void Draw_PrintDone() {
     const bool haspreview = Preview_Valid();
     if (haspreview) {
       Preview_Show();
-      DWINUI::Draw_Button(BTN_Continue, 86, 295);
-      Draw_Select_Box(86, 295);
+      DWINUI::Draw_Button(BTN_Continue, 86, 295, true);
+      //Draw_Select_Box(86, 295);
     }
   #else
     constexpr bool haspreview = false;
@@ -654,8 +654,8 @@ void Draw_PrintDone() {
     DWINUI::Draw_Icon(ICON_RemainTime, 150, 171);
     Draw_Print_ProgressElapsed();
     Draw_Print_ProgressRemain();
-    DWINUI::Draw_Button(BTN_Continue, 86, 273);
-    Draw_Select_Box(86, 273);
+    DWINUI::Draw_Button(BTN_Continue, 86, 273, true);
+    //Draw_Select_Box(86, 273);
   }
 }
 
@@ -779,7 +779,6 @@ void _draw_feedrate() {
     else {
       static int16_t _feedrate = 100;
       if (blink && _should_redraw == true) {
-        //DWIN_Draw_Box(1, HMI_data.Background_Color, 116 + 5 * STAT_CHR_W + 2, 384, 20, 20);
         DWINUI::Draw_String(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 116 + 4 * STAT_CHR_W + 2, 384, F(" %"));
         DWINUI::Draw_Int(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 3, 116 + 2 * STAT_CHR_W, 384, feedrate_percentage);
       }
@@ -1421,8 +1420,8 @@ void EachMomentUpdate() {
     DWINUI::Draw_CenteredString(HMI_data.PopupTxt_Color, 70, GET_TEXT_F(MSG_OUTAGE_RECOVERY));
     DWINUI::Draw_CenteredString(HMI_data.PopupTxt_Color, 147, F("It looks like the last"));
     DWINUI::Draw_CenteredString(HMI_data.PopupTxt_Color, 167, F("file was interrupted."));
-    DWINUI::Draw_Button(BTN_Cancel,    26, 280);
-    DWINUI::Draw_Button(BTN_Continue, 146, 280);
+    DWINUI::Draw_Button(BTN_Cancel, 26, 280, false);
+    DWINUI::Draw_Button(BTN_Continue, 146, 280, false);
     MediaFile *dir = nullptr;
     const char * const filename = card.diveToFile(true, dir, recovery.info.sd_filename);
     card.selectFileByName(filename);
@@ -1542,9 +1541,9 @@ void DWIN_LevelingStart() {
     Title.ShowCaption(GET_TEXT_F(MSG_BED_LEVELING));
     #if PROUI_EX
       MeshViewer.DrawMeshGrid(GRID_MAX_POINTS_X, GRID_MAX_POINTS_Y);
-      DWINUI::Draw_Button(BTN_Cancel, 86, 305);
+      DWINUI::Draw_Button(BTN_Cancel, 86, 305, true);
     #else
-      DWIN_Show_Popup(ICON_AutoLeveling, GET_TEXT_F(MSG_BED_LEVELING), GET_TEXT_F(MSG_PLEASE_WAIT), TERN(PROUI_EX, BTN_Cancel, 0));
+      DWIN_Show_Popup(ICON_AutoLeveling, GET_TEXT_F(MSG_BED_LEVELING), GET_TEXT_F(MSG_PLEASE_WAIT), BTN_Cancel);
     #endif
     #if BOTH(AUTO_BED_LEVELING_UBL, PREHEAT_BEFORE_LEVELING)
       #if HAS_BED_PROBE
@@ -1761,8 +1760,8 @@ void DWIN_LevelingDone() {
       _target = thermalManager.temp_hotend[0].target;
       plot.Draw(gfrm, _maxtemp, _target);
       DWINUI::Draw_Int(false, 2, HMI_data.StatusTxt_Color, HMI_data.PopupBg_Color, 3, gfrm.x + 80, gfrm.y - DWINUI::fontHeight() - 4, _target);
-      DWINUI::Draw_Button(BTN_Continue, 86, 305);
-      Draw_Select_Box(86, 305);
+      DWINUI::Draw_Button(BTN_Continue, 86, 305, true);
+      //Draw_Select_Box(86, 305);
       DWIN_UpdateLCD();
     }
   #endif
@@ -1780,8 +1779,8 @@ void DWIN_LevelingDone() {
       _target = thermalManager.temp_bed.target;
       plot.Draw(gfrm, _maxtemp, _target);
       DWINUI::Draw_Int(false, 2, HMI_data.StatusTxt_Color, HMI_data.PopupBg_Color, 3, gfrm.x + 80, gfrm.y - DWINUI::fontHeight() - 4, _target);
-      DWINUI::Draw_Button(BTN_Continue, 86, 305);
-      Draw_Select_Box(86, 305);
+      DWINUI::Draw_Button(BTN_Continue, 86, 305, true);
+      //Draw_Select_Box(86, 305);
       DWIN_UpdateLCD();
     }
   #endif
@@ -1956,7 +1955,8 @@ void DWIN_SetDataDefaults() {
     HMI_data.MediaSort = true;
     card.setSortOn(true);
   #endif
-  HMI_data.MediaAutoMount = ENABLED(HAS_SD_EXTENDER);
+  TERN_(HAS_SD_EXTENDER, HMI_data.MediaAutoMount = false);
+  //HMI_data.MediaAutoMount = ENABLED(HAS_SD_EXTENDER);
   #if BOTH(INDIVIDUAL_AXIS_HOMING_SUBMENU, MESH_BED_LEVELING)
     HMI_data.z_after_homing = DEF_Z_AFTER_HOMING;
   #endif
@@ -2158,8 +2158,8 @@ void DWIN_RedrawScreen() {
 
   void Draw_Popup_FilamentPurge() {
     DWIN_Draw_Popup(ICON_BLTouch, GET_TEXT_F(MSG_ADVANCED_PAUSE), GET_TEXT_F(MSG_FILAMENT_CHANGE_PURGE_CONTINUE));
-    DWINUI::Draw_Button(BTN_Purge, 26, 280);
-    DWINUI::Draw_Button(BTN_Continue, 146, 280);
+    DWINUI::Draw_Button(BTN_Purge, 26, 280, false);
+    DWINUI::Draw_Button(BTN_Continue, 146, 280, false);
     Draw_Select_Highlight(true);
   }
 
@@ -2766,10 +2766,14 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
       LOOP_L_N(x, 2) LOOP_L_N(y, 2) zval[x][y] -= avg;
       MeshViewer.DrawMesh(zval, 2, 2);
       }
+      else {
+        DWINUI::Draw_CenteredString(140, F("Finding True value"));
+        safe_delay(1000);
+      }
       ui.reset_status();
 
       #ifndef BED_TRAMMING_PROBE_TOLERANCE
-        #define BED_TRAMMING_PROBE_TOLERANCE 0.05
+        #define BED_TRAMMING_PROBE_TOLERANCE 0.05f
       #endif
 
       if (ABS(MeshViewer.max - MeshViewer.min) < BED_TRAMMING_PROBE_TOLERANCE) {
@@ -2801,8 +2805,8 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
         DWINUI::Draw_CenteredString(Color_Green, 160, s ? F("Lower") : F("Raise"));
         DWINUI::Draw_CenteredString(Color_Green, 180, plabel);
       }
-      DWINUI::Draw_Button(BTN_Continue, 86, 305);
-      Draw_Select_Box(86, 305);
+      DWINUI::Draw_Button(BTN_Continue, 86, 305, true);
+      //Draw_Select_Box(86, 305);
       checkkey = Menu;
       HMI_SaveProcessID(WaitResponse);
     }
@@ -4419,7 +4423,7 @@ void Draw_AdvancedSettings_Menu() {
       #if ENABLED(MESH_EDIT_MENU)
         MENU_ITEM(ICON_UBLActive, MSG_EDIT_MESH, onDrawSubMenu, Draw_EditMesh_Menu);
       #endif
-      MENU_ITEM(ICON_Level, MSG_AUTO_MESH, onDrawMenuItem, AutoLev);
+      MENU_ITEM(ICON_Level, MSG_AUTO_MESH, onDrawMenuItem, AutoLevStart);
       MENU_ITEM_F(ICON_SetZOffset, "Zero Current Mesh", onDrawMenuItem, ZeroMesh2);
     #endif
   }
