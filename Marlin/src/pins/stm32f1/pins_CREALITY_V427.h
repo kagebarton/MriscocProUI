@@ -26,7 +26,16 @@
  */
 
 #define BOARD_INFO_NAME      "Creality v4.2.7"
-#define DEFAULT_MACHINE_NAME "Creality3D"
+#ifndef DEFAULT_MACHINE_NAME
+#define DEFAULT_MACHINE_NAME "Ender-3 V2"
+#endif
+#ifndef CUSTOM_MACHINE_NAME
+#define CUSTOM_MACHINE_NAME DEFAULT_MACHINE_NAME
+#endif
+#ifndef BOOT_MACHINE_NAME
+#define BOOT_MACHINE_NAME DEFAULT_MACHINE_NAME
+#endif
+
 
 //
 // Steppers

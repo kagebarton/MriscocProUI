@@ -22,13 +22,15 @@
 #pragma once
 
 /**
- * CREALITY v4.2.2 (STM32F103RE / STM32F103RC) board pin assignments
+ * FFP0173_Aquila_Main_Board_V1.0.1 (GD32F103RE / N32F103RC)
+ * 
+ * Uses CREALITY v4 (STM32F103RE / STM32F103RC) board pin assignments
  */
 
-#define BOARD_INFO_NAME      "Creality v4.2.2"
+#define BOARD_INFO_NAME      "Aquila v1.0.1"
 
 #ifndef DEFAULT_MACHINE_NAME
-#define DEFAULT_MACHINE_NAME "Ender-3 V2"
+#define DEFAULT_MACHINE_NAME "Aquila"
 #endif
 #ifndef CUSTOM_MACHINE_NAME
 #define CUSTOM_MACHINE_NAME DEFAULT_MACHINE_NAME
@@ -37,6 +39,6 @@
 #define BOOT_MACHINE_NAME DEFAULT_MACHINE_NAME
 #endif
 
-#define EMIT_CREALITY_422_WARNING
+#define NO_MAPLE_WARNING     // Disable warning when compiling with Maple env
 
-#include "pins_CREALITY_V4.h"
+#include "../stm32f1/pins_CREALITY_V4.h"
