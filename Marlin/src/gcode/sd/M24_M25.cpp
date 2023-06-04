@@ -45,7 +45,7 @@
   #include "../../lcd/extui/dgus/DGUSDisplayDef.h"
 #endif
 
-#if BOTH(DWIN_LCD_PROUI, CV_LASER_MODULE)
+#if ALL(DWIN_LCD_PROUI, CV_LASER_MODULE)
   #include "../../lcd/e3v2/proui/dwin.h"
   #include "../../feature/spindle_laser.h"
 #endif

@@ -21,7 +21,7 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if BOTH(DWIN_LCD_PROUI, HAS_MESH)
+#if ALL(DWIN_LCD_PROUI, HAS_MESH)
 
 #include "../../../core/types.h"
 #include "../../marlinui.h"
@@ -64,8 +64,8 @@ void MeshViewerClass::DrawMeshGrid(const uint8_t csizex, const uint8_t csizey) {
   max = -100;
   DWINUI::ClearMainArea();
   DWIN_Draw_Rectangle(0, HMI_data.PopupTxt_Color, px(0), py(0), px(sizex - 1), py(sizey - 1));
-  LOOP_S_L_N(x, 1, sizex - 1) DWIN_Draw_VLine(HMI_data.PopupBg_Color, px(x), py(sizey - 1), width);
-  LOOP_S_L_N(y, 1, sizey - 1) DWIN_Draw_HLine(HMI_data.PopupBg_Color, px(0), py(y), width);
+  for (uint8_t x = 1; x < sizex - 1; ++x) DWIN_Draw_VLine(HMI_data.PopupBg_Color, px(x), py(sizey - 1), width);
+  for (uint8_t y = 1; y < sizey - 1; ++y) DWIN_Draw_HLine(HMI_data.PopupBg_Color, px(0), py(y), width);
 }
 
 void MeshViewerClass::DrawMeshPoint(const uint8_t x, const uint8_t y, const float z) {
@@ -108,9 +108,9 @@ void MeshViewerClass::DrawMeshPoint(const uint8_t x, const uint8_t y, const floa
 
 void MeshViewerClass::DrawMesh(bed_mesh_t zval, const uint8_t csizex, const uint8_t csizey) {
   DrawMeshGrid(csizex, csizey);
-  LOOP_L_N(y, csizey) {
+   for (uint8_t y = 0; y < csizey; ++y) {
     hal.watchdog_refresh();
-    LOOP_L_N(x, csizex) DrawMeshPoint(x, y, zval[x][y]);
+     for (uint8_t x = 0; x < csizex; ++x) DrawMeshPoint(x, y, zval[x][y]);
   }
 }
 

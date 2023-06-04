@@ -200,7 +200,7 @@ TERN(HAS_BED_PROBE, float, void) Tram(uint8_t point, bool stow_probe = true);
 #if HAS_ONESTEP_LEVELING
   void Trammingwizard();
 #endif
-#if BOTH(LED_CONTROL_MENU, HAS_COLOR_LEDS)
+#if ALL(LED_CONTROL_MENU, HAS_COLOR_LEDS)
   void ApplyLEDColor();
 #endif
 #if ENABLED(AUTO_BED_LEVELING_UBL)
@@ -298,7 +298,7 @@ void Draw_FilSet_Menu();
   void Draw_ParkPos_Menu();
 #endif
 void Draw_PhySet_Menu();
-#if BOTH(CASE_LIGHT_MENU, CASELIGHT_USES_BRIGHTNESS)
+#if ALL(CASE_LIGHT_MENU, CASELIGHT_USES_BRIGHTNESS)
   void Draw_CaseLight_Menu();
 #endif
 #if ENABLED(LED_CONTROL_MENU)
@@ -317,7 +317,7 @@ void Draw_MaxAccel_Menu();
   void Draw_MaxJerk_Menu();
 #endif
 void Draw_Steps_Menu();
-#if EITHER(HAS_BED_PROBE, BABYSTEPPING)
+#if ANY(HAS_BED_PROBE, BABYSTEPPING)
   void Draw_ZOffsetWiz_Menu();
 #endif
 #if ENABLED(INDIVIDUAL_AXIS_HOMING_SUBMENU)
@@ -355,7 +355,7 @@ void Draw_Steps_Menu();
   #if ENABLED(PID_AUTOTUNE_MENU)
     void HotendPID();
   #endif
-  #if EITHER(PID_AUTOTUNE_MENU, PID_EDIT_MENU)
+  #if ANY(PID_AUTOTUNE_MENU, PID_EDIT_MENU)
     void Draw_HotendPID_Menu();
   #endif
 #endif
@@ -363,13 +363,13 @@ void Draw_Steps_Menu();
   #if ENABLED(PID_AUTOTUNE_MENU)
     void BedPID();
   #endif
-  #if EITHER(PID_AUTOTUNE_MENU, PID_EDIT_MENU)
+  #if ANY(PID_AUTOTUNE_MENU, PID_EDIT_MENU)
     void Draw_BedPID_Menu();
   #endif
 #endif
 
 // MPC
-#if EITHER(MPC_EDIT_MENU, MPC_AUTOTUNE_MENU)
+#if ANY(MPC_EDIT_MENU, MPC_AUTOTUNE_MENU)
   void Draw_HotendMPC_Menu();
 #endif
 #if ENABLED(MPC_AUTOTUNE)

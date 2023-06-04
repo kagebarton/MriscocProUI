@@ -138,7 +138,7 @@ Stepper stepper; // Singleton
   #include "../feature/spindle_laser.h"
 #endif
 
-#if BOTH(DWIN_LCD_PROUI, CV_LASER_MODULE)
+#if ALL(DWIN_LCD_PROUI, CV_LASER_MODULE)
   #include "../lcd/e3v2/proui/dwin.h"
 #endif
 
@@ -152,7 +152,7 @@ Stepper stepper; // Singleton
 
 // public:
 
-#if EITHER(HAS_EXTRA_ENDSTOPS, Z_STEPPER_AUTO_ALIGN)
+#if ANY(HAS_EXTRA_ENDSTOPS, Z_STEPPER_AUTO_ALIGN)
   bool Stepper::separate_multi_axis = false;
 #endif
 
@@ -186,7 +186,7 @@ bool Stepper::abort_current_block;
   bool Stepper::locked_Y_motor = false, Stepper::locked_Y2_motor = false;
 #endif
 
-#if EITHER(Z_MULTI_ENDSTOPS, Z_STEPPER_AUTO_ALIGN)
+#if ANY(Z_MULTI_ENDSTOPS, Z_STEPPER_AUTO_ALIGN)
   bool Stepper::locked_Z_motor = false, Stepper::locked_Z2_motor = false
     #if NUM_Z_STEPPERS >= 3
       , Stepper::locked_Z3_motor = false
@@ -222,7 +222,7 @@ uint32_t Stepper::advance_divisor = 0,
          Stepper::decelerate_after,          // The count at which to start decelerating
          Stepper::step_event_count;          // The total event count for the current block
 
-#if EITHER(HAS_MULTI_EXTRUDER, MIXING_EXTRUDER)
+#if ANY(HAS_MULTI_EXTRUDER, MIXING_EXTRUDER)
   uint8_t Stepper::stepper_extruder;
 #else
   constexpr uint8_t Stepper::stepper_extruder;
@@ -1971,7 +1971,7 @@ void Stepper::pulse_phase_isr() {
         PULSE_PREP(W);
       #endif
 
-      #if EITHER(HAS_E0_STEP, MIXING_EXTRUDER)
+      #if ANY(HAS_E0_STEP, MIXING_EXTRUDER)
         PULSE_PREP(E);
 
         #if ENABLED(LIN_ADVANCE)
@@ -2565,7 +2565,7 @@ hal_timer_t Stepper::block_phase_isr() {
          * If DeltaA == -DeltaB, the movement is only in the 2nd axis (Y or Z, handled below)
          * If DeltaA ==  DeltaB, the movement is only in the 1st axis (X)
          */
-        #if EITHER(COREXY, COREXZ)
+        #if ANY(COREXY, COREXZ)
           #define X_CMP(A,B) ((A)==(B))
         #else
           #define X_CMP(A,B) ((A)!=(B))
@@ -2585,7 +2585,7 @@ hal_timer_t Stepper::block_phase_isr() {
          * If DeltaA ==  DeltaB, the movement is only in the 1st axis (X or Y)
          * If DeltaA == -DeltaB, the movement is only in the 2nd axis (Y or Z)
          */
-        #if EITHER(COREYX, COREYZ)
+        #if ANY(COREYX, COREYZ)
           #define Y_CMP(A,B) ((A)==(B))
         #else
           #define Y_CMP(A,B) ((A)!=(B))
@@ -2605,7 +2605,7 @@ hal_timer_t Stepper::block_phase_isr() {
          * If DeltaA ==  DeltaB, the movement is only in the 1st axis (X or Y, already handled above)
          * If DeltaA == -DeltaB, the movement is only in the 2nd axis (Z)
          */
-        #if EITHER(COREZX, COREZY)
+        #if ANY(COREZX, COREZY)
           #define Z_CMP(A,B) ((A)==(B))
         #else
           #define Z_CMP(A,B) ((A)!=(B))
@@ -2640,7 +2640,7 @@ hal_timer_t Stepper::block_phase_isr() {
         oversampling_factor = 0;                            // Assume no axis smoothing (via oversampling)
         // Decide if axis smoothing is possible
         uint32_t max_rate = current_block->nominal_rate;    // Get the step event rate
-        IF_ENABLED(DWIN_LCD_PROUI, if (HMI_data.AdaptiveStepSmoothing))
+        TERN_(DWIN_LCD_PROUI, if (HMI_data.AdaptiveStepSmoothing))
         while (max_rate < MIN_STEP_ISR_FREQUENCY) {         // As long as more ISRs are possible...
           max_rate <<= 1;                                   // Try to double the rate
           if (max_rate < MIN_STEP_ISR_FREQUENCY)            // Don't exceed the estimated ISR limit
@@ -2850,7 +2850,7 @@ void Stepper::init() {
   #if MB(ALLIGATOR)
     const float motor_current[] = MOTOR_CURRENT;
     unsigned int digipot_motor = 0;
-    LOOP_L_N(i, 3 + EXTRUDERS) {
+    for (uint8_t i = 0; i < 3 + EXTRUDERS; ++i) {
       digipot_motor = 255 * (motor_current[i] / 2.5);
       dac084s085::setValue(i, digipot_motor);
     }
@@ -2864,7 +2864,7 @@ void Stepper::init() {
   TERN_(HAS_X2_DIR, X2_DIR_INIT());
   #if HAS_Y_DIR
     Y_DIR_INIT();
-    #if BOTH(HAS_Y2_STEPPER, HAS_Y2_DIR)
+    #if ALL(HAS_Y2_STEPPER, HAS_Y2_DIR)
       Y2_DIR_INIT();
     #endif
   #endif
@@ -2916,7 +2916,7 @@ void Stepper::init() {
     #endif
     X_ENABLE_INIT();
     if (X_ENABLE_INIT_STATE) X_ENABLE_WRITE(X_ENABLE_INIT_STATE);
-    #if BOTH(HAS_X2_STEPPER, HAS_X2_ENABLE)
+    #if ALL(HAS_X2_STEPPER, HAS_X2_ENABLE)
       X2_ENABLE_INIT();
       if (X_ENABLE_INIT_STATE) X2_ENABLE_WRITE(X_ENABLE_INIT_STATE);
     #endif
@@ -2927,7 +2927,7 @@ void Stepper::init() {
     #endif
     Y_ENABLE_INIT();
     if (Y_ENABLE_INIT_STATE) Y_ENABLE_WRITE(Y_ENABLE_INIT_STATE);
-    #if BOTH(HAS_Y2_STEPPER, HAS_Y2_ENABLE)
+    #if ALL(HAS_Y2_STEPPER, HAS_Y2_ENABLE)
       Y2_ENABLE_INIT();
       if (Y_ENABLE_INIT_STATE) Y2_ENABLE_WRITE(Y_ENABLE_INIT_STATE);
     #endif
@@ -3733,7 +3733,7 @@ void Stepper::report_positions() {
 
   void Stepper::refresh_motor_power() {
     if (!initialized) return;
-    LOOP_L_N(i, COUNT(motor_current_setting)) {
+    for (uint8_t i = 0; i < COUNT(motor_current_setting); ++i) {
       switch (i) {
         #if ANY_PIN(MOTOR_CURRENT_PWM_XY, MOTOR_CURRENT_PWM_X, MOTOR_CURRENT_PWM_Y, MOTOR_CURRENT_PWM_I, MOTOR_CURRENT_PWM_J, MOTOR_CURRENT_PWM_K, MOTOR_CURRENT_PWM_U, MOTOR_CURRENT_PWM_V, MOTOR_CURRENT_PWM_W)
           case 0:
@@ -3829,7 +3829,7 @@ void Stepper::report_positions() {
         SPI.begin();
         SET_OUTPUT(DIGIPOTSS_PIN);
 
-        LOOP_L_N(i, COUNT(motor_current_setting))
+        for (uint8_t i = 0; i < COUNT(motor_current_setting); ++i)
           set_digipot_current(i, motor_current_setting[i]);
 
       #elif HAS_MOTOR_CURRENT_PWM

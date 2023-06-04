@@ -21,7 +21,7 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if BOTH(DWIN_LCD_PROUI, HAS_CGCODE)
+#if ALL(DWIN_LCD_PROUI, HAS_CGCODE)
 
 #include "../../../MarlinCore.h" // for wait_for_user
 #include "../../../core/types.h"
@@ -32,7 +32,7 @@
 #include "dwin.h"
 #include "custom_gcodes.h"
 
-#if BOTH(PROUI_EX, HAS_MEDIA)
+#if ALL(PROUI_EX, HAS_MEDIA)
   #include "file_header.h"
 #endif
 

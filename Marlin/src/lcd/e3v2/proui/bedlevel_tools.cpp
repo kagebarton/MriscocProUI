@@ -24,7 +24,7 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if BOTH(DWIN_LCD_PROUI, HAS_LEVELING)
+#if ALL(DWIN_LCD_PROUI, HAS_LEVELING)
 
 #include "../../marlinui.h"
 #include "../../../core/types.h"

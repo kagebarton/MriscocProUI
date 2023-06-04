@@ -160,7 +160,7 @@ public:
   static void CheckParkingPos();
   static void SetData();
   static void LoadSettings();
-  #if EITHER(AUTO_BED_LEVELING_BILINEAR, MESH_BED_LEVELING)
+  #if ANY(AUTO_BED_LEVELING_BILINEAR, MESH_BED_LEVELING)
     static float getZvalues(const uint8_t sy, const uint8_t x, const uint8_t y, const float *values);
   #endif
 };

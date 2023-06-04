@@ -22,7 +22,7 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if BOTH(DWIN_LCD_PROUI, HAS_PLOT)
+#if ALL(DWIN_LCD_PROUI, HAS_PLOT)
 
 #include "dwin.h"
 #include "../../../core/types.h"

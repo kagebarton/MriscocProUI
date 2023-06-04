@@ -79,7 +79,6 @@ namespace Language_en {
   LSTR MSG_DEBUG_MENU                     = _UxGT("Debug Menu");
   LSTR MSG_PROGRESS_BAR_TEST              = _UxGT("Progress Bar Test");
   LSTR MSG_ENDSTOP_TEST                   = _UxGT("End-stop Diagnostic");
-  LSTR MSG_Z_PROBE                        = _UxGT("Z Probe");
   LSTR MSG_HOMING                         = _UxGT("Homing");
   LSTR MSG_AUTO_HOME                      = _UxGT("Auto Home");
   LSTR MSG_AUTO_HOME_A                    = _UxGT("Home @");
@@ -605,7 +604,7 @@ namespace Language_en {
   #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Change ") MEDIA_TYPE_EN;
   LSTR MSG_RELEASE_MEDIA                  = _UxGT("Release ") MEDIA_TYPE_EN;
-  LSTR MSG_ZPROBE_OUT                     = _UxGT("Z Probe Past Bed");
+  LSTR MSG_ZPROBE_OUT                     = _UxGT("Z-Probe Past Bed");
   LSTR MSG_SKEW_FACTOR                    = _UxGT("Skew Factor");
   LSTR MSG_BLTOUCH                        = _UxGT("BLTouch");
   LSTR MSG_BLTOUCH_SELFTEST               = _UxGT("Self-Test");
@@ -623,21 +622,23 @@ namespace Language_en {
   LSTR MSG_BLTOUCH_MODE_CHANGE            = _UxGT("DANGER: Bad settings can cause damage! Proceed anyway?");
   LSTR MSG_TOUCHMI_PROBE                  = _UxGT("TouchMI");
   LSTR MSG_TOUCHMI_INIT                   = _UxGT("Init TouchMI");
-  LSTR MSG_TOUCHMI_ZTEST                  = _UxGT("Z Offset Test");
+  LSTR MSG_TOUCHMI_ZTEST                  = _UxGT("Z-Offset Test");
   LSTR MSG_TOUCHMI_SAVE                   = _UxGT("Save");
   LSTR MSG_MANUAL_DEPLOY_TOUCHMI          = _UxGT("Deploy TouchMI");
   LSTR MSG_MANUAL_DEPLOY                  = _UxGT("Deploy Z-Probe");
   LSTR MSG_MANUAL_PENUP                   = _UxGT("Pen up");
   LSTR MSG_MANUAL_PENDOWN                 = _UxGT("Pen down");
+  LSTR MSG_MANUAL_RESET                   = _UxGT("Reset Z-Probe");
   LSTR MSG_MANUAL_STOW                    = _UxGT("Stow Z-Probe");
   LSTR MSG_HOME_FIRST                     = _UxGT("Home %s First");
+  LSTR MSG_Z_PROBE                        = _UxGT("Z-Probe");
   LSTR MSG_ZPROBE_SETTINGS                = _UxGT("Probe Settings");
   LSTR MSG_ZPROBE_OFFSETS                 = _UxGT("Probe Offsets");
   LSTR MSG_ZPROBE_XOFFSET                 = _UxGT("Probe X Offset");
   LSTR MSG_ZPROBE_YOFFSET                 = _UxGT("Probe Y Offset");
   LSTR MSG_ZPROBE_ZOFFSET                 = _UxGT("Z-Offset");
   LSTR MSG_ZPROBE_MARGIN                  = _UxGT("Probe Margin");
-  LSTR MSG_ZPROBE_MULTIPLE                = _UxGT("Multiple Probing");
+  LSTR MSG_ZPROBE_MULTIPLE                = _UxGT("Extra Probing");
   LSTR MSG_Z_FEED_RATE                    = _UxGT("Z Feed Rate");
   LSTR MSG_ENABLE_HS_MODE                 = _UxGT("Enable HS mode");
   LSTR MSG_MOVE_NOZZLE_TO_BED             = _UxGT("Center Nozzle");

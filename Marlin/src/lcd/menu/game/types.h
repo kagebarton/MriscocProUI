@@ -22,7 +22,6 @@
 #pragma once
 
 #include <stdint.h>
-#include "../../../core/millis_t.h"
 
 typedef struct { int8_t x, y; } pos_t;
 

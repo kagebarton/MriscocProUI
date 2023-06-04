@@ -28,7 +28,7 @@
 #include "../../feature/spindle_laser.h"
 #include "../../module/planner.h"
 
-#if BOTH(DWIN_LCD_PROUI, CV_LASER_MODULE)
+#if ALL(DWIN_LCD_PROUI, CV_LASER_MODULE)
   #include "../../lcd/e3v2/proui/dwin.h"
 #endif
 

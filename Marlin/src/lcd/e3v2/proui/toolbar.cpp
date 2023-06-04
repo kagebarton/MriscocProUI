@@ -21,7 +21,7 @@
 
 #include "../../../inc/MarlinConfig.h"
 
-#if BOTH(DWIN_LCD_PROUI, HAS_TOOLBAR)
+#if ALL(DWIN_LCD_PROUI, HAS_TOOLBAR)
 
 #include "dwin.h"
 #include "toolbar.h"
@@ -52,7 +52,7 @@ void Draw_ToolBar(bool force /*=false*/) {
   if (force || (CurrentMenu != &ToolBar)) {
     CurrentMenu = &ToolBar;
     MenuItemsPrepare(TBMaxOpt);
-    LOOP_L_N(i,TBMaxOpt) {
+    for (uint8_t i = 0; i < TBMaxOpt; ++i) {
       TBGetItem(PRO_data.TBopt[i]);
       if (TBItem->icon) MENU_ITEM_F(TBItem->icon, TBItem->caption, onDrawTBItem, TBItem->onClick);
     }
@@ -83,4 +83,4 @@ void TBGetItem(uint8_t item) {
     TBItem = &TBItemA[0];
 }
 
-#endif // BOTH(DWIN_LCD_PROUI, HAS_TOOLBAR)
+#endif // ALL(DWIN_LCD_PROUI, HAS_TOOLBAR)
