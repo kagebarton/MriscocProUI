@@ -702,7 +702,7 @@ void _update_axis_value(const AxisEnum axis, const uint16_t x, const uint16_t y,
   #if ALL(IS_FULL_CARTESIAN, SHOW_REAL_POS)
     const float p = planner.get_axis_position_mm(axis);
   #else
-    const float p = current_position[axis]);
+    const float p = current_position[axis];
   #endif
 
   const bool changed = oldpos[axis] != p;
@@ -1833,10 +1833,12 @@ void DWIN_Print_Finished() {
 void DWIN_Print_Aborted() {
   DEBUG_ECHOLNPGM("DWIN_Print_Aborted");
   #if PROUI_EX
-    char cmd[34] = "";
-    const int16_t zpos = current_position.z + PRO_data.Park_point.z;
-    sprintf_P(cmd, PSTR("G0 F3000 Z%i\nG0 F3000 Y%i"), zpos, PRO_data.Park_point.y);
-    queue.inject(cmd);
+    if (all_axes_homed()) {
+      char cmd[34] = "";
+      const int16_t zpos = current_position.z + PRO_data.Park_point.z;
+      sprintf_P(cmd, PSTR("G0 F3000 Z%i\nG0 F3000 Y%i"), zpos, PRO_data.Park_point.y);
+      queue.inject(cmd);
+    }
   #endif
   hostui.notify("Print Aborted");
   DWIN_Print_Finished();
@@ -3159,7 +3161,7 @@ void Draw_Control_Menu() {
       #if ENABLED(CASELIGHT_USES_BRIGHTNESS)
         MENU_ITEM(ICON_CaseLight, MSG_CASE_LIGHT, onDrawSubMenu, Draw_CaseLight_Menu);
       #else
-        MENU_ITEM(ICON_CaseLight, MSG_CASE_LIGHT, onDrawChkbMenu, SetCaseLight, &caselight.on);
+        EDIT_ITEM(ICON_CaseLight, MSG_CASE_LIGHT, onDrawChkbMenu, SetCaseLight, &caselight.on);
       #endif
     #endif
     #if ENABLED(LED_CONTROL_MENU)
