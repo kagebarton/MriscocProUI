@@ -1,19 +1,26 @@
-# Professional Firmware for the Voxelab Aquila and Creality Ender 3 Printers
+# Professional Firmware for the Voxelab Aquila and Creality Ender-3 3D Printers 
+(or any other compatible 3D Printer)
 
 ![GitHub contributors](https://img.shields.io/github/contributors/classicrocker883/MriscocProUI.svg)
 ![GitHub Release Date](https://img.shields.io/github/release-date/classicrocker883/MriscocProUI.svg)
 [![Build Status](https://github.com/classicrocker883/MriscocProUI/workflows/CI/badge.svg)](https://github.com/classicrocker883/MriscocProUI/actions)
 [![Build Configs](https://github.com/classicrocker883/MriscocProUI/actions/workflows/compile-configs.yml/badge.svg?event=release)](https://github.com/classicrocker883/MriscocProUI/releases)
 
-## Universal RET6/RCT6 chips: G32, N32, (working on H32), Creality 4.2.7 and 4.2.2 boards
+## Universal RET6/RCT6 chips: G32, N32, H32, Creality 4.2.7 and 4.2.2 boards
 
 ### - Please read this: -
-Many Updates have been included in the most recent MriscocProUI since the May 2023 release.
-A list will be provided, but for now most of these are [addressed here](https://github.com/mriscoc/Ender3V2S1/releases/tag/20230522)
+Many Updates have been included in the most recent MriscocProUI in the **2023-June** release.<br>
+H32->HC32 support is currently only in the branch **HC32-June**. You can find the original repo here [@shadow578/Marlin-H32](https://github.com/shadow578/Marlin-H32)<br>
+#### Important Info regarding HC32:
+Not all features or options have been fully tested with this chip, specifically. *UBL*/*BLT* versions may not work with the **CR/3D/BL-Touch**
+<br>
 
-#### One important note is Mesh Inset now saves upon restart, it is working as normal.
+General information about the firmware and updates is located in the _Wiki_ page [What's New In This Release](https://github.com/classicrocker883/MriscocProUI/wiki/What's-New-in-this-Release). <br> Other changes and updates are [addressed here](https://github.com/classicrocker883/MriscocProUI/releases/latest) and are [addressed here](https://github.com/mriscoc/Ender3V2S1/releases/latest).
 
-If when you start printing and it says Advance Pause with Runout enabled, you may have to change the pull-up to HIGH, or LOW (depending on what is already selected). This is found in the Prepare menu/ Filament Management/ Filament Settings. 
+#### One important change to note is the `Mesh Inset` now saves upon restart -- it is working as normal.
+
+If you start printing and it says `Advance Pause` while **Runout** is enabled, you may have to change state it triggers no filament to **HIGH**, or **LOW** (depending on what is already selected). This is found in the _Prepare_ menu/ _Filament Management_/ _Filament Settings_ -> _Runout Active_. <br>
+A small issue which may occur is if you are in the <i>Print</i> menu and you quickly select to print between several printable *Gcode* files in a short amount of time. The screen can freeze for a moment and the printer will restart - that is it.<br><br>
 If you encounter any issues please feel free to post it on the issues tab, or if anything is going well please leave a comment. 
 
 I will be working on more upgrades and features and tweaks along the way. Enjoy using this fork of Marlin as I intend it to be the best. It is easy to use and convenient. So far I really enjoy the new settings and toolbar for the main menu. There is a variety of parameters and options that can be changed without having to reflash the firmware. 
@@ -79,6 +86,8 @@ Join the Voxelab Aquila [Facebook Group](https://www.facebook.com/groups/voxelab
 This fork of Mriscoc's ProUI firmware is maintained by [@classicrocker883](https://github.com/classicrocker883) (yours truly)
 
 ProUI is a Marlin based firmware maintained by [@mriscoc](https://github.com/mriscoc)
+
+The fork for H32|HC32 firmware is maintained by [@shadow578](https://github.com/shadow578)
 
 Marlin is maintained mainly by [@thinkyhead](https://github.com/thinkyhead) 
 
