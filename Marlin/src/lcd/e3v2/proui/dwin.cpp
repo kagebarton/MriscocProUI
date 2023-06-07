@@ -137,12 +137,7 @@
 // Load and Unload limits
 #define MAX_LOAD_UNLOAD  500
 
-// Feedspeed limit (max feedspeed = MAX_FEEDRATE_EDIT_VALUES)
-// #define MIN_MAXFEEDSPEED      1
-// #define MIN_MAXACCELERATION   1
-// #define MIN_MAXJERK           0.1
-// #define MIN_STEP              1
-// #define MAX_STEP              1999.9
+// Juntion deviation limits
 #define MIN_JD_MM             0.001
 #define MAX_JD_MM             TERN(LIN_ADVANCE, 0.3f, 0.5f)
 
@@ -211,32 +206,6 @@ typedef struct {
   bool inc(uint8_t v) { if (now < (v - 1)) now++; else now = (v - 1); return changed(); }
 } select_t;
 select_t select_page{0}, select_print{0};
-
-// constexpr float max_feedrate_edit_values[] =
-//   #ifdef MAX_FEEDRATE_EDIT_VALUES
-//     MAX_FEEDRATE_EDIT_VALUES
-//   #else
-//     { 1000, 1000, 40, 200 }
-//   #endif
-// ;
-
-// constexpr float max_acceleration_edit_values[] =
-//   #ifdef MAX_ACCEL_EDIT_VALUES
-//     MAX_ACCEL_EDIT_VALUES
-//   #else
-//     { 3000, 3000, 300, 9999 }
-//   #endif
-// ;
-
-// #if HAS_CLASSIC_JERK
-//   constexpr float max_jerk_edit_values[] =
-//     #ifdef MAX_JERK_EDIT_VALUES
-//       MAX_JERK_EDIT_VALUES
-//     #else
-//       { DEFAULT_XJERK * 2, DEFAULT_YJERK * 2, DEFAULT_ZJERK * 4, DEFAULT_EJERK * 4 }
-//     #endif
-//   ;
-// #endif
 
 bool hash_changed = true; // Flag to know if message status was changed
 bool blink = false;
