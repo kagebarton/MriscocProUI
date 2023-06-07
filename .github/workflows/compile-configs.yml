@@ -16,7 +16,6 @@ jobs:
         chip: [GD32,N32]
         temp: [true,false]
         inshape: [true,false]
-        sdex: [true,false]
     steps:
     - uses: actions/checkout@v3
     - name: Cache pip
@@ -45,9 +44,8 @@ jobs:
       run: |
         if ($TP); then TPTMP=-MPC; else TPTMP=; fi;
         if ($IS); then ISTMP=-IS; else ISTMP=; fi;
-        if ($SD); then SDTMP=-SDex; else SDTMP=; fi;
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "filename=${AVTMP}_Default-NP-ProUI${ISTMP}${TPTMP}${SDTMP}.bin" >> $GITHUB_OUTPUT
+        echo "filename=${AVTMP}_Default-NP-ProUI${ISTMP}${TPTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/Default-NP/Configuration.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/Default-NP/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/Voxelab\ Aquila/Default-NP/Version.h Marlin/Version.h
@@ -59,8 +57,6 @@ jobs:
         sed -i "s/[^ ]*#define PIDTEMP/$PTEMP#define PIDTEMP/g" Marlin/Configuration.h
         if ($TP); then MTEMP=; else MTEMP='\/\/'; fi;
         sed -i "s/[^ ]*#define MPCTEMP/$MTEMP#define MPCTEMP/g" Marlin/Configuration.h
-        if ($SD); then STEMP=; else STEMP='\/\/'; fi;
-        sed -i "s/[^ ]*#define HAS_SD_EXTENDER/$STEMP#define HAS_SD_EXTENDER/g" Marlin/Configuration.h
         pio run
         mkdir temp
         mv .pio/build/${AQUILA_VER}F103RC_voxelab_maple/*.bin temp/build.bin
@@ -68,7 +64,6 @@ jobs:
         AQUILA_VER: ${{ matrix.chip }}
         TP: ${{ matrix.temp }}
         IS: ${{ matrix.inshape }}
-        SD: ${{ matrix.sdex }}
     - name: Get release
       id: get_release
       uses: bruceadams/get-release@v1.3.2
@@ -91,7 +86,6 @@ jobs:
         chip: [GD32,N32]
         temp: [true,false]
         inshape: [true,false]
-        sdex: [true,false]
     steps:
     - uses: actions/checkout@v3
     - name: Cache pip
@@ -120,9 +114,8 @@ jobs:
       run: |
         if ($TP); then TPTMP=-MPC; else TPTMP=; fi;
         if ($IS); then ISTMP=-IS; else ISTMP=; fi;
-        if ($SD); then SDTMP=-SDex; else SDTMP=; fi;
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "filename=${AVTMP}_MM-ProUI${ISTMP}${TPTMP}${SDTMP}.bin" >> $GITHUB_OUTPUT
+        echo "filename=${AVTMP}_MM-ProUI${ISTMP}${TPTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/MM/Configuration.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/MM/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/Voxelab\ Aquila/MM/Version.h Marlin/Version.h
@@ -134,8 +127,6 @@ jobs:
         sed -i "s/[^ ]*#define PIDTEMP/$PTEMP#define PIDTEMP/g" Marlin/Configuration.h
         if ($TP); then MTEMP=; else MTEMP='\/\/'; fi;
         sed -i "s/[^ ]*#define MPCTEMP/$MTEMP#define MPCTEMP/g" Marlin/Configuration.h
-        if ($SD); then STEMP=; else STEMP='\/\/'; fi;
-        sed -i "s/[^ ]*#define HAS_SD_EXTENDER/$STEMP#define HAS_SD_EXTENDER/g" Marlin/Configuration.h
         pio run
         mkdir temp
         mv .pio/build/${AQUILA_VER}F103RC_voxelab_maple/*.bin temp/build.bin
@@ -143,7 +134,6 @@ jobs:
         AQUILA_VER: ${{ matrix.chip }}
         TP: ${{ matrix.temp }}
         IS: ${{ matrix.inshape }}
-        SD: ${{ matrix.sdex }}
     - name: Get release
       id: get_release
       uses: bruceadams/get-release@v1.3.2
@@ -166,7 +156,6 @@ jobs:
         chip: [GD32,N32]
         temp: [true,false]
         inshape: [true,false]
-        sdex: [true,false]
     steps:
     - uses: actions/checkout@v3
     - name: Cache pip
@@ -195,9 +184,8 @@ jobs:
       run: |
         if ($TP); then TPTMP=-MPC; else TPTMP=; fi;
         if ($IS); then ISTMP=-IS; else ISTMP=; fi;
-        if ($SD); then SDTMP=-SDex; else SDTMP=; fi;
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "filename=${AVTMP}_UBL-ProUI${ISTMP}${TPTMP}${SDTMP}.bin" >> $GITHUB_OUTPUT
+        echo "filename=${AVTMP}_UBL-ProUI${ISTMP}${TPTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/UBL/ConfigurationPro.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/UBL/Configuration_advPro.h Marlin/Configuration_adv.h
         cp configurations/Voxelab\ Aquila/UBL/Version.h Marlin/Version.h
@@ -209,8 +197,6 @@ jobs:
         sed -i "s/[^ ]*#define PIDTEMP/$PTEMP#define PIDTEMP/g" Marlin/Configuration.h
         if ($TP); then MTEMP=; else MTEMP='\/\/'; fi;
         sed -i "s/[^ ]*#define MPCTEMP/$MTEMP#define MPCTEMP/g" Marlin/Configuration.h
-        if ($SD); then STEMP=; else STEMP='\/\/'; fi;
-        sed -i "s/[^ ]*#define HAS_SD_EXTENDER/$STEMP#define HAS_SD_EXTENDER/g" Marlin/Configuration.h
         if ($IS) && ($TP); then ETEMP='\/\/'; else ETEMP=; fi;
         sed -i "s/[^ ]*#define EXTENDED_CAPABILITIES_REPORT/$ETEMP#define EXTENDED_CAPABILITIES_REPORT/g" Marlin/Configuration_adv.h
         pio run
@@ -220,7 +206,6 @@ jobs:
         AQUILA_VER: ${{ matrix.chip }}
         TP: ${{ matrix.temp }}
         IS: ${{ matrix.inshape }}
-        SD: ${{ matrix.sdex }}
     - name: Get release
       id: get_release
       uses: bruceadams/get-release@v1.3.2
@@ -244,7 +229,6 @@ jobs:
         grid: [3,5,7]
         temp: [true,false]
         inshape: [true,false]
-        sdex: [true,false]
     steps:
     - uses: actions/checkout@v3
     - name: Cache pip
@@ -273,9 +257,8 @@ jobs:
       run: |
         if ($TP); then TPTMP=-MPC; else TPTMP=; fi;
         if ($IS); then ISTMP=-IS; else ISTMP=; fi;
-        if ($SD); then SDTMP=-SDex; else SDTMP=; fi;
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "filename=${AVTMP}_UBL-${GRID}x${GRID}-NoPro${ISTMP}${TPTMP}${SDTMP}.bin" >> $GITHUB_OUTPUT
+        echo "filename=${AVTMP}_UBL-${GRID}x${GRID}-NoPro${ISTMP}${TPTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/UBL/Configuration.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/UBL/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/Voxelab\ Aquila/UBL/Version.h Marlin/Version.h
@@ -288,8 +271,6 @@ jobs:
         sed -i "s/[^ ]*#define PIDTEMP/$PTEMP#define PIDTEMP/g" Marlin/Configuration.h
         if ($TP); then MTEMP=; else MTEMP='\/\/'; fi;
         sed -i "s/[^ ]*#define MPCTEMP/$MTEMP#define MPCTEMP/g" Marlin/Configuration.h
-        if ($SD); then STEMP=; else STEMP='\/\/'; fi;
-        sed -i "s/[^ ]*#define HAS_SD_EXTENDER/$STEMP#define HAS_SD_EXTENDER/g" Marlin/Configuration.h
         pio run
         mkdir temp
         mv .pio/build/${AQUILA_VER}F103RC_voxelab_maple/*.bin temp/build.bin
@@ -298,7 +279,6 @@ jobs:
         GRID: ${{ matrix.grid }}
         TP: ${{ matrix.temp }}
         IS: ${{ matrix.inshape }}
-        SD: ${{ matrix.sdex }}
     - name: Get release
       id: get_release
       uses: bruceadams/get-release@v1.3.2
@@ -320,7 +300,6 @@ jobs:
       matrix:
         chip: [GD32,N32]
         temp: [true,false]
-        sdex: [true,false]
     steps:
     - uses: actions/checkout@v3
     - name: Cache pip
@@ -348,9 +327,8 @@ jobs:
       id: build_configs
       run: |
         if ($TP); then TPTMP=-MPC; else TPTMP=; fi;
-        if ($SD); then SDTMP=-SDex; else SDTMP=; fi;
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "filename=${AVTMP}_BLT-ProUI${TPTMP}${SDTMP}.bin" >> $GITHUB_OUTPUT
+        echo "filename=${AVTMP}_BLT-ProUI${TPTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/BLT/ConfigurationPro.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/BLT/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/Voxelab\ Aquila/BLT/Version.h Marlin/Version.h
@@ -360,15 +338,12 @@ jobs:
         sed -i "s/[^ ]*#define PIDTEMP/$PTEMP#define PIDTEMP/g" Marlin/Configuration.h
         sed -i "s/[^ ]*#define MPCTEMP/$MTEMP#define MPCTEMP/g" Marlin/Configuration.h
         sed -i "s/[^ ]*#define NOZZLE_CLEAN_FEATURE/$PTEMP#define NOZZLE_CLEAN_FEATURE/g" Marlin/Configuration.h
-        if ($SD); then STEMP=; else STEMP='\/\/'; fi;
-        sed -i "s/[^ ]*#define HAS_SD_EXTENDER/$STEMP#define HAS_SD_EXTENDER/g" Marlin/Configuration.h
         pio run
         mkdir temp
         mv .pio/build/${AQUILA_VER}F103RC_voxelab_maple/*.bin temp/build.bin
       env:
         AQUILA_VER: ${{ matrix.chip }}
         TP: ${{ matrix.temp }}
-        SD: ${{ matrix.sdex }}
     - name: Get release
       id: get_release
       uses: bruceadams/get-release@v1.3.2
@@ -392,7 +367,6 @@ jobs:
         grid: [3,4,5]
         temp: [true,false]
         inshape: [true,false]
-        sdex: [true,false]
     steps:
     - uses: actions/checkout@v3
     - name: Cache pip
@@ -421,9 +395,8 @@ jobs:
       run: |
         if ($TP); then TPTMP=-MPC; else TPTMP=; fi;
         if ($IS); then ISTMP=-IS; else ISTMP=; fi;
-        if ($SD); then SDTMP=-SDex; else SDTMP=; fi;
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "filename=${AVTMP}_BLT-${GRID}x${GRID}-NoPro${ISTMP}${TPTMP}${SDTMP}.bin" >> $GITHUB_OUTPUT
+        echo "filename=${AVTMP}_BLT-${GRID}x${GRID}-NoPro${ISTMP}${TPTMP}.bin" >> $GITHUB_OUTPUT
         cp configurations/Voxelab\ Aquila/BLT/Configuration.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/BLT/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/Voxelab\ Aquila/BLT/Version.h Marlin/Version.h
@@ -436,8 +409,6 @@ jobs:
         sed -i "s/[^ ]*#define PIDTEMP/$PTEMP#define PIDTEMP/g" Marlin/Configuration.h
         if ($TP); then MTEMP=; else MTEMP='\/\/'; fi;
         sed -i "s/[^ ]*#define MPCTEMP/$MTEMP#define MPCTEMP/g" Marlin/Configuration.h
-        if ($SD); then STEMP=; else STEMP='\/\/'; fi;
-        sed -i "s/[^ ]*#define HAS_SD_EXTENDER/$STEMP#define HAS_SD_EXTENDER/g" Marlin/Configuration.h
         pio run
         mkdir temp
         mv .pio/build/${AQUILA_VER}F103RC_voxelab_maple/*.bin temp/build.bin
@@ -446,7 +417,6 @@ jobs:
         GRID: ${{ matrix.grid }}
         TP: ${{ matrix.temp }}
         IS: ${{ matrix.inshape }}
-        SD: ${{ matrix.sdex }}
     - name: Get release
       id: get_release
       uses: bruceadams/get-release@v1.3.2
