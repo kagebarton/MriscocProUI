@@ -99,7 +99,9 @@ typedef struct {
   bool Runout_active_state = FIL_RUNOUT_STATE;
   bool FilamentMotionSensor = DEF_FIL_MOTION_SENSOR;
   celsius_t hotend_maxtemp = HEATER_0_MAXTEMP;
-  uint8_t TBopt[TBMaxOpt] = DEF_TBOPT;
+  #if HAS_TOOLBAR
+    uint8_t TBopt[TBMaxOpt] = DEF_TBOPT;
+  #endif
 } PRO_data_t;
 extern PRO_data_t PRO_data;
 

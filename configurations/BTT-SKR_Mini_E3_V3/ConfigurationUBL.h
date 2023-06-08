@@ -3374,7 +3374,7 @@
 
 #if ENABLED(DWIN_LCD_PROUI)
 // Professional firmware features:
-  #define PROUI_EX 1            // Extended UI features (272 bytes of flash)
+  #define PROUI_EX 1            // Extended UI features (15152 bytes of flash)
   #ifdef PROUI_EX
     #define HAS_GCODE_PREVIEW 1
     #define HAS_TOOLBAR 1

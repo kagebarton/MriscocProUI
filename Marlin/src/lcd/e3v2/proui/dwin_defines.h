@@ -145,5 +145,4 @@
 #else
   #include <stddef.h>
   #include "../../../core/types.h"
-  #include "proui.h"
 #endif  // PROUI_EX
