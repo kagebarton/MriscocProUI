@@ -1540,7 +1540,7 @@ void DWIN_LevelingStart() {
 void DWIN_LevelingDone() {
   DEBUG_ECHOLNPGM("DWIN_LevelingDone");
   #if HAS_MESH
-    #if PROUI_EX && HAS_BED_PROBE
+    #if PROUI_EX && HAS_BED_PROBE && ENABLED(AUTO_BED_LEVELING_UBL)
       ProEx.LevelingDone();
     #else
       Goto_MeshViewer(true);
@@ -2286,7 +2286,7 @@ void Goto_Info_Menu() {
 void DisableMotors() { queue.inject(F("M84")); }
 
 void AutoLev() {   // Always reacquire the Z "home" position
-  queue.inject(F(TERN(AUTO_BED_LEVELING_UBL, "G28ZL\nG29P3", "G28XYO\nG28Z\nG29")));
+  queue.inject(F(TERN(AUTO_BED_LEVELING_UBL, "G29P3", "G29")));
 }
 
 void AutoHome() { queue.inject_P(G28_STR); }

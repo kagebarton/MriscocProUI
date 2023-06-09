@@ -1,4 +1,4 @@
-/** Aquila BLT Mriscoc ProUI
+/** Aquila BLT Mriscoc NoPro
  * Marlin 3D Printer Firmware
  * Copyright (c) 2022 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
@@ -3399,7 +3399,7 @@
     #define PLR_TUNE_ITEM       // Power-loss Recovery option in Tune Menu (3400 bytes of flash)
   #endif
   #if ENABLED(BLTOUCH)
-    //#define HS_MENU_ITEM      // BLTOUCH_HS_MODE menu option (56 bytes of flash)
+    #define HS_MENU_ITEM        // BLTOUCH_HS_MODE menu option (56 bytes of flash)
   #endif
   #if ENABLED(HAS_PLOT)
     #define PLOT_TUNE_ITEM      // Temperature Plot Graph item in Tune Menu (688 bytes of flash)

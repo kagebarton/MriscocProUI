@@ -5,7 +5,7 @@ on:
   release:
     types: [created]
     tags:
-      - '2.1.3c-test2'
+      - '2.1.3c-test3'
 
 jobs:
   Build-Default-A:            # Default-NP for Aquila

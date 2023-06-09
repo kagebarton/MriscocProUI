@@ -3783,7 +3783,7 @@
 /**
  * Include capabilities in M115 output
  */
-//#define EXTENDED_CAPABILITIES_REPORT // (1000 bytes of flash)
+#define EXTENDED_CAPABILITIES_REPORT // (1000 bytes of flash)
 #if ENABLED(EXTENDED_CAPABILITIES_REPORT)
   #define M115_GEOMETRY_REPORT  // (448 bytes of flash) MRiscoC Enabled
 #endif
@@ -4036,7 +4036,7 @@
  *
  * Implement M486 to allow Marlin to skip objects
  */
-//#define CANCEL_OBJECTS  // MRiscoC Enabled M486 to skip objects (416 bytes of flash)
+#define CANCEL_OBJECTS  // MRiscoC Enabled M486 to skip objects (416 bytes of flash)
 #if ENABLED(CANCEL_OBJECTS)
   #define CANCEL_OBJECTS_REPORTING // Emit the current object as a status message
 #endif
