@@ -3417,7 +3417,8 @@
   #define ENC_MENU_ITEM         // Menu item: faster/slower encoder rate (272 bytes of flash)
   #define SHOW_SPEED_IND        // Menu item: blink speed in mm/s along with speed percentage (296 bytes of flash)
   //#define NO_BLINK_IND        // Disables dashboard icon blink indicator highlighted background
-  //#define ZHOME_BEFORE_LEVELING
+  #define ZHOME_BEFORE_LEVELING
+
 
 #endif
 
