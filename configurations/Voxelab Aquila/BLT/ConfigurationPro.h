@@ -778,7 +778,6 @@
 
   // 120V 250W silicone heater into 4mm borosilicate (MendelMax 1.5+)
   // from FOPDT model - kp=.39 Tp=405 Tdead=66, Tc set to 79.2, aggressive factor of .15 (vs .1, 1, 10)
-  // Aquila
   #define DEFAULT_bedKp 128.06
   #define DEFAULT_bedKi 24.95
   #define DEFAULT_bedKd 438.07
@@ -3382,25 +3381,25 @@
     #define HAS_GCODE_PREVIEW 1
     #define HAS_TOOLBAR 1
   #endif
-  #define HAS_PLOT 1            // Graph Temp as grid plot - PID/MPC Tuning
+  #define HAS_PLOT 1            // Graph Temp as grid plot - PID/MPC Tuning (1624 bytes of flash)
   #define HAS_ESDIAG 1          // View End-stop switch continuity (560 bytes of flash)
-  #define HAS_CGCODE 1          // Extra Gcode options
-  #define HAS_LOCKSCREEN 1      // Simple lockscreen as to not accidentally change something (  bytes of flash)
+  #define HAS_CGCODE 1          // Extra Gcode options (3320 bytes of flash)
+  #define HAS_LOCKSCREEN 1      // Simple lockscreen as to not accidentally change something (568 bytes of flash)
   #define HAS_SD_EXTENDER 1     // Enable to support SD card extender cables (48 bytes of flash)
-  #define USE_GRID_MESHVIEWER 1 // Enable two mesh graph types : one (  bytes of flash)
-  #define HAS_CUSTOM_COLORS 1   // Able to change display colors
+  #define USE_GRID_MESHVIEWER 1 // Enable two mesh graph types : one (1728 bytes of flash)
+  #define HAS_CUSTOM_COLORS 1   // Able to change display colors (2040 bytes of flash)
   #define ALTCOLOR_MENU_ITEM 0  // Color palette options => Disabled or 0 = Voxelab Default | 1 = Alternate Aquila | 2 = Ender3V2 Default
   #if ENABLED(AUTO_BED_LEVELING_UBL)
-    #define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option (  bytes of flash)
+    #define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option (152 bytes of flash)
   #endif
   #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-    #define RUNOUT_TUNE_ITEM    // Filament Runout option in Tune Menu (  bytes of flash)
+    #define RUNOUT_TUNE_ITEM    // Filament Runout option in Tune Menu (2528 bytes of flash)
   #endif
   #if ENABLED(POWER_LOSS_RECOVERY)
-    #define PLR_TUNE_ITEM       // Power-loss Recovery option in Tune Menu (  bytes of flash)
+    #define PLR_TUNE_ITEM       // Power-loss Recovery option in Tune Menu (3400 bytes of flash)
   #endif
   #if ENABLED(BLTOUCH)
-    #define HS_MENU_ITEM        // BLTOUCH_HS_MODE menu option (272 bytes of flash)
+    #define HS_MENU_ITEM        // BLTOUCH_HS_MODE menu option (56 bytes of flash)
   #endif
   #if ENABLED(HAS_PLOT)
     #define PLOT_TUNE_ITEM      // Temperature Plot Graph item in Tune Menu (688 bytes of flash)

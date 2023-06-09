@@ -1709,7 +1709,7 @@
    * an option on the LCD screen to continue the print from the last-known
    * point in the file.
    */
-  //#define POWER_LOSS_RECOVERY
+  //#define POWER_LOSS_RECOVERY         // (3400 bytes of flash)
   #if ENABLED(POWER_LOSS_RECOVERY)
     #define PLR_ENABLED_DEFAULT   false // Power Loss Recovery enabled by default. (Set with 'M413 Sn' & M500)
     //#define BACKUP_POWER_SUPPLY       // Backup power / UPS to move the steppers on power loss
@@ -2612,9 +2612,9 @@
  * - During Hold all Emergency Parser commands are available, as usual.
  * - Enable NANODLP_Z_SYNC and NANODLP_ALL_AXIS for move command end-state reports.
  */
-//#define REALTIME_REPORTING_COMMANDS
+//#define REALTIME_REPORTING_COMMANDS     // (544 bytes of flash)
 #if ENABLED(REALTIME_REPORTING_COMMANDS)
-  #define FULL_REPORT_TO_HOST_FEATURE   // Auto-report the machine status like Grbl CNC
+  #define FULL_REPORT_TO_HOST_FEATURE   // Auto-report the machine status like Grbl CNC (208 bytes of flash)
 #endif
 
 // Bad Serial-connections can miss a received command by sending an 'ok'
@@ -2624,7 +2624,7 @@
 //#define NO_TIMEOUTS 1000 // Milliseconds
 
 // Some clients will have this feature soon. This could make the NO_TIMEOUTS unnecessary.
-//#define ADVANCED_OK
+//#define ADVANCED_OK // (128 bytes of flash)
 
 // Printrun may have trouble receiving long strings all at once.
 // This option inserts short delays between lines of serial output.
@@ -2667,7 +2667,7 @@
  *
  * Note that M207 / M208 / M209 settings are saved to EEPROM.
  */
-#define FWRETRACT  // MRiscoC Enabled support for firmware based retract
+#define FWRETRACT  // MRiscoC Enabled support for firmware based retract (1592 bytes of flash)
 #if ENABLED(FWRETRACT)
   //#define FWRETRACT_AUTORETRACT             // Override slicer retractions  // MRiscoC use slicer retract
   #if ENABLED(FWRETRACT_AUTORETRACT)
@@ -3775,17 +3775,17 @@
 /**
  * Auto-report position with M154 S<seconds>
  */
-//#define AUTO_REPORT_POSITION
+//#define AUTO_REPORT_POSITION // (224 bytes of flash)
 #if ENABLED(AUTO_REPORT_POSITION)
-  //#define AUTO_REPORT_REAL_POSITION // Auto-report the real position
+  #define AUTO_REPORT_REAL_POSITION // Auto-report the real position
 #endif
 
 /**
  * Include capabilities in M115 output
  */
-#define EXTENDED_CAPABILITIES_REPORT
+//#define EXTENDED_CAPABILITIES_REPORT // (1000 bytes of flash)
 #if ENABLED(EXTENDED_CAPABILITIES_REPORT)
-  #define M115_GEOMETRY_REPORT  // MRiscoC Enabled
+  #define M115_GEOMETRY_REPORT  // (448 bytes of flash) MRiscoC Enabled
 #endif
 
 // @section security
@@ -3830,8 +3830,8 @@
 // @section reporting
 
 // Extra options for the M114 "Current Position" report
-//#define M114_DETAIL         // Use 'M114` for details to check planner calculations
-//#define M114_REALTIME       // Real current position based on forward kinematics
+//#define M114_DETAIL         // Use 'M114` for details to check planner calculations (600 bytes of flash)
+//#define M114_REALTIME       // Real current position based on forward kinematics (80 bytes of flash)
 //#define M114_LEGACY         // M114 used to synchronize on every call. Enable if needed.
 
 //#define REPORT_FAN_CHANGE   // Report the new fan speed when changed by M106 (and others)
@@ -4036,7 +4036,7 @@
  *
  * Implement M486 to allow Marlin to skip objects
  */
-#define CANCEL_OBJECTS  // MRiscoC Enabled M486 to skip objects
+//#define CANCEL_OBJECTS  // MRiscoC Enabled M486 to skip objects (416 bytes of flash)
 #if ENABLED(CANCEL_OBJECTS)
   #define CANCEL_OBJECTS_REPORTING // Emit the current object as a status message
 #endif
