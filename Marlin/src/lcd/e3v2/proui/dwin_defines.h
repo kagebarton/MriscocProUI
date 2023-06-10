@@ -145,4 +145,17 @@
 #else
   #include <stddef.h>
   #include "../../../core/types.h"
+  #ifndef MESH_MIN_X
+  #define MESH_MIN_X MESH_INSET
+  #endif
+  #ifndef MESH_MIN_Y
+    #define MESH_MIN_Y MESH_INSET
+  #endif
+  #ifndef MESH_MAX_X
+    #define MESH_MAX_X  X_BED_SIZE - (MESH_INSET)
+  #endif
+  #ifndef MESH_MAX_Y
+    #define MESH_MAX_Y  Y_BED_SIZE - (MESH_INSET)
+  #endif
+  //#include "proui.h"
 #endif  // PROUI_EX

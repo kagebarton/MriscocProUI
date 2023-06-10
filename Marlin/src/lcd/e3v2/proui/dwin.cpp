@@ -1539,6 +1539,7 @@ void DWIN_LevelingStart() {
 
 void DWIN_LevelingDone() {
   DEBUG_ECHOLNPGM("DWIN_LevelingDone");
+  SaveMesh();
   #if HAS_MESH
     #if PROUI_EX && HAS_BED_PROBE && ENABLED(AUTO_BED_LEVELING_UBL)
       ProEx.LevelingDone();
