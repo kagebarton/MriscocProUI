@@ -255,13 +255,9 @@ G29_TYPE GcodeSuite::G29() {
     G29_RETURN(false, false);
   }
 
-  #if ALL(DWIN_LCD_PROUI, ZHOME_BEFORE_LEVELING)
-    process_subcommands_now(F("G28Z"));
-  #else
-    // Send 'N' to force homing before G29 (internal only)
-    if (parser.seen_test('N'))
-      process_subcommands_now(TERN(CAN_SET_LEVELING_AFTER_G28, F("G28L0"), FPSTR(G28_STR)));
-  #endif
+  // Send 'N' to force homing before G29 (internal only)
+  if (parser.seen_test('N'))
+    process_subcommands_now(TERN(CAN_SET_LEVELING_AFTER_G28, F("G28L0"), FPSTR(G28_STR)));
 
   // Don't allow auto-leveling without homing first
   if (homing_needed_error()) G29_RETURN(false, false);

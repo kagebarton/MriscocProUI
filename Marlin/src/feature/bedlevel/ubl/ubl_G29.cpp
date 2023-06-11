@@ -312,9 +312,6 @@ void unified_bed_leveling::G29() {
     planner.synchronize();
     // Send 'N' to force homing before G29 (internal only)
     if (axes_should_home() || parser.seen_test('N')) gcode.home_all_axes();
-    #if ALL(DWIN_LCD_PROUI, ZHOME_BEFORE_LEVELING)
-      else gcode.process_subcommands_now(F("G28ZL"));
-    #endif
     probe.use_probing_tool();
 
     // Position bed horizontally and Z probe vertically.
@@ -773,9 +770,7 @@ void unified_bed_leveling::shift_mesh_height() {
       const grid_count_t point_num = (GRID_MAX_POINTS - count) + 1;
       SERIAL_ECHOLNPGM("Probing mesh point ", point_num, "/", GRID_MAX_POINTS, ".");
       TERN_(HAS_STATUS_MESSAGE, ui.status_printf(0, F(S_FMT " %i/%i"), GET_TEXT(MSG_PROBING_POINT), point_num, int(GRID_MAX_POINTS)));
-      #if LCD_BACKLIGHT_TIMEOUT_MINS
-        ui.refresh_backlight_timeout();
-      #endif
+      TERN_(LCD_BACKLIGHT_TIMEOUT_MINS, ui.refresh_backlight_timeout());
       #if HAS_MARLINUI_MENU
         if (ui.button_pressed()) {
           ui.quick_feedback(false); // Preserve button state for click-and-hold
@@ -823,7 +818,7 @@ void unified_bed_leveling::shift_mesh_height() {
     #if PROUI_EX
       if (count) ui.status_printf(0, F("Found %i unreachable points"), count);
       safe_delay(500);
-      for (uint8_t x = 0; x < GRID_LIMIT; ++x) bedlevel.smart_fill_mesh();
+      for (uint8_t x = 0; x < GRID_MAX_POINTS_X; ++x) bedlevel.smart_fill_mesh();
     #else
       do_blocking_move_to_xy(
         constrain(nearby.x - probe.offset_xy.x, MESH_MIN_X, MESH_MAX_X),

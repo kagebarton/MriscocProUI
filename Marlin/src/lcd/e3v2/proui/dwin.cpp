@@ -506,8 +506,9 @@ void DWIN_DrawStatusMessage() {
         uint8_t chars = LCD_WIDTH - rlen;                  // Amount of space left in characters
         if (--chars) {                                     // Draw a second dot if there's space
           DWINUI::Draw_Char(HMI_data.StatusTxt_Color, '.');
-          if (--chars)
-            DWINUI::Draw_String(HMI_data.StatusTxt_Color, ui.status_message, chars); // Print a second copy of the message
+          if (--chars) {                                   // Print a second copy of the message
+            DWINUI::Draw_String(HMI_data.StatusTxt_Color, ui.status_message, chars);
+          }
         }
       }
       MarlinUI::advance_status_scroll();
@@ -589,8 +590,7 @@ void Draw_PrintProcess() {
 }
 
 void Goto_PrintProcess() {
-  if (checkkey == PrintProcess)
-    ICON_ResumeOrPause();
+  if (checkkey == PrintProcess) { ICON_ResumeOrPause(); }
   else {
     checkkey = PrintProcess;
     Draw_PrintProcess();
@@ -679,11 +679,11 @@ void _update_axis_value(const AxisEnum axis, const uint16_t x, const uint16_t y,
 
   if (force || changed || draw_qmark || draw_empty) {
     if (blink && draw_qmark)
-      DWINUI::Draw_String(HMI_data.Coordinate_Color, HMI_data.Background_Color, x, y, F("  - ? -"));
+      { DWINUI::Draw_String(HMI_data.Coordinate_Color, HMI_data.Background_Color, x, y, F("  - ? -")); }
     else if (blink && draw_empty)
-      DWINUI::Draw_String(HMI_data.Coordinate_Color, HMI_data.Background_Color, x, y, F("       "));
+      { DWINUI::Draw_String(HMI_data.Coordinate_Color, HMI_data.Background_Color, x, y, F("       ")); }
     else
-      DWINUI::Draw_Signed_Float(HMI_data.Coordinate_Color, HMI_data.Background_Color, 3, 2, x, y, p);
+      { DWINUI::Draw_Signed_Float(HMI_data.Coordinate_Color, HMI_data.Background_Color, 3, 2, x, y, p); }
   }
 }
 
@@ -1196,8 +1196,9 @@ void HMI_Printing() {
           ui.resume_print();
           break;
         }
-        else
+        else {
           return Goto_Popup(Popup_window_PauseOrStop, onClick_PauseOrStop);
+        }
       case PRINT_STOP:
         return Goto_Popup(Popup_window_PauseOrStop, onClick_PauseOrStop);
       default: break;
@@ -1329,23 +1330,17 @@ void EachMomentUpdate() {
     if ((HMI_flag.printing_flag != Printing()) && !HMI_flag.home_flag) {
       HMI_flag.printing_flag = Printing();
       DEBUG_ECHOLNPGM("printing_flag: ", HMI_flag.printing_flag);
-      if (HMI_flag.printing_flag)
-        DWIN_Print_Started();
-      else if (HMI_flag.abort_flag)
-        DWIN_Print_Aborted();
-      else
-        DWIN_Print_Finished();
+      if (HMI_flag.printing_flag) { DWIN_Print_Started(); }
+      else if (HMI_flag.abort_flag) { DWIN_Print_Aborted(); }
+      else { DWIN_Print_Finished(); }
     }
 
     if ((print_job_timer.isPaused() != HMI_flag.pause_flag) && !HMI_flag.home_flag) {
       HMI_flag.pause_flag = print_job_timer.isPaused();
       DEBUG_ECHOLNPGM("pause_flag: ", HMI_flag.pause_flag);
-      if (HMI_flag.pause_flag)
-        DWIN_Print_Pause();
-      else if (HMI_flag.abort_flag)
-        DWIN_Print_Aborted();
-      else
-        DWIN_Print_Resume();
+      if (HMI_flag.pause_flag) { DWIN_Print_Pause(); }
+      else if (HMI_flag.abort_flag) { DWIN_Print_Aborted(); }
+      else { DWIN_Print_Resume(); }
     }
 
     if (checkkey == PrintProcess) { // print process
@@ -1421,6 +1416,44 @@ void EachMomentUpdate() {
 
 #endif // POWER_LOSS_RECOVERY
 
+#if ENABLED(AUTO_BED_LEVELING_UBL)
+
+  void ApplyUBLSlot() { bedlevel.storage_slot = MenuData.Value; }
+  void SetUBLSlot() { SetIntOnClick(0, settings.calc_num_meshes() - 1, bedlevel.storage_slot, ApplyUBLSlot); }
+  void onDrawUBLSlot(MenuItemClass* menuitem, int8_t line) {
+    NOLESS(bedlevel.storage_slot, 0);
+    onDrawIntMenu(menuitem, line, bedlevel.storage_slot);
+  }
+
+  void ApplyUBLTiltGrid() { bedLevelTools.tilt_grid = MenuData.Value; }
+  void SetUBLTiltGrid() { SetIntOnClick(1, 3, bedLevelTools.tilt_grid, ApplyUBLTiltGrid); }
+
+  void UBLMeshTilt() {
+    NOLESS(bedlevel.storage_slot, 0);
+    char buf[9];
+    sprintf_P(buf, PSTR("G29J%i"), bedLevelTools.tilt_grid > 1 ? bedLevelTools.tilt_grid : 0);
+    gcode.process_subcommands_now(buf);
+    LCD_MESSAGE(MSG_UBL_MESH_TILTED);
+  }
+
+  void UBLSmartFillMesh() {
+    for (uint8_t x = 0; x < TERN(PROUI_EX, GRID_MAX_POINTS_X, GRID_LIMIT); ++x) bedlevel.smart_fill_mesh();
+    LCD_MESSAGE(MSG_UBL_MESH_FILLED);
+  }
+
+  void UBLMeshSave() {
+    NOLESS(bedlevel.storage_slot, 0);
+    settings.store_mesh(bedlevel.storage_slot);
+    ui.status_printf(0, GET_TEXT_F(MSG_MESH_SAVED), bedlevel.storage_slot);
+    DONE_BUZZ(true);
+  }
+
+  void UBLMeshLoad() {
+    NOLESS(bedlevel.storage_slot, 0);
+    settings.load_mesh(bedlevel.storage_slot);
+  }
+
+#endif  // AUTO_BED_LEVELING_UBL
 
 void DWIN_HandleScreen() {
   switch (checkkey) {
@@ -1496,10 +1529,8 @@ void DWIN_HomingDone() {
   #if ENABLED(CV_LASER_MODULE)
     if (laser_device.is_laser_device()) laser_device.laser_home();
   #endif
-  if (last_checkkey == PrintDone) 
-    Goto_PrintDone();
-  else
-    HMI_ReturnScreen();
+  if (last_checkkey == PrintDone) { Goto_PrintDone(); }
+  else { HMI_ReturnScreen(); }
 }
 
 void DWIN_LevelingStart() {
@@ -1539,7 +1570,6 @@ void DWIN_LevelingStart() {
 
 void DWIN_LevelingDone() {
   DEBUG_ECHOLNPGM("DWIN_LevelingDone");
-  SaveMesh();
   #if HAS_MESH
     #if PROUI_EX && HAS_BED_PROBE && ENABLED(AUTO_BED_LEVELING_UBL)
       ProEx.LevelingDone();
@@ -2047,15 +2077,14 @@ void DWIN_InitScreen() {
   hash_changed = true;
   DWIN_DrawStatusLine();
   DWIN_Draw_Dashboard();
-  #if ENABLED(AUTO_BED_LEVELING_UBL)
-    if (bedlevel.storage_slot < 0) bedlevel.storage_slot = 0;
-    settings.load_mesh(bedlevel.storage_slot);
-  #endif
   #if PROUI_EX && HAS_MESH
     SetMeshArea();
   #endif
+  Goto_Main_Menu();  
+  #if ENABLED(AUTO_BED_LEVELING_UBL)
+    UBLMeshLoad();
+  #endif
   LCD_MESSAGE(WELCOME_MSG);
-  Goto_Main_Menu();
 }
 
 void MarlinUI::update() {
@@ -2136,8 +2165,9 @@ void DWIN_RedrawScreen() {
   }
 
   void onClick_FilamentPurge() {
-    if (HMI_flag.select_flag)
+    if (HMI_flag.select_flag) {
       pause_menu_response = PAUSE_RESPONSE_EXTRUDE_MORE;  // "Purge More" button
+    }
     else {
       HMI_SaveProcessID(NothingToDo);
       pause_menu_response = PAUSE_RESPONSE_RESUME_PRINT;  // "Continue" button
@@ -2201,8 +2231,7 @@ void DWIN_RedrawScreen() {
       Goto_Main_Menu();
       return card.openAndPrintFile(card.filename);
     }
-    else
-      HMI_ReturnScreen();
+    else { HMI_ReturnScreen(); }
   }
 #endif
 
@@ -2287,7 +2316,7 @@ void Goto_Info_Menu() {
 void DisableMotors() { queue.inject(F("M84")); }
 
 void AutoLev() {   // Always reacquire the Z "home" position
-  queue.inject(F(TERN(AUTO_BED_LEVELING_UBL, "G29P3", "G29")));
+  queue.inject(F(TERN(AUTO_BED_LEVELING_UBL, "G28XYO\nG28Z\nG29P1", "G28XYO\nG28Z\nG29")));
 }
 
 void AutoHome() { queue.inject_P(G28_STR); }
@@ -2416,12 +2445,12 @@ void ApplyMove() {
 #endif
 
 #if ENABLED(BAUD_RATE_GCODE)
+  void SetBaud115K() { queue.inject(F("M575B115")); }
+  void SetBaud250K() { queue.inject(F("M575B250")); }
   void SetBaudRate() {
     Toggle_Chkb_Line(HMI_data.Baud250K);
     if (HMI_data.Baud250K) SetBaud250K(); else SetBaud115K();
   }
-  void SetBaud115K() { queue.inject(F("M575B115")); }
-  void SetBaud250K() { queue.inject(F("M575B250")); }
 #endif
 
 #if HAS_LCD_BRIGHTNESS
@@ -2754,7 +2783,7 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
       }
       else {
         uint8_t p = 0;
-        float max = 0;
+        float max = 0.0f;
         FSTR_P plabel;
         bool s = true;
         for (uint8_t x = 0; x < 2; ++x) for (uint8_t y = 0; y < 2; ++y) {
@@ -3014,7 +3043,7 @@ void onDrawGetColorItem(MenuItemClass* menuitem, int8_t line) {
       }
     Trammingwizard();
     }
-    else HMI_ReturnScreen();
+    else { HMI_ReturnScreen(); }
   }
   void TramwizStart() { Goto_Popup(PopUp_StartTramwiz, onClick_StartTramwiz); }
 #endif
@@ -3022,8 +3051,8 @@ void onDrawGetColorItem(MenuItemClass* menuitem, int8_t line) {
 // Auto Bed Leveling / Create Mesh Popup
 void PopUp_StartAutoLev() { DWIN_Popup_ConfirmCancel(ICON_AutoLeveling, F("Start Auto Bed Leveling?")); }
 void onClick_StartAutoLev() {
-  if (HMI_flag.select_flag) AutoLev();
-  else HMI_ReturnScreen();
+  if (HMI_flag.select_flag) {AutoLev();}
+  else { HMI_ReturnScreen(); }
 }
 void AutoLevStart() { Goto_Popup(PopUp_StartAutoLev, onClick_StartAutoLev); }
 
@@ -4113,45 +4142,6 @@ void Draw_GetColor_Menu() {
 
 #endif // HAS_MESH
 
-#if ENABLED(AUTO_BED_LEVELING_UBL)
-
-  void ApplyUBLSlot() { bedlevel.storage_slot = MenuData.Value; }
-  void SetUBLSlot() { SetIntOnClick(0, settings.calc_num_meshes() - 1, bedlevel.storage_slot, ApplyUBLSlot); }
-  void onDrawUBLSlot(MenuItemClass* menuitem, int8_t line) {
-    NOLESS(bedlevel.storage_slot, 0);
-    onDrawIntMenu(menuitem, line, bedlevel.storage_slot);
-  }
-
-  void ApplyUBLTiltGrid() { bedLevelTools.tilt_grid = MenuData.Value; }
-  void SetUBLTiltGrid() { SetIntOnClick(1, 3, bedLevelTools.tilt_grid, ApplyUBLTiltGrid); }
-
-  void UBLMeshTilt() {
-    NOLESS(bedlevel.storage_slot, 0);
-    char buf[9];
-    sprintf_P(buf, PSTR("G29J%i"), bedLevelTools.tilt_grid > 1 ? bedLevelTools.tilt_grid : 0);
-    gcode.process_subcommands_now(buf);
-    LCD_MESSAGE(MSG_UBL_MESH_TILTED);
-  }
-
-  void UBLSmartFillMesh() {
-    for (uint8_t x = 0; x < TERN(PROUI_EX, GRID_LIMIT, GRID_MAX_POINTS_X); ++x) bedlevel.smart_fill_mesh();
-    LCD_MESSAGE(MSG_UBL_MESH_FILLED);
-  }
-
-  void UBLMeshSave() {
-    NOLESS(bedlevel.storage_slot, 0);
-    settings.store_mesh(bedlevel.storage_slot);
-    ui.status_printf(0, GET_TEXT_F(MSG_MESH_SAVED), bedlevel.storage_slot);
-    DONE_BUZZ(true);
-  }
-
-  void UBLMeshLoad() {
-    NOLESS(bedlevel.storage_slot, 0);
-    settings.load_mesh(bedlevel.storage_slot);
-  }
-
-#endif  // AUTO_BED_LEVELING_UBL
-
 #if HAS_MESH
   void Draw_MeshSet_Menu() {
     checkkey = Menu;
@@ -4324,7 +4314,7 @@ void Draw_GetColor_Menu() {
 
   void PopUp_HostShutDown() { DWIN_Popup_ConfirmCancel(ICON_Info_1, GET_TEXT_F(MSG_HOST_SHUTDOWN)); }
   void onClick_HostShutDown() {
-    if (HMI_flag.select_flag) hostui.shutdown();
+    if (HMI_flag.select_flag) { hostui.shutdown(); }
     HMI_ReturnScreen();
   }
   void HostShutDown() { Goto_Popup(PopUp_HostShutDown, onClick_HostShutDown); }
@@ -4388,6 +4378,7 @@ void Draw_AdvancedSettings_Menu() {
         MENU_ITEM(ICON_ProbeSet, MSG_ZPROBE_SETTINGS, onDrawSubMenu, Draw_ProbeSet_Menu);
       #endif
       MENU_ITEM(ICON_PrintSize, MSG_MESH_LEVELING, onDrawSubMenu, Draw_MeshSet_Menu);
+      MENU_ITEM(ICON_Level, MSG_AUTO_MESH, onDrawMenuItem, AutoLevStart);
       #if ENABLED(USE_GRID_MESHVIEWER)
         MENU_ITEM(ICON_Level, MSG_MESH_VIEW, onDrawSubMenu, DWIN_MeshViewer);
         EDIT_ITEM_F(ICON_PrintSize, "Change Mesh Viewer", onDrawChkbMenu, SetViewMesh, &bedLevelTools.view_mesh);
@@ -4395,7 +4386,6 @@ void Draw_AdvancedSettings_Menu() {
       #if ENABLED(MESH_EDIT_MENU)
         MENU_ITEM(ICON_UBLActive, MSG_EDIT_MESH, onDrawSubMenu, Draw_EditMesh_Menu);
       #endif
-      MENU_ITEM(ICON_Level, MSG_AUTO_MESH, onDrawMenuItem, AutoLevStart);
       MENU_ITEM_F(ICON_SetZOffset, "Zero Current Mesh", onDrawMenuItem, ZeroMesh2);
     #endif
   }

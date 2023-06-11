@@ -157,12 +157,12 @@ void MeshViewerClass::Draw(bool withsave /*=false*/, bool redraw /*=true*/) {
 
 void Draw_MeshViewer() { MeshViewer.Draw(true, meshredraw); }
 
-void onClick_MeshViewer() { if (HMI_flag.select_flag) SaveMesh(); HMI_ReturnScreen(); }
+void onClick_MeshViewer() { if (HMI_flag.select_flag) { SaveMesh(); HMI_ReturnScreen(); } }
 
 void Goto_MeshViewer(bool redraw) {
   meshredraw = redraw;
-  if (leveling_is_valid()) Goto_Popup(Draw_MeshViewer, onClick_MeshViewer);
-  else HMI_ReturnScreen();
+  if (leveling_is_valid()) { Goto_Popup(Draw_MeshViewer, onClick_MeshViewer); }
+  else { HMI_ReturnScreen(); }
 }
 
 #endif // DWIN_LCD_PROUI && HAS_MESH
