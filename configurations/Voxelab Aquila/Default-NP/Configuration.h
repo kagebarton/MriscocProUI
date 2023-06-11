@@ -3392,11 +3392,11 @@
   #if ENABLED(AUTO_BED_LEVELING_UBL)
     #define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option (152 bytes of flash)
   #endif
-  #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-    #define RUNOUT_TUNE_ITEM    // Filament Runout option in Tune Menu (2528 bytes of flash)
+  #if ENABLED(FILAMENT_RUNOUT_SENSOR) // (2528 bytes of flash)
+    #define RUNOUT_TUNE_ITEM    // Filament Runout option in Tune Menu 
   #endif
-  #if ENABLED(POWER_LOSS_RECOVERY)
-    #define PLR_TUNE_ITEM       // Power-loss Recovery option in Tune Menu (3400 bytes of flash)
+  #if ENABLED(POWER_LOSS_RECOVERY) // (3400 bytes of flash)
+    #define PLR_TUNE_ITEM       // Power-loss Recovery option in Tune Menu 
   #endif
   #if ENABLED(BLTOUCH)
     //#define HS_MENU_ITEM      // BLTOUCH_HS_MODE menu option (56 bytes of flash)

@@ -1437,7 +1437,7 @@ void EachMomentUpdate() {
   }
 
   void UBLSmartFillMesh() {
-    for (uint8_t x = 0; x < TERN(PROUI_EX, GRID_MAX_POINTS_X, GRID_LIMIT); ++x) bedlevel.smart_fill_mesh();
+    for (uint8_t x = 0; x < GRID_MAX_POINTS_X; ++x) bedlevel.smart_fill_mesh();
     LCD_MESSAGE(MSG_UBL_MESH_FILLED);
   }
 
@@ -1849,7 +1849,7 @@ void DWIN_Print_Aborted() {
   void DWIN_FilamentRunout(const uint8_t extruder) { LCD_MESSAGE(MSG_RUNOUT_SENSOR); }
 #endif
 
-#if (ALTCOLOR_MENU_ITEM == 1)
+#if (ALT_COLOR_MENU == 1)
   void DWIN_SetColorDefaults() {
     HMI_data.Background_Color = Def_Background_Color;
     HMI_data.Cursor_Color     = Def_Cursor_Color;
@@ -1871,7 +1871,7 @@ void DWIN_Print_Aborted() {
     HMI_data.Coordinate_Color = Def_Coordinate_Color;
     HMI_data.Bottom_Color     = Def_Bottom_Color;
   }
-#elif (ALTCOLOR_MENU_ITEM == 2) 
+#elif (ALT_COLOR_MENU == 2) 
   void DWIN_SetColorDefaults() {
     #undef Def_Background_Color
     #undef Def_Text_Color
