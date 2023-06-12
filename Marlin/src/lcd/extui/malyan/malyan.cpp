@@ -204,7 +204,7 @@ template<typename T>
 void j_move_axis(const char *command, const T axis) {
   const float dist = atof(command + 1) / 10.0;
   ExtUI::setAxisPosition_mm(ExtUI::getAxisPosition_mm(axis) + dist, axis);
-};
+}
 
 void process_lcd_j_command(const char *command) {
   switch (command[0]) {

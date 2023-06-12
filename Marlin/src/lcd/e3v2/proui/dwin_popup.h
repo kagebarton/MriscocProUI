@@ -26,7 +26,7 @@
 extern void (*Draw_Popup)();
 
 void Draw_Select_Highlight(const bool sel, const uint16_t ypos);
-inline void Draw_Select_Highlight(const bool sel) { Draw_Select_Highlight(sel, 280); };
+inline void Draw_Select_Highlight(const bool sel) { Draw_Select_Highlight(sel, 280); }
 // void Draw_Select_Box(const uint16_t xpos, const uint16_t ypos);
 void DWIN_Popup_Continue(const uint8_t icon, FSTR_P const fmsg1, FSTR_P const fmsg2);
 void DWIN_Popup_ConfirmCancel(const uint8_t icon, FSTR_P const fmsg2);

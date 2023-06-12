@@ -46,7 +46,7 @@ void onDrawTBItem(MenuItemClass* menuitem, int8_t line) {
     DWINUI::Draw_String(xp + B_XPOS, B_YPOS + 1, menuitem->caption);
   }
   DWINUI::Draw_Icon(menuitem->icon, xp, B_YPOS);
-};
+}
 
 void Draw_ToolBar(bool force /*=false*/) {
   if (force || (CurrentMenu != &ToolBar)) {

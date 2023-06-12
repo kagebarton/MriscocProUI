@@ -279,11 +279,11 @@ namespace DWINUI {
 
   // Get font character width
   uint8_t fontWidth(fontid_t cfont);
-  inline uint8_t fontWidth() { return fontWidth(fontid); };
+  inline uint8_t fontWidth() { return fontWidth(fontid); }
 
   // Get font character height
   uint8_t fontHeight(fontid_t cfont);
-  inline uint8_t fontHeight() { return fontHeight(fontid); };
+  inline uint8_t fontHeight() { return fontHeight(fontid); }
 
   // Get screen x coordinates from text column
   uint16_t ColToX(uint8_t col);
@@ -465,7 +465,7 @@ namespace DWINUI {
   //  y: ordinate of the display
   //  c: ASCII code of char
   void Draw_Char(uint16_t color, uint16_t x, uint16_t y, const char c);
-  inline void Draw_Char(uint16_t x, uint16_t y, const char c) { Draw_Char(textcolor, x, y, c); };
+  inline void Draw_Char(uint16_t x, uint16_t y, const char c) { Draw_Char(textcolor, x, y, c); }
   // Draw a char at cursor position and increment cursor
   void Draw_Char(uint16_t color, const char c);
   inline void Draw_Char(const char c) { Draw_Char(textcolor, c); }

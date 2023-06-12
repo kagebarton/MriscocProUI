@@ -68,9 +68,9 @@ public:
   int8_t pos = 0;
   OnDrawItem onDraw = nullptr;
   void (*onClick)() = nullptr;
-  CustomMenuItemClass() {};
+  CustomMenuItemClass() {}
   CustomMenuItemClass(OnDrawItem ondraw=nullptr, OnClickItem onclick=nullptr);
-  virtual ~CustomMenuItemClass(){};
+  virtual ~CustomMenuItemClass(){}
   virtual void draw(int8_t line);
   void redraw(bool erase=false);
 };
@@ -102,9 +102,9 @@ public:
   int8_t selected = 0;
   TitleClass MenuTitle;
   MenuClass();
-  virtual ~MenuClass(){};
-  inline int8_t line() { return selected - topline; };
-  inline int8_t line(uint8_t pos) {return pos - topline; };
+  virtual ~MenuClass(){}
+  inline int8_t line() { return selected - topline; }
+  inline int8_t line(uint8_t pos) {return pos - topline; }
   int8_t count();
   virtual void draw();
   virtual void onScroll(bool dir);
@@ -135,10 +135,10 @@ void onDrawPInt8Menu(MenuItemClass* menuitem, int8_t line);
 void onDrawPInt32Menu(MenuItemClass* menuitem, int8_t line);
 void onDrawFloatMenu(MenuItemClass* menuitem, int8_t line, uint8_t dp, const float value);
 void onDrawPFloatMenu(MenuItemClass* menuitem, int8_t line, uint8_t dp);
-inline void onDrawPFloatMenu(MenuItemClass* menuitem, int8_t line) { onDrawPFloatMenu(menuitem, line, UNITFDIGITS); };
-inline void onDrawPFloat2Menu(MenuItemClass* menuitem, int8_t line) { onDrawPFloatMenu(menuitem, line, 2); };
-inline void onDrawPFloat3Menu(MenuItemClass* menuitem, int8_t line) { onDrawPFloatMenu(menuitem, line, 3); };
-inline void onDrawPFloat4Menu(MenuItemClass* menuitem, int8_t line) { onDrawPFloatMenu(menuitem, line, 4); };
+inline void onDrawPFloatMenu(MenuItemClass* menuitem, int8_t line) { onDrawPFloatMenu(menuitem, line, UNITFDIGITS); }
+inline void onDrawPFloat2Menu(MenuItemClass* menuitem, int8_t line) { onDrawPFloatMenu(menuitem, line, 2); }
+inline void onDrawPFloat3Menu(MenuItemClass* menuitem, int8_t line) { onDrawPFloatMenu(menuitem, line, 3); }
+inline void onDrawPFloat4Menu(MenuItemClass* menuitem, int8_t line) { onDrawPFloatMenu(menuitem, line, 4); }
 void onDrawChkbMenu(MenuItemClass* menuitem, int8_t line, bool checked);
 void onDrawChkbMenu(MenuItemClass* menuitem, int8_t line);
 
