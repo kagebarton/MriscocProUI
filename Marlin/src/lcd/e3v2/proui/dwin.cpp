@@ -474,7 +474,7 @@ void DWIN_CheckStatusMessage() {
   uint32_t hash = GetHash(&ui.status_message[0]);
   hash_changed = hash != old_hash;
   old_hash = hash;
-};
+}
 
 void DWIN_DrawStatusMessage() {
   #if ENABLED(STATUS_MESSAGE_SCROLLING)
@@ -867,7 +867,9 @@ bool DWIN_lcd_sd_status = false;
   }
 #endif
 
-void SetMediaAutoMount() { Toggle_Chkb_Line(HMI_data.MediaAutoMount); }
+#if ENABLED(HAS_SD_EXTENDER)
+  void SetMediaAutoMount() { Toggle_Chkb_Line(HMI_data.MediaAutoMount); }
+#endif
 
 inline uint16_t nr_sd_menu_items() {
   return _MIN(card.get_num_items() + !card.flag.workDirIsRoot, MENU_MAX_ITEMS);
@@ -1141,10 +1143,12 @@ void HMI_MainMenu() {
   else if (encoder_diffState == ENCODER_DIFF_ENTER) {
     switch (select_page.now) {
       case PAGE_PRINT:
-        if (HMI_data.MediaAutoMount) {
+      #ifdef HAS_SD_EXTENDER
+        if (HMI_data.); {
           card.mount();
           safe_delay(800);
-        };
+        }
+      #endif
         Draw_Print_File_Menu();
         break;
       case PAGE_PREPARE: Draw_Prepare_Menu(); break;
@@ -2326,7 +2330,7 @@ void AutoHome() { queue.inject_P(G28_STR); }
   void HomeY() { queue.inject(F("G28Y")); }
   void HomeZ() { queue.inject(F("G28Z")); }
   #if ALL(INDIVIDUAL_AXIS_HOMING_SUBMENU, MESH_BED_LEVELING)
-    void ApplyZAfterHoming() { HMI_data.z_after_homing = MenuData.Value; };
+    void ApplyZAfterHoming() { HMI_data.z_after_homing = MenuData.Value; }
     void SetZAfterHoming() { SetIntOnClick(0, 20, HMI_data.z_after_homing, ApplyZAfterHoming); }
   #endif
 #endif

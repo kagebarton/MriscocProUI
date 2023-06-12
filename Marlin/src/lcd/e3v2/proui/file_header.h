@@ -40,9 +40,9 @@ typedef struct {
   float maxy;
   float minz;
   float maxz;
-  float width() { return maxx - minx; };
-  float length() { return maxy - miny; };
-  float height() { return maxz - minz + layer; };
+  float width() { return maxx - minx; }
+  float length() { return maxy - miny; }
+  float height() { return maxz - minz + layer; }
   void setname(const char * const fn);
   void clear();
 } fileprop_t;

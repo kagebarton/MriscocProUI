@@ -258,7 +258,7 @@ void DWIN_CopySettingsTo(char * const buff);
 void DWIN_CopySettingsFrom(const char * const buff);
 void DWIN_SetDataDefaults();
 void DWIN_RebootScreen();
-inline void DWIN_Gcode(const int16_t codenum) { TERN_(HAS_CGCODE, custom_gcode(codenum)); };
+inline void DWIN_Gcode(const int16_t codenum) { TERN_(HAS_CGCODE, custom_gcode(codenum)); }
 
 #if ENABLED(ADVANCED_PAUSE_FEATURE)
   void DWIN_Popup_Pause(FSTR_P const fmsg, uint8_t button=0);
