@@ -740,7 +740,7 @@ void _draw_feedrate() {
       }
       else {
         _value = CEIL(feedrate_mm_s * feedrate_percentage / 100);
-        DWIN_Draw_Box(1, HMI_data.Background_Color, 116 + 5 * STAT_CHR_W + 2, 384, 20, 20);
+        DWIN_Draw_Box(1, HMI_data.Background_Color, 116 + 4 * STAT_CHR_W + 2, 384, 30, 20);
       }
       DWINUI::Draw_Int(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 3, 116 + 2 * STAT_CHR_W, 384, _value);
       _should_redraw = true;
@@ -1531,7 +1531,7 @@ void DWIN_HomingDone() {
     babystep.add_mm(Z_AXIS, HMI_data.ManualZOffset);
   #endif
   #if ENABLED(CV_LASER_MODULE)
-    if (laser_device.is_laser_device()) laser_device.laser_home();
+    if (laser_device.is_laser_device()) { laser_device.laser_home(); }
   #endif
   if (last_checkkey == PrintDone) { Goto_PrintDone(); }
   else { HMI_ReturnScreen(); }
@@ -2746,7 +2746,8 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
       if (HMI_data.FullManualTramming) {
         LCD_MESSAGE_F("Disable manual tramming");
         return;
-      } else LCD_MESSAGE_F("Bed tramming wizzard");
+      } 
+      LCD_MESSAGE_F("Bed Tramming Wizard Start");
       bed_mesh_t zval = {0};
       probe.stow();
       zval[0][0] = Tram(0, false);  // First tram point can do Homing
