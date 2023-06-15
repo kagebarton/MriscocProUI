@@ -106,9 +106,9 @@
 #endif
 
 #ifndef FAN0_PIN
-  #if ANY(FET_ORDER_EFB, FET_ORDER_EFF)        // Hotend, Fan, Bed or Hotend, Fan, Fan
+  #if ANY(FET_ORDER_EFB, FET_ORDER_EFF)           // Hotend, Fan, Bed or Hotend, Fan, Fan
     #define FAN0_PIN                        PB5
-  #elif ANY(FET_ORDER_EEF, FET_ORDER_SF)       // Hotend, Hotend, Fan or Spindle, Fan
+  #elif ANY(FET_ORDER_EEF, FET_ORDER_SF)          // Hotend, Hotend, Fan or Spindle, Fan
     #define FAN0_PIN                        PD12
   #elif ENABLED(FET_ORDER_EEB)                    // Hotend, Hotend, Bed
     #define FAN0_PIN                        -1    // IO pin. Buffer needed

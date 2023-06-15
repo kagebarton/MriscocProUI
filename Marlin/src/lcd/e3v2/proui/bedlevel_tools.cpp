@@ -83,29 +83,17 @@ char cmd[MAX_CMD_SIZE+16], str_1[16], str_2[16], str_3[16];
 
     matrix_3x3 rotation = matrix_3x3::create_look_at(vector_3(lsf_results.A, lsf_results.B, 1));
     GRID_LOOP(i, j) {
-      float mx = bedlevel.get_mesh_x(i),
-            my = bedlevel.get_mesh_y(j),
-            mz = bedlevel.z_values[i][j];
+      float mx = bedlevel.get_mesh_x(i), my = bedlevel.get_mesh_y(j), mz = bedlevel.z_values[i][j];
 
       if (DEBUGGING(LEVELING)) {
-        DEBUG_ECHOPAIR_F("before rotation = [", mx, 7);
-        DEBUG_CHAR(',');
-        DEBUG_ECHO_F(my, 7);
-        DEBUG_CHAR(',');
-        DEBUG_ECHO_F(mz, 7);
-        DEBUG_ECHOPGM("]   ---> ");
+        DEBUG_ECHOLN(F("before rotation = ["), p_float_t(mx, 7), AS_CHAR(','), p_float_t(my, 7), AS_CHAR(','), p_float_t(mz, 7), F("]   ---> "));
         DEBUG_DELAY(20);
       }
 
       rotation.apply_rotation_xyz(mx, my, mz);
 
       if (DEBUGGING(LEVELING)) {
-        DEBUG_ECHOPAIR_F("after rotation = [", mx, 7);
-        DEBUG_CHAR(',');
-        DEBUG_ECHO_F(my, 7);
-        DEBUG_CHAR(',');
-        DEBUG_ECHO_F(mz, 7);
-        DEBUG_ECHOLNPGM("]");
+        DEBUG_ECHOLN(F("after rotation = ["), p_float_t(mx, 7), AS_CHAR(','), p_float_t(my, 7), AS_CHAR(','), p_float_t(mz, 7), F("]   ---> "));
         DEBUG_DELAY(20);
       }
 
@@ -147,21 +135,19 @@ void BedLevelToolsClass::manual_move(const uint8_t mesh_x, const uint8_t mesh_y,
   }
 }
 
+// Move / Probe methods. As examples, not yet used.
 void BedLevelToolsClass::MoveToXYZ() {
   bedLevelTools.goto_mesh_value = true;
   bedLevelTools.manual_move(bedLevelTools.mesh_x, bedLevelTools.mesh_y, false);
 }
-
 void BedLevelToolsClass::MoveToXY() {
   bedLevelTools.goto_mesh_value = false;
   bedLevelTools.manual_move(bedLevelTools.mesh_x, bedLevelTools.mesh_y, false);
 }
-
 void BedLevelToolsClass::MoveToZ() {
   bedLevelTools.goto_mesh_value = true;
   bedLevelTools.manual_move(bedLevelTools.mesh_x, bedLevelTools.mesh_y, true);
 }
-
 void BedLevelToolsClass::ProbeXY() {
   const uint16_t Clear = Z_CLEARANCE_DEPLOY_PROBE;
   sprintf_P(cmd, PSTR("G28O\nG0Z%i\nG30X%sY%s"),
@@ -237,7 +223,7 @@ bool BedLevelToolsClass::meshvalidate() {
       const auto end_x_px   = start_x_px + cell_width_px - 1 - gridline_width;
       const auto start_y_px = padding_y_top + ((GRID_MAX_POINTS_Y) - y - 1) * cell_height_px;
       const auto end_y_px   = start_y_px + cell_height_px - 1 - gridline_width;
-      DWIN_Draw_Rectangle(1,                                                                                      // RGB565 colors: http://www.barth-dev.de/online/rgb565-color-picker/
+      DWIN_Draw_Rectangle(1,                                                                                 // RGB565 colors: http://www.barth-dev.de/online/rgb565-color-picker/
         isnan(bedlevel.z_values[x][y]) ? Color_Grey : (                                                           // gray if undefined
           (bedlevel.z_values[x][y] < 0 ?
             (uint16_t)round(0x1F * -bedlevel.z_values[x][y] / (!viewer_asymmetric_range ? range : v_min)) << 11 : // red if mesh point value is negative
@@ -245,6 +231,7 @@ bool BedLevelToolsClass::meshvalidate() {
               _MIN(0x1F, (((uint8_t)abs(bedlevel.z_values[x][y]) / 10) * 4))),                                    // + blue stepping for every mm
         start_x_px, start_y_px, end_x_px, end_y_px
       );
+
       safe_delay(10);
       LCD_SERIAL.flushTX();
 
@@ -273,18 +260,19 @@ bool BedLevelToolsClass::meshvalidate() {
   }
 
   void BedLevelToolsClass::Set_Mesh_Viewer_Status() { // TODO: draw gradient with values as a legend instead
-    float v_max = abs(get_max_value()), v_min = abs(get_min_value()), range = _MAX(v_min, v_max), rangeb = _MIN(v_min, v_max);
-    if (v_min > 3e+10F) v_min = 0.0000001;
-    if (v_max > 3e+10F) v_max = 0.0000001;
-    if (range > 3e+10F) range = 0.0000001;
+    float v_max = abs(get_max_value()), v_min = abs(get_min_value()), rangeA = _MAX(v_min, v_max), rangeB = _MIN(v_min, v_max);
+    if (v_min > 3e+10F) { v_min = 0.0000001; }
+    if (v_max > 3e+10F) { v_max = 0.0000001; }
+    if (rangeA > 3e+10F) { rangeA = 0.0000001; }
+    if (rangeB > 3e+10F) { rangeB = 0.0000001; }
     char msg[47];
     if (viewer_asymmetric_range) {
       dtostrf(-v_min, 1, 2, str_1);
       dtostrf( v_max, 1, 2, str_2);
     }
     else {
-      dtostrf(-range, 1, 2, str_1);
-      dtostrf( rangeb, 1, 2, str_2);
+      dtostrf(-rangeA, 1, 2, str_1);
+      dtostrf( rangeB, 1, 2, str_2);
     }
     sprintf_P(msg, PSTR("Red %s..0..%s+ Green"), str_1, str_2);
     ui.set_status(msg);

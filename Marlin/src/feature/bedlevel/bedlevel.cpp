@@ -138,7 +138,7 @@ void reset_bed_level() {
   void print_2d_array(const uint8_t sx, const uint8_t sy, const uint8_t precision, const float *values) {
     #ifndef SCAD_MESH_OUTPUT
       for (uint8_t x = 0; x < sx; ++x) {
-        serial_spaces(precision + (x < 10 ? 3 : 2));
+        SERIAL_ECHO_SP(precision + (x < 10 ? 3 : 2));
         SERIAL_ECHO(x);
       }
       SERIAL_EOL();
@@ -162,7 +162,7 @@ void reset_bed_level() {
         #endif
         if (!isnan(offset)) {
           if (offset >= 0) SERIAL_CHAR('+');
-          SERIAL_ECHO_F(offset, int(precision));
+          SERIAL_ECHO(p_float_t(offset, precision));
         }
         else {
           #ifdef SCAD_MESH_OUTPUT

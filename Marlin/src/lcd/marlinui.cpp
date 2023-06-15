@@ -1193,7 +1193,7 @@ void MarlinUI::init() {
           run_current_screen();
 
           // Apply all DWIN drawing after processing
-          TERN_(IS_DWIN_MARLINUI, DWIN_UpdateLCD());
+          TERN_(IS_DWIN_MARLINUI, dwinUpdateLCD());
 
         #endif
 
@@ -1627,7 +1627,7 @@ void MarlinUI::init() {
     #endif
 
     TERN_(EXTENSIBLE_UI, ExtUI::onStatusChanged(status_message));
-    TERN_(DWIN_CREALITY_LCD, DWIN_StatusChanged(status_message));
+    TERN_(DWIN_CREALITY_LCD, dwinStatusChanged(status_message));
     TERN_(DWIN_LCD_PROUI, DWIN_CheckStatusMessage());
   }
 

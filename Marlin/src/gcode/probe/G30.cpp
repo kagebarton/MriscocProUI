@@ -72,7 +72,6 @@ void GcodeSuite::G30() {
 
     TERN_(DWIN_LCD_PROUI, process_subcommands_now(F("G28O")));
 
-
     const ProbePtRaise raise_after = parser.boolval('E', true) ? PROBE_PT_STOW : PROBE_PT_NONE;
 
     TERN_(HAS_PTC, ptc.set_enabled(!parser.seen('C') || parser.value_bool()));
@@ -101,7 +100,7 @@ void GcodeSuite::G30() {
     report_current_position();
   }
   else {
-    SERIAL_ECHOLNF(GET_EN_TEXT_F(MSG_ZPROBE_OUT));
+    SERIAL_ECHOLN(GET_EN_TEXT_F(MSG_ZPROBE_OUT));
     LCD_MESSAGE(MSG_ZPROBE_OUT);
   }
 
