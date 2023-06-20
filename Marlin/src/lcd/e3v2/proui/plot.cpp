@@ -51,7 +51,7 @@ void PlotClass::Draw(const frame_rect_t &frame, const celsius_t max, const_float
 }
 
 void PlotClass::Update(const_float_t value) {
-  if (!scale) return;
+  if (!scale) { return; }
   const uint16_t y = round((y2) - value * scale);
   if (grphpoints < grphframe.w) {
     DWIN_Draw_Point(Color_Yellow, 1, 1, grphpoints + grphframe.x, y);

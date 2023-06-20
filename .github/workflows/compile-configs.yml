@@ -4,8 +4,6 @@ on:
   workflow_dispatch:
   release:
     types: [created]
-    tags:
-      - '2.1.3c-test4'
 
 jobs:
   Build-Default-A:            # Default-NP for Aquila

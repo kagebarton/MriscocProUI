@@ -234,7 +234,7 @@ void DWINUI::Draw_Button(uint8_t id, uint16_t x, uint16_t y) {
 }
 
 void DWINUI::Draw_Button(uint8_t id, uint16_t x, uint16_t y, bool sel) {
-  if (sel) Draw_Select_Box(x, y);
+  if (sel) { Draw_Select_Box(x, y); }
   switch (id) {
     case BTN_Cancel  : Draw_Button(GET_TEXT_F(MSG_BUTTON_CANCEL), x, y); break;
     case BTN_Confirm : Draw_Button(GET_TEXT_F(MSG_BUTTON_CONFIRM), x, y); break;
@@ -300,7 +300,7 @@ uint16_t DWINUI::ColorInt(int16_t val, int16_t minv, int16_t maxv, uint16_t colo
   return RGB(R, G, B);
 }
 
-// Color Interpolator through Red->Yellow->Green->Blue (Pro UI)
+// Color Interpolator through Red->Orange->Yellow->Green->Blue (Pro UI)
 //  val : Interpolator minv..maxv
 //  minv : Minimum value
 //  maxv : Maximum value

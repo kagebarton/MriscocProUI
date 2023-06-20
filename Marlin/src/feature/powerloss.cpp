@@ -508,7 +508,7 @@ void PrintJobRecovery::resume() {
   #if ENABLED(DWIN_LCD_PROUI) && DISABLED(NOZZLE_CLEAN_FEATURE)
     // Parking head to allow clean before of heating the hotend
     gcode.process_subcommands_now(F("G27"));
-    DWIN_Popup_Continue(ICON_BLTouch, GET_TEXT_F(MSG_NOZZLE_PARKED), GET_TEXT_F(MSG_NOZZLE_CLEAN));
+    DWIN_Popup_Continue(ICON_Leveling_0, GET_TEXT_F(MSG_NOZZLE_PARKED), GET_TEXT_F(MSG_NOZZLE_CLEAN));
     wait_for_user_response();
     info.current_position = save_pos;
   #endif

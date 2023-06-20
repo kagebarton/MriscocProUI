@@ -584,6 +584,7 @@ namespace DWINUI {
   //  maxv : Maximum value
   //  color1 : Start color
   //  color2 : End color
+  //  sel : true - draw box to select, or false - no box
   uint16_t ColorInt(int16_t val, int16_t minv, int16_t maxv, uint16_t color1, uint16_t color2);
 
   // ------------------------- Buttons ------------------------------//

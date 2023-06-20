@@ -66,8 +66,8 @@ enum processID : uint8_t {
   WaitResponse,
   Homing,
   PidProcess,
-  MPCProcess,
   PlotProcess,
+  MPCProcess,
   NothingToDo
 };
 
@@ -178,6 +178,7 @@ uint32_t GetHash(char * str);
     void SaveMesh();
   #endif
 #endif
+void AutoLev();
 void RebootPrinter();
 void DisableMotors();
 void AutoLevStart();
@@ -197,7 +198,7 @@ void DoCoolDown();
 void ApplyExtMinT();
 void ParkHead();
 TERN(HAS_BED_PROBE, float, void) Tram(uint8_t point, bool stow_probe = true);
-#if HAS_ONESTEP_LEVELING
+#if HAS_BED_PROBE && ENABLED(TRAMWIZ_MENU_ITEM)
   void Trammingwizard();
 #endif
 #if ALL(LED_CONTROL_MENU, HAS_COLOR_LEDS)
@@ -221,8 +222,8 @@ void Goto_Main_Menu();
 void Goto_Info_Menu();
 void Goto_PowerLossRecovery();
 void Goto_ConfirmToPrint();
-//void DWIN_Draw_Dashboard(); // Status Area
 void Draw_Main_Area();      // Redraw main area
+void DWIN_Draw_Dashboard(); // Status Area
 void DWIN_DrawStatusLine(const char *text = ""); // Draw simple status text
 void DWIN_RedrawDash();     // Redraw Dash and Status line
 void DWIN_RedrawScreen();   // Redraw all screen elements

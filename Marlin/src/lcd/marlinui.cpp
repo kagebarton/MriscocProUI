@@ -64,19 +64,19 @@ MarlinUI ui;
 constexpr uint8_t epps = ENCODER_PULSES_PER_STEP;
 
 #ifdef BED_SCREW_INSET
-  float MarlinUI::screw_pos = BED_SCREW_INSET; 
+  float MarlinUI::screw_pos; // = BED_SCREW_INSET
 #endif
 
 #if PROUI_EX && HAS_MESH
-  float MarlinUI::mesh_inset_min_x = MESH_INSET;
-  float MarlinUI::mesh_inset_max_x = X_BED_SIZE - MESH_INSET;
-  float MarlinUI::mesh_inset_min_y = MESH_INSET;
-  float MarlinUI::mesh_inset_max_y = Y_BED_SIZE - MESH_INSET;
+  float MarlinUI::mesh_inset_min_x; // = MESH_INSET
+  float MarlinUI::mesh_inset_max_x; // = X_BED_SIZE - MESH_INSET
+  float MarlinUI::mesh_inset_min_y; // = MESH_INSET
+  float MarlinUI::mesh_inset_max_y; // = Y_BED_SIZE - MESH_INSET
 #endif
 
 #if ENABLED(ENCODER_RATE_MULTIPLIER) && ENABLED(ENC_MENU_ITEM)
-  int MarlinUI::enc_rateA;
-  int MarlinUI::enc_rateB;
+  int MarlinUI::enc_rateA; // = 135
+  int MarlinUI::enc_rateB; // = 25
 #endif
 
 #if HAS_STATUS_MESSAGE
@@ -136,7 +136,7 @@ constexpr uint8_t epps = ENCODER_PULSES_PER_STEP;
 
 #if ENABLED(SOUND_MENU_ITEM)
   bool MarlinUI::sound_on = ENABLED(SOUND_ON_DEFAULT);
-  bool MarlinUI::no_tick = ENABLED(TICK_ON_DEFAULT); //changed added
+  bool MarlinUI::no_tick = ENABLED(TICK_ON_DEFAULT);
 #endif
 
 #if ENABLED(PCA9632_BUZZER)
@@ -1674,7 +1674,7 @@ void MarlinUI::init() {
 
   void MarlinUI::abort_print() {
     #if ENABLED(CV_LASER_MODULE)
-      if (laser_device.is_laser_device()) laser_device.quick_stop();
+      if (laser_device.is_laser_device()) { laser_device.quick_stop(); }
     #endif
     #if HAS_MEDIA
       wait_for_heatup = wait_for_user = false;

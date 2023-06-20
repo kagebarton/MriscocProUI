@@ -182,7 +182,7 @@ void SetOnClick(uint8_t process, const int32_t lo, const int32_t hi, uint8_t dp,
   MenuData.Apply = Apply;
   MenuData.LiveUpdate = LiveUpdate;
   MenuData.Value = constrain(val, lo, hi);
-  EncoderRate.enabled = true;
+  encoderRate.enabled = true;
 }
 
 // Generic onclick event for integer values
@@ -275,10 +275,10 @@ int8_t HMI_Get(bool draw) {
   const int32_t lo = MenuData.MinValue;
   const int32_t hi = MenuData.MaxValue;
   const int32_t cval = MenuData.Value;
-  EncoderState encoder_diffState = Encoder_ReceiveAnalyze();
+  EncoderState encoder_diffState = encoderReceiveAnalyze();
   if (encoder_diffState != ENCODER_DIFF_NO) {
-    if (Apply_Encoder(encoder_diffState, MenuData.Value)) {
-      EncoderRate.enabled = false;
+    if (applyEncoder(encoder_diffState, MenuData.Value)) {
+      encoderRate.enabled = false;
       if (draw) DrawItemEdit(false);
       checkkey = Menu;
       return 2;
