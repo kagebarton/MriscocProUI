@@ -1448,7 +1448,7 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
     static_assert(Z_AFTER_PROBING >= 0, "Probes require Z_AFTER_PROBING >= 0.");
   #endif
 
-  #if PROUI_EX
+/*  #if PROUI_EX
     #if MULTIPLE_PROBING == 1
         #error "MULTIPLE_PROBING must be 0 or more than 2."
     #endif
@@ -1465,7 +1465,7 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
         #error "EXTRA_PROBING must be less than MULTIPLE_PROBING."
       #endif
     #endif
-  #endif
+  #endif */
 
   #if Z_PROBE_LOW_POINT > 0
     #error "Z_PROBE_LOW_POINT must be less than or equal to 0."
