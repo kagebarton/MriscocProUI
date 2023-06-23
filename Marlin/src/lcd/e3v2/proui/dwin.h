@@ -179,6 +179,7 @@ uint32_t GetHash(char * str);
     void SaveMesh();
   #endif
 #endif
+void dwinDrawPlot(tempcontrol_t result);
 void AutoLev();
 void RebootPrinter();
 void DisableMotors();

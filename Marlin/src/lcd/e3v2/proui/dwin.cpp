@@ -1748,7 +1748,8 @@ void DWIN_LevelingDone() {
     Draw_Popup_Bkgd();
     switch (result) {
     #if HAS_TEMP_SENSOR
-      case PID_EXTR_START:
+      TERN_(MPCTEMP, case MPCTEMP_START:)
+      TERN_(PIDTEMP, case PID_EXTR_START:)
         DWINUI::Draw_CenteredString(3, HMI_data.PopupTxt_Color, 75, F("Nozzle Temperature"));
         _maxtemp = thermalManager.hotend_maxtemp[0];
         _target = thermalManager.temp_hotend[0].target;
@@ -1772,11 +1773,22 @@ void DWIN_LevelingDone() {
     DWIN_UpdateLCD();
   }
 
+  void setDrawPlot(heater_id_t id){
+    if(id == H_E0){
+      TERN_(PIDTEMP, dwinDrawPlot(PID_EXTR_START);)
+      TERN_(MPCTEMP, dwinDrawPlot(MPCTEMP_START);)
+    }
+    if(id == H_BED){
+      dwinDrawPlot(PID_BED_START);
+    }
+}
+
+
   void drawHPlot(){
-    dwinDrawPlot(PID_EXTR_START);
+    setDrawPlot(H_E0);
   }
   void drawBPlot(){
-    dwinDrawPlot(PID_BED_START);
+    setDrawPlot(H_BED);
   }
 #endif
 
