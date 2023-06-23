@@ -120,8 +120,8 @@ typedef struct {
   int16_t BedLevT;
   #endif
   bool Baud250K;
-  bool CalcAvg = true;
-  bool SpdInd = false;
+  bool CalcAvg;
+  bool SpdInd;
   bool FullManualTramming;
   bool MediaSort;
   bool MediaAutoMount;
@@ -144,6 +144,8 @@ typedef struct {
   AxisEnum axis           = X_AXIS;   // Axis Select
 } HMI_value_t;
 
+extern HMI_value_t HMI_value;
+
 typedef struct {
   bool printing_flag:1; // sd or host printing
   bool abort_flag:1;    // sd or host was aborted
@@ -156,7 +158,6 @@ typedef struct {
   #endif
 } HMI_flag_t;
 
-extern HMI_value_t HMI_value;
 extern HMI_flag_t HMI_flag;
 extern uint8_t checkkey;
 
@@ -183,6 +184,19 @@ void RebootPrinter();
 void DisableMotors();
 void AutoLevStart();
 void AutoHome();
+void AutoLevStart();
+void SetMeshPoints();
+void SetMeshInset();
+void MaxMeshArea();
+void CenterMeshArea();
+void SetMeshFadeHeight();
+void SetEncRateA();
+void SetEncRateB();
+void SetHSMode();
+void PopUp_StartAutoLev();
+void onClick_StartAutoLev();
+void SetRetractSpeed();
+void ChangeFilament();
 #if HAS_PREHEAT
   #define _DOPREHEAT(N) void DoPreheat##N();
   REPEAT_1(PREHEAT_COUNT, _DOPREHEAT)
@@ -200,6 +214,9 @@ void ParkHead();
 TERN(HAS_BED_PROBE, float, void) Tram(uint8_t point, bool stow_probe = true);
 #if HAS_BED_PROBE && ENABLED(TRAMWIZ_MENU_ITEM)
   void Trammingwizard();
+  void TramwizStart();
+  void onClick_StartTramwiz();
+  void PopUp_StartTramwiz();
 #endif
 #if ALL(LED_CONTROL_MENU, HAS_COLOR_LEDS)
   void ApplyLEDColor();

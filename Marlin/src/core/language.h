@@ -160,7 +160,7 @@
 #define STR_ON                              "ON"
 #define STR_OFF                             "OFF"
 #define STR_ENDSTOP_HIT                     "TRIGGERED"
-#define STR_ENDSTOP_OPEN                    "open"
+#define STR_ENDSTOP_OPEN                    "Open"
 #define STR_DUPLICATION_MODE                "Duplication mode: "
 #define STR_SOFT_MIN                        " Min: "
 #define STR_SOFT_MAX                        " Max: "

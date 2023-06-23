@@ -68,8 +68,8 @@ void GcodeSuite::M303() {
     default:
       SERIAL_ECHOPGM(STR_PID_AUTOTUNE);
       SERIAL_ECHOLNPGM(STR_PID_BAD_HEATER_ID);
-      TERN_(EXTENSIBLE_UI, ExtUI::onPidTuning(ExtUI::result_t::PID_BAD_HEATER_ID));
-      TERN_(DWIN_LCD_PROUI, DWIN_PidTuning(PID_BAD_HEATER_ID));
+      TERN_(EXTENSIBLE_UI, ExtUI::onPidTuning(ExtUI::result_t::PID_BAD_HEATER_ID);)
+      TERN_(DWIN_LCD_PROUI, DWIN_PidTuning(PID_BAD_HEATER_ID);)
       return;
   }
 
@@ -79,9 +79,9 @@ void GcodeSuite::M303() {
   const celsius_t temp = seenS ? parser.value_celsius() : default_temp;
   const bool u = parser.boolval('U');
 
-  TERN_(DWIN_LCD_PROUI, DWIN_M303(seenC, c, seenS, hid, temp));
+  TERN_(DWIN_LCD_PROUI, DWIN_M303(seenC, c, seenS, hid, temp);)
 
-  IF_DISABLED(BUSY_WHILE_HEATING, KEEPALIVE_STATE(NOT_BUSY));
+  IF_DISABLED(BUSY_WHILE_HEATING, KEEPALIVE_STATE(NOT_BUSY);)
 
   LCD_MESSAGE(MSG_PID_AUTOTUNE);
   thermalManager.PID_autotune(temp, hid, c, u);

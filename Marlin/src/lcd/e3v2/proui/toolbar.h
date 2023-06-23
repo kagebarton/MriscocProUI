@@ -55,3 +55,5 @@ void UpdateTBSetupItem(MenuItemClass* menuitem, uint8_t val);
 void DrawTBSetupItem(bool focused);
 void Draw_ToolBar(bool force = false);
 void TBGetItem(uint8_t item);
+void onDrawTBSetupItem(MenuItemClass* menuitem, int8_t line);
+void SetTBSetupItem();

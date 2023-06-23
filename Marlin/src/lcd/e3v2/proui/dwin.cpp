@@ -1077,7 +1077,7 @@ void DWIN_Draw_Dashboard() {
 
   DWINUI::Draw_Icon(ICON_Speed, 113, 384);
   DWINUI::Draw_Int(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 3, 116 + 2 * STAT_CHR_W, 384, feedrate_percentage);
-  #if ENABLED(SHOW_SPEED_IND) 
+  #if ENABLED(SHOW_SPEED_IND)
     if (!HMI_data.SpdInd) { DWINUI::Draw_String(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 116 + 5 * STAT_CHR_W + 2, 384, F("%")); }
   #else
     DWINUI::Draw_String(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 116 + 5 * STAT_CHR_W + 2, 384, F("%"));
@@ -1254,8 +1254,8 @@ void Draw_Main_Area() {
 void HMI_WaitForUser() {
   EncoderState encoder_diffState = get_encoder_state();
   if (encoder_diffState != ENCODER_DIFF_NO && !ui.backlight) {
-    if (checkkey == WaitResponse) { HMI_ReturnScreen();
-    return ui.refresh_brightness(); }
+    if (checkkey == WaitResponse) { HMI_ReturnScreen(); }
+    return ui.refresh_brightness();
   }
   if (!wait_for_user) {
     switch (checkkey) {
@@ -1586,7 +1586,7 @@ void DWIN_LevelingStart() {
 void DWIN_LevelingDone() {
   DEBUG_ECHOLNPGM("DWIN_LevelingDone");
   #if HAS_MESH
-    #if PROUI_EX && HAS_BED_PROBE && ENABLED(AUTO_BED_LEVELING_UBL)
+    #if PROUI_EX && HAS_BED_PROBE // && ENABLED(AUTO_BED_LEVELING_UBL)
       ProEx.LevelingDone();
     #else
       Goto_MeshViewer(true);
@@ -1616,7 +1616,7 @@ void DWIN_LevelingDone() {
           DWINUI::Draw_CenteredString(2,HMI_data.PopupTxt_Color, 70, GET_TEXT_F(MSG_MPC_AUTOTUNE));
           DWINUI::Draw_String(HMI_data.PopupTxt_Color, gfrm.x, gfrm.y - DWINUI::fontHeight() - 4, F("MPC target:     Celsius"));
           DWINUI::Draw_CenteredString(2, HMI_data.PopupTxt_Color, 92, F("for NOZZLE"));
-          _maxtemp = MAX_ETEMP;
+          _maxtemp = thermalManager.hotend_maxtemp[0];
           _target = 200;
           break;
       #endif
@@ -1625,7 +1625,7 @@ void DWIN_LevelingDone() {
           DWINUI::Draw_CenteredString(2, HMI_data.PopupTxt_Color, 70, GET_TEXT_F(MSG_PID_AUTOTUNE));
           DWINUI::Draw_String(HMI_data.PopupTxt_Color, gfrm.x, gfrm.y - DWINUI::fontHeight() - 4, F("PID target:     Celsius"));
           DWINUI::Draw_CenteredString(2, HMI_data.PopupTxt_Color, 92, F("for NOZZLE"));
-          _maxtemp = MAX_ETEMP;
+          _maxtemp = thermalManager.hotend_maxtemp[0];
           _target = HMI_data.HotendPidT;
           break;
       #endif
@@ -1750,7 +1750,7 @@ void DWIN_LevelingDone() {
     #if HAS_TEMP_SENSOR
       case PID_EXTR_START:
         DWINUI::Draw_CenteredString(3, HMI_data.PopupTxt_Color, 75, F("Nozzle Temperature"));
-        _maxtemp = MAX_ETEMP;
+        _maxtemp = thermalManager.hotend_maxtemp[0];
         _target = thermalManager.temp_hotend[0].target;
         break;
     #endif
@@ -1952,7 +1952,6 @@ void DWIN_SetDataDefaults() {
     card.setSortOn(true);
   #endif
   TERN_(HAS_SD_EXTENDER, HMI_data.MediaAutoMount = false;)
-  //HMI_data.MediaAutoMount = ENABLED(HAS_SD_EXTENDER);
   #if ALL(INDIVIDUAL_AXIS_HOMING_SUBMENU, MESH_BED_LEVELING)
     HMI_data.z_after_homing = DEF_Z_AFTER_HOMING;
   #endif
@@ -2240,14 +2239,14 @@ void Goto_ConfirmToPrint() {
     if (fileprop.isConfig) return card.openAndPrintFile(card.filename);
   #endif
   #if ENABLED(CV_LASER_MODULE)
-    if(fileprop.isLaser) {
+    if (fileprop.isLaser) {
       if (laser_device.is_laser_device()) 
         return Draw_LaserPrint_Menu(); 
       else 
         return Draw_LaserSettings_Menu();
+    }
     else
       LaserOn(false); // If it is not laser file turn off laser mode
-    }
   #endif
   #if HAS_GCODE_PREVIEW
     if (HMI_data.EnablePreview) return Goto_Popup(Preview_DrawFromSD, onClick_ConfirmToPrint);
@@ -2312,7 +2311,7 @@ void Goto_Info_Menu() {
 void DisableMotors() { queue.inject(F("M84")); }
 
 void AutoLev() {   // Always reacquire the Z "home" position
-  queue.inject(F(TERN(AUTO_BED_LEVELING_UBL, "G28XYO\nG28Z\nG29P1", "G28XYO\nG28Z\nG29")));
+  queue.inject(F(TERN(AUTO_BED_LEVELING_UBL, "G28ZL\nG29P1", "G28ZL\nG29")));
 }
 
 void AutoHome() { queue.inject_P(G28_STR); }
@@ -2519,13 +2518,14 @@ void ApplyMove() {
 
   #if PROUI_EX
     void SetProbeZSpeed()  { SetPIntOnClick(60, Z_PROBE_FEEDRATE_FAST); }
-    void ApplyProbeMultiple() { PRO_data.multiple_probing = (MenuData.Value > 0) ? MenuData.Value : 0; }
-    void SetProbeMultiple()  { SetIntOnClick(0, 5, PRO_data.multiple_probing, ApplyProbeMultiple); }
+    void ApplyProbeMultiple() { PRO_data.multiple_probing = MenuData.Value; }
+    void SetProbeMultiple()  { SetIntOnClick(0, 4, PRO_data.multiple_probing, ApplyProbeMultiple); }
   #endif
 
   void ProbeTest() {
-    LCD_MESSAGE(MSG_M48_TEST);
-    queue.inject(F("G28O\nM48 P5"));
+    DEBUG_ECHOLNPGM("M48 Probe Test");
+    DWIN_Popup_Pause(GET_TEXT_F(MSG_M48_TEST));
+    queue.inject(F("G28XYO\nG28Z\nM48 P5"));
   }
   void ProbeStow() { probe.stow(); }
   void ProbeDeploy() { probe.deploy(); }
@@ -2626,6 +2626,7 @@ void SetSpeed() { SetPIntOnClick(MIN_PRINT_SPEED, MAX_PRINT_SPEED); }
 #endif // ADVANCED_PAUSE_FEATURE
 
 void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refresh_e_factor(0); }); }
+
 #if ENABLED(SHOW_SPEED_IND)
   void SetSpdInd() { Toggle_Chkb_Line(HMI_data.SpdInd); }
 #endif
@@ -2739,13 +2740,12 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
         LCD_MESSAGE_F("Disable manual tramming");
         return;
       } 
-      else {
-      LCD_MESSAGE_F("Bed Tramming Wizard Start");
+      else LCD_MESSAGE_F("Bed Tramming Wizard Start");
       bed_mesh_t zval = {0};
       probe.stow();
-      MeshViewer.DrawMeshGrid(2, 2);
       zval[0][0] = Tram(0, false);  // First tram point can do Homing
       checkkey = NothingToDo;       // After home disable user input
+      MeshViewer.DrawMeshGrid(2, 2);
       MeshViewer.DrawMeshPoint(0, 0, zval[0][0]);
       zval[1][0] = Tram(1, false);
       MeshViewer.DrawMeshPoint(1, 0, zval[1][0]);
@@ -2808,7 +2808,7 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
       //Draw_Select_Box(86, 305);
       checkkey = Menu;
       HMI_SaveProcessID(WaitResponse);
-      }
+
     }
 
     void SetManualTramming() {
@@ -3030,7 +3030,7 @@ void onDrawGetColorItem(MenuItemClass* menuitem, int8_t line) {
   }
 #endif
 
-#if ANY(AUTO_BED_LEVELING_UBL, AUTO_BED_LEVELING_BILINEAR) && ENABLED(TRAMWIZ_MENU_ITEM)
+#if HAS_BED_PROBE && ENABLED(TRAMWIZ_MENU_ITEM)
   // Trammingwizard Popup
   void PopUp_StartTramwiz() { DWIN_Popup_ConfirmCancel(ICON_Info_1, F("Start Tramming Wizard?")); }
   void onClick_StartTramwiz() {
@@ -3040,7 +3040,7 @@ void onDrawGetColorItem(MenuItemClass* menuitem, int8_t line) {
         HMI_ReturnScreen();
         return;
       }
-    Trammingwizard();
+      else { Trammingwizard(); }
     }
     else { HMI_ReturnScreen(); }
   }
@@ -4107,13 +4107,13 @@ void Draw_GetColor_Menu() {
     #define Z_OFFSET_MIN -3
     #define Z_OFFSET_MAX  3
 
-    void LiveEditMesh() {
+    /*void LiveEditMesh() {
       int x = HMI_value.Select ? bedLevelTools.mesh_x : MenuData.Value;
       int y = HMI_value.Select ? MenuData.Value : bedLevelTools.mesh_y;
       ((MenuItemPtrClass*)EditZValueItem)->value = &bedlevel.z_values[x][y];
       EditZValueItem->redraw();
-    }
-    // void LiveEditMesh() { ((MenuItemPtrClass*)EditZValueItem)->value = &bedlevel.z_values[HMI_value.Select ? bedLevelTools.mesh_x : MenuData.Value][HMI_value.Select ? MenuData.Value : bedLevelTools.mesh_y]; EditZValueItem->redraw(); }
+    }*/
+    void LiveEditMesh() { ((MenuItemPtrClass*)EditZValueItem)->value = &bedlevel.z_values[HMI_value.Select ? bedLevelTools.mesh_x : MenuData.Value][HMI_value.Select ? MenuData.Value : bedLevelTools.mesh_y]; EditZValueItem->redraw(); }
     void LiveEditMeshZ() { *MenuData.P_Float = MenuData.Value / POW(10, 3); if (AutoMovToMesh) { bedLevelTools.MoveToZ(); } }
     void ApplyEditMeshX() { bedLevelTools.mesh_x = MenuData.Value; if (AutoMovToMesh) { bedLevelTools.MoveToXY(); } }
     void ApplyEditMeshY() { bedLevelTools.mesh_y = MenuData.Value; if (AutoMovToMesh) { bedLevelTools.MoveToXY(); } }

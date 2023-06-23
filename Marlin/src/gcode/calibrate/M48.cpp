@@ -57,6 +57,10 @@
  */
 
 void GcodeSuite::M48() {
+  // Store the original value of bltouch.high_speed_mode
+  const bool prev_high_speed_mode = bltouch.high_speed_mode;
+  // Set bltouch.high_speed_mode to 0
+  bltouch.high_speed_mode = false;
 
   if (homing_needed_error()) return;
 
@@ -266,6 +270,9 @@ void GcodeSuite::M48() {
     #endif
   }
 
+  // Restore the previous value of bltouch.high_speed_mode
+  bltouch.high_speed_mode = prev_high_speed_mode;
+  checkkey = Menu;
   restore_feedrate_and_scaling();
 
   // Re-enable bed level correction if it had been on

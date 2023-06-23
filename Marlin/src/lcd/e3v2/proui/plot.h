@@ -25,7 +25,7 @@
 
 class PlotClass {
 public:
-  static void Draw(const frame_rect_t &frame, const celsius_t max, const_float_t ref=0);
+  static void Draw(const frame_rect_t &frame, const_celsius_float_t max, const_float_t ref=0);
   static void Update(const_float_t value);
 };
 
