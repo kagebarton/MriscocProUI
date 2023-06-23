@@ -1739,29 +1739,32 @@ void DWIN_LevelingDone() {
 #endif // MPCTEMP
 
 //Temperature (PID Tuning Graph) Plot During Printing
-#if ENABLED(HAS_PLOT) && ENABLED(PLOT_TUNE_ITEM)
+#if ENABLED(HAS_PLOT) && ENABLED(PLOT_TUNE_ITEM) && (HAS_TEMP_SENSOR || HAS_HEATED_BED)
+
   void dwinDrawPlot(tempcontrol_t result) {
     HMI_value.tempcontrol = result;
     frame_rect_t gfrm = {30, 135, DWIN_WIDTH - 60, 160};
     DWINUI::ClearMainArea();
     Draw_Popup_Bkgd();
+
     switch (result) {
-    #if HAS_TEMP_SENSOR
-      case TERN_(MPCTEMP, MPCTEMP_START) TERN_(PIDTEMP, PID_EXTR_START):
-        HMI_SaveProcessID(PlotProcess);
-        DWINUI::Draw_CenteredString(3, HMI_data.PopupTxt_Color, 75, F("Nozzle Temperature"));
-        _maxtemp = thermalManager.hotend_maxtemp[0];
-        _target = thermalManager.temp_hotend[0].target;
+      #if ENABLED(MPCTEMP)
+        case MPCTEMP_START:
+      #endif
+      #if ENABLED(PIDTEMP)
+        case PID_EXTR_START:
+      #endif
+          HMI_SaveProcessID(PlotProcess);
+          DWINUI::Draw_CenteredString(3, HMI_data.PopupTxt_Color, 75, F("Nozzle Temperature"));
+          _maxtemp = thermalManager.hotend_maxtemp[0];
+          _target = thermalManager.temp_hotend[0].target;
         break;
-    #endif
-    #if HAS_HEATED_BED
       case TERN_(PIDTEMPBED, PID_BED_START):
         HMI_SaveProcessID(PlotProcess);
         DWINUI::Draw_CenteredString(3, HMI_data.PopupTxt_Color, 75, F("Bed Temperature"));
         _maxtemp = BED_MAX_TARGET;
         _target = thermalManager.temp_bed.target;
         break;
-    #endif
     default:
       break;
     }
