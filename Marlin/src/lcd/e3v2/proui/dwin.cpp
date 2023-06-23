@@ -1742,21 +1742,21 @@ void DWIN_LevelingDone() {
 #if ENABLED(HAS_PLOT) && ENABLED(PLOT_TUNE_ITEM)
   void dwinDrawPlot(tempcontrol_t result) {
     HMI_value.tempcontrol = result;
-    HMI_SaveProcessID(PlotProcess);
     frame_rect_t gfrm = {30, 135, DWIN_WIDTH - 60, 160};
     DWINUI::ClearMainArea();
     Draw_Popup_Bkgd();
     switch (result) {
     #if HAS_TEMP_SENSOR
-      TERN_(MPCTEMP, case MPCTEMP_START:)
-      TERN_(PIDTEMP, case PID_EXTR_START:)
+      case TERN_(MPCTEMP, MPCTEMP_START) TERN_(PIDTEMP, PID_EXTR_START):
+        HMI_SaveProcessID(PlotProcess);
         DWINUI::Draw_CenteredString(3, HMI_data.PopupTxt_Color, 75, F("Nozzle Temperature"));
         _maxtemp = thermalManager.hotend_maxtemp[0];
         _target = thermalManager.temp_hotend[0].target;
         break;
     #endif
     #if HAS_HEATED_BED
-      case PID_BED_START:
+      case TERN_(PIDTEMPBED, PID_BED_START):
+        HMI_SaveProcessID(PlotProcess);
         DWINUI::Draw_CenteredString(3, HMI_data.PopupTxt_Color, 75, F("Bed Temperature"));
         _maxtemp = BED_MAX_TARGET;
         _target = thermalManager.temp_bed.target;
@@ -1779,17 +1779,16 @@ void DWIN_LevelingDone() {
       TERN_(MPCTEMP, dwinDrawPlot(MPCTEMP_START);)
     }
     if(id == H_BED){
-      dwinDrawPlot(PID_BED_START);
+      TERN_(PIDTEMPBED, dwinDrawPlot(PID_BED_START);)
     }
-}
-
-
-  void drawHPlot(){
-    setDrawPlot(H_E0);
   }
-  void drawBPlot(){
-    setDrawPlot(H_BED);
-  }
+
+    void drawHPlot(){
+      setDrawPlot(H_E0);
+    }
+    void drawBPlot(){
+      setDrawPlot(H_BED);
+    }
 #endif
 
 // Started a Print Job
