@@ -2779,7 +2779,7 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
       MeshViewer.DrawMesh(zval, 2, 2);
       }
       else {
-        DWINUI::Draw_CenteredString(140, F("Finding True value"));
+        DWINUI::Draw_CenteredString(100, F("Finding True value"));
         safe_delay(1000);
       }
       ui.reset_status();
