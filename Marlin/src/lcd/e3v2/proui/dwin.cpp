@@ -1647,12 +1647,12 @@ void DWIN_LevelingDone() {
 
 #if HAS_PID_HEATING
 
-  void DWIN_M303(const bool seenC, const int c, const bool seenS, const heater_id_t hid, const celsius_t temp){
+  void DWIN_M303(const bool seenC, const int c, const bool seenS, const heater_id_t hid, const celsius_t temp) {
     if (seenC) { HMI_data.PidCycles = c; }
     if (seenS) {
       switch (hid) {
-        OPTCODE(PIDTEMP,    case 0 ... HOTENDS - 1: HMI_data.HotendPidT = temp; break)
-        OPTCODE(PIDTEMPBED, case H_BED:             HMI_data.BedPidT = temp;    break)
+        OPTCODE(PIDTEMP,    case 0 ... HOTENDS - 1: HMI_data.HotendPidT = temp; break;)
+        OPTCODE(PIDTEMPBED, case H_BED:             HMI_data.BedPidT = temp;    break;)
         default: break;
       }
     }
@@ -1750,48 +1750,51 @@ void DWIN_LevelingDone() {
     switch (result) {
       #if ENABLED(MPCTEMP)
         case MPCTEMP_START:
-      #endif
-      #if ENABLED(PIDTEMP)
+          HMI_SaveProcessID(MPCProcess);
+      #elif ENABLED(PIDTEMP)
         case PID_EXTR_START:
+          HMI_SaveProcessID(PlotProcess); 
       #endif
-          HMI_SaveProcessID(PlotProcess);
           DWINUI::Draw_CenteredString(3, HMI_data.PopupTxt_Color, 75, F("Nozzle Temperature"));
           _maxtemp = thermalManager.hotend_maxtemp[0];
           _target = thermalManager.temp_hotend[0].target;
+          break;
+      #if ENABLED(PIDTEMPBED)
+        case PID_BED_START):
+          HMI_SaveProcessID(PlotProcess);
+          DWINUI::Draw_CenteredString(3, HMI_data.PopupTxt_Color, 75, F("Bed Temperature"));
+          _maxtemp = BED_MAX_TARGET;
+          _target = thermalManager.temp_bed.target;
+          break;
+      #endif
+      default:
         break;
-      case TERN_(PIDTEMPBED, PID_BED_START):
-        HMI_SaveProcessID(PlotProcess);
-        DWINUI::Draw_CenteredString(3, HMI_data.PopupTxt_Color, 75, F("Bed Temperature"));
-        _maxtemp = BED_MAX_TARGET;
-        _target = thermalManager.temp_bed.target;
-        break;
-    default:
-      break;
     }
+    
     DWIN_Draw_String(false, 2, HMI_data.PopupTxt_Color, HMI_data.PopupBg_Color, gfrm.x, gfrm.y - DWINUI::fontHeight() - 4, F("Target:     Celsius"));
     plot.Draw(gfrm, _maxtemp, _target);
     DWINUI::Draw_Int(false, 2, HMI_data.StatusTxt_Color, HMI_data.PopupBg_Color, 3, gfrm.x + 80, gfrm.y - DWINUI::fontHeight() - 4, _target);
     DWINUI::Draw_Button(BTN_Continue, 86, 305, true);
-    //Draw_Select_Box(86, 305);
     DWIN_UpdateLCD();
   }
 
-  void setDrawPlot(heater_id_t id){
-    if(id == H_E0){
-      TERN_(PIDTEMP, dwinDrawPlot(PID_EXTR_START);)
-      TERN_(MPCTEMP, dwinDrawPlot(MPCTEMP_START);)
+  void setDrawPlot(heater_id_t h) {
+    if(h == H_E0) {
+      TERN_(PIDTEMP, dwinDrawPlot(PID_EXTR_START););
+      TERN_(MPCTEMP, dwinDrawPlot(MPCTEMP_START););
     }
-    if(id == H_BED){
-      TERN_(PIDTEMPBED, dwinDrawPlot(PID_BED_START);)
+    if(h == H_BED){
+      TERN_(PIDTEMPBED, dwinDrawPlot(PID_BED_START););
     }
   }
 
-    void drawHPlot(){
-      setDrawPlot(H_E0);
-    }
-    void drawBPlot(){
-      setDrawPlot(H_BED);
-    }
+  void drawHPlot() {
+    setDrawPlot(H_E0);
+  }
+  void drawBPlot() {
+    setDrawPlot(H_BED);
+  }
+
 #endif
 
 // Started a Print Job
@@ -1943,7 +1946,7 @@ void DWIN_Print_Aborted() {
   }
 #endif
 
-void DWIN_SetDataDefaults() {
+void DWIN_SetDataDefaults() {TERN 
   DEBUG_ECHOLNPGM("DWIN_SetDataDefaults");
   DWIN_SetColorDefaults();
   DWINUI::SetColors(HMI_data.Text_Color, HMI_data.Background_Color, HMI_data.TitleBg_Color);
