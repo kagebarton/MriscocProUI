@@ -1760,7 +1760,7 @@ void DWIN_LevelingDone() {
           _target = thermalManager.temp_hotend[0].target;
           break;
       #if ENABLED(PIDTEMPBED)
-        case PID_BED_START):
+        case PID_BED_START:
           HMI_SaveProcessID(PlotProcess);
           DWINUI::Draw_CenteredString(3, HMI_data.PopupTxt_Color, 75, F("Bed Temperature"));
           _maxtemp = BED_MAX_TARGET;
@@ -1946,7 +1946,7 @@ void DWIN_Print_Aborted() {
   }
 #endif
 
-void DWIN_SetDataDefaults() {TERN 
+void DWIN_SetDataDefaults() {
   DEBUG_ECHOLNPGM("DWIN_SetDataDefaults");
   DWIN_SetColorDefaults();
   DWINUI::SetColors(HMI_data.Text_Color, HMI_data.Background_Color, HMI_data.TitleBg_Color);
