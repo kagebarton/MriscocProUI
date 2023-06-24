@@ -1778,21 +1778,12 @@ void DWIN_LevelingDone() {
     DWIN_UpdateLCD();
   }
 
-  void setDrawPlot(heater_id_t h) {
-    if(h == H_E0) {
-      TERN_(PIDTEMP, dwinDrawPlot(PID_EXTR_START););
-      TERN_(MPCTEMP, dwinDrawPlot(MPCTEMP_START););
-    }
-    if(h == H_BED){
-      TERN_(PIDTEMPBED, dwinDrawPlot(PID_BED_START););
-    }
-  }
-
   void drawHPlot() {
-    setDrawPlot(H_E0);
+    TERN_(PIDTEMP, dwinDrawPlot(PID_EXTR_START);)
+    TERN_(MPCTEMP, dwinDrawPlot(MPCTEMP_START);)
   }
   void drawBPlot() {
-    setDrawPlot(H_BED);
+    TERN_(PIDTEMPBED, dwinDrawPlot(PID_BED_START);)
   }
 
 #endif
@@ -2093,6 +2084,8 @@ void DWIN_InitScreen() {
   Goto_Main_Menu();  
   #if ENABLED(AUTO_BED_LEVELING_UBL)
     UBLMeshLoad();
+  #elif ENABLED(AUTO_BED_LEVELING_BILINEAR)
+  bedLevelTools.mesh_reset();
   #endif
   LCD_MESSAGE(WELCOME_MSG);
 }
@@ -2288,8 +2281,10 @@ void Goto_ConfirmToPrint() {
 
   void WriteEeprom() {
     DWIN_DrawStatusLine(GET_TEXT_F(MSG_STORE_EEPROM));
+    const bool success = settings.save();
+    safe_delay(200);
     DWIN_UpdateLCD();
-    DONE_BUZZ(settings.save());
+    DONE_BUZZ(success);
   }
 
   void ReadEeprom() {
@@ -2535,14 +2530,15 @@ void ApplyMove() {
 
   #if PROUI_EX
     void SetProbeZSpeed()  { SetPIntOnClick(60, Z_PROBE_FEEDRATE_FAST); }
-    void ApplyProbeMultiple() { PRO_data.multiple_probing = MenuData.Value; }
+    void ApplyProbeMultiple() { PRO_data.multiple_probing = (MenuData.Value > 1) ? MenuData.Value : 0; }
     void SetProbeMultiple()  { SetIntOnClick(0, 4, PRO_data.multiple_probing, ApplyProbeMultiple); }
   #endif
 
   void ProbeTest() {
     DEBUG_ECHOLNPGM("M48 Probe Test");
-    DWIN_Popup_Pause(GET_TEXT_F(MSG_M48_TEST));
+    LCD_MESSAGE(MSG_M48_TEST);
     queue.inject(F("G28XYO\nG28Z\nM48 P5"));
+    //DWIN_Popup_Pause(GET_TEXT_F(MSG_M48_TEST), BTN_Cancel);
   }
   void ProbeStow() { probe.stow(); }
   void ProbeDeploy() { probe.deploy(); }

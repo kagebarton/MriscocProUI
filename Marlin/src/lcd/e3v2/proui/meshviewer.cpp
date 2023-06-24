@@ -34,7 +34,7 @@
   #include "bedlevel_tools.h"
 #endif
 
-bool meshredraw;                            // Redraw mesh points
+//bool meshredraw;                            // Redraw mesh points
 uint8_t sizex, sizey;                       // Mesh XY size
 uint8_t rmax;                               // Maximum radius
 #define margin 25                           // XY Margins
@@ -131,8 +131,9 @@ void MeshViewerClass::Draw(bool withsave /*=false*/, bool redraw /*=true*/) {
     else DWINUI::Draw_Box(1, HMI_data.Background_Color, {89,305,99,38});
   #endif
   if (withsave) {
-    DWINUI::Draw_Button(BTN_Save, 26, 305, false);
-    DWINUI::Draw_Button(BTN_Continue, 146, 305, false);
+    DWIN_Draw_Box(1, HMI_data.Background_Color, 120, 300, 31, 42);
+    DWINUI::Draw_Button(BTN_Continue, 146, 305);
+    DWINUI::Draw_Button(BTN_Save, 26, 305);
     Draw_Select_Highlight(HMI_flag.select_flag, 305);
   }
   else {
@@ -155,12 +156,11 @@ void MeshViewerClass::Draw(bool withsave /*=false*/, bool redraw /*=true*/) {
   #endif
 }
 
-void Draw_MeshViewer() { MeshViewer.Draw(true, meshredraw); }
+void Draw_MeshViewer() { MeshViewer.Draw(true, true); }
 
 void onClick_MeshViewer() { if (HMI_flag.select_flag) SaveMesh(); HMI_ReturnScreen(); }
 
 void Goto_MeshViewer(bool redraw) {
-  meshredraw = redraw;
   if (leveling_is_valid()) { Goto_Popup(Draw_MeshViewer, onClick_MeshViewer); }
   else { HMI_ReturnScreen(); }
 }

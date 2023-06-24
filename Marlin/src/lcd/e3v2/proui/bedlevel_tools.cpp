@@ -160,9 +160,7 @@ void BedLevelToolsClass::ProbeXY() {
 
 void BedLevelToolsClass::mesh_reset() {
   ZERO(bedlevel.z_values);
-  #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
-    bedlevel.refresh_bed_level();
-  #endif
+  TERN_(AUTO_BED_LEVELING_BILINEAR, bedlevel.refresh_bed_level();)
 }
 
 float BedLevelToolsClass::get_max_value() {

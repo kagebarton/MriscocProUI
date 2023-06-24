@@ -47,7 +47,7 @@ constexpr int8_t DEF_GRID_MAX_POINTS = TERN(HAS_MESH, GRID_MAX_POINTS_X, 3);
 #define GRID_MIN 3
 #define GRID_LIMIT 9
 #ifndef MESH_INSET
-  #define MESH_INSET 0
+  #define MESH_INSET 10
 #endif
 #ifndef MESH_MIN_X
   #define MESH_MIN_X MESH_INSET
@@ -67,9 +67,6 @@ constexpr int16_t DEF_MESH_MIN_Y = MESH_MIN_Y;
 constexpr int16_t DEF_MESH_MAX_Y = MESH_MAX_Y;
 #define MIN_MESH_INSET 0
 #define MAX_MESH_INSET X_BED_SIZE
-constexpr int16_t DEF_PROBING_MARGIN = PROBING_MARGIN;
-#define MIN_PROBE_MARGIN 0
-#define MAX_PROBE_MARGIN 60
 constexpr int16_t DEF_Z_PROBE_FEEDRATE_SLOW = Z_PROBE_FEEDRATE_SLOW;
 #ifndef MULTIPLE_PROBING
   #define MULTIPLE_PROBING 0
