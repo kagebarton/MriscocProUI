@@ -1630,7 +1630,7 @@
  * A total of 2 does fast/slow probes with a weighted average.
  * A total of 3 or more adds more slow probes, taking the average.
  */
-#define MULTIPLE_PROBING 1    // Use a value of (1) with ProUIex, otherwise (2)
+#define MULTIPLE_PROBING 0    // Use a value of (0) with ProUIex, otherwise (2)
 //#define EXTRA_PROBING    1
 
 /**
