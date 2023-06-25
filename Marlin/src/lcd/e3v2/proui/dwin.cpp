@@ -1503,7 +1503,7 @@ bool IDisPopUp() {    // If ID is popup...
        || (checkkey == Leveling)
        || (checkkey == PidProcess)
        || (checkkey == PlotProcess)
-       TERN0(HAS_ESDIAG, || (checkkey == ESDiagProcess))
+       || TERN0(HAS_ESDIAG, (checkkey == ESDiagProcess))
        || (checkkey == Popup);
 }
 
@@ -1511,7 +1511,7 @@ void HMI_SaveProcessID(const uint8_t id) {
   if (checkkey != id) {
     if (!IDisPopUp()) { last_checkkey = checkkey; } // if previous is not a popup
     if ((id == Popup)
-         TERN0(HAS_ESDIAG, || (id == ESDiagProcess))
+         || TERN0(HAS_ESDIAG, (id == ESDiagProcess))
          || (id == PrintDone)
          || (id == Leveling)
          || (id == PlotProcess)
