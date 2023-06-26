@@ -40,7 +40,11 @@ LevelingBilinear bedlevel;
 xy_pos_t LevelingBilinear::grid_spacing,
          LevelingBilinear::grid_start;
 xy_float_t LevelingBilinear::grid_factor;
-float LevelingBilinear::z_values[GRID_LIMIT][GRID_LIMIT];
+#if PROUI_EX
+  float LevelingBilinear::z_values[GRID_LIMIT][GRID_LIMIT];
+#else
+  float LevelingBilinear::z_values[GRID_MAX_POINTS_X][GRID_MAX_POINTS_Y];
+#endif
 xy_pos_t LevelingBilinear::cached_rel;
 xy_int8_t LevelingBilinear::cached_g;
 
