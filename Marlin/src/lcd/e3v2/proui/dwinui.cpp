@@ -174,7 +174,7 @@ void DWINUI::Draw_String(uint16_t color, const char * const string, uint16_t rli
 //  iNum: Number of digits
 //  x/y: Upper-left coordinate
 //  value: Integer value
-void DWINUI::Draw_Int(uint8_t bShow, bool signedMode, fontid_t fid, uint16_t color, uint16_t bColor, uint8_t iNum, uint16_t x, uint16_t y, int32_t value) {
+void DWINUI::Draw_Int(uint8_t bShow, bool signedMode, fontid_t fid, uint16_t color, uint16_t bColor, uint8_t iNum, uint16_t x, uint16_t y, long value) {
   char nstr[10];
   sprintf_P(nstr, PSTR("%*li"), (signedMode ? iNum + 1 : iNum), value);
   DWIN_Draw_String(bShow, fid, color, bColor, x, y, nstr);
