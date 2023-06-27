@@ -3,7 +3,7 @@
  * Extended by: Miguel A. Risco-Castillo (MRISCOC)
  * Version: 3.2.0
  * Date: 2023/05/03
- * 
+ *
  * Based on the original work of: Henri-J-Norden
  * https://github.com/Jyers/Marlin/pull/126
  *
@@ -163,6 +163,7 @@ void BedLevelToolsClass::mesh_reset() {
   TERN_(AUTO_BED_LEVELING_BILINEAR, bedlevel.refresh_bed_level();)
 }
 
+// Accessors
 float BedLevelToolsClass::get_max_value() {
   float max = __FLT_MAX__ * -1;
   GRID_LOOP(x, y) {
@@ -192,13 +193,9 @@ bool BedLevelToolsClass::meshvalidate() {
 
 #if ENABLED(USE_GRID_MESHVIEWER)
 
-  #if ENABLED(TJC_DISPLAY)
-    #define meshfont font8x16
-  #else
-    #define meshfont font6x12
-  #endif
+  constexpr uint8_t meshfont = TERN(TJC_DISPLAY, font8x16, font6x12);
 
-  void BedLevelToolsClass::Draw_Bed_Mesh(int16_t selected /*= -1*/, uint8_t gridline_width /*= 1*/, uint16_t padding_x /*= 8*/, uint16_t padding_y_top /*= 40 + 53 - 7*/) {
+  void BedLevelToolsClass::Draw_Bed_Mesh(int16_t selected/*=-1*/, uint8_t gridline_width/*=1*/, uint16_t padding_x/*=8*/, uint16_t padding_y_top/*=(40 + 53 - 7)*/) {
     drawing_mesh = true;
     const uint16_t total_width_px = DWIN_WIDTH - padding_x - padding_x;
     const uint16_t cell_width_px  = total_width_px / (GRID_MAX_POINTS_X);

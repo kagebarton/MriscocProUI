@@ -146,7 +146,7 @@
   #include <stddef.h>
   #include "../../../core/types.h"
   #ifndef MESH_MIN_X
-  #define MESH_MIN_X MESH_INSET
+    #define MESH_MIN_X MESH_INSET
   #endif
   #ifndef MESH_MIN_Y
     #define MESH_MIN_Y MESH_INSET

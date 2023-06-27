@@ -334,9 +334,9 @@ MenuItemClass *FanSpeedItem = nullptr;
 MenuItemClass *MMeshMoveZItem = nullptr;
 MenuItemClass *EditZValueItem = nullptr;
 
-bool Printing() { return (printingIsActive() || print_job_timer.isPaused()); }
-bool SD_Printing() { return (Printing() && IS_SD_FILE_OPEN()); }
-bool Host_Printing() { return (Printing() && !IS_SD_FILE_OPEN()); }
+bool Printing() { return printingIsActive() || printingIsPaused(); }
+bool SD_Printing() { return Printing() && IS_SD_FILE_OPEN(); }
+bool Host_Printing() { return Printing() && !IS_SD_FILE_OPEN(); }
 
 //-----------------------------------------------------------------------------
 // Main Buttons
@@ -2282,7 +2282,7 @@ void Goto_ConfirmToPrint() {
   void WriteEeprom() {
     DWIN_DrawStatusLine(GET_TEXT_F(MSG_STORE_EEPROM));
     const bool success = settings.save();
-    safe_delay(200);
+    safe_delay(500);
     DWIN_UpdateLCD();
     DONE_BUZZ(success);
   }
