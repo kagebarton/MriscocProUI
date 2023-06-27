@@ -12,7 +12,7 @@
 Many Updates have been included in the most recent MriscocProUI in the **2023-June** release.<br>
 H32->HC32 support is currently only in the branch **HC32-June**. You can find the original repo here [@shadow578/Marlin-H32](https://github.com/shadow578/Marlin-H32)<br>
 #### Important Info regarding HC32:
-Not all features or options have been fully tested with this chip, specifically. *UBL*/*BLT* versions may not work with the **CR/3D/BL-Touch**
+Not all features or options have been fully tested with this chip.
 <br>
 
 General information about the firmware and updates is located in the _Wiki_ page [What's New In This Release](https://github.com/classicrocker883/MriscocProUI/wiki/What's-New-in-this-Release). <br> Other changes and updates are [addressed here](https://github.com/classicrocker883/MriscocProUI/releases/latest) and are [addressed here](https://github.com/mriscoc/Ender3V2S1/releases/latest).
@@ -23,11 +23,27 @@ If you start printing and it says `Advance Pause` while **Runout** is enabled, y
 A small issue which may occur is if you are in the <i>Print</i> menu and you quickly select to print between several printable *Gcode* files in a short amount of time. The screen can freeze for a moment and the printer will restart - that is it.<br><br>
 If you encounter any issues please feel free to post it on the issues tab, or if anything is going well please leave a comment. 
 
-I will be working on more upgrades and features and tweaks along the way. Enjoy using this fork of Marlin as I intend it to be the best. It is easy to use and convenient. So far I really enjoy the new settings and toolbar for the main menu. There is a variety of parameters and options that can be changed without having to reflash the firmware. 
+I will be working on more upgrades and features and tweaks along the way. Enjoy using this fork of Marlin as I intend it to be the best. It is easy to use and convenient. So far I really enjoy the new settings and toolbar for the main menu. There is a variety of parameters and options that can be changed without having to reflash the firmware.
+
+### MarlinSimulator.exe Instructions
+
+There is a *MarlinSimulator.exe* file provided to test out for yourself. It simulates a pre-built configuration of this firmware.
+
+To create your own MarlinSimulator with you own build, start by changing in Configuration.h **MOTHERBOARD** to *BOARD_SIMULATED*, also disable `ENDSTOP_INTERRUPTS_FEATURE` and `PROUI_EX`, and then in platformio.ini **default_envs =** change to *simulator_windows*. The MarlinSimulator can only compile for Manual Mesh Bed Leveling for now, so make sure your configuration is set for `MESH_BED_LEVELING`.
+
+Then you have to extract **SDL2-devel-2.28.0-mingw.zip** from /**docs**. To install SDL, navigate to the SDL2 directory in *MSYS2 MINGW64* terminal and type
+>make native
+
+64-bit files are in \x86_64-w64-mingw32. Then copy the contents of ~\SDL2-2.28.0\x86_64-w64-mingw32\include\SDL2\* into ~\.pio\libdeps\simulator_windows\imgui\misc
+
+Once all that is done, just build like you would normally and *MarlinSimulator.exe* will be created.
+
+For MacOS or Linux, you're on your own...sorry.
+<br>
 
 [Linear Advance Information](https://github.com/MarlinFirmware/MarlinDocumentation/blob/master/_features/lin_advance.md)
 
-The Precompiled binary files of this firmware can work with STM32 (STM32F103RET6/RCT6) and it's clones G32 (GD32F103RET6), N32 (Nation), and possibly H32. They can be downloaded from:
+The Precompiled binary files of this firmware can work with STM32 (STM32F103RET6/RCT6 - STMicroelectronics) and it's clones: G32 (GD32F103Rx - GigaDevice), N32 (N32F103Rx / N32G455x - Nation), and H32 (HC32F460x - Huada Semiconductor/HDSC). They can be downloaded from:
 [Latest Release](https://github.com/classicrocker883/MriscocProUI/releases/latest)
 
 <img height=260 src="https://enfss.voxelab3dp.com/10001/picture/2021/09/b849845bd0ffa889f00a782aae76ccf3.jpg" align="left" />
@@ -72,11 +88,10 @@ The Issue Queue is reserved for Bug Reports and Feature Requests. To get help wi
 
 ## Credits
 
-Thanks to Reddit u/schuh8 for donating his board to help test the firmware.
+Thanks to Reddit u/schuh8 and @whasupjohn for donating his board to help test the firmware.
 <br>
-and I*_U*1
+/u I*U*2
 </br>
-
 
 
 Find me on [Facebook](https://www.facebook.com/yoboyyy) 
