@@ -595,17 +595,17 @@ typedef struct SettingsDataStruct {
   // Bed corner screw position
   //
   #ifdef BED_SCREW_INSET
-    float screw_pos;
+    float ui_screw_pos;
   #endif
 
   //
   // MESH_INSET workaround
   //
   #if PROUI_EX && HAS_MESH
-    float mesh_inset_min_x;
-    float mesh_inset_max_x;
-    float mesh_inset_min_y;
-    float mesh_inset_max_y;
+    float ui_mesh_inset_min_x;
+    float ui_mesh_inset_max_x;
+    float ui_mesh_inset_min_y;
+    float ui_mesh_inset_max_y;
   #endif
 
   //
@@ -2781,7 +2781,7 @@ void MarlinSettings::postprocess() {
       //BED_SCREW_INSET
       //
       #ifdef BED_SCREW_INSET
-        _FIELD_TEST(screw_pos);
+        _FIELD_TEST(ui_screw_pos);
         EEPROM_READ(ui.screw_pos);
       #endif
 
@@ -2789,13 +2789,13 @@ void MarlinSettings::postprocess() {
       // MESH_INSET workaround
       //
       #if PROUI_EX && HAS_MESH
-        _FIELD_TEST(mesh_inset_min_x);
+        _FIELD_TEST(ui_mesh_inset_min_x);
         EEPROM_READ(ui.mesh_inset_min_x);
-        _FIELD_TEST(mesh_inset_max_x);
+        _FIELD_TEST(ui_mesh_inset_max_x);
         EEPROM_READ(ui.mesh_inset_max_x);
-        _FIELD_TEST(mesh_inset_min_y);
+        _FIELD_TEST(ui_mesh_inset_min_y);
         EEPROM_READ(ui.mesh_inset_min_y);
-        _FIELD_TEST(mesh_inset_max_y);
+        _FIELD_TEST(ui_mesh_inset_max_y);
         EEPROM_READ(ui.mesh_inset_max_y); 
       #endif
 
@@ -3330,9 +3330,9 @@ void MarlinSettings::reset() {
   //
   #if PROUI_EX && HAS_MESH
     ui.mesh_inset_min_x = MESH_INSET;
-    ui.mesh_inset_max_x = (X_BED_SIZE - MESH_INSET);
+    ui.mesh_inset_max_x = (DEF_X_BED_SIZE - MESH_INSET);
     ui.mesh_inset_min_y = MESH_INSET;
-    ui.mesh_inset_max_y = (Y_BED_SIZE - MESH_INSET);
+    ui.mesh_inset_max_y = (DEF_Y_BED_SIZE - MESH_INSET);
   #endif
 
   //
