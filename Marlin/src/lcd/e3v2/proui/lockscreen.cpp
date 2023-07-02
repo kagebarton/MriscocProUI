@@ -28,19 +28,19 @@
 #include "dwin.h"
 #include "lockscreen.h"
 
-LockScreenClass lockScreen;
+LockScreen lockScreen;
 
-uint8_t LockScreenClass::lock_pos = 0;
-bool LockScreenClass::unlocked = false;
-uint8_t LockScreenClass::rprocess = 0;
+uint8_t LockScreen::lock_pos = 0;
+bool LockScreen::unlocked = false;
+uint8_t LockScreen::rprocess = 0;
 
-void LockScreenClass::init() {
+void LockScreen::init() {
   lock_pos = 0;
   unlocked = false;
   draw();
 }
 
-void LockScreenClass::draw() {
+void LockScreen::draw() {
   Title.SetCaption(GET_TEXT_F(MSG_LOCKSCREEN));
   DWINUI::ClearMainArea();
   DWINUI::Draw_Icon(ICON_LOGO, 71, 120);  // CREALITY logo
@@ -52,7 +52,7 @@ void LockScreenClass::draw() {
   DWIN_UpdateLCD();
 }
 
-void LockScreenClass::onEncoder(EncoderState encoder_diffState) {
+void LockScreen::onEncoder(EncoderState encoder_diffState) {
   switch (encoder_diffState) {
     case ENCODER_DIFF_CW:    lock_pos += 8; break;
     case ENCODER_DIFF_CCW:   lock_pos -= 8; break;

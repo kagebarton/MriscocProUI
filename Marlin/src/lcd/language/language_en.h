@@ -44,7 +44,11 @@
 
 #define MEDIA_TYPE_EN "SD Card"
 
-namespace Language_en {
+#ifndef PREHEAT_1_LABEL
+  #define PREHEAT_1_LABEL ""
+#endif
+
+namespace LanguageNarrow_en {
   constexpr uint8_t CHARSIZE              = 2;
   LSTR LANGUAGE                           = _UxGT("English");
 
@@ -114,30 +118,30 @@ namespace Language_en {
   LSTR MSG_TRAMMING_WIZARD                = _UxGT("Tramming Wizard");
   LSTR MSG_SELECT_ORIGIN                  = _UxGT("Select Origin");
   LSTR MSG_LAST_VALUE_SP                  = _UxGT("Last value ");
-  #if HAS_PREHEAT
-    LSTR MSG_PREHEAT_1                    = _UxGT("Preheat ") PREHEAT_1_LABEL;
-    LSTR MSG_PREHEAT_1_H                  = _UxGT("Preheat ") PREHEAT_1_LABEL " ~";
-    LSTR MSG_PREHEAT_1_END                = _UxGT("Preheat ") PREHEAT_1_LABEL _UxGT(" End");
-    LSTR MSG_PREHEAT_1_END_E              = _UxGT("Preheat ") PREHEAT_1_LABEL _UxGT(" End ~");
-    LSTR MSG_PREHEAT_1_ALL                = _UxGT("Preheat ") PREHEAT_1_LABEL _UxGT(" All");
-    LSTR MSG_PREHEAT_1_BEDONLY            = _UxGT("Preheat ") PREHEAT_1_LABEL _UxGT(" Bed");
-    LSTR MSG_PREHEAT_1_SETTINGS           = _UxGT("Preheat ") PREHEAT_1_LABEL _UxGT(" Settings");
-    #ifdef PREHEAT_2_LABEL
-      LSTR MSG_PREHEAT_2                  = _UxGT("Preheat ") PREHEAT_2_LABEL;
-      LSTR MSG_PREHEAT_2_SETTINGS         = _UxGT("Preheat ") PREHEAT_2_LABEL _UxGT(" Settings");
-    #endif
-    #ifdef PREHEAT_3_LABEL
-      LSTR MSG_PREHEAT_3                  = _UxGT("Warmup ");
-      LSTR MSG_PREHEAT_3_SETTINGS         = _UxGT("Warmup ") _UxGT("Settings");
-    #endif
-    LSTR MSG_PREHEAT_M                    = _UxGT("Preheat $");
-    LSTR MSG_PREHEAT_M_H                  = _UxGT("Preheat $ ~");
-    LSTR MSG_PREHEAT_M_END                = _UxGT("Preheat $ End");
-    LSTR MSG_PREHEAT_M_END_E              = _UxGT("Preheat $ End ~");
-    LSTR MSG_PREHEAT_M_ALL                = _UxGT("Preheat $ All");
-    LSTR MSG_PREHEAT_M_BEDONLY            = _UxGT("Preheat $ Bed");
-    LSTR MSG_PREHEAT_M_SETTINGS           = _UxGT("Preheat $ Conf");
+
+  LSTR MSG_PREHEAT_1                      = _UxGT("Preheat ") PREHEAT_1_LABEL;
+  LSTR MSG_PREHEAT_1_H                    = _UxGT("Preheat ") PREHEAT_1_LABEL " ~";
+  LSTR MSG_PREHEAT_1_END                  = _UxGT("Preheat ") PREHEAT_1_LABEL _UxGT(" End");
+  LSTR MSG_PREHEAT_1_END_E                = _UxGT("Preheat ") PREHEAT_1_LABEL _UxGT(" End ~");
+  LSTR MSG_PREHEAT_1_ALL                  = _UxGT("Preheat ") PREHEAT_1_LABEL _UxGT(" All");
+  LSTR MSG_PREHEAT_1_BEDONLY              = _UxGT("Preheat ") PREHEAT_1_LABEL _UxGT(" Bed");
+  LSTR MSG_PREHEAT_1_SETTINGS             = _UxGT("Preheat ") PREHEAT_1_LABEL _UxGT(" Settings");
+  #ifdef PREHEAT_2_LABEL
+    LSTR MSG_PREHEAT_2                    = _UxGT("Preheat ") PREHEAT_2_LABEL;
+    LSTR MSG_PREHEAT_2_SETTINGS           = _UxGT("Preheat ") PREHEAT_2_LABEL _UxGT(" Settings");
   #endif
+  #ifdef PREHEAT_3_LABEL
+    LSTR MSG_PREHEAT_3                    = PREHEAT_2_LABEL;
+    LSTR MSG_PREHEAT_3_SETTINGS           = PREHEAT_2_LABEL _UxGT(" Settings");
+  #endif
+  LSTR MSG_PREHEAT_M                      = _UxGT("Preheat $");
+  LSTR MSG_PREHEAT_M_H                    = _UxGT("Preheat $ ~");
+  LSTR MSG_PREHEAT_M_END                  = _UxGT("Preheat $ End");
+  LSTR MSG_PREHEAT_M_END_E                = _UxGT("Preheat $ End ~");
+  LSTR MSG_PREHEAT_M_ALL                  = _UxGT("Preheat $ All");
+  LSTR MSG_PREHEAT_M_BEDONLY              = _UxGT("Preheat $ Bed");
+  LSTR MSG_PREHEAT_M_SETTINGS             = _UxGT("Preheat $ Settings");
+
   LSTR MSG_PREHEAT_HOTEND                 = _UxGT("Preheat Hotend");
   LSTR MSG_PREHEAT_CUSTOM                 = _UxGT("Preheat Custom");
   LSTR MSG_COOLDOWN                       = _UxGT("Cooldown");
@@ -517,11 +521,11 @@ namespace Language_en {
   LSTR MSG_STOP_PRINT                     = _UxGT("Stop Print");
   LSTR MSG_OUTAGE_RECOVERY                = _UxGT("Power-loss Recovery");
   #if LCD_WIDTH >= 20 || HAS_DWIN_E3V2
-    LSTR MSG_HOST_START_PRINT             = _UxGT("Start Host Print");
+    LSTR MSG_HOST_START_PRINT             = _UxGT("Host Start Print");
     LSTR MSG_PRINTING_OBJECT              = _UxGT("Printing Object");
     LSTR MSG_CANCEL_OBJECT                = _UxGT("Cancel Object");
     LSTR MSG_CANCEL_OBJECT_N              = _UxGT("Cancel Object {");
-    LSTR MSG_CONTINUE_PRINT_JOB           = _UxGT("Continue Print Job");
+    LSTR MSG_CONTINUE_PRINT_JOB           = _UxGT("Continue Print");
     LSTR MSG_MEDIA_MENU                   = _UxGT("Select from ") MEDIA_TYPE_EN;
     LSTR MSG_TURN_OFF                     = _UxGT("Turn off the printer");
     LSTR MSG_END_LOOPS                    = _UxGT("End Repeat Loops");
@@ -596,12 +600,9 @@ namespace Language_en {
   LSTR MSG_FILAMENTUNLOAD                 = _UxGT("Unload Filament");
   LSTR MSG_FILAMENTUNLOAD_E               = _UxGT("Unload *");
   LSTR MSG_FILAMENTUNLOAD_ALL             = _UxGT("Unload All");
-  #if ENABLED(MULTI_VOLUME)
-    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Attach SD Card");
-    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("Attach USB Drive");
-  #else
-    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Attach ") MEDIA_TYPE_EN;
-  #endif
+  LSTR MSG_ATTACH_MEDIA                   = _UxGT("Attach ") MEDIA_TYPE_EN;
+  LSTR MSG_ATTACH_SD_MEDIA                = _UxGT("Attach SD Card");
+  LSTR MSG_ATTACH_USB_MEDIA               = _UxGT("Attach USB Drive");
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Change ") MEDIA_TYPE_EN;
   LSTR MSG_RELEASE_MEDIA                  = _UxGT("Release ") MEDIA_TYPE_EN;
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Z-Probe Past Bed");
@@ -725,8 +726,8 @@ namespace Language_en {
   LSTR MSG_PLEASE_WAIT_REBOOT             = _UxGT("Starting... Please wait.");
 
   #if LCD_WIDTH >= 20 || HAS_DWIN_E3V2
-    LSTR MSG_MEDIA_NOT_INSERTED           = _UxGT("No media inserted.");
-    LSTR MSG_PLEASE_PREHEAT               = _UxGT("Please preheat the hot end.");
+    LSTR MSG_MEDIA_NOT_INSERTED           = MEDIA_TYPE_EN _UxGT(" Not Inserted.");
+    LSTR MSG_PLEASE_PREHEAT               = _UxGT("Please Preheat Hot End.");
     LSTR MSG_INFO_PRINT_COUNT_RESET       = _UxGT("Reset Print Count");
     LSTR MSG_INFO_PRINT_COUNT             = _UxGT("Print Count");
     LSTR MSG_INFO_PRINT_TIME              = _UxGT("Print Time");
@@ -892,11 +893,8 @@ namespace Language_en {
 
   LSTR MSG_LEVEL_X_AXIS                   = _UxGT("Level X Axis");
   LSTR MSG_AUTO_CALIBRATE                 = _UxGT("Auto Calibrate");
-  #if ENABLED(TOUCH_UI_FTDI_EVE)
-    LSTR MSG_HEATER_TIMEOUT               = _UxGT("Idle timeout, temperature decreased. Press Okay to reheat and again to resume.");
-  #else
-    LSTR MSG_HEATER_TIMEOUT               = _UxGT("Heater Timeout");
-  #endif
+  LSTR MSG_FTDI_HEATER_TIMEOUT            = _UxGT("Idle timeout, temperature decreased. Press Okay to reheat and again to resume.");
+  LSTR MSG_HEATER_TIMEOUT                 = _UxGT("Heater Timeout");
   LSTR MSG_REHEAT                         = _UxGT("Reheat");
   LSTR MSG_REHEATING                      = _UxGT("Reheating...");
   LSTR MSG_REHEATDONE                     = _UxGT("Reheat Done");
@@ -965,5 +963,47 @@ namespace Language_en {
   LSTR DGUS_MSG_WRITE_EEPROM_FAILED       = _UxGT("EEPROM write failed");
   LSTR DGUS_MSG_READ_EEPROM_FAILED        = _UxGT("EEPROM read failed");
   LSTR DGUS_MSG_FILAMENT_RUNOUT           = _UxGT("Filament runout E%d");
+}
 
+namespace LanguageWide_en {
+  using namespace LanguageNarrow_en;
+  #if LCD_WIDTH >= 20 || HAS_DWIN_E3V2
+    LSTR MSG_HOST_START_PRINT             = _UxGT("Start Host Print");
+    LSTR MSG_PRINTING_OBJECT              = _UxGT("Printing Object");
+    LSTR MSG_CANCEL_OBJECT                = _UxGT("Cancel Object");
+    LSTR MSG_CANCEL_OBJECT_N              = _UxGT("Cancel Object {");
+    LSTR MSG_CONTINUE_PRINT_JOB           = _UxGT("Continue Print Job");
+    LSTR MSG_MEDIA_MENU                   = _UxGT("Select from ") MEDIA_TYPE_EN;
+    LSTR MSG_TURN_OFF                     = _UxGT("Turn off the printer");
+    LSTR MSG_END_LOOPS                    = _UxGT("End Repeat Loops");
+    LSTR MSG_MEDIA_NOT_INSERTED           = _UxGT("No media inserted.");
+    LSTR MSG_PLEASE_PREHEAT               = _UxGT("Please preheat the hot end.");
+    LSTR MSG_INFO_PRINT_COUNT_RESET       = _UxGT("Reset Print Count");
+    LSTR MSG_INFO_PRINT_COUNT             = _UxGT("Print Count");
+    LSTR MSG_INFO_PRINT_TIME              = _UxGT("Print Time");
+    LSTR MSG_INFO_PRINT_LONGEST           = _UxGT("Longest Job Time");
+    LSTR MSG_INFO_PRINT_FILAMENT          = _UxGT("Extruded Total");
+  #endif
+}
+
+namespace LanguageTall_en {
+  using namespace LanguageWide_en;
+  #if LCD_HEIGHT >= 4
+    // Filament Change screens show up to 3 lines on a 4-line display
+    LSTR MSG_ADVANCED_PAUSE_WAITING       = _UxGT(MSG_2_LINE("Press Button", "to resume print"));
+    LSTR MSG_PAUSE_PRINT_PARKING          = _UxGT(MSG_1_LINE("Parking..."));
+    LSTR MSG_FILAMENT_CHANGE_INIT         = _UxGT(MSG_3_LINE("Wait for", "filament change", "to start"));
+    LSTR MSG_FILAMENT_CHANGE_INSERT       = _UxGT(MSG_3_LINE("Insert filament", "and press button", "to continue"));
+    LSTR MSG_FILAMENT_CHANGE_HEAT         = _UxGT(MSG_2_LINE("Press button", "to heat nozzle"));
+    LSTR MSG_FILAMENT_CHANGE_HEATING      = _UxGT(MSG_2_LINE("Nozzle heating", "Please wait..."));
+    LSTR MSG_FILAMENT_CHANGE_UNLOAD       = _UxGT(MSG_2_LINE("Wait for", "filament unload"));
+    LSTR MSG_FILAMENT_CHANGE_LOAD         = _UxGT(MSG_2_LINE("Wait for", "filament load"));
+    LSTR MSG_FILAMENT_CHANGE_PURGE        = _UxGT(MSG_2_LINE("Wait for", "filament purge"));
+    LSTR MSG_FILAMENT_CHANGE_CONT_PURGE   = _UxGT(MSG_2_LINE("Click to finish", "filament purge"));
+    LSTR MSG_FILAMENT_CHANGE_RESUME       = _UxGT(MSG_2_LINE("Wait for print", "to resume..."));
+  #endif
+}
+
+namespace Language_en {
+  using namespace LanguageTall_en;
 }

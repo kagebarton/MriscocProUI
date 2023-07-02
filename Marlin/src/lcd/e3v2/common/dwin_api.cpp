@@ -35,14 +35,12 @@
 uint8_t DWIN_SendBuf[11 + DWIN_WIDTH / 6 * 2] = { 0xAA };
 uint8_t DWIN_BufTail[4] = { 0xCC, 0x33, 0xC3, 0x3C };
 uint8_t databuf[26] = { 0 };
-bool need_lcd_update = true;
 
 // Send the data in the buffer plus the packet tail
 void DWIN_Send(size_t &i) {
   ++i;
   for (uint8_t n = 0; n < i; ++n) { LCD_SERIAL.write(DWIN_SendBuf[n]); delayMicroseconds(1); }
   for (uint8_t n = 0; n < 4; ++n) { LCD_SERIAL.write(DWIN_BufTail[n]); delayMicroseconds(1); }
-  need_lcd_update = true;
 }
 
 /*-------------------------------------- System variable function --------------------------------------*/
@@ -107,12 +105,9 @@ void DWIN_Frame_SetDir(uint8_t dir) {
 
 // Update display
 void DWIN_UpdateLCD() {
-  if (need_lcd_update) {
     size_t i = 0;
     DWIN_Byte(i, 0x3D);
     DWIN_Send(i);
-    need_lcd_update = false;
-  }
 }
 
 /*---------------------------------------- Drawing functions ----------------------------------------*/
@@ -199,15 +194,15 @@ void DWIN_Frame_AreaMove(uint8_t mode, uint8_t dir, uint16_t dis,
 
 //Color: color
 //x/y: Upper-left coordinate of the first pixel
-void DWIN_Draw_DegreeSymbol(uint16_t Color, uint16_t x, uint16_t y)	{
-  	DWIN_Draw_Point(Color, 1, 1, x + 1, y);
-  	DWIN_Draw_Point(Color, 1, 1, x + 2, y);
-  	DWIN_Draw_Point(Color, 1, 1, x, y + 1);
-		DWIN_Draw_Point(Color, 1, 1, x + 3, y + 1);
-  	DWIN_Draw_Point(Color, 1, 1, x, y + 2);
-		DWIN_Draw_Point(Color, 1, 1, x + 3, y + 2);
-    DWIN_Draw_Point(Color, 1, 1, x + 1, y + 3);
-  	DWIN_Draw_Point(Color, 1, 1, x + 2, y + 3);
+void DWIN_Draw_DegreeSymbol(uint16_t Color, uint16_t x, uint16_t y) {
+  DWIN_Draw_Point(Color, 1, 1, x + 1, y);
+  DWIN_Draw_Point(Color, 1, 1, x + 2, y);
+  DWIN_Draw_Point(Color, 1, 1, x, y + 1);
+  DWIN_Draw_Point(Color, 1, 1, x + 3, y + 1);
+  DWIN_Draw_Point(Color, 1, 1, x, y + 2);
+  DWIN_Draw_Point(Color, 1, 1, x + 3, y + 2);
+  DWIN_Draw_Point(Color, 1, 1, x + 1, y + 3);
+  DWIN_Draw_Point(Color, 1, 1, x + 2, y + 3);
 }
 
 /*---------------------------------------- Text related functions ----------------------------------------*/

@@ -853,7 +853,7 @@ void MarlinSettings::postprocess() {
    */
   bool MarlinSettings::save() {
     float dummyf = 0;
-    char ver[4] = "ERR";
+    MString<3> ver(F("ERR"));
 
     if (!EEPROM_START(EEPROM_OFFSET)) return false;
 
@@ -3167,7 +3167,7 @@ void MarlinSettings::postprocess() {
         #endif
 
         #if ENABLED(DWIN_LCD_PROUI)
-          status = !bedLevelTools.meshvalidate();
+          status = !bedLevelTools.meshValidate();
           if (status) {
             bedlevel.invalidate();
             LCD_MESSAGE(MSG_UBL_MESH_INVALID);

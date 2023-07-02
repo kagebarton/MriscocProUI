@@ -571,8 +571,8 @@
 #define TEMP_SENSOR_REDUNDANT 0
 
 // Dummy thermistor constant temperature readings, for use with 998 and 999
-#define DUMMY_THERMISTOR_998_VALUE  45
-#define DUMMY_THERMISTOR_999_VALUE 235
+#define DUMMY_THERMISTOR_998_VALUE  25
+#define DUMMY_THERMISTOR_999_VALUE 100
 
 // Resistor values when using MAX31865 sensors (-5) on TEMP_SENSOR_0 / 1
 #if TEMP_SENSOR_IS_MAX_TC(0)
@@ -691,9 +691,9 @@
     #define DEFAULT_Kd_LIST { 114.00, 114.00 }
   #else
 //50w Aquila
-    #define DEFAULT_Kp  13.19
-    #define DEFAULT_Ki   0.77
-    #define DEFAULT_Kd  56.05
+    #define DEFAULT_Kp  23.24
+    #define DEFAULT_Ki   2.22
+    #define DEFAULT_Kd  60.88
   #endif
 #else
   #define BANG_MAX 255    // Limit hotend current while in bang-bang mode; 255=full current
@@ -782,9 +782,9 @@
   // 120V 250W silicone heater into 4mm borosilicate (MendelMax 1.5+)
   // from FOPDT model - kp=.39 Tp=405 Tdead=66, Tc set to 79.2, aggressive factor of .15 (vs .1, 1, 10)
   // Aquila old: P-128.06, I-24.95, D-438.07
-  #define DEFAULT_bedKp 58.34
-  #define DEFAULT_bedKi 11.05
-  #define DEFAULT_bedKd 205.36
+  #define DEFAULT_bedKp 172.77
+  #define DEFAULT_bedKi 13.33
+  #define DEFAULT_bedKd 1492.74
 
   // FIND YOUR OWN: "M303 E-1 C8 S90" to run autotune on the bed at 90 degreesC for 8 cycles.
 #else
@@ -1235,7 +1235,7 @@
  * Override with M92
  *                                      X, Y, Z [, I [, J [, K...]]], E0 [, E1[, E2...]]
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80.05, 79.90, 399.45, 97.90 }
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 79.75, 79.90, 399.45, 97.90 }
 
 //#define LIMITED_MAX_STEPS_EDITING
 #if ENABLED(LIMITED_MAX_STEPS_EDITING)
@@ -1564,7 +1564,7 @@
  *     |    [-]    |
  *     O-- FRONT --+
  */
-#define NOZZLE_TO_PROBE_OFFSET { -45.0, -7.0, -0.50 }
+#define NOZZLE_TO_PROBE_OFFSET { -45.0, -7.0, -0.67 }
 
 // Enable and set to use a specific tool for probing. Disable to allow any tool.
 //#define PROBING_TOOL 0
@@ -1860,7 +1860,7 @@
  */
 #define FILAMENT_RUNOUT_SENSOR            // MRiscoC Enabled runout sensor support (2528 bytes of flash)
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-  #define FIL_RUNOUT_ENABLED_DEFAULT false // Enable the sensor on startup. Override with M412 followed by M500.
+  #define FIL_RUNOUT_ENABLED_DEFAULT true // Enable the sensor on startup. Override with M412 followed by M500.
   #define NUM_RUNOUT_SENSORS   1          // Number of sensors, up to one per extruder. Define a FIL_RUNOUT#_PIN for each.
 
   #define FIL_RUNOUT_STATE     HIGH       // Pin state indicating that filament is NOT present.
@@ -3150,6 +3150,10 @@
  *  - Download https://github.com/InsanityAutomation/Marlin/raw/CrealityDwin_2.0/TM3D_Combined480272_Landscape_V7.7z
  *  - Copy the downloaded DWIN_SET folder to the SD card.
  *
+ * E3S1PRO (T5UID1)
+ *  - Download https://github.com/CrealityOfficial/Ender-3S1/archive/3S1_Plus_Screen.zip
+ *  - Copy the downloaded DWIN_SET folder to the SD card.
+ *
  * CREALITY_TOUCH
  *  - CR-6 OEM touch screen. A DWIN display with touch.
  *
@@ -3159,7 +3163,7 @@
  *  - Plug the microSD card into the back of the display.
  *  - Boot the display and wait for the update to complete.
  *
- * :[ 'ORIGIN', 'FYSETC', 'HYPRECY', 'MKS', 'RELOADED', 'IA_CREALITY' ]
+ * :[ 'ORIGIN', 'FYSETC', 'HYPRECY', 'MKS', 'RELOADED', 'IA_CREALITY', 'E3S1PRO' ]
  */
 //#define DGUS_LCD_UI ORIGIN
 #if DGUS_UI_IS(MKS)
@@ -3385,7 +3389,7 @@
     #define HAS_GCODE_PREVIEW 1
     #define HAS_TOOLBAR 1
   #endif
-  #define HAS_PLOT 1            // Graph Temp as grid plot - PID/MPC Tuning (1624 bytes of flash)
+  #define DISABLE_TUNING_GRAPH 0// Graph Temp as grid plot - PID/MPC Tuning (1624 bytes of flash)
   #define HAS_ESDIAG 1          // View End-stop switch continuity (560 bytes of flash)
   #define HAS_CGCODE 1          // Extra Gcode options (3320 bytes of flash)
   #define HAS_LOCKSCREEN 1      // Simple lockscreen as to not accidentally change something (568 bytes of flash)
@@ -3405,7 +3409,7 @@
   #if ENABLED(BLTOUCH)
     #define HS_MENU_ITEM        // BLTOUCH_HS_MODE menu option (56 bytes of flash)
   #endif
-  #if ENABLED(HAS_PLOT)
+  #if DISABLED(DISABLE_TUNING_GRAPH)
     #define PLOT_TUNE_ITEM      // Temperature Plot Graph item in Tune Menu (688 bytes of flash)
   #endif
   #if DISABLED(CLASSIC_JERK)

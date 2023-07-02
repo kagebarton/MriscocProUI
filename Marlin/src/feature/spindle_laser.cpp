@@ -69,7 +69,6 @@ cutter_frequency_t SpindleLaser::frequency;                           // PWM fre
  * Init the cutter to a safe OFF state
  */
 void SpindleLaser::init() {
-
   #if ENABLED(CV_LASER_MODULE)
     _SET_OUTPUT(LASER_SOFT_PWM_PIN);
     laser_device.init_device();

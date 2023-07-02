@@ -38,7 +38,7 @@
   #include "../../../module/probe.h"
 #endif
 
-ESDiagClass ESDiag;
+ESDiag esDiag;
 
 void draw_es_label(FSTR_P const flabel=nullptr) {
   DWINUI::cursor.x = 40;
@@ -55,7 +55,7 @@ void draw_es_state(const bool is_hit) {
   DWINUI::MoveBy(0, 25);
 }
 
-void ESDiagClass::Draw() {
+void ESDiag::draw() {
   Title.ShowCaption(GET_TEXT_F(MSG_ENDSTOP_TEST));
   DWINUI::ClearMainArea();
   Draw_Popup_Bkgd();
@@ -90,10 +90,10 @@ void ESDiagClass::Draw() {
   TERN_(HAS_Z_MIN_PIN, ES_LABEL(Z_MIN)); TERN_(USE_Z_MAX, ES_LABEL(Z_MAX));
   TERN_(HAS_FILAMENT_SENSOR, draw_es_label(F(STR_FILAMENT)));
 */
-  Update();
+  update();
 }
 
-void ESDiagClass::Update() {
+void ESDiag::update() {
   DWINUI::cursor.y = 80;
   #define ES_REPORT(S) draw_es_state(READ(S##_PIN) == S##_ENDSTOP_HIT_STATE)
   #if USE_X_MIN

@@ -20,9 +20,9 @@
  * For commercial applications additional licenses can be requested
  */
 
-#include "../../../inc/MarlinConfigPre.h"
+#include "../../../inc/MarlinConfig.h"
 
-#if ALL(DWIN_LCD_PROUI, HAS_PLOT)
+#if ALL(DWIN_LCD_PROUI, PROUI_TUNING_GRAPH)
 
 #include "dwin.h"
 #include "../../../core/types.h"
@@ -37,7 +37,7 @@ uint16_t grphpoints, r, x2, y2 = 0;
 frame_rect_t grphframe = {0};
 float scale = 0;
 
-void PlotClass::Draw(const frame_rect_t &frame, const_celsius_float_t max, const_float_t ref/*=0*/) {
+void PlotClass::draw(const frame_rect_t &frame, const_celsius_float_t max, const_float_t ref/*=0*/) {
   grphframe = frame;
   grphpoints = 0;
   scale = frame.h / max;
@@ -50,7 +50,7 @@ void PlotClass::Draw(const frame_rect_t &frame, const_celsius_float_t max, const
   DWIN_Draw_HLine(Color_Red, frame.x, r, frame.w);
 }
 
-void PlotClass::Update(const_float_t value) {
+void PlotClass::update(const_float_t value) {
   if (!scale) { return; }
   const uint16_t y = round((y2) - value * scale);
   if (grphpoints < grphframe.w) {
@@ -68,4 +68,4 @@ void PlotClass::Update(const_float_t value) {
   #endif
 }
 
-#endif // DWIN_LCD_PROUI && HAS_PLOT
+#endif // DWIN_LCD_PROUI && PROUI_TUNING_GRAPH

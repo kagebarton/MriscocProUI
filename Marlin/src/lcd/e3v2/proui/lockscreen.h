@@ -23,7 +23,7 @@
 #include "../common/encoder.h"
 #include <stdint.h>
 
-class LockScreenClass {
+class LockScreen {
 private:
   static bool unlocked;
   static uint8_t lock_pos;
@@ -35,4 +35,4 @@ public:
   static bool isUnlocked() { return unlocked; }
 };
 
-extern LockScreenClass lockScreen;
+extern LockScreen lockScreen;

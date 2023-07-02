@@ -20,10 +20,10 @@
  */
 #pragma once
 
-class ESDiagClass {
+class ESDiag {
 public:
-  static void Draw();
-  static void Update();
+  static void draw();
+  static void update();
 };
 
-extern ESDiagClass ESDiag;
+extern ESDiag esDiag;

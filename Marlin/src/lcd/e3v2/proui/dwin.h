@@ -39,9 +39,9 @@
 namespace GET_LANG(LCD_LANGUAGE) {
   #define _MSG_PREHEAT(N) \
     LSTR MSG_PREHEAT_##N                  = _UxGT("Preheat ") PREHEAT_## N ##_LABEL; \
-    LSTR MSG_PREHEAT_## N ##_SETTINGS     = _UxGT("Preheat ") PREHEAT_## N ##_LABEL _UxGT(" Conf");
+    LSTR MSG_PREHEAT_## N ##_SETTINGS     = _UxGT("Preheat ") PREHEAT_## N ##_LABEL _UxGT(" Settings");
   #if PREHEAT_COUNT > 3
-    REPEAT_S(4, PREHEAT_COUNT, _MSG_PREHEAT)
+    REPEAT_S(4, INCREMENT(PREHEAT_COUNT, _MSG_PREHEAT)
   #endif
 }
 
@@ -71,21 +71,21 @@ enum processID : uint8_t {
   NothingToDo
 };
 
-#if HAS_PID_HEATING || ENABLED(MPC_AUTOTUNE)
+#if ANY(PROUI_PID_TUNE, MPC_AUTOTUNE)
   enum tempcontrol_t : uint8_t {
-  #if HAS_PID_HEATING
-    PID_EXTR_START = 0,
-    PID_BED_START,
-    PID_BAD_HEATER_ID,
-    PID_TEMP_TOO_HIGH,
-    PID_TUNING_TIMEOUT,
-  #endif
-  #if ENABLED(MPC_AUTOTUNE)
-    MPCTEMP_START,
-    MPC_TEMP_ERROR,
-    MPC_INTERRUPTED,
-  #endif
-  AUTOTUNE_DONE
+    #if PROUI_PID_TUNE
+      PID_EXTR_START,
+      PID_BED_START,
+      PID_BAD_HEATER_ID,
+      PID_TEMP_TOO_HIGH,
+      PID_TUNING_TIMEOUT,
+    #endif
+    #if ENABLED(MPC_AUTOTUNE)
+      MPCTEMP_START,
+      MPC_TEMP_ERROR,
+      MPC_INTERRUPTED,
+    #endif
+    AUTOTUNE_DONE
   };
 #endif
 
@@ -137,8 +137,8 @@ static constexpr size_t eeprom_data_size = sizeof(HMI_data_t) + TERN0(PROUI_EX, 
 
 typedef struct {
   int8_t Color[3];                    // Color components
-  #if ANY(HAS_PID_HEATING, MPCTEMP)
-    tempcontrol_t tempcontrol = AUTOTUNE_DONE;
+  #if ANY(PROUI_PID_TUNE, MPCTEMP)
+    tempcontrol_t tempControl = AUTOTUNE_DONE;
   #endif
   uint8_t Select          = 0;        // Auxiliary selector variable
   AxisEnum axis           = X_AXIS;   // Axis Select
@@ -365,7 +365,7 @@ void Draw_Steps_Menu();
 #endif
 
 // PID
-#if HAS_PID_HEATING
+#if PROUI_PID_TUNE
   #include "../../../module/temperature.h"
   void DWIN_M303(const bool seenC, const int c, const bool seenS, const heater_id_t hid, const celsius_t temp);
   void DWIN_PidTuning(tempcontrol_t result);

@@ -20,13 +20,13 @@
  */
 #pragma once
 
-class PrintStatsClass {
+class PrintStats {
 public:
-  static void Draw();
-  static void Reset();
+  static void draw();
+  static void reset();
 };
 
-extern PrintStatsClass PrintStats;
+extern PrintStats printStats;
 
-void Goto_PrintStats();
-void PrintStatsReset();
+void gotoPrintStats();
+void printStatsReset();

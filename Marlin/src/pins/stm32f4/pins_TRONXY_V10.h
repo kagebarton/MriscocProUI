@@ -255,10 +255,3 @@
 #define SD_DETECT_PIN                       -1    // PF0, but not connected
 #define SDIO_CLOCK                       4500000
 #define SDIO_READ_RETRIES                     16
-
-#define BOARD_SDIO_D0                        PC8
-#define BOARD_SDIO_D1                        PC9
-#define BOARD_SDIO_D2                        PC10
-#define BOARD_SDIO_D3                        PC11
-#define BOARD_SDIO_CK                        PC12
-#define BOARD_SDIO_CMD                       PD2

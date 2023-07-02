@@ -3,7 +3,7 @@
  * Extended by: Miguel A. Risco-Castillo (MRISCOC)
  * Version: 3.2.0
  * Date: 2023/05/03
- * 
+ *
  * Based on the original work of: Henri-J-Norden
  * https://github.com/Jyers/Marlin/pull/126
  *
@@ -54,7 +54,7 @@ public:
   static void mesh_reset();
   static float get_max_value();
   static float get_min_value();
-  static bool meshvalidate();
+  static bool meshValidate();
   #if ENABLED(USE_GRID_MESHVIEWER)
     static void Draw_Bed_Mesh(int16_t selected=-1, uint8_t gridline_width=1, uint16_t padding_x=8, uint16_t padding_y_top=(40 + 53 - 7));
     static void Set_Mesh_Viewer_Status();
