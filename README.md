@@ -7,12 +7,27 @@
 [![Build Configs](https://github.com/classicrocker883/MriscocProUI/actions/workflows/compile-configs.yml/badge.svg?event=release)](https://github.com/classicrocker883/MriscocProUI/releases/latest)
 
 ## Universal RET6/RCT6 chips: G32, N32, H32, Creality 4.2.7 and 4.2.2 boards
+#### Don't forget to checkout the [thingiverse](https://www.thingiverse.com/classicrocker883/designs) models I designed
+[Minimalist Dual Cooling Fan Shroud](https://www.thingiverse.com/thing:5263939) for Aquila / Ender 3 V2
+<img src="https://cdn.thingiverse.com/assets/1a/21/e9/e9/f5/card_preview_c60b15d6-69cf-469a-8641-40f6bef37992.png" style="float:left;width:40px;height:40px;" align="left"/>  
+
+[Tool Box for Middle Extrusion](https://www.thingiverse.com/thing:5181522) "**VOXELAB**" engraved
+<img src="https://cdn.thingiverse.com/assets/39/e7/eb/bd/9f/card_preview_Voxelab_WideMiddle_Shell.png" style="float:left;width:40px;height:40px;" align="left"/>  
+
+[Fantastic Filament Guide](https://www.thingiverse.com/thing:4974802) for Aquila
+<img src="https://cdn.thingiverse.com/assets/46/79/c1/80/14/card_preview_FantasticFilamentGuideAquilaL.png" style="float:left;width:40px;height:40px;" align="left"/>
+
+[Raspberry Pi Zero Case Mount 30mm case width](https://www.thingiverse.com/thing:5166780) for Aquila
+<img src="https://cdn.thingiverse.com/assets/73/1e/84/38/f1/card_preview_Pi_Zero_Case_holder.png" style="float:left;width:40px;height:40px;" align="left"/>  
+
+---
 
 ### - Please read this: -
-Many Updates have been included in the most recent MriscocProUI in the **2023-June** release.<br>
-H32->HC32 support is currently only in the branch **HC32-June**. You can find the original repo here [@shadow578/Marlin-H32](https://github.com/shadow578/Marlin-H32)<br>
+Many Updates have been included in the most recent MriscocProUI in the **2023-July** release.<br>
+H32->HC32 support is currently only in the branch **HC32-July**. You can find the original repo here [@shadow578/Marlin-H32](https://github.com/shadow578/Marlin-H32)<br>
 #### Important Info regarding HC32:
-Not all features or options have been fully tested with this chip.
+* Not all features or options have been fully tested with this chip.  
+* * <ins>**FOREWARNING**</ins>: So far everything has been working great - as normal - except there are reports of it restarting after saving with no other negative effects. So far, that is the only issue. I just wanted to give advance notice and if there is anything else to report please do so under [Issues tab](https://github.com/classicrocker883/MriscocProUI/issues).
 <br>
 
 General information about the firmware and updates is located in the _Wiki_ page [What's New In This Release](https://github.com/classicrocker883/MriscocProUI/wiki/What's-New-in-this-Release). <br> Other changes and updates are [addressed here](https://github.com/classicrocker883/MriscocProUI/releases/latest) and are [addressed here](https://github.com/mriscoc/Ender3V2S1/releases/latest).
