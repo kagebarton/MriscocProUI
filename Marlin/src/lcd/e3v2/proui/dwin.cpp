@@ -621,7 +621,6 @@ void Draw_PrintDone() {
     if (haspreview) {
       Preview_Show();
       DWINUI::Draw_Button(BTN_Continue, 86, 295, true);
-      //Draw_Select_Box(86, 295);
     }
   #else
     constexpr bool haspreview = false;
@@ -635,7 +634,6 @@ void Draw_PrintDone() {
     Draw_Print_ProgressElapsed();
     Draw_Print_ProgressRemain();
     DWINUI::Draw_Button(BTN_Continue, 86, 273, true);
-    //Draw_Select_Box(86, 273);
   }
 }
 
@@ -2812,7 +2810,6 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
         DWINUI::Draw_CenteredString(Color_Green, 180, plabel);
       }
       DWINUI::Draw_Button(BTN_Continue, 86, 305, true);
-      //Draw_Select_Box(86, 305);
       checkkey = Menu;
       HMI_SaveProcessID(WaitResponse);
 
