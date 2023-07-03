@@ -2630,7 +2630,7 @@
  */
 //#define REALTIME_REPORTING_COMMANDS     // (544 bytes of flash)
 #if ENABLED(REALTIME_REPORTING_COMMANDS)
-  #define FULL_REPORT_TO_HOST_FEATURE   // Auto-report the machine status like Grbl CNC (208 bytes of flash)
+  //#define FULL_REPORT_TO_HOST_FEATURE   // Auto-report the machine status like Grbl CNC (208 bytes of flash)
 #endif
 
 // Bad Serial-connections can miss a received command by sending an 'ok'
