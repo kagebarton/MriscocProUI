@@ -2698,9 +2698,9 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
         set_bed_leveling_enabled(false);
         queue.inject(MString<100>(
           #if ENABLED(LCD_BED_TRAMMING)
-            F("M420S0\nG28O\nG90\nG0F300Z" STRINGIFY(BED_TRAMMING_Z_HOP) "\nG0F5000X"), p_float_t(xpos, 1), 'Y', p_float_t(ypos, 1), F("\nG0F300Z" STRINGIFY(BED_TRAMMING_HEIGHT))
+            F("M420S0\nG28O\nG90\nG0F300Z" STRINGIFY(BED_TRAMMING_Z_HOP) "\nG0F5000X"), p_float_t(xpos, 1), F("Y"), p_float_t(ypos, 1), F("\nG0F300Z" STRINGIFY(BED_TRAMMING_HEIGHT))
           #else
-            F("M420S0\nG28O\nG90\nG0F300Z" STRINGIFY(Z_CLEARANCE_BETWEEN_PROBES) "\nG0F5000X"), p_float_t(xpos, 1), 'Y', p_float_t(ypos, 1), F("\nG0F300Z0")
+            F("M420S0\nG28O\nG90\nG0F300Z" STRINGIFY(Z_CLEARANCE_BETWEEN_PROBES) "\nG0F5000X"), p_float_t(xpos, 1), F("Y"), p_float_t(ypos, 1), F("\nG0F300Z0")
           #endif
         ));
       }
@@ -2712,7 +2712,7 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
         inLev = true;
         zval = probe.probe_at_point(xpos, ypos, stow_probe ? PROBE_PT_STOW : PROBE_PT_RAISE);
         if (!isnan(zval)) {
-          ui.set_status(TS(F("X:"), p_float_t(xpos, 1), F(" Y:"), p_float_t(ypos, 1), F(" Z:")));
+          ui.set_status(TS(F("X:"), p_float_t(xpos, 1), F(" Y:"), p_float_t(ypos, 1), F(" Z:"), p_float_t(zval, 2)));
         }
         else { LCD_MESSAGE(MSG_M48_OUT_OF_BOUNDS); }
         inLev = false;
@@ -2723,14 +2723,14 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
     
       queue.inject(MString<100>(
         #if ENABLED(LCD_BED_TRAMMING)
-          F("M420S0\nG28O\nG90\nG0F300Z" STRINGIFY(BED_TRAMMING_Z_HOP) "\nG0F5000X"), p_float_t(xpos, 1), 'Y', p_float_t(ypos, 1), F("\nG0F300Z" STRINGIFY(BED_TRAMMING_HEIGHT))
+          F("M420S0\nG28O\nG90\nG0F300Z" STRINGIFY(BED_TRAMMING_Z_HOP) "\nG0F5000X"), p_float_t(xpos, 1), F("Y"), p_float_t(ypos, 1), F("\nG0F300Z" STRINGIFY(BED_TRAMMING_HEIGHT))
         #else
-          F("M420S0\nG28O\nG90\nG0F300Z" STRINGIFY(Z_CLEARANCE_BETWEEN_PROBES) "\nG0F5000X"), p_float_t(xpos, 1), 'Y', p_float_t(ypos, 1), F("\nG0F300Z0")
+          F("M420S0\nG28O\nG90\nG0F300Z" STRINGIFY(Z_CLEARANCE_BETWEEN_PROBES) "\nG0F5000X"), p_float_t(xpos, 1), F("Y"), p_float_t(ypos, 1), F("\nG0F300Z0")
         #endif
       ));
 
     #endif // HAS_BED_PROBE
-  } // Bed Tramming Tram()(HMI_data.FullManualTramming ? true : false)
+  } // Bed Tramming
 
   void TramFL() { Tram(0); }
   void TramFR() { Tram(1); }
@@ -2761,14 +2761,14 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
       MeshViewer.DrawMeshPoint(0, 1, zval[0][1]);
 
       if (HMI_data.CalcAvg) {
-      DWINUI::Draw_CenteredString(140, F("Calculating average"));
-      DWINUI::Draw_CenteredString(160, F("and relative heights"));
-      safe_delay(1000);
-      float avg = 0.0f;
-      for (uint8_t x = 0; x < 2; ++x) for (uint8_t y = 0; y < 2; ++y) avg += zval[x][y];
-      avg /= 4.0f;
-      for (uint8_t x = 0; x < 2; ++x) for (uint8_t y = 0; y < 2; ++y) zval[x][y] -= avg;
-      MeshViewer.DrawMesh(zval, 2, 2);
+        DWINUI::Draw_CenteredString(140, F("Calculating average"));
+        DWINUI::Draw_CenteredString(160, F("and relative heights"));
+        safe_delay(1000);
+        float avg = 0.0f;
+        for (uint8_t x = 0; x < 2; ++x) for (uint8_t y = 0; y < 2; ++y) avg += zval[x][y];
+        avg /= 4.0f;
+        for (uint8_t x = 0; x < 2; ++x) for (uint8_t y = 0; y < 2; ++y) zval[x][y] -= avg;
+        MeshViewer.DrawMesh(zval, 2, 2);
       }
       else {
         DWINUI::Draw_CenteredString(100, F("Finding True value"));
@@ -3887,7 +3887,7 @@ void Draw_GetColor_Menu() {
   void SetPID(celsius_t t, heater_id_t h) {
 // replace    sprintf_P(cmd, PSTR("G28OXY\nG0Z10F300\nG0X%sY%sF5000\nM84\nM400"),
     gcode.process_subcommands_now(
-      MString<60>(F("G28OXY\nG0Z5F300\nG0X"), X_CENTER, F("Y"), Y_CENTER, F("F5000\nM84\nM400"))
+      TS(F("G28OXY\nG0Z10F300\nG0X"), X_CENTER, F("Y"), Y_CENTER, F("F5000\nM84\nM400"))
     );
     thermalManager.PID_autotune(t, h, HMI_data.PidCycles, true);
   }
