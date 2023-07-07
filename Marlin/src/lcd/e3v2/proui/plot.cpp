@@ -31,15 +31,15 @@
 
 #define Plot_Bg_Color RGB( 1, 12,  8)
 
-PlotClass plot;
+Plot plot;
 
-uint16_t grphpoints, r, x2, y2 = 0;
-frame_rect_t grphframe = {0};
+uint16_t graphpoints, r, x2, y2 = 0;
+frame_rect_t graphframe = {0};
 float scale = 0;
 
-void PlotClass::draw(const frame_rect_t &frame, const_celsius_float_t max, const_float_t ref/*=0*/) {
-  grphframe = frame;
-  grphpoints = 0;
+void Plot::draw(const frame_rect_t &frame, const_celsius_float_t max, const_float_t ref/*=0*/) {
+  graphframe = frame;
+  graphpoints = 0;
   scale = frame.h / max;
   x2 = frame.x + frame.w - 1;
   y2 = frame.y + frame.h - 1;
@@ -50,19 +50,19 @@ void PlotClass::draw(const frame_rect_t &frame, const_celsius_float_t max, const
   DWIN_Draw_HLine(Color_Red, frame.x, r, frame.w);
 }
 
-void PlotClass::update(const_float_t value) {
+void Plot::update(const_float_t value) {
   if (!scale) { return; }
   const uint16_t y = round((y2) - value * scale);
-  if (grphpoints < grphframe.w) {
-    DWIN_Draw_Point(Color_Yellow, 1, 1, grphpoints + grphframe.x, y);
+  if (graphpoints < graphframe.w) {
+    DWIN_Draw_Point(Color_Yellow, 1, 1, graphpoints + graphframe.x, y);
   }
   else {
-    DWIN_Frame_AreaMove(1, 0, 1, Plot_Bg_Color, grphframe.x, grphframe.y, x2, y2);
-    if ((grphpoints % 60) == 0) DWIN_Draw_VLine(Line_Color, x2 - 1, grphframe.y + 1, grphframe.h - 2);
+    DWIN_Frame_AreaMove(1, 0, 1, Plot_Bg_Color, graphframe.x, graphframe.y, x2, y2);
+    if ((graphpoints % 60) == 0) DWIN_Draw_VLine(Line_Color, x2 - 1, graphframe.y + 1, graphframe.h - 2);
     DWIN_Draw_Point(Color_Red, 1, 1, x2 - 1, r);
     DWIN_Draw_Point(Color_Yellow, 1, 1, x2 - 1, y);
   }
-  grphpoints++;
+  graphpoints++;
   #if LCD_BACKLIGHT_TIMEOUT_MINS
     ui.refresh_backlight_timeout();
   #endif
