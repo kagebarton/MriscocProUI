@@ -63,7 +63,7 @@ void CError() {
   void C35() {
     if (parser.seenval('T')) {
       const int8_t i = parser.value_byte();
-      if (WITHIN(i, 0, 4)) Tram(i);
+      if (WITHIN(i, 0, 4)) tram(i);
     }
     TERN_(HAS_BED_PROBE, else Trammingwizard());
   }

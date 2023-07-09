@@ -2646,7 +2646,7 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
 #endif
 
 // Bed Tramming
-  TERN(HAS_BED_PROBE, float, void) Tram(uint8_t point, bool stow_probe/*=true*/) {
+  TERN(HAS_BED_PROBE, float, void) tram(uint8_t point, bool stow_probe/*=true*/) {
     #if HAS_BED_PROBE
       #if ENABLED(LCD_BED_TRAMMING)
         constexpr float bed_tramming_inset_lfbr[] = BED_TRAMMING_INSET_LFRB;
@@ -2666,27 +2666,27 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
     #endif
     switch (point) {
       case 0:
-        LCD_MESSAGE(MSG_LEVBED_FL);
+        LCD_MESSAGE(MSG_TRAM_FL);
         xpos = bed_tramming_inset_lfbr[0];
         ypos = bed_tramming_inset_lfbr[1];
         break;
       case 1:
-        LCD_MESSAGE(MSG_LEVBED_FR);
+        LCD_MESSAGE(MSG_TRAM_FR);
         xpos = X_BED_SIZE - bed_tramming_inset_lfbr[2];
         ypos = bed_tramming_inset_lfbr[1];
         break;
       case 2:
-        LCD_MESSAGE(MSG_LEVBED_BR);
+        LCD_MESSAGE(MSG_TRAM_BR);
         xpos = X_BED_SIZE - bed_tramming_inset_lfbr[2];
         ypos = Y_BED_SIZE - bed_tramming_inset_lfbr[3];
         break;
       case 3:
-        LCD_MESSAGE(MSG_LEVBED_BL);
+        LCD_MESSAGE(MSG_TRAM_BL);
         xpos = bed_tramming_inset_lfbr[0];
         ypos = Y_BED_SIZE - bed_tramming_inset_lfbr[3];
         break;
       case 4:
-        LCD_MESSAGE(MSG_LEVBED_C);
+        LCD_MESSAGE(MSG_TRAM_C);
         xpos = X_BED_SIZE / 2;
         ypos = Y_BED_SIZE / 2;
         break;
@@ -2732,12 +2732,6 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
     #endif // HAS_BED_PROBE
   } // Bed Tramming
 
-  void TramFL() { Tram(0); }
-  void TramFR() { Tram(1); }
-  void TramBR() { Tram(2); }
-  void TramBL() { Tram(3); }
-  void TramC () { Tram(4); }
-
   #if HAS_BED_PROBE && ENABLED(TRAMWIZ_MENU_ITEM)
 
     void Trammingwizard() {
@@ -2748,15 +2742,15 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
       else LCD_MESSAGE_F("Bed Tramming Wizard Start");
       bed_mesh_t zval = {0};
       probe.stow();
-      zval[0][0] = Tram(0, false);  // First tram point can do Homing
+      zval[0][0] = tram(0, false);  // First tram point can do Homing
       checkkey = NothingToDo;       // After home disable user input
       MeshViewer.DrawMeshGrid(2, 2);
       MeshViewer.DrawMeshPoint(0, 0, zval[0][0]);
-      zval[1][0] = Tram(1, false);
+      zval[1][0] = tram(1, false);
       MeshViewer.DrawMeshPoint(1, 0, zval[1][0]);
-      zval[1][1] = Tram(2, false);
+      zval[1][1] = tram(2, false);
       MeshViewer.DrawMeshPoint(1, 1, zval[1][1]);
-      zval[0][1] = Tram(3, false);
+      zval[0][1] = tram(3, false);
       probe.stow();
       MeshViewer.DrawMeshPoint(0, 1, zval[0][1]);
 
@@ -2798,10 +2792,10 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
           }
         }
         switch (p) {
-          case 0b00 : plabel = GET_TEXT_F(MSG_LEVBED_FL); break;
-          case 0b01 : plabel = GET_TEXT_F(MSG_LEVBED_FR); break;
-          case 0b10 : plabel = GET_TEXT_F(MSG_LEVBED_BL); break;
-          case 0b11 : plabel = GET_TEXT_F(MSG_LEVBED_BR); break;
+          case 0b00 : plabel = GET_TEXT_F(MSG_TRAM_FL); break;
+          case 0b01 : plabel = GET_TEXT_F(MSG_TRAM_FR); break;
+          case 0b10 : plabel = GET_TEXT_F(MSG_TRAM_BL); break;
+          case 0b11 : plabel = GET_TEXT_F(MSG_TRAM_BR); break;
           default   : plabel = F(""); break;
         }
         DWINUI::Draw_CenteredString(120, F("Corners not leveled"));
@@ -3116,11 +3110,11 @@ void Draw_Tramming_Menu() {
         MENU_ITEM_F(ICON_MoveZ0, "Home Z and disable", onDrawMenuItem, HomeZandDisable);
       #endif
     #endif
-    MENU_ITEM(ICON_Axis, MSG_LEVBED_FL, onDrawMenuItem, TramFL);
-    MENU_ITEM(ICON_Axis, MSG_LEVBED_FR, onDrawMenuItem, TramFR);
-    MENU_ITEM(ICON_Axis, MSG_LEVBED_BR, onDrawMenuItem, TramBR);
-    MENU_ITEM(ICON_Axis, MSG_LEVBED_BL, onDrawMenuItem, TramBL);
-    MENU_ITEM(ICON_SetHome, MSG_LEVBED_C, onDrawMenuItem, TramC);
+    MENU_ITEM(ICON_Axis, MSG_TRAM_FL, onDrawMenuItem, []{ (void)tram(0); });
+    MENU_ITEM(ICON_Axis, MSG_TRAM_FR, onDrawMenuItem, []{ (void)tram(1); });
+    MENU_ITEM(ICON_Axis, MSG_TRAM_BR, onDrawMenuItem, []{ (void)tram(2); });
+    MENU_ITEM(ICON_Axis, MSG_TRAM_BL, onDrawMenuItem, []{ (void)tram(3); });
+    MENU_ITEM(ICON_SetHome, MSG_TRAM_C, onDrawMenuItem, []{ (void)tram(4); });
     MENU_ITEM(ICON_HomeZ, MSG_AUTO_HOME_Z, onDrawMenuItem, HomeZ);
   }
   UpdateMenu(TrammingMenu);

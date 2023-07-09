@@ -212,7 +212,7 @@ void DoCoolDown();
 #endif
 void ApplyExtMinT();
 void ParkHead();
-TERN(HAS_BED_PROBE, float, void) Tram(uint8_t point, bool stow_probe = true);
+TERN(HAS_BED_PROBE, float, void) tram(uint8_t point, bool stow_probe = true);
 #if HAS_BED_PROBE && ENABLED(TRAMWIZ_MENU_ITEM)
   void Trammingwizard();
   void TramwizStart();
