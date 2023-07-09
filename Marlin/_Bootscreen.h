@@ -6,7 +6,7 @@
  * IMAGES TO BYTE ARRAY ONLINE CONVERTER (CPP, ARDUINO)
  * https://mischianti.org/images-to-byte-array-online-converter-cpp-arduino/
  *
- * This bitmap from the file 'display assets/17182_0cede2ea.png'
+ * This bitmap from the file 'voxelab-500.png'
  */
 #pragma once
 #include <Wire.h>
