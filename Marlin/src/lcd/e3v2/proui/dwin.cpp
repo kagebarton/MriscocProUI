@@ -2664,6 +2664,7 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
       #endif
       float xpos = 0, ypos = 0;
     #endif
+    gcode.process_subcommands_now(F("G28O"));
     switch (point) {
       case 0:
         LCD_MESSAGE(MSG_TRAM_FL);
@@ -2698,21 +2699,21 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
         set_bed_leveling_enabled(false);
         queue.inject(MString<100>(
           #if ENABLED(LCD_BED_TRAMMING)
-            F("M420S0\nG28O\nG90\nG0F300Z" STRINGIFY(BED_TRAMMING_Z_HOP) "\nG0F5000X"), p_float_t(xpos, 1), F("Y"), p_float_t(ypos, 1), F("\nG0F300Z" STRINGIFY(BED_TRAMMING_HEIGHT))
+            F("M420S0\nG90\nG0F300Z" STRINGIFY(BED_TRAMMING_Z_HOP) "\nG0F5000X"), p_float_t(xpos, 1), 'Y', p_float_t(ypos, 1), F("\nG0F300Z" STRINGIFY(BED_TRAMMING_HEIGHT))
           #else
-            F("M420S0\nG28O\nG90\nG0F300Z" STRINGIFY(Z_CLEARANCE_BETWEEN_PROBES) "\nG0F5000X"), p_float_t(xpos, 1), F("Y"), p_float_t(ypos, 1), F("\nG0F300Z0")
+            F("M420S0\nG90\nG0F300Z" STRINGIFY(Z_CLEARANCE_BETWEEN_PROBES) "\nG0F5000X"), p_float_t(xpos, 1), 'Y', p_float_t(ypos, 1), F("\nG0F300Z0")
           #endif
         ));
       }
       else {
+        set_bed_leveling_enabled(false);
         LIMIT(xpos, MESH_MIN_X, MESH_MAX_X);
         LIMIT(ypos, MESH_MIN_Y, MESH_MAX_Y);
         if (stow_probe) { probe.stow(); }
-        gcode.process_subcommands_now(F("M420S0\nG28O"));
         inLev = true;
-        zval = probe.probe_at_point(xpos, ypos, stow_probe ? PROBE_PT_STOW : PROBE_PT_RAISE);
+        zval = probe.probe_at_point(xpos, ypos, (stow_probe ? PROBE_PT_STOW : PROBE_PT_RAISE));
         if (!isnan(zval)) {
-          ui.set_status(TS(F("X:"), p_float_t(xpos, 1), F(" Y:"), p_float_t(ypos, 1), F(" Z:"), p_float_t(zval, 2)));
+          ui.set_status(TS(F("X:"), p_float_t(xpos, 1), F(" Y:"), p_float_t(ypos, 1), F(" Z:"), p_float_t(zval, 3)));
         }
         else { LCD_MESSAGE(MSG_M48_OUT_OF_BOUNDS); }
         inLev = false;
@@ -2723,9 +2724,9 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
     
       queue.inject(MString<100>(
         #if ENABLED(LCD_BED_TRAMMING)
-          F("M420S0\nG28O\nG90\nG0F300Z" STRINGIFY(BED_TRAMMING_Z_HOP) "\nG0F5000X"), p_float_t(xpos, 1), F("Y"), p_float_t(ypos, 1), F("\nG0F300Z" STRINGIFY(BED_TRAMMING_HEIGHT))
+          F("M420S0\nG28O\nG90\nG0F300Z" STRINGIFY(BED_TRAMMING_Z_HOP) "\nG0F5000X"), p_float_t(xpos, 1), 'Y', p_float_t(ypos, 1), F("\nG0F300Z" STRINGIFY(BED_TRAMMING_HEIGHT))
         #else
-          F("M420S0\nG28O\nG90\nG0F300Z" STRINGIFY(Z_CLEARANCE_BETWEEN_PROBES) "\nG0F5000X"), p_float_t(xpos, 1), F("Y"), p_float_t(ypos, 1), F("\nG0F300Z0")
+          F("M420S0\nG28O\nG90\nG0F300Z" STRINGIFY(Z_CLEARANCE_BETWEEN_PROBES) "\nG0F5000X"), p_float_t(xpos, 1), 'Y', p_float_t(ypos, 1), F("\nG0F300Z0")
         #endif
       ));
 
@@ -2740,10 +2741,11 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
         return;
       } 
       else LCD_MESSAGE_F("Bed Tramming Wizard Start");
-      bed_mesh_t zval = {0};
+      DWINUI::ClearMainArea();
+      static bed_mesh_t zval = {};
       probe.stow();
-      zval[0][0] = tram(0, false);  // First tram point can do Homing
       checkkey = NothingToDo;       // After home disable user input
+      zval[0][0] = tram(0, false);  // First tram point can do Homing
       MeshViewer.DrawMeshGrid(2, 2);
       MeshViewer.DrawMeshPoint(0, 0, zval[0][0]);
       zval[1][0] = tram(1, false);
@@ -2764,14 +2766,12 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
         for (uint8_t x = 0; x < 2; ++x) for (uint8_t y = 0; y < 2; ++y) zval[x][y] -= avg;
         MeshViewer.DrawMesh(zval, 2, 2);
       }
-      else {
-        DWINUI::Draw_CenteredString(100, F("Finding True value"));
-        safe_delay(1000);
-      }
+      else { DWINUI::Draw_CenteredString(100, F("Finding True value")); }
+      safe_delay(1000);
       ui.reset_status();
 
       #ifndef BED_TRAMMING_PROBE_TOLERANCE
-        #define BED_TRAMMING_PROBE_TOLERANCE 0.05f
+        #define BED_TRAMMING_PROBE_TOLERANCE 0.1f
       #endif
 
       if (ABS(MeshViewer.max - MeshViewer.min) < BED_TRAMMING_PROBE_TOLERANCE) {
@@ -2800,8 +2800,8 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
         }
         DWINUI::Draw_CenteredString(120, F("Corners not leveled"));
         DWINUI::Draw_CenteredString(140, F("Knob adjustment required"));
-        DWINUI::Draw_CenteredString(Color_Green, 160, s ? F("Lower") : F("Raise"));
-        DWINUI::Draw_CenteredString(Color_Green, 180, plabel);
+        DWINUI::Draw_CenteredString((s ? Color_Green : Color_Error_Red), 160, s ? F("Lower") : F("Raise"));
+        DWINUI::Draw_CenteredString(Color_Orange, 180, plabel);
       }
       DWINUI::Draw_Button(BTN_Continue, 86, 305, true);
       checkkey = Menu;
