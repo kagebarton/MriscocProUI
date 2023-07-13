@@ -114,7 +114,7 @@ void MeshViewerClass::DrawMesh(bed_mesh_t zval, const uint8_t csizex, const uint
   }
 }
 
-void MeshViewerClass::Draw(bool withsave /*=false*/, bool redraw /*=true*/) {
+void MeshViewerClass::Draw(bool withsave/*=false*/, bool redraw/*=true*/) {
   Title.ShowCaption(GET_TEXT_F(MSG_MESH_VIEWER));
   #if ENABLED(USE_GRID_MESHVIEWER)
   if(bedLevelTools.view_mesh) {

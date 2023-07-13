@@ -204,9 +204,9 @@
 #define Color_Light_Red       0x8800
 #define Color_Orange          0xFB00 //0xFA20
 #define Color_Light_Orange    0xFC80 //0xFBC0
-#define Color_Light_Yellow    0x8BE0
-#define Color_Brown           0xCC27
-#define Color_Light_Brown     0x6204
+#define Color_Light_Yellow    0xFFE0 //0x8BE0
+#define Color_Brown           0x8A22
+#define Color_Light_Brown     0xC530
 #define Color_Grey            0x18E3
 
 // UI element defines and constants
