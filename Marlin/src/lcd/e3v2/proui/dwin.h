@@ -116,9 +116,7 @@ typedef struct {
   int16_t BedPidT;
   int16_t PidCycles;
   int16_t ExtMinT;
-  #if ENABLED(PREHEAT_BEFORE_LEVELING)
   int16_t BedLevT;
-  #endif
   bool Baud250K;
   bool CalcAvg;
   bool SpdInd;

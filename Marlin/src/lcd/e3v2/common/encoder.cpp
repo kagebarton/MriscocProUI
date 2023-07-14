@@ -126,6 +126,7 @@ EncoderState encoderReceiveAnalyze() {
     #if LCD_BACKLIGHT_TIMEOUT_MINS
       if (temp_diffState > 0) {
         ui.refresh_backlight_timeout(); //reset timer after encoder +- (this can be changed -> added to an all in one if statement)
+        if (!ui.backlight) { ui.refresh_brightness(); }
       }
     #endif
 

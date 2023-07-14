@@ -131,7 +131,7 @@ void MeshViewerClass::Draw(bool withsave/*=false*/, bool redraw/*=true*/) {
     else DWINUI::Draw_Box(1, HMI_data.Background_Color, {89,305,99,38});
   #endif
   if (withsave) {
-    DWIN_Draw_Box(1, HMI_data.Background_Color, 120, 300, 31, 42);
+    DWIN_Draw_Box(1, HMI_data.Background_Color, 120, 300, 31, 42); // draw black box to fill previous button select_box
     DWINUI::Draw_Button(BTN_Continue, 146, 305);
     DWINUI::Draw_Button(BTN_Save, 26, 305);
     Draw_Select_Highlight(HMI_flag.select_flag, 305);

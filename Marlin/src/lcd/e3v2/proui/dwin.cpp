@@ -1257,7 +1257,7 @@ void Draw_Main_Area() {
 
 void HMI_WaitForUser() {
   EncoderState encoder_diffState = get_encoder_state();
-  if (encoder_diffState != ENCODER_DIFF_NO && !ui.backlight) {
+  if ((encoder_diffState != ENCODER_DIFF_NO) && !ui.backlight) {
     if (checkkey == WaitResponse) { HMI_ReturnScreen(); }
     return ui.refresh_brightness();
   }
@@ -1501,25 +1501,25 @@ void DWIN_HandleScreen() {
 }
 
 bool IDisPopUp() {    // If ID is popup...
-  return  (checkkey == NothingToDo)
-       || (checkkey == WaitResponse)
-       || (checkkey == Homing)
-       || (checkkey == Leveling)
-       || (checkkey == PidProcess)
-       || (checkkey == PlotProcess)
-       || TERN0(HAS_ESDIAG, (checkkey == ESDiagProcess))
-       || (checkkey == Popup);
+  return (checkkey == NothingToDo)
+      || (checkkey == WaitResponse)
+      || (checkkey == Homing)
+      || (checkkey == Leveling)
+      || (checkkey == PidProcess)
+      || (checkkey == PlotProcess)
+      TERN_(HAS_ESDIAG, || (checkkey == ESDiagProcess))
+      || (checkkey == Popup);
 }
 
 void HMI_SaveProcessID(const uint8_t id) {
   if (checkkey != id) {
     if (!IDisPopUp()) { last_checkkey = checkkey; } // if previous is not a popup
     if ((id == Popup)
-         || TERN0(HAS_ESDIAG, (id == ESDiagProcess))
-         || (id == PrintDone)
-         || (id == Leveling)
-         || (id == PlotProcess)
-         || (id == WaitResponse)) { wait_for_user = true; }
+      TERN_(HAS_ESDIAG, || (id == ESDiagProcess))
+      || (id == PrintDone)
+      || (id == Leveling)
+      || (id == PlotProcess)
+      || (id == WaitResponse)) { wait_for_user = true; }
     checkkey = id;
   }
 }
@@ -2037,7 +2037,6 @@ void DWIN_CopySettingsFrom(const char * const buff) {
   DEBUG_ECHOLNPGM("DWIN_CopySettingsFrom");
   memcpy(&HMI_data, buff, sizeof(HMI_data_t));
   TERN_(PROUI_EX, memcpy(&PRO_data, buff + sizeof(HMI_data_t), sizeof(PRO_data));)
-  // if (HMI_data.Text_Color == HMI_data.Background_Color) DWIN_SetColorDefaults();
   DWINUI::SetColors(HMI_data.Text_Color, HMI_data.Background_Color, HMI_data.TitleBg_Color);
   TERN_(PREVENT_COLD_EXTRUSION, ApplyExtMinT();)
   feedrate_percentage = 100;
@@ -2076,7 +2075,6 @@ void DWIN_InitScreen() {
     safe_delay(2000);
   #endif
   DWINUI::init();
-  //DWINUI::SetColors(HMI_data.Text_Color, HMI_data.Background_Color, HMI_data.TitleBg_Color);
   DWINUI::onTitleDraw = Draw_Title;
   InitMenu();
   checkkey = 255;
@@ -2539,7 +2537,6 @@ void ApplyMove() {
     DEBUG_ECHOLNPGM("M48 Probe Test");
     LCD_MESSAGE(MSG_M48_TEST);
     queue.inject(F("G28XYO\nG28Z\nM48 P5"));
-    //DWIN_Popup_Pause(GET_TEXT_F(MSG_M48_TEST), BTN_Cancel);
   }
   void ProbeStow() { probe.stow(); }
   void ProbeDeploy() { probe.deploy(); }
@@ -2665,6 +2662,7 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
       float xpos = 0, ypos = 0;
     #endif
     gcode.process_subcommands_now(F("G28O"));
+    ui.reset_status(true);
     switch (point) {
       case 0:
         LCD_MESSAGE(MSG_TRAM_FL);
@@ -2742,10 +2740,11 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
       } 
       else LCD_MESSAGE_F("Bed Tramming Wizard Start");
       DWINUI::ClearMainArea();
+      MeshViewer.DrawMeshGrid(2, 2);
       static bed_mesh_t zval = {};
       probe.stow();
-      checkkey = NothingToDo;       // After home disable user input
       zval[0][0] = tram(0, false);  // First tram point can do Homing
+      checkkey = NothingToDo;       // After home disable user input
       MeshViewer.DrawMeshGrid(2, 2);
       MeshViewer.DrawMeshPoint(0, 0, zval[0][0]);
       zval[1][0] = tram(1, false);
@@ -2771,12 +2770,15 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
       ui.reset_status();
 
       #ifndef BED_TRAMMING_PROBE_TOLERANCE
-        #define BED_TRAMMING_PROBE_TOLERANCE 0.1f
+        #define BED_TRAMMING_PROBE_TOLERANCE 0.06f
       #endif
 
       if (ABS(MeshViewer.max - MeshViewer.min) < BED_TRAMMING_PROBE_TOLERANCE) {
         DWINUI::Draw_CenteredString(140, F("Corners leveled"));
         DWINUI::Draw_CenteredString(160, F("Tolerance achieved!"));
+        DWINUI::Draw_Button(BTN_Continue, 86, 305, true);
+        checkkey = Menu;
+        HMI_SaveProcessID(WaitResponse);
       }
       else {
         uint8_t p = 0;
@@ -2801,12 +2803,12 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
         DWINUI::Draw_CenteredString(120, F("Corners not leveled"));
         DWINUI::Draw_CenteredString(140, F("Knob adjustment required"));
         DWINUI::Draw_CenteredString((s ? Color_Green : Color_Error_Red), 160, s ? F("Lower") : F("Raise"));
-        DWINUI::Draw_CenteredString(Color_Orange, 180, plabel);
+        DWINUI::Draw_CenteredString(HMI_data.StatusTxt_Color, 180, plabel);
+        DWINUI::Draw_Button(BTN_Continue, 86, 305, true);
+        checkkey = Menu;
+        HMI_SaveProcessID(WaitResponse);
+        TramwizStart();
       }
-      DWINUI::Draw_Button(BTN_Continue, 86, 305, true);
-      checkkey = Menu;
-      HMI_SaveProcessID(WaitResponse);
-
     }
 
     void SetManualTramming() {
@@ -2817,7 +2819,7 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
       Toggle_Chkb_Line(HMI_data.CalcAvg);
     }
 
-  #endif // HAS_BED_PROBE
+  #endif // HAS_BED_PROBE && TRAMWIZ_MENU_ITEM
 // TrammingWizard
 
 #if ENABLED(MESH_BED_LEVELING)
