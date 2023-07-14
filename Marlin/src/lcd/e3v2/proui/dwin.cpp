@@ -2776,9 +2776,6 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
       if (ABS(MeshViewer.max - MeshViewer.min) < BED_TRAMMING_PROBE_TOLERANCE) {
         DWINUI::Draw_CenteredString(140, F("Corners leveled"));
         DWINUI::Draw_CenteredString(160, F("Tolerance achieved!"));
-        DWINUI::Draw_Button(BTN_Continue, 86, 305, true);
-        checkkey = Menu;
-        HMI_SaveProcessID(WaitResponse);
       }
       else {
         uint8_t p = 0;
@@ -2804,11 +2801,10 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
         DWINUI::Draw_CenteredString(140, F("Knob adjustment required"));
         DWINUI::Draw_CenteredString((s ? Color_Green : Color_Error_Red), 160, s ? F("Lower") : F("Raise"));
         DWINUI::Draw_CenteredString(HMI_data.StatusTxt_Color, 180, plabel);
-        DWINUI::Draw_Button(BTN_Continue, 86, 305, true);
-        checkkey = Menu;
-        HMI_SaveProcessID(WaitResponse);
-        TramwizStart();
       }
+      DWINUI::Draw_Button(BTN_Continue, 86, 305, true);
+      checkkey = Menu;
+      HMI_SaveProcessID(WaitResponse);
     }
 
     void SetManualTramming() {
