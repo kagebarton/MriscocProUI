@@ -44,7 +44,6 @@
 BedLevelToolsClass bedLevelTools;
 
 #if ENABLED(USE_GRID_MESHVIEWER)
-  bool BedLevelToolsClass::viewer_asymmetric_range = false;
   bool BedLevelToolsClass::viewer_print_value = true;
   bool BedLevelToolsClass::view_mesh = false;
 #endif
@@ -220,10 +219,10 @@ bool BedLevelToolsClass::meshValidate() {
       const auto start_y_px = padding_y_top + ((GRID_MAX_POINTS_Y) - y - 1) * cell_height_px;
       const auto end_y_px   = start_y_px + cell_height_px - 1 - gridline_width;
       DWIN_Draw_Rectangle(1,                                                                                 // RGB565 colors: http://www.barth-dev.de/online/rgb565-color-picker/
-        isnan(bedlevel.z_values[x][y]) ? Color_Grey : (                                                           // gray if undefined
+        isnan(bedlevel.z_values[x][y]) ? Color_Grey : (                                                           // grey if undefined
           (bedlevel.z_values[x][y] < 0 ?
-            (uint16_t)round(0x1F * -bedlevel.z_values[x][y] / (!viewer_asymmetric_range ? range : v_min)) << 11 : // red if mesh point value is negative
-            (uint16_t)round(0x3F *  bedlevel.z_values[x][y] / (!viewer_asymmetric_range ? range : v_max)) << 5) | // green if mesh point value is positive
+            (uint16_t)round(0x1F * -bedlevel.z_values[x][y] / (range)) << 11 : // red if mesh point value is negative
+            (uint16_t)round(0x3F *  bedlevel.z_values[x][y] / (range)) << 5) | // green if mesh point value is positive
               _MIN(0x1F, (((uint8_t)abs(bedlevel.z_values[x][y]) / 10) * 4))),                                    // + blue stepping for every mm
         start_x_px, start_y_px, end_x_px, end_y_px
       );
@@ -257,14 +256,12 @@ bool BedLevelToolsClass::meshValidate() {
 
   void BedLevelToolsClass::Set_Mesh_Viewer_Status() { // TODO: draw gradient with values as a legend instead
     float v_max = abs(get_max_value()), v_min = abs(get_min_value()), rangeA = _MAX(v_min, v_max), rangeB = _MIN(v_min, v_max);
-    if (v_min > 3e+10F) { v_min = 0.0000001; }
-    if (v_max > 3e+10F) { v_max = 0.0000001; }
     if (rangeA > 3e+10F) { rangeA = 0.0000001; }
     if (rangeB > 3e+10F) { rangeB = 0.0000001; }
     ui.set_status(
       &MString<47>(
-        F("Red "),  p_float_t(viewer_asymmetric_range ? -v_min : -rangeA, 3),
-        F("..0.."), p_float_t(viewer_asymmetric_range ?  v_max :  rangeB, 3),
+        F("Red "),  p_float_t(-rangeA, 3),
+        F("..0.."), p_float_t(rangeB, 3),
         F("+ Green")
       )
     );
