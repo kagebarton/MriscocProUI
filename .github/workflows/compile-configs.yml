@@ -152,8 +152,8 @@ jobs:
     strategy:
       matrix:
         chip: [GD32,N32]
-        temp: [false,false]
-        inshape: [false,false]
+        temp: [true,false]
+        inshape: [true,false]
     steps:
     - uses: actions/checkout@v3
     - name: Cache pip
