@@ -3236,9 +3236,6 @@ void Draw_Move_Menu() {
       #if HAS_Y_AXIS
         EDIT_ITEM(ICON_ProbeOffsetY, MSG_ZPROBE_YOFFSET, onDrawPFloatMenu, SetProbeOffsetY, &probe.offset.y);
       #endif
-      #if HAS_Z_AXIS
-        EDIT_ITEM(ICON_ProbeOffsetZ, MSG_ZPROBE_ZOFFSET, onDrawPFloat2Menu, SetProbeOffsetZ, &probe.offset.z);
-      #endif
       #if PROUI_EX
         EDIT_ITEM(ICON_ProbeZSpeed, MSG_Z_FEED_RATE, onDrawPIntMenu, SetProbeZSpeed, &PRO_data.zprobefeedslow);
         EDIT_ITEM(ICON_Homing, MSG_ZPROBE_MULTIPLE, onDrawPInt8Menu, SetProbeMultiple, &PRO_data.multiple_probing);
@@ -3815,11 +3812,8 @@ void Draw_GetColor_Menu() {
 
   void Draw_PID_Menu() {
     checkkey = Menu;
-    if (SET_MENU_F(PIDMenu, "PID Settings", 4)) {
+    if (SET_MENU_F(PIDMenu, "PID Settings", 3)) {
       BACK_ITEM(Draw_Temperature_Menu);
-    #if ENABLED(EEPROM_SETTINGS)
-      MENU_ITEM(ICON_WriteEEPROM, MSG_STORE_EEPROM, onDrawMenuItem, WriteEeprom);
-    #endif
     #if ENABLED(PIDTEMP) && ANY(PID_AUTOTUNE_MENU, PID_EDIT_MENU)
       MENU_ITEM_F(ICON_PIDNozzle, STR_HOTEND_PID " Settings", onDrawSubMenu, Draw_HotendPID_Menu);
     #elif ENABLED(MPCTEMP) && ANY(MPC_EDIT_MENU, MPC_AUTOTUNE_MENU)
@@ -3877,7 +3871,6 @@ void Draw_GetColor_Menu() {
 
 #if PROUI_PID_TUNE && ENABLED(PID_AUTOTUNE_MENU)
   void SetPID(celsius_t t, heater_id_t h) {
-// replace    sprintf_P(cmd, PSTR("G28OXY\nG0Z10F300\nG0X%sY%sF5000\nM84\nM400"),
     gcode.process_subcommands_now(
       TS(F("G28OXY\nG0Z10F300\nG0X"), X_CENTER, F("Y"), Y_CENTER, F("F5000\nM84\nM400"))
     );
@@ -3919,7 +3912,7 @@ void Draw_GetColor_Menu() {
 
   void Draw_HotendPID_Menu() {
     checkkey = Menu;
-    if (SET_MENU_F(HotendPIDMenu, STR_HOTEND_PID " Settings", 8)) {
+    if (SET_MENU_F(HotendPIDMenu, STR_HOTEND_PID " Settings", 7)) {
       BACK_ITEM(Return_PID_Menu);
       #if ENABLED(PID_AUTOTUNE_MENU)
         MENU_ITEM_F(ICON_PIDNozzle, "Tune " STR_HOTEND_PID, onDrawMenuItem, HotendPID);
@@ -3946,7 +3939,7 @@ void Draw_GetColor_Menu() {
 
   void Draw_BedPID_Menu() {
     checkkey = Menu;
-    if (SET_MENU_F(BedPIDMenu, STR_BED_PID " Settings", 8)) {
+    if (SET_MENU_F(BedPIDMenu, STR_BED_PID " Settings", 7)) {
       BACK_ITEM(Return_PID_Menu);
       #if ENABLED(PID_AUTOTUNE_MENU)
         MENU_ITEM_F(ICON_PIDBed, "Tune " STR_BED_PID, onDrawMenuItem, BedPID);
@@ -4058,10 +4051,10 @@ void Draw_GetColor_Menu() {
       if (max < X_BED_SIZE - ui.mesh_inset_max_x) { max = X_BED_SIZE - ui.mesh_inset_max_x; }
       if (max < ui.mesh_inset_min_y) { max = ui.mesh_inset_min_y; }
       if (max < Y_BED_SIZE - ui.mesh_inset_max_y) { max = Y_BED_SIZE - ui.mesh_inset_max_y; }
-      ui.mesh_inset_min_x = max;
-      ui.mesh_inset_max_x = X_BED_SIZE - max;
-      ui.mesh_inset_min_y = max;
-      ui.mesh_inset_max_y = Y_BED_SIZE - max;
+      PRO_data.mesh_min_x = ui.mesh_inset_min_x = max;
+      PRO_data.mesh_max_x = ui.mesh_inset_max_x = X_BED_SIZE - max;
+      PRO_data.mesh_min_y = ui.mesh_inset_min_y = max;
+      PRO_data.mesh_max_y = ui.mesh_inset_max_y = Y_BED_SIZE - max;
       ProEx.ApplyMeshLimits();
       ReDrawMenu();
     }

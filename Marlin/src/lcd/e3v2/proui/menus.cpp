@@ -509,19 +509,6 @@ bool SetMenu(MenuClass* &menu, FSTR_P title, int8_t totalitems) {
   return NotCurrent;
 }
 
-bool SetMenu(MenuClass* &menu, frame_rect_t cn, FSTR_P title, int8_t totalitems) {
-  if (!menu) menu = new MenuClass();
-  const bool NotCurrent = (CurrentMenu != menu);
-  if (NotCurrent) {
-    if (cn.w != 0)
-      menu->MenuTitle.SetFrame(cn.x, cn.y, cn.w, cn.h);
-    else
-      menu->MenuTitle.SetCaption(title);
-    MenuItemsPrepare(totalitems);
-  }
-  return NotCurrent;
-}
-
 void ResetMenu(MenuClass* &menu) {
   if (menu) {
     menu->topline = 0;
