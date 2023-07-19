@@ -148,7 +148,7 @@
 
 // Editable temperature limits
 #define MIN_ETEMP  0
-#define MAX_ETEMP  (thermalManager.hotend_maxtemp[0] - (HOTEND_OVERSHOOT))
+#define MAX_ETEMP  thermalManager.hotend_max_target(0)
 #define MIN_BEDTEMP 0
 #define MAX_BEDTEMP BED_MAX_TARGET
 
@@ -1621,7 +1621,7 @@ void DWIN_LevelingDone() {
           DWINUI::Draw_CenteredString(2,HMI_data.PopupTxt_Color, 70, GET_TEXT_F(MSG_MPC_AUTOTUNE));
           DWINUI::Draw_String(HMI_data.PopupTxt_Color, gfrm.x, gfrm.y - DWINUI::fontHeight() - 4, F("MPC target:     Celsius"));
           DWINUI::Draw_CenteredString(2, HMI_data.PopupTxt_Color, 92, F("for NOZZLE"));
-          _maxtemp = thermalManager.hotend_maxtemp[0];
+          _maxtemp = thermalManager.hotend_max_target(0);
           _target = 200;
           break;
       #endif
@@ -1630,7 +1630,7 @@ void DWIN_LevelingDone() {
           DWINUI::Draw_CenteredString(2, HMI_data.PopupTxt_Color, 70, GET_TEXT_F(MSG_PID_AUTOTUNE));
           DWINUI::Draw_String(HMI_data.PopupTxt_Color, gfrm.x, gfrm.y - DWINUI::fontHeight() - 4, F("PID target:     Celsius"));
           DWINUI::Draw_CenteredString(2, HMI_data.PopupTxt_Color, 92, F("for NOZZLE"));
-          _maxtemp = thermalManager.hotend_maxtemp[0];
+          _maxtemp = thermalManager.hotend_max_target(0);
           _target = HMI_data.HotendPidT;
           break;
       #endif
@@ -1761,15 +1761,15 @@ void DWIN_LevelingDone() {
           HMI_SaveProcessID(PlotProcess); 
       #endif
           DWINUI::Draw_CenteredString(3, HMI_data.PopupTxt_Color, 75, F("Nozzle Temperature"));
-          _maxtemp = thermalManager.hotend_maxtemp[0];
-          _target = thermalManager.temp_hotend[0].target;
+          _maxtemp = thermalManager.hotend_max_target(0);
+          _target = thermalManager.degTargetHotend(0);
           break;
       #if ENABLED(PIDTEMPBED)
         case PID_BED_START:
           HMI_SaveProcessID(PlotProcess);
           DWINUI::Draw_CenteredString(3, HMI_data.PopupTxt_Color, 75, F("Bed Temperature"));
           _maxtemp = BED_MAX_TARGET;
-          _target = thermalManager.temp_bed.target;
+          _target = thermalManager.degTargetBed();
           break;
       #endif
       default:
