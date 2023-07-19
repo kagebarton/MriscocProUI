@@ -7,7 +7,7 @@ name: Bump Distribution Date
 
 on:
   schedule:
-    - cron: '0 12 */1 * *'
+    - cron: '0 12 */2 * *'
 
 jobs:
   bump_date:
@@ -18,12 +18,12 @@ jobs:
 
     steps:
 
-    - name: Check out 2023-May
+    - name: Check out 2023-July
       uses: actions/checkout@v3
       with:
-        ref: 2023-May
+        ref: 2023-July
 
-    - name: Bump Date (2023-May)
+    - name: Bump Date (2023-July)
       run: |
         # Inline Bump Script
         if [[ ! "$( git log -1 --pretty=%B )" =~ ^\[cron\] ]]; then
