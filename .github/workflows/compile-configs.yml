@@ -3,7 +3,6 @@ name: Build Configs
 on:
   workflow_dispatch:
   release:
-    branches: [main, default, master]
     types: [created]
 
 jobs:
@@ -32,6 +31,11 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v3
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
@@ -39,11 +43,6 @@ jobs:
         pip install --upgrade pip
         pip install --upgrade wheel
         pip install --upgrade platformio
-    - name: Cache PlatformIO
-      uses: actions/cache@v3
-      with:
-        path: ~/.platformio
-        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Run PlatformIO
       id: build_configs
       run: |
@@ -111,6 +110,11 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v3
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
@@ -118,11 +122,6 @@ jobs:
         pip install --upgrade pip
         pip install --upgrade wheel
         pip install --upgrade platformio
-    - name: Cache PlatformIO
-      uses: actions/cache@v3
-      with:
-        path: ~/.platformio
-        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Run PlatformIO
       id: build_configs
       run: |
@@ -188,6 +187,11 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v3
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
@@ -252,6 +256,11 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v3
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
@@ -327,6 +336,11 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v3
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
@@ -398,6 +412,11 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v3
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
@@ -474,6 +493,11 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v3
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
@@ -550,6 +574,11 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v3
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
@@ -626,6 +655,11 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v3
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
@@ -702,6 +736,11 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v3
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
