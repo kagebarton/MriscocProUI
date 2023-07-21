@@ -5,8 +5,6 @@ on:
   release:
     branches: [main, default, master]
     types: [created]
-    tags:
-      - 2.1.3d-2d
 
 jobs:
   Build-Default-A:            # Default-NP for Aquila
@@ -23,7 +21,6 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-        cache: 'pip'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
@@ -103,7 +100,6 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-        cache: 'pip'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
@@ -181,7 +177,6 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-        cache: 'pip'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
@@ -246,7 +241,6 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-        cache: 'pip'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
@@ -322,7 +316,6 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-        cache: 'pip'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
@@ -394,7 +387,6 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-        cache: 'pip'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
@@ -471,7 +463,6 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-        cache: 'pip'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
@@ -548,7 +539,6 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-        cache: 'pip'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
@@ -625,7 +615,6 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-        cache: 'pip'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
@@ -702,7 +691,6 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-        cache: 'pip'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
