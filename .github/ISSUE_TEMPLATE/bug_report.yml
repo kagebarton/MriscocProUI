@@ -31,7 +31,7 @@ body:
         Describe the bug in this section. Be clear and concise of the
         problem and include as many details as possible.
 
-        Use ` ```y ` before and  ` ``` ` after (on its own line) when pasting formatted code
+        Use ` ```y ` before and  ` ``` ` after (on its own line) when pasting formatted code.
       placeholder: |
         A does B, supposed to do C.
         X doesn't work.
