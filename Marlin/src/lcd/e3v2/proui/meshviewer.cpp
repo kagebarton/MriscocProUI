@@ -145,14 +145,14 @@ void MeshViewerClass::Draw(bool withsave/*=false*/, bool redraw/*=true*/) {
     else {
     char str_1[6], str_2[6] = "";
     ui.status_printf(0, F("minZ: %s | maxZ: +%s"),
-      dtostrf(min, 1, 2, str_1),
-      dtostrf(max, 1, 2, str_2));
+      dtostrf(min, 1, 3, str_1),
+      dtostrf(max, 1, 3, str_2));
     }
   #else
     char str_1[6], str_2[6] = "";
     ui.status_printf(0, F("minZ: %s | maxZ: +%s"),
-      dtostrf(min, 1, 2, str_1),
-      dtostrf(max, 1, 2, str_2));
+      dtostrf(min, 1, 3, str_1),
+      dtostrf(max, 1, 3, str_2));
   #endif
 }
 
