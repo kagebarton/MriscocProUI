@@ -106,7 +106,7 @@ Stepper stepper; // Singleton
   #include "../feature/bedlevel/bdl/bdl.h"
 #endif
 
-#if ENABLED(INTEGRATED_BABYSTEPPING)
+#if ENABLED(BABYSTEPPING)
   #include "../feature/babystep.h"
 #endif
 
@@ -277,7 +277,7 @@ uint32_t Stepper::advance_divisor = 0,
   #endif
 #endif
 
-#if ENABLED(INTEGRATED_BABYSTEPPING)
+#if ENABLED(BABYSTEPPING)
   hal_timer_t Stepper::nextBabystepISR = BABYSTEP_NEVER;
 #endif
 
@@ -1547,7 +1547,7 @@ void Stepper::isr() {
         // Define 2.5 msec task for auxilliary functions.
         if (!fxdTiCtrl_nextAuxISR) {
           endstops.update();
-          TERN_(INTEGRATED_BABYSTEPPING, if (babystep.has_steps()) babystepping_isr());
+          TERN_(BABYSTEPPING, if (babystep.has_steps()) babystepping_isr());
           fxdTiCtrl_refreshAxisDidMove();
           fxdTiCtrl_nextAuxISR = 0.0025f * (STEPPER_TIMER_RATE);
         }
@@ -1578,7 +1578,7 @@ void Stepper::isr() {
           nextAdvanceISR = la_interval;
       #endif
 
-      #if ENABLED(INTEGRATED_BABYSTEPPING)
+      #if ENABLED(BABYSTEPPING)
         const bool is_babystep = (nextBabystepISR == 0);  // 0 = Do Babystepping (XY)Z pulses
         if (is_babystep) nextBabystepISR = babystepping_isr();
       #endif
@@ -1587,7 +1587,7 @@ void Stepper::isr() {
 
       if (!nextMainISR) nextMainISR = block_phase_isr();  // Manage acc/deceleration, get next block
 
-      #if ENABLED(INTEGRATED_BABYSTEPPING)
+      #if ENABLED(BABYSTEPPING)
         if (is_babystep)                                  // Avoid ANY stepping too soon after baby-stepping
           NOLESS(nextMainISR, (BABYSTEP_TICKS) / 8);      // FULL STOP for 125µs after a baby-step
 
@@ -1600,7 +1600,7 @@ void Stepper::isr() {
       TERN_(INPUT_SHAPING_X, NOMORE(interval, ShapingQueue::peek_x()));   // Time until next input shaping echo for X
       TERN_(INPUT_SHAPING_Y, NOMORE(interval, ShapingQueue::peek_y()));   // Time until next input shaping echo for Y
       TERN_(LIN_ADVANCE, NOMORE(interval, nextAdvanceISR));               // Come back early for Linear Advance?
-      TERN_(INTEGRATED_BABYSTEPPING, NOMORE(interval, nextBabystepISR));  // Come back early for Babystepping?
+      TERN_(BABYSTEPPING, NOMORE(interval, nextBabystepISR));             // Come back early for Babystepping?
 
       //
       // Compute remaining time for each ISR phase
@@ -1612,7 +1612,7 @@ void Stepper::isr() {
       nextMainISR -= interval;
       TERN_(HAS_ZV_SHAPING, ShapingQueue::decrement_delays(interval));
       TERN_(LIN_ADVANCE, if (nextAdvanceISR != LA_ADV_NEVER) nextAdvanceISR -= interval);
-      TERN_(INTEGRATED_BABYSTEPPING, if (nextBabystepISR != BABYSTEP_NEVER) nextBabystepISR -= interval);
+      TERN_(BABYSTEPPING, if (nextBabystepISR != BABYSTEP_NEVER) nextBabystepISR -= interval);
 
     } // standard motion control
 
@@ -2418,7 +2418,7 @@ hal_timer_t Stepper::block_phase_isr() {
           }
         #endif // LIN_ADVANCE
 
-        /*
+        /**
          * Adjust Laser Power - Decelerating
          * trap_ramp_entry_decr - holds the precalculated value to decrease the current power per decel step.
          */
@@ -2814,7 +2814,7 @@ hal_timer_t Stepper::block_phase_isr() {
 
 #endif // LIN_ADVANCE
 
-#if ENABLED(INTEGRATED_BABYSTEPPING)
+#if ENABLED(BABYSTEPPING)
 
   // Timer interrupt for baby-stepping
   hal_timer_t Stepper::babystepping_isr() {
@@ -3676,7 +3676,7 @@ void Stepper::report_positions() {
   // No other ISR should ever interrupt this!
   void Stepper::do_babystep(const AxisEnum axis, const bool direction) {
 
-    IF_DISABLED(INTEGRATED_BABYSTEPPING, cli());
+    IF_DISABLED(BABYSTEPPING, cli());
 
     switch (axis) {
 
@@ -3757,7 +3757,7 @@ void Stepper::report_positions() {
       default: break;
     }
 
-    IF_DISABLED(INTEGRATED_BABYSTEPPING, sei());
+    IF_DISABLED(BABYSTEPPING, sei());
   }
 
 #endif // BABYSTEPPING

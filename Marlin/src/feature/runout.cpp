@@ -133,7 +133,7 @@ void event_filament_runout(const uint8_t extruder) {
     SERIAL_ECHOPGM(" " ACTION_REASON_ON_FILAMENT_RUNOUT " ");
     SERIAL_CHAR(tool);
     SERIAL_EOL();
-    
+
   #endif // HOST_ACTION_COMMANDS
 
   #ifdef FILAMENT_RUNOUT_SCRIPT
