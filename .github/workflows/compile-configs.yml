@@ -24,25 +24,24 @@ jobs:
       with:
         python-version: '3.10'
         cache: 'pip'
-        cache-dependency-path: '**/requirements.txt'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
         node-version: 16
-    - name: Install PlatformIO
-      run: |
-        python3 -m pip install --upgrade pip
-        pip install -r subdirectory/requirements.txt
-        pip install --upgrade pip
-        pip install --upgrade wheel
-        pip install --upgrade platformio
     - name: Cache pip
       uses: actions/cache@v3
       with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        path: ${{ env.pythonLocation}}/lib/python3.10/site-packages/*
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+    - name: Install PlatformIO
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install --upgrade pip
+        pip install --upgrade wheel
+        pip install --upgrade platformio
     - name: Cache PlatformIO
       uses: actions/cache@v3
       with:
@@ -100,27 +99,29 @@ jobs:
         inshape: [true,false]
     steps:
     - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
         node-version: 16
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10' 
-    - name: Install PlatformIO
-      run: |
-        python3 -m pip install --upgrade pip
-        pip install --upgrade pip
-        pip install --upgrade wheel
-        pip install --upgrade platformio
     - name: Cache pip
       uses: actions/cache@v3
       with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        path: ${{ env.pythonLocation}}/lib/python3.10/site-packages/*
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+    - name: Install PlatformIO
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install --upgrade pip
+        pip install --upgrade wheel
+        pip install --upgrade platformio
     - name: Cache PlatformIO
       uses: actions/cache@v3
       with:
@@ -176,32 +177,29 @@ jobs:
         chip: [GD32,N32]
     steps:
     - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
         node-version: 16
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10' 
-    - name: Install PlatformIO
-      run: |
-        python3 -m pip install --upgrade pip
-        pip install --upgrade pip
-        pip install --upgrade wheel
-        pip install --upgrade platformio
     - name: Cache pip
       uses: actions/cache@v3
       with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        path: ${{ env.pythonLocation}}/lib/python3.10/site-packages/*
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-    - name: Cache PlatformIO
-      uses: actions/cache@v3
-      with:
-        path: ~/.platformio
-        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+    - name: Install PlatformIO
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install --upgrade pip
+        pip install --upgrade wheel
+        pip install --upgrade platformio
     - name: Run PlatformIO
       id: build_configs
       run: |
@@ -244,6 +242,11 @@ jobs:
         inshape: [true,false]
     steps:
     - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
@@ -251,22 +254,14 @@ jobs:
     - name: Cache pip
       uses: actions/cache@v3
       with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        path: ${{ env.pythonLocation}}/lib/python3.10/site-packages/*
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-    - name: Cache PlatformIO
-      uses: actions/cache@v3
-      with:
-        path: ~/.platformio
-        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
+        pip install -r requirements.txt
         pip install --upgrade pip
         pip install --upgrade wheel
         pip install --upgrade platformio
@@ -323,6 +318,11 @@ jobs:
         temp: [true,false]
     steps:
     - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
@@ -330,22 +330,14 @@ jobs:
     - name: Cache pip
       uses: actions/cache@v3
       with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        path: ${{ env.pythonLocation}}/lib/python3.10/site-packages/*
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-    - name: Cache PlatformIO
-      uses: actions/cache@v3
-      with:
-        path: ~/.platformio
-        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
+        pip install -r requirements.txt
         pip install --upgrade pip
         pip install --upgrade wheel
         pip install --upgrade platformio
@@ -398,6 +390,11 @@ jobs:
         inshape: [true,false]
     steps:
     - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
@@ -405,22 +402,14 @@ jobs:
     - name: Cache pip
       uses: actions/cache@v3
       with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        path: ${{ env.pythonLocation}}/lib/python3.10/site-packages/*
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-    - name: Cache PlatformIO
-      uses: actions/cache@v3
-      with:
-        path: ~/.platformio
-        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
+        pip install -r requirements.txt
         pip install --upgrade pip
         pip install --upgrade wheel
         pip install --upgrade platformio
@@ -478,6 +467,11 @@ jobs:
         inshape: [true,false]
     steps:
     - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
@@ -485,22 +479,14 @@ jobs:
     - name: Cache pip
       uses: actions/cache@v3
       with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        path: ${{ env.pythonLocation}}/lib/python3.10/site-packages/*
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-    - name: Cache PlatformIO
-      uses: actions/cache@v3
-      with:
-        path: ~/.platformio
-        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
+        pip install -r requirements.txt
         pip install --upgrade pip
         pip install --upgrade wheel
         pip install --upgrade platformio
@@ -558,6 +544,11 @@ jobs:
         inshape: [true,false]
     steps:
     - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
@@ -565,22 +556,14 @@ jobs:
     - name: Cache pip
       uses: actions/cache@v3
       with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        path: ${{ env.pythonLocation}}/lib/python3.10/site-packages/*
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-    - name: Cache PlatformIO
-      uses: actions/cache@v3
-      with:
-        path: ~/.platformio
-        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
+        pip install -r requirements.txt
         pip install --upgrade pip
         pip install --upgrade wheel
         pip install --upgrade platformio
@@ -638,6 +621,11 @@ jobs:
         inshape: [true,false]
     steps:
     - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
@@ -645,22 +633,14 @@ jobs:
     - name: Cache pip
       uses: actions/cache@v3
       with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        path: ${{ env.pythonLocation}}/lib/python3.10/site-packages/*
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-    - name: Cache PlatformIO
-      uses: actions/cache@v3
-      with:
-        path: ~/.platformio
-        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
+        pip install -r requirements.txt
         pip install --upgrade pip
         pip install --upgrade wheel
         pip install --upgrade platformio
@@ -718,6 +698,11 @@ jobs:
         inshape: [true,false]
     steps:
     - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
     - name: Setup node
       uses: actions/setup-node@v3
       with:
@@ -725,22 +710,14 @@ jobs:
     - name: Cache pip
       uses: actions/cache@v3
       with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        path: ${{ env.pythonLocation}}/lib/python3.10/site-packages/*
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-    - name: Cache PlatformIO
-      uses: actions/cache@v3
-      with:
-        path: ~/.platformio
-        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
     - name: Install PlatformIO
       run: |
         python3 -m pip install --upgrade pip
+        pip install -r requirements.txt
         pip install --upgrade pip
         pip install --upgrade wheel
         pip install --upgrade platformio
