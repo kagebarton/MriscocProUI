@@ -6,13 +6,13 @@ body:
     attributes:
       value: |
         # Bug Details
-        ### You can also use this form to suggest any fix no matter how simple, it doesn't have to be a 'bug' per say.
+        #### You can also use this form to suggest any fix no matter how simple, it doesn't have to be a 'bug' per say.
 
   - type: dropdown
     attributes:
-      label: Did you test the [latest release build](https://github.com/classicrocker883/MriscocProUI/releases/latest)?
+      label: Did you test the latest release build?
       description: >-
-        Always try the latest - most recently updated code
+        Always try the [latest](https://github.com/classicrocker883/MriscocProUI/releases/latest) - most recently updated firmware
       options:
         - Yes, and the problem still exists.
         - No, but I will try it!
@@ -31,7 +31,7 @@ body:
         Describe the bug in this section. Be clear and concise of the
         problem and include as many details as possible.
 
-        Use ` ```y ` before and after (on its own line) when pasting formatted code
+        Use ` ```y ` before and  ` ``` ` after (on its own line) when pasting formatted code
       placeholder: |
         A does B, supposed to do C.
         X doesn't work.
@@ -66,7 +66,7 @@ body:
   - type: dropdown
     attributes:
       label: Your Mainboard
-      description: What Chip?
+      description: Which Chip?
       options:
         - GD32
         - N32
@@ -102,10 +102,10 @@ body:
       label: Bed Leveling
       description: What kind of bed leveling are you using?
       options:
-        - UBL Bilinear mesh
-        - BLT Bilinear mesh
-        - MM Manual Mesh Bed Leveling
-        - Default - No Probe / Bed Leveling
+        - UBL - Unified Bed Leveling
+        - BLT - BL Touch Bilinear mesh
+        - MM - Manual Mesh Bed Leveling
+        - Default - No Probe / No Bed Leveling
     validations:
       required: true
 
@@ -116,7 +116,7 @@ body:
 
   - type: checkboxes
     attributes:
-      label: Don't forget to include
+      label: Did you include your own configuration files?
       options:
         - label: A ZIP file containing your `Configuration.h` and `Configuration_adv.h`.
 
@@ -134,4 +134,4 @@ body:
       description: >-
         If you've made any other modifications to the firmware, please describe them in detail.
 
-        Don't forget to put ` ```y ` before and after (on its own line) when pasting formatted code.
+        Don't forget to put ` ```y ` before and  ` ``` ` after (on its own line) when pasting formatted code.
