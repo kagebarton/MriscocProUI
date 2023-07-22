@@ -833,7 +833,7 @@ jobs:
         cp configurations/Creality\ Ender/Default-NP/Configuration.h Marlin/Configuration.h
         cp configurations/Creality\ Ender/Default-NP/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/Creality\ Ender/Default-NP/Version.h Marlin/Version.h
-        sed -i "s/default_envs =.*/default_envs = GD32F103RE_creality_maple/g" platformio.ini
+        sed -i "s/default_envs =.*/default_envs = GD32F303RE_creality_maple/g" platformio.ini
         if ($IS); then TEMP=; else TEMP='\/\/'; fi;
         sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
         sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h
@@ -843,7 +843,7 @@ jobs:
         sed -i "s/[^ ]*#define MPCTEMP/$MTEMP#define MPCTEMP/g" Marlin/Configuration.h
         pio run
         mkdir temp
-        mv .pio/build/GD32F103RE_creality_maple/*.bin temp/build.bin
+        mv .pio/build/GD32F303RE_creality_maple/*.bin temp/build.bin
       env:
         TP: ${{ matrix.temp }}
         IS: ${{ matrix.inshape }}
@@ -908,7 +908,7 @@ jobs:
         cp configurations/Creality\ Ender/MM/Configuration.h Marlin/Configuration.h
         cp configurations/Creality\ Ender/MM/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/Creality\ Ender/MM/Version.h Marlin/Version.h
-        sed -i "s/default_envs =.*/default_envs = GD32F103RE_creality_maple/g" platformio.ini
+        sed -i "s/default_envs =.*/default_envs = GD32F303RE_creality_maple/g" platformio.ini
         if ($IS); then TEMP=; else TEMP='\/\/'; fi;
         sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
         sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h
@@ -918,7 +918,7 @@ jobs:
         sed -i "s/[^ ]*#define MPCTEMP/$MTEMP#define MPCTEMP/g" Marlin/Configuration.h
         pio run
         mkdir temp
-        mv .pio/build/GD32F103RE_creality_maple/*.bin temp/build.bin
+        mv .pio/build/GD32F303RE_creality_maple/*.bin temp/build.bin
       env:
         TP: ${{ matrix.temp }}
         IS: ${{ matrix.inshape }}
@@ -983,7 +983,7 @@ jobs:
         cp configurations/Creality\ Ender/UBL/Configuration.h Marlin/Configuration.h
         cp configurations/Creality\ Ender/UBL/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/Creality\ Ender/UBL/Version.h Marlin/Version.h
-        sed -i "s/default_envs =.*/default_envs = GD32F103RE_creality_maple/g" platformio.ini
+        sed -i "s/default_envs =.*/default_envs = GD32F303RE_creality_maple/g" platformio.ini
         if ($IS); then TEMP=; else TEMP='\/\/'; fi;
         sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
         sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h
@@ -993,7 +993,7 @@ jobs:
         sed -i "s/[^ ]*#define MPCTEMP/$MTEMP#define MPCTEMP/g" Marlin/Configuration.h
         pio run
         mkdir temp
-        mv .pio/build/GD32F103RE_creality_maple/*.bin temp/build.bin
+        mv .pio/build/GD32F303RE_creality_maple/*.bin temp/build.bin
       env:
         TP: ${{ matrix.temp }}
         IS: ${{ matrix.inshape }}
@@ -1060,7 +1060,7 @@ jobs:
   #       cp configurations/Creality\ Ender/UBL/Configuration.h Marlin/Configuration.h
   #       cp configurations/Creality\ Ender/UBL/Configuration_adv.h Marlin/Configuration_adv.h
   #       cp configurations/Creality\ Ender/UBL/Version.h Marlin/Version.h
-  #       sed -i "s/default_envs =.*/default_envs = GD32F103RE_creality_maple/g" platformio.ini
+  #       sed -i "s/default_envs =.*/default_envs = GD32F303RE_creality_maple/g" platformio.ini
   #       sed -i "s/#define GRID_MAX_POINTS_X.*/#define GRID_MAX_POINTS_X $GRID/g" Marlin/Configuration.h
   #       if ($IS); then TEMP=; else TEMP='\/\/'; fi;
   #       sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
@@ -1080,7 +1080,7 @@ jobs:
   
   #       pio run
   #       mkdir temp
-  #       mv .pio/build/GD32F103RE_creality_maple/*.bin temp/build.bin
+  #       mv .pio/build/GD32F303RE_creality_maple/*.bin temp/build.bin
   #     env:
     #     PR: ${{ matrix.printer}}
   #       GRID: ${{ matrix.grid }}
@@ -1147,7 +1147,7 @@ jobs:
         cp configurations/Creality\ Ender/BLT/Configuration.h Marlin/Configuration.h
         cp configurations/Creality\ Ender/BLT/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/Creality\ Ender/BLT/Version.h Marlin/Version.h
-        sed -i "s/default_envs =.*/default_envs = GD32F103RE_creality_maple/g" platformio.ini
+        sed -i "s/default_envs =.*/default_envs = GD32F303RE_creality_maple/g" platformio.ini
         if ($IS); then TEMP=; else TEMP='\/\/'; fi;
         sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
         sed -i "s/[^ ]*#define INPUT_SHAPING_Y/$TEMP#define INPUT_SHAPING_Y/g" Marlin/Configuration_adv.h
@@ -1157,7 +1157,7 @@ jobs:
         sed -i "s/[^ ]*#define MPCTEMP/$MTEMP#define MPCTEMP/g" Marlin/Configuration.h
         pio run
         mkdir temp
-        mv .pio/build/GD32F103RE_creality_maple/*.bin temp/build.bin
+        mv .pio/build/GD32F303RE_creality_maple/*.bin temp/build.bin
       env:
         TP: ${{ matrix.temp }}
         IS: ${{ matrix.inshape }}
@@ -1223,7 +1223,7 @@ jobs:
   #       cp configurations/Creality\ Ender/BLT/Configuration.h Marlin/Configuration.h
   #       cp configurations/Creality\ Ender/BLT/Configuration_adv.h Marlin/Configuration_adv.h
   #       cp configurations/Creality\ Ender/BLT/Version.h Marlin/Version.h
-  #       sed -i "s/default_envs =.*/default_envs = GD32F103RE_creality_maple/g" platformio.ini
+  #       sed -i "s/default_envs =.*/default_envs = GD32F303RE_creality_maple/g" platformio.ini
   #       sed -i "s/#define GRID_MAX_POINTS_X.*/#define GRID_MAX_POINTS_X $GRID/g" Marlin/Configuration.h
   #       if ($IS); then TEMP=; else TEMP='\/\/'; fi;
   #       sed -i "s/[^ ]*#define INPUT_SHAPING_X/$TEMP#define INPUT_SHAPING_X/g" Marlin/Configuration_adv.h
@@ -1234,7 +1234,7 @@ jobs:
   #       sed -i "s/[^ ]*#define MPCTEMP/$MTEMP#define MPCTEMP/g" Marlin/Configuration.h
   #       pio run
   #       mkdir temp
-  #       mv .pio/build/GD32F103RE_creality_maple/*.bin temp/build.bin
+  #       mv .pio/build/GD32F303RE_creality_maple/*.bin temp/build.bin
   #     env:
   #       GRID: ${{ matrix.grid }}
   #       TP: ${{ matrix.temp }}
