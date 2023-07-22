@@ -7,7 +7,7 @@ on:
 
 jobs:
   Build-Default-A:            # Default-NP for Aquila
-    name: Build Default Files
+    name: Build Default Files A
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -85,7 +85,7 @@ jobs:
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
   Build-Manual-Mesh-A:        # Manual Mesh - MM for Aquila
-    name: Build Manual-Mesh Files
+    name: Build Manual-Mesh Files A
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -163,7 +163,7 @@ jobs:
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
   Build-UBL-ProUI-A:            # UBL-Pro for Aquila
-    name: Build UBL Pro Files
+    name: Build UBL Pro Files A
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -228,7 +228,7 @@ jobs:
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
   Build-UBL-NoPro-A:          # UBL NoPro for Aquila
-    name: Build UBL NoPro Files
+    name: Build UBL NoPro Files A
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -309,7 +309,7 @@ jobs:
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
   Build-BLTouch-A:            # BLTouch Pro for Aquila
-    name: Build BLT Pro Files
+    name: Build BLT Pro Files A
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -382,7 +382,7 @@ jobs:
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
   Build-BLTouch-NP-A:         # BLTouch NoPro for Aquila
-    name: Build BLT NoPro Files
+    name: Build BLT NoPro Files A
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -463,7 +463,7 @@ jobs:
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
   Build-Default-A4:            # Default-NP for Aquila 427
-    name: Build Default Files 427
+    name: Build Default Files A4
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -543,7 +543,7 @@ jobs:
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
   Build-Manual-Mesh-A4:        # Manual Mesh - MM for Aquila 427
-    name: Build Manual-Mesh Files 427
+    name: Build Manual-Mesh Files A4
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -623,7 +623,7 @@ jobs:
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
   Build-UBL-ProUI-A4:            # UBL-Pro for Aquila 427
-    name: Build UBL Pro Files 427
+    name: Build UBL Pro Files A4
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -703,7 +703,7 @@ jobs:
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
   Build-BLTouch-A4:            # BLTouch Pro for Aquila 427
-    name: Build BLT Pro Files 427
+    name: Build BLT Pro Files A4
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -787,7 +787,7 @@ jobs:
 ############################################################ Ender-3
 
   Build-Default-E:            # Default-NP for Ender-3
-    name: Build Default Files
+    name: Build Default Files E
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -862,7 +862,7 @@ jobs:
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
   Build-Manual-Mesh-E:        # Manual Mesh - MM for Ender-3
-    name: Build Manual-Mesh Files
+    name: Build Manual-Mesh Files E
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -937,7 +937,7 @@ jobs:
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
   Build-UBL-ProUI-E:            # UBL-Pro for Ender-3
-    name: Build UBL Pro Files
+    name: Build UBL Pro Files E
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -980,8 +980,8 @@ jobs:
         > Marlin/Configuration.h
         > Marlin/Configuration_adv.h
         > Marlin/Version.h
-        cp configurations/Creality\ Ender/UBL/ConfigurationPro.h Marlin/Configuration.h
-        cp configurations/Creality\ Ender/UBL/Configuration_advPro.h Marlin/Configuration_adv.h
+        cp configurations/Creality\ Ender/UBL/Configuration.h Marlin/Configuration.h
+        cp configurations/Creality\ Ender/UBL/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/Creality\ Ender/UBL/Version.h Marlin/Version.h
         sed -i "s/default_envs =.*/default_envs = GD32F103RE_creality_maple/g" platformio.ini
         if ($IS); then TEMP=; else TEMP='\/\/'; fi;
@@ -1101,7 +1101,7 @@ jobs:
   #       asset_name: ${{ steps.build_configs.outputs.filename }}
   #       asset_content_type: application/x-binary
   Build-BLTouch-E:            # BLTouch Pro for Ender-3
-    name: Build BLT Pro Files
+    name: Build BLT Pro Files E
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -1144,7 +1144,7 @@ jobs:
         > Marlin/Configuration.h
         > Marlin/Configuration_adv.h
         > Marlin/Version.h
-        cp configurations/Creality\ Ender/BLT/ConfigurationPro.h Marlin/Configuration.h
+        cp configurations/Creality\ Ender/BLT/Configuration.h Marlin/Configuration.h
         cp configurations/Creality\ Ender/BLT/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/Creality\ Ender/BLT/Version.h Marlin/Version.h
         sed -i "s/default_envs =.*/default_envs = GD32F103RE_creality_maple/g" platformio.ini
@@ -1176,7 +1176,7 @@ jobs:
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
   # Build-BLTouch-NP-E:         # BLTouch NoPro for Ender-3
-  #   name: Build BLT NoPro Files
+  #   name: Build BLT NoPro Files E4
   #   runs-on: ubuntu-latest
   #   strategy:
   #     matrix:
@@ -1254,7 +1254,7 @@ jobs:
   #       asset_name: ${{ steps.build_configs.outputs.filename }}
   #       asset_content_type: application/x-binary
   Build-Default-E4:            # Default-NP for Ender-3
-    name: Build Default Files Ender
+    name: Build Default Files Ender E4
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -1334,7 +1334,7 @@ jobs:
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
   Build-Manual-Mesh-E4:        # Manual Mesh - MM for Ender-3
-    name: Build Manual-Mesh Files Ender
+    name: Build Manual-Mesh Files E4
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -1414,7 +1414,7 @@ jobs:
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
   Build-UBL-ProUI-E4:            # UBL-Pro for Ender-3
-    name: Build UBL Pro Files Ender
+    name: Build UBL Pro Files E4
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -1494,7 +1494,7 @@ jobs:
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
   Build-BLTouch-E4:            # BLTouch Pro for Ender-3
-    name: Build BLT Pro Files Ender
+    name: Build BLT Pro Files E4
     runs-on: ubuntu-latest
     strategy:
       matrix:
