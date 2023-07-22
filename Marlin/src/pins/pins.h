@@ -645,13 +645,13 @@
 #elif MB(CHITU3D_V9)
   #include "stm32f1/pins_CHITU3D_V9.h"              // STM32F1                              env:chitu_f103 env:chitu_f103_maple
 #elif MB(CREALITY_V4)
-  #include "stm32f1/pins_CREALITY_V4.h"             // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple env:STM32F103RC_creality_maple
+  #include "stm32f1/pins_CREALITY_V4.h"             // STM32F1, GD32F1                      env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple env:STM32F103RE_creality_maple env:GD32F103RE_creality_maple env:GD32F103RC_creality_maple
 #elif MB(CREALITY_V4210)
   #include "stm32f1/pins_CREALITY_V4210.h"          // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple
 #elif MB(CREALITY_V425)
   #include "stm32f1/pins_CREALITY_V425.h"           // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple
 #elif MB(CREALITY_V422)
-  #include "stm32f1/pins_CREALITY_V422.h"           // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple env:STM32F103RC_creality_maple
+  #include "stm32f1/pins_CREALITY_V422.h"           // STM32F1, GD32F1                      env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple env:STM32F103RE_creality_maple env:GD32F103RE_creality_maple env:GD32F103RC_creality_maple
 #elif MB(CREALITY_V423)
   #include "stm32f1/pins_CREALITY_V423.h"           // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer
 #elif MB(CREALITY_V427)
@@ -691,7 +691,7 @@
 #elif MB(PANDA_PI_V29)
   #include "stm32f1/pins_PANDA_PI_V29.h"            // STM32F1                              env:PANDA_PI_V29
 #elif MB(VOXELAB_AQUILA)
-  #include "gd32f1/pins_VOXELAB_AQUILA.h"           // GD32F1, N32F1/N32G4, STM32F1               env:GD32F103RC_voxelab_maple env:N32F103RC_voxelab_maple env:STM32F103RE_creality_maple env:STM32F103RC_creality_maple env:STM32F103RE_creality env:STM32F103RC_creality env:N32G455RE_voxelab_maple
+  #include "gd32f1/pins_VOXELAB_AQUILA.h"           // GD32F1, N32F1/N32G4, STM32F1         env:GD32F103RC_voxelab_maple env:N32F103RC_voxelab_maple env:STM32F103RE_creality_maple env:STM32F103RC_creality_maple env:STM32F103RE_creality env:STM32F103RC_creality env:N32G455RE_voxelab_maple
 #elif MB(SOVOL_V131)
   #include "gd32f1/pins_SOVOL_V131.h"               // GD32F1                               env:GD32F103RET6_sovol_maple
 #elif MB(TRIGORILLA_V006)
