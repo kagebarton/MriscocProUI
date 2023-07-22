@@ -1591,7 +1591,7 @@
   //#define SHOW_TEMPERATURE_BELOW_ZERO
 
   // Change Title Menu Text to Centered
-  #define TITLE_CENTERED 
+  //#define TITLE_CENTERED 
 
   /**
    * LED Control Menu
