@@ -2774,6 +2774,7 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
       #endif
 
       if (ABS(MeshViewer.max - MeshViewer.min) < BED_TRAMMING_PROBE_TOLERANCE) {
+        EXIT_TRAMWIZ:
         DWINUI::Draw_CenteredString(140, F("Corners leveled"));
         DWINUI::Draw_CenteredString(160, F("Tolerance achieved!"));
       }
@@ -2789,6 +2790,7 @@ void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refr
             max = d;
             p = x + 2 * y;
           }
+          else { goto EXIT_TRAMWIZ; } // fail-safe if Corners are = 0.00
         }
         switch (p) {
           case 0b00 : plabel = GET_TEXT_F(MSG_TRAM_FL); break;

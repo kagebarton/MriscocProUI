@@ -262,7 +262,6 @@ extern TitleClass Title;
 
 namespace DWINUI {
   extern xy_int_t cursor;
-  //extern uint16_t pencolor;
   extern uint16_t textcolor;
   extern uint16_t backcolor;
   extern uint16_t buttoncolor;
