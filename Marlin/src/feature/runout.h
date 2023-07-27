@@ -30,7 +30,8 @@
 #include "../module/planner.h"
 #include "../module/stepper.h" // for block_t
 #include "../gcode/queue.h"
-#include "../feature/pause.h"
+#include "../feature/pause.h" // for did_pause_print
+#include "../MarlinCore.h" // for printingIsActive()
 
 #include "../inc/MarlinConfig.h"
 
@@ -54,9 +55,16 @@
   #define HAS_FILAMENT_SWITCH 1
 #endif
 
-typedef Flags<8> runout_flags_t;
+typedef Flags<
+          #if NUM_MOTION_SENSORS > NUM_RUNOUT_SENSORS
+            NUM_MOTION_SENSORS
+          #else
+            NUM_RUNOUT_SENSORS
+          #endif
+        > runout_flags_t;
 
 void event_filament_runout(const uint8_t extruder);
+inline bool should_monitor_runout() { return did_pause_print || printingIsActive(); }
 
 template<class RESPONSE_T, class SENSOR_T>
 class TFilamentMonitor;
@@ -140,7 +148,7 @@ class TFilamentMonitor : public FilamentMonitorBase {
 
     // Give the response a chance to update its counter.
     static void run() {
-      if (enabled && !filament_ran_out && (printingIsActive() || did_pause_print)) {
+      if (enabled && !filament_ran_out && should_monitor_runout()) {
         TERN_(HAS_FILAMENT_RUNOUT_DISTANCE, cli()); // Prevent RunoutResponseDelayed::block_completed from accumulating here
         response.run();
         sensor.run();
@@ -385,8 +393,10 @@ class FilamentSensorBase {
 
   typedef struct {
     float runout[NUM_RUNOUT_SENSORS];
+    Flags<NUM_RUNOUT_SENSORS> runout_reset;    // Reset runout later
     #if ENABLED(FILAMENT_SWITCH_AND_MOTION)
       float motion[NUM_MOTION_SENSORS];
+      Flags<NUM_MOTION_SENSORS> motion_reset;  // Reset motion later
     #endif
   } countdown_t;
 
@@ -396,9 +406,10 @@ class FilamentSensorBase {
   class RunoutResponseDelayed {
     private:
       #if PROUI_EX
-        static volatile float runout_mm_countdown[NUM_RUNOUT_SENSORS];
+        static float runout_mm_countdown[NUM_RUNOUT_SENSORS];
+        static countdown_t mm_countdown;
       #else
-        static volatile countdown_t mm_countdown;
+        static countdown_t mm_countdown;
       #endif
     public:
       static float runout_distance_mm;
@@ -436,27 +447,57 @@ class FilamentSensorBase {
         return runout_flags;
       }
 
-      static void filament_present(const uint8_t extruder) {
-        (TERN(PROUI_EX, runout_mm_countdown[extruder], mm_countdown.runout[extruder])) = runout_distance_mm;
+      static void filament_present(const uint8_t extruder) {       
+        if (TERN(PROUI_EX, runout_mm_countdown[extruder], mm_countdown.runout[extruder]) < runout_distance_mm || did_pause_print) {
+          // Reset runout only if it is smaller than runout_distance or printing is paused.
+          // On Bowden systems retract may be larger than runout_distance_mm, so if retract
+          // was added leave it in place, or the following unretract will cause runout event.
+          (TERN(PROUI_EX, runout_mm_countdown[extruder], mm_countdown.runout[extruder])) = runout_distance_mm;
+            mm_countdown.runout_reset.clear(extruder);
+      }
+        else {
+          // If runout is larger than runout distance, we cannot reset right now, as Bowden and retract
+          // distance larger than runout_distance_mm leads to negative runout right after unretract.
+          // But we cannot ignore filament_present event. After unretract, runout will become smaller
+          // than runout_distance_mm and should be reset after that. So activate delayed reset.
+          mm_countdown.runout_reset.set(extruder);
+        }
       }
 
       #if ENABLED(FILAMENT_SWITCH_AND_MOTION)
         static void filament_motion_present(const uint8_t extruder) {
+          // Same logic as filament_present
+          if (mm_countdown.motion[extruder] < runout_distance_mm || did_pause_print) {
           mm_countdown.motion[extruder] = runout_distance_mm;
+            mm_countdown.motion_reset.clear(extruder);
+          }
+          else
+            mm_countdown.motion_reset.set(extruder);
         }
       #endif
 
       static void block_completed(const block_t * const b) {
-        if (b->steps.x || b->steps.y || b->steps.z || did_pause_print) { // Allow pause purge move to re-trigger runout state
-          // Only trigger on extrusion with XYZ movement to allow filament change and retract/recover.
+        const int32_t esteps = b->steps.e;
+        if (!esteps) return;
+
+        // No calculation unless paused or printing
+        if (!should_monitor_runout()) return;
+
+        // No need to ignore retract/unretract movement since they complement each other
           const uint8_t e = b->extruder;
-          const int32_t steps = b->steps.e;
-          const float mm = (b->direction_bits.e ? steps : -steps) * planner.mm_per_step[E_AXIS_N(e)];
-          if (e < NUM_RUNOUT_SENSORS) TERN(PROUI_EX, runout_mm_countdown[e], mm_countdown.runout[e]) -= mm;
-          #if ENABLED(FILAMENT_SWITCH_AND_MOTION)
-            if (e < NUM_MOTION_SENSORS) mm_countdown.motion[e] -= mm;
-          #endif
+        const float mm = (b->direction_bits.e ? esteps : -esteps) * planner.mm_per_step[E_AXIS_N(e)];
+
+        if (e < NUM_RUNOUT_SENSORS) {
+          TERN(PROUI_EX, runout_mm_countdown[e], mm_countdown.runout[e]) -= mm;
+          if (mm_countdown.runout_reset[e]) filament_present(e);          // Reset pending. Try to reset.
         }
+
+        #if ENABLED(FILAMENT_SWITCH_AND_MOTION)
+          if (e < NUM_MOTION_SENSORS) {
+            mm_countdown.motion[e] -= mm;
+            if (mm_countdown.motion_reset[e]) filament_motion_present(e); // Reset pending. Try to reset.
+          }
+        #endif
       }
   };
 
