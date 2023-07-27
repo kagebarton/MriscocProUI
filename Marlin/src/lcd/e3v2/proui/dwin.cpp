@@ -3368,7 +3368,7 @@ void Draw_Tune_Menu() {
     if (laser_device.is_laser_device()) return LCD_MESSAGE_F("Not available in laser mode");
   #endif
   checkkey = Menu;
-  if (SET_MENU(TuneMenu, MSG_TUNE, 20)) {
+  if (SET_MENU(TuneMenu, MSG_TUNE, 21)) {
     BACK_ITEM(Goto_PrintProcess);
     #if HAS_LCD_BRIGHTNESS
       MENU_ITEM(ICON_Box, MSG_BRIGHTNESS_OFF, onDrawMenuItem, TurnOffBacklight);
@@ -3402,6 +3402,9 @@ void Draw_Tune_Menu() {
     #endif
     #if ENABLED(PLR_TUNE_ITEM) && ENABLED(POWER_LOSS_RECOVERY)
       EDIT_ITEM(ICON_Pwrlossr, MSG_OUTAGE_RECOVERY, onDrawChkbMenu, SetPwrLossr, &recovery.enabled);
+    #endif
+    #if ENABLED(SHOW_SPEED_IND)
+      EDIT_ITEM_F(ICON_MaxSpeed, "Speed Indicator", onDrawChkbMenu, SetSpdInd, &HMI_data.SpdInd);
     #endif
     #if ENABLED(FWRETRACT)
       MENU_ITEM(ICON_FWRetract, MSG_FWRETRACT, onDrawSubMenu, Draw_FWRetract_Menu);

@@ -2774,7 +2774,7 @@
 
 //
 // Original RADDS LCD Display+Encoder+SDCardReader
-// http://doku.radds.org/dokumentation/lcd-display/
+// https://web.archive.org/web/20200719145306/http://doku.radds.org/dokumentation/lcd-display/
 //
 //#define RADDS_DISPLAY
 
@@ -2804,7 +2804,6 @@
 
 //
 // RigidBot Panel V1.0
-// http://www.inventapart.com/
 //
 //#define RIGIDBOT_PANEL
 
@@ -2848,8 +2847,9 @@
 //
 // Sainsmart (YwRobot) LCD Displays
 //
-// These require F.Malpartida's LiquidCrystal_I2C library
-// https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
+// These require LiquidCrystal_I2C library:
+//   https://github.com/MarlinFirmware/New-LiquidCrystal
+//   https://github.com/fmalpartida/New-LiquidCrystal/wiki
 //
 //#define LCD_SAINSMART_I2C_1602
 //#define LCD_SAINSMART_I2C_2004
@@ -2882,7 +2882,7 @@
 //
 
 //
-// 2-wire Non-latching LCD SR from https://goo.gl/aJJ4sH
+// 2-wire Non-latching LCD SR from https://github.com/fmalpartida/New-LiquidCrystal/wiki/schematics#user-content-ShiftRegister_connection
 // LCD configuration: https://reprap.org/wiki/SAV_3D_LCD
 //
 //#define SAV_3DLCD
@@ -2954,7 +2954,7 @@
 
 //
 // MaKr3d Makr-Panel with graphic controller and SD support.
-// https://reprap.org/wiki/MaKr3d_MaKrPanel
+// https://reprap.org/wiki/MaKrPanel
 //
 //#define MAKRPANEL
 
@@ -2972,7 +2972,7 @@
 
 //
 // Cartesio UI
-// http://mauk.cc/webshop/cartesio-shop/electronics/user-interface
+// https://web.archive.org/web/20180605050442/http://mauk.cc/webshop/cartesio-shop/electronics/user-interface
 //
 //#define CARTESIO_UI
 
@@ -3017,6 +3017,7 @@
 
 //
 // BigTreeTech Mini 12864 V1.0 is an alias for FYSETC_MINI_12864_2_1. Type A/B. NeoPixel RGB Backlight.
+// https://github.com/bigtreetech/MINI-12864/tree/master/mini12864_v1.0
 //
 //#define BTT_MINI_12864_V1
 
@@ -3141,6 +3142,10 @@
  *  - Download https://github.com/InsanityAutomation/Marlin/raw/CrealityDwin_2.0/TM3D_Combined480272_Landscape_V7.7z
  *  - Copy the downloaded DWIN_SET folder to the SD card.
  *
+ * E3S1PRO (T5UID1)
+ *  - Download https://github.com/CrealityOfficial/Ender-3S1/archive/3S1_Plus_Screen.zip
+ *  - Copy the downloaded DWIN_SET folder to the SD card.
+ *
  * CREALITY_TOUCH
  *  - CR-6 OEM touch screen. A DWIN display with touch.
  *
@@ -3150,7 +3155,7 @@
  *  - Plug the microSD card into the back of the display.
  *  - Boot the display and wait for the update to complete.
  *
- * :[ 'ORIGIN', 'FYSETC', 'HYPRECY', 'MKS', 'RELOADED', 'IA_CREALITY' ]
+ * :[ 'ORIGIN', 'FYSETC', 'HYPRECY', 'MKS', 'RELOADED', 'IA_CREALITY', 'E3S1PRO', 'CREALITY_TOUCH' ]
  */
 //#define DGUS_LCD_UI ORIGIN
 #if DGUS_UI_IS(MKS)
@@ -3222,6 +3227,7 @@
 //
 // 480x320, 3.5", SPI Display with Rotary Encoder from MKS
 // Usually paired with MKS Robin Nano V2 & V3
+// https://github.com/makerbase-mks/MKS-TFT-Hardware/tree/master/MKS%20TS35
 //
 //#define MKS_TS35_V2_0
 
@@ -3286,12 +3292,14 @@
 //#define ANET_ET5_TFT35
 
 //
-// 1024x600, 7", RGB Stock Display with Rotary Encoder from BIQU-BX
+// 1024x600, 7", RGB Stock Display with Rotary Encoder from BIQU BX
+// https://github.com/bigtreetech/BIQU-BX/tree/master/Hardware
 //
 //#define BIQU_BX_TFT70
 
 //
 // 480x320, 3.5", SPI Stock Display with Rotary Encoder from BIQU B1 SE Series
+// https://github.com/bigtreetech/TFT35-SPI/tree/master/v1
 //
 //#define BTT_TFT35_SPI_V1_0
 
@@ -3338,7 +3346,18 @@
    */
   #define TFT_FONT  NOTOSANS
 
+  /**
+   * TFT Theme for Color_UI. Choose one of the following or add a new one to 'Marlin/src/lcd/tft/themes' directory
+   *
+   * BLUE_MARLIN  - Default theme with 'midnight blue' background
+   * BLACK_MARLIN - Theme with 'black' background
+   * ANET_BLACK   - Theme used for Anet ET4/5
+   */
+  #define TFT_THEME BLACK_MARLIN
+
   //#define TFT_SHARED_IO   // I/O is shared between TFT display and other devices. Disable async data transfer.
+
+  #define COMPACT_MARLIN_BOOT_LOGO  // Use compressed data to save Flash space.
 #endif
 
 #if ENABLED(TFT_LVGL_UI)
@@ -3383,15 +3402,12 @@
   #define HAS_SD_EXTENDER 1     // Enable to support SD card extender cables (48 bytes of flash)
   #define USE_GRID_MESHVIEWER 1 // Enable two mesh graph types : one (1728 bytes of flash)
   #define HAS_CUSTOM_COLORS 1   // Able to change display colors (2040 bytes of flash)
-  #define ALTCOLOR_MENU_ITEM 0  // Color palette options => Disabled or 0 = Voxelab Default | 1 = Alternate Aquila | 2 = Ender3V2 Default
+  #define ALT_COLOR_MENU 0      // Color palette options >> 0 = Voxelab Default | 1 = Alternate Aquila | 2 = Ender3V2 Default
   #if ENABLED(AUTO_BED_LEVELING_UBL)
     #define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option (152 bytes of flash)
   #endif
-  #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-    #define RUNOUT_TUNE_ITEM    // Filament Runout option in Tune Menu (2528 bytes of flash)
-  #endif
-  #if ENABLED(POWER_LOSS_RECOVERY)
-    #define PLR_TUNE_ITEM       // Power-loss Recovery option in Tune Menu (3400 bytes of flash)
+  #if ENABLED(FILAMENT_RUNOUT_SENSOR) // (2528 bytes of flash)
+    #define RUNOUT_TUNE_ITEM    // Filament Runout option in Tune Menu 
   #endif
   #if ENABLED(BLTOUCH)
     //#define HS_MENU_ITEM      // BLTOUCH_HS_MODE menu option (56 bytes of flash)
@@ -3399,12 +3415,9 @@
   #if DISABLED(DISABLE_TUNING_GRAPH)
     #define PLOT_TUNE_ITEM      // Temperature Plot Graph item in Tune Menu (688 bytes of flash)
   #endif
-  #if DISABLED(CLASSIC_JERK)
-    //#define JD_TUNE_ITEM      // Enable only if Juntion Deviation is enabled
-  #endif
-  #if ENABLED(LIN_ADVANCE)
-    #define ADVK_TUNE_ITEM      // Linear Advance item in Tune Menu
-  #endif
+  #define PLR_TUNE_ITEM         // Power-loss Recovery option in Tune Menu (POWER_LOSS_RECOVERY 3400 bytes of flash)
+  //#define JD_TUNE_ITEM        // Juntion Deviation item in Tune Menu (only if JD is enabled)
+  #define ADVK_TUNE_ITEM        // Linear Advance item in Tune Menu (only if JD is enabled)
   #define SHOW_REAL_POS
   #define CCLOUD_PRINT_SUPPORT  // Menu item: enable/disable Creality Cloud Print Support (192 bytes of flash)
   #define TRAMWIZ_MENU_ITEM     // Menu item: enable Tramming Wizard (2304 bytes of flash)
@@ -3416,13 +3429,15 @@
 #endif
 
 //
-// Factory display for Creality CR-10
+// Factory display for Creality CR-10 / CR-7 / Ender-3
 // https://www.aliexpress.com/item/32833148327.html
 //
 // This is RAMPS-compatible using a single 10-pin connector.
-// (For CR-10 owners who want to replace the Melzi Creality board but retain the display)
 //
+// (For CR-10 owners who want to replace the Melzi Creality board but retain the display)
+// Connect to EXP1 on RAMPS and compatible boards.
 // 2.4" 128x64 LCD
+//
 
 //#define CR10_STOCKDISPLAY    //For Ender-3 / Aquila C2 blue/white monochrome LCD
 #if ENABLED(CR10_STOCKDISPLAY) //BTT_SKR_MINI_E3
