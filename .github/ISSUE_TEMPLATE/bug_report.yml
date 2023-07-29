@@ -84,7 +84,7 @@ body:
   - type: input
     attributes:
       label: Other Mainboard Type
-      description: [Optional] Enter chip full model '#' if not listed above.
+      description: [Optional] Enter chip full model number if not listed above.
 
   - type: input
     attributes:
