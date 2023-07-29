@@ -63,8 +63,8 @@ body:
     attributes:
       label: Model Type
       description: Aquila[OG, X2, X3, S2, S3, D1, Pro]  
-      Ender-3[V2, S1, Neo, Pro, Max]  
-      Other
+        Ender-3[V2, S1, Neo, Pro, Max]  
+        Other
 
   - type: dropdown
     attributes:
