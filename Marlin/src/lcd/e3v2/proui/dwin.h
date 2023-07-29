@@ -195,7 +195,6 @@ void SetHSMode();
 void PopUp_StartAutoLev();
 void onClick_StartAutoLev();
 void SetRetractSpeed();
-void ChangeFilament();
 #if HAS_PREHEAT
   #define _DOPREHEAT(N) void DoPreheat##N();
   REPEAT_1(PREHEAT_COUNT, _DOPREHEAT)
@@ -324,8 +323,9 @@ void Draw_PhySet_Menu();
 void Draw_Tune_Menu();
 void Draw_Motion_Menu();
 #if ENABLED(ADVANCED_PAUSE_FEATURE)
-  void Draw_FilamentMan_Menu();
+  void ChangeFilament();
 #endif
+void Draw_FilamentMan_Menu();
 void Draw_Temperature_Menu();
 void Draw_PID_Menu();
 void Draw_MaxSpeed_Menu();
