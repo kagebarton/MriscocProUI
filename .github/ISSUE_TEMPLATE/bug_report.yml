@@ -88,14 +88,14 @@ body:
     attributes:
       label: Other Mainboard Type
       description: >-
-        If not listed above.
+        If not listed above
 
-        (Optional) Enter chip full model number.
+        (Optional) Enter chip full model number
 
   - type: input
     attributes:
       label: Add-ons that could be involved
-      description: (BL/3D/CR)-Touch, R-pi, Slicer
+      description: (BL/3D/CR)-Touch, Rasp-pi, Slicer
 
   - type: dropdown
     attributes:
