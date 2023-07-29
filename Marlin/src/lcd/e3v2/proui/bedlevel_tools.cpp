@@ -53,7 +53,6 @@ uint8_t BedLevelToolsClass::mesh_y = 0;
 uint8_t BedLevelToolsClass::tilt_grid = 2;
 
 bool drawing_mesh = false;
-char str_1[16], str_2[16], str_3[16];
 
 #if ENABLED(AUTO_BED_LEVELING_UBL)
 
@@ -232,6 +231,7 @@ bool BedLevelToolsClass::meshValidate() {
 
       // Draw value text on
       char buf[8];
+      char str_1[16];
       const uint8_t fs = DWINUI::fontWidth(meshfont);
       if (viewer_print_value) {
         int8_t offset_x, offset_y = cell_height_px / 2 - fs;
