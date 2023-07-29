@@ -58,16 +58,14 @@ body:
         - Voxelab Aquila
         - Creality Ender-3
         - Other (explain below)
-    validations:
-      required: false
 
   - type: input
     attributes:
       label: Model Type
       description: >-
-        Aquila[OG, X2, X3, S2, S3, D1, Pro]
+        Aquila [OG, X2, X3, S2, S3, D1, Pro]
 
-        Ender-3[V2, S1, Neo, Pro, Max]
+        Ender-3 [V2, S1, Neo, Pro, Max]
 
   - type: dropdown
     attributes:
@@ -78,18 +76,21 @@ body:
         - Aquila GD32
         - Aquila N32
         - Aquila HC32
-        - Creality v4.2.7/v4.2.2
-        - Creality E3 / BTT SKR MINI E3 v3.0.1
-        - BTT SKR MINI E3 v3
-        - BTT SKR MINI E3 v2/v1.2/v1
+        - Creality v4.2.7/4.2.2 F103RET6
+        - Creality v2.4 F401RCT6 (S1)
+        - Creality E3 F401RET6
+        - BTT SKR MINI E3 v3.0.1
+        - BTT SKR MINI E3 v3.0
+        - BTT SKR MINI E3 v2.0/1.2/1.0
         - Other (other than listed)
-    validations:
-      required: false
 
   - type: input
     attributes:
       label: Other Mainboard Type
-      description: (Optional) Enter chip full model number if not listed above.
+      description: >-
+        If not listed above.
+
+        (Optional) Enter chip full model number.
 
   - type: input
     attributes:
