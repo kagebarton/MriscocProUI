@@ -2594,7 +2594,7 @@ void ApplyMove() {
 void SetSpeed() { SetPIntOnClick(MIN_PRINT_SPEED, MAX_PRINT_SPEED); }
 
 #if HAS_HOTEND
-  void ApplyHotendTemp() { thermalManager.setTargetHotend(MenuData.Value, 0); }
+  void ApplyHotendTemp() { thermalManager.setTargetHotend(MenuData.Value, H_E0); }
   void SetHotendTemp() { SetIntOnClick(MIN_ETEMP, MAX_ETEMP, thermalManager.degTargetHotend(0), ApplyHotendTemp); }
 #endif
 
@@ -3251,6 +3251,7 @@ void Draw_Move_Menu() {
       #endif
     }
     UpdateMenu(ProbeSetMenu);
+    LCD_MESSAGE_F("..HS Mode is High Speed for Probe ");
   }
 
 #endif
@@ -3374,10 +3375,10 @@ void Draw_Tune_Menu() {
     EDIT_ITEM(ICON_Speed, MSG_SPEED, onDrawPIntMenu, SetSpeed, &feedrate_percentage);
     EDIT_ITEM(ICON_Flow, MSG_FLOW, onDrawPIntMenu, SetFlow, &planner.flow_percentage[0]);
     #if HAS_HOTEND
-      HotendTargetItem = EDIT_ITEM(ICON_HotendTemp, MSG_UBL_SET_TEMP_HOTEND, onDrawPIntMenu, SetHotendTemp, &thermalManager.temp_hotend[0].target);
+      HotendTargetItem = EDIT_ITEM(ICON_SetEndTemp, MSG_UBL_SET_TEMP_HOTEND, onDrawPIntMenu, SetHotendTemp, &thermalManager.temp_hotend[0].target);
     #endif
     #if HAS_HEATED_BED
-      BedTargetItem = EDIT_ITEM(ICON_BedTemp, MSG_UBL_SET_TEMP_BED, onDrawPIntMenu, SetBedTemp, &thermalManager.temp_bed.target);
+      BedTargetItem = EDIT_ITEM(ICON_SetBedTemp, MSG_UBL_SET_TEMP_BED, onDrawPIntMenu, SetBedTemp, &thermalManager.temp_bed.target);
     #endif
     #if HAS_FAN
       FanSpeedItem = EDIT_ITEM(ICON_FanSpeed, MSG_FAN_SPEED, onDrawPInt8Menu, SetFanSpeed, &thermalManager.fan_speed[0]);
