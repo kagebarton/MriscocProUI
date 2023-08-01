@@ -64,14 +64,14 @@ MarlinUI ui;
 constexpr uint8_t epps = ENCODER_PULSES_PER_STEP;
 
 #ifdef BED_SCREW_INSET
-  float MarlinUI::screw_pos; // = BED_SCREW_INSET
+  float MarlinUI::screw_pos = BED_SCREW_INSET;
 #endif
 
 #if PROUI_EX && HAS_MESH
-  float MarlinUI::mesh_inset_min_x; // = MESH_INSET
-  float MarlinUI::mesh_inset_max_x; // = X_BED_SIZE - MESH_INSET
-  float MarlinUI::mesh_inset_min_y; // = MESH_INSET
-  float MarlinUI::mesh_inset_max_y; // = Y_BED_SIZE - MESH_INSET
+  float MarlinUI::mesh_inset_min_x = MESH_INSET;
+  float MarlinUI::mesh_inset_max_x = X_BED_SIZE - MESH_INSET;
+  float MarlinUI::mesh_inset_min_y = MESH_INSET;
+  float MarlinUI::mesh_inset_max_y = Y_BED_SIZE - MESH_INSET;
 #endif
 
 #if ENABLED(ENCODER_RATE_MULTIPLIER) && ENABLED(ENC_MENU_ITEM)
@@ -1626,7 +1626,6 @@ void MarlinUI::host_notify(const char * const cstr) {
     #endif
 
     TERN_(EXTENSIBLE_UI, ExtUI::onStatusChanged(status_message));
-    TERN_(DWIN_CREALITY_LCD, dwinStatusChanged(status_message));
     TERN_(DWIN_LCD_PROUI, DWIN_CheckStatusMessage());
   }
 
