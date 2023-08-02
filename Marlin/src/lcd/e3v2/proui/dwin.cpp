@@ -2505,7 +2505,7 @@ void ApplyMove() {
     Toggle_Chkb_Line(ui.sound_on);
   }
   void SetEnableTick() {
-    Toggle_Chkb_Line(ui.no_tick);
+    Toggle_Chkb_Line(ui.tick_on);
   }
 #endif
 
@@ -4432,7 +4432,7 @@ void Draw_AdvancedSettings_Menu() {
       EDIT_ITEM_F(ICON_MaxSpeed, "Speed Indicator", onDrawChkbMenu, SetSpdInd, &HMI_data.SpdInd);
     #endif
     #if ENABLED(SOUND_MENU_ITEM)
-      EDIT_ITEM(ICON_Sound, MSG_TICK, onDrawChkbMenu, SetEnableTick, &ui.no_tick);
+      EDIT_ITEM(ICON_Sound, MSG_TICK, onDrawChkbMenu, SetEnableTick, &ui.tick_on);
       EDIT_ITEM(ICON_Sound, MSG_SOUND, onDrawChkbMenu, SetEnableSound, &ui.sound_on);
     #endif
     #if HAS_GCODE_PREVIEW
@@ -4487,7 +4487,7 @@ void Draw_Advanced_Menu() { // From Control Menu || Default-NP Advaned Settings 
       EDIT_ITEM_F(ICON_MaxSpeed, "Speed Indicator", onDrawChkbMenu, SetSpdInd, &HMI_data.SpdInd);
     #endif
     #if ENABLED(SOUND_MENU_ITEM)
-      EDIT_ITEM(ICON_Sound, MSG_TICK, onDrawChkbMenu, SetEnableTick, &ui.no_tick);
+      EDIT_ITEM(ICON_Sound, MSG_TICK, onDrawChkbMenu, SetEnableTick, &ui.tick_on);
       EDIT_ITEM(ICON_Sound, MSG_SOUND, onDrawChkbMenu, SetEnableSound, &ui.sound_on);
     #endif
     #if HAS_GCODE_PREVIEW

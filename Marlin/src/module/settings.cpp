@@ -581,7 +581,7 @@ typedef struct SettingsDataStruct {
   //
   #if ENABLED(SOUND_MENU_ITEM)
     bool sound_on;
-    bool no_tick; //encoder beep
+    bool tick_on; //encoder beep
   #endif
 
   //
@@ -1745,7 +1745,7 @@ void MarlinSettings::postprocess() {
     //
     #if ENABLED(SOUND_MENU_ITEM)
       EEPROM_WRITE(ui.sound_on);
-      EEPROM_WRITE(ui.no_tick);
+      EEPROM_WRITE(ui.tick_on);
     #endif
 
     #if ENABLED(HAS_MESH) && ENABLED(USE_GRID_MESHVIEWER)
@@ -2850,8 +2850,8 @@ void MarlinSettings::postprocess() {
       #if ENABLED(SOUND_MENU_ITEM)
         _FIELD_TEST(sound_on);
         EEPROM_READ(ui.sound_on);
-        _FIELD_TEST(no_tick);
-        EEPROM_READ(ui.no_tick);
+        _FIELD_TEST(tick_on);
+        EEPROM_READ(ui.tick_on);
       #endif
 
       #if ENABLED(HAS_MESH) && ENABLED(USE_GRID_MESHVIEWER)
@@ -3355,7 +3355,7 @@ void MarlinSettings::reset() {
   //
   #if ENABLED(SOUND_MENU_ITEM)
     ui.sound_on = ENABLED(SOUND_ON_DEFAULT);
-    ui.no_tick = ENABLED(TICK_ON_DEFAULT); //added encoder beep bool
+    ui.tick_on = ENABLED(TICK_ON_DEFAULT); //added encoder beep bool
   #endif
 
   #if ENABLED(HAS_MESH) && ENABLED(USE_GRID_MESHVIEWER)

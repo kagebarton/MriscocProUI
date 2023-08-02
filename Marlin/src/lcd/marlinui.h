@@ -239,7 +239,7 @@ public:
 
   #if ENABLED(SOUND_MENU_ITEM)
     static bool sound_on; // Initialized by settings.load()
-    static bool no_tick; // added to disable encoder tick/beep while keeping sound on
+    static bool tick_on; // added to disable encoder tick/beep while keeping sound on
   #else
     static constexpr bool sound_on = true;
   #endif
