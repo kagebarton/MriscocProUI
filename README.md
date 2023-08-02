@@ -23,7 +23,7 @@
 ---
 
 ### - Please read this: -
-Many Updates have been included in the most recent MriscocProUI in the **2023-July** release.<br>
+Many Updates have been included in the most recent MriscocProUI in the **2023-August** release.<br>
 H32->HC32 support is currently only in the branch **HC32-July**. You can find the original repo here [@shadow578/Marlin-H32](https://github.com/shadow578/Marlin-H32)<br>
 #### Important Info regarding HC32:
 * Not all features or options have been fully tested with this chip.  
