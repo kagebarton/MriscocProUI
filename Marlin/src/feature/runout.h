@@ -447,14 +447,14 @@ class FilamentSensorBase {
         return runout_flags;
       }
 
-      static void filament_present(const uint8_t extruder) {       
+      static void filament_present(const uint8_t extruder) {
         if (TERN(PROUI_EX, runout_mm_countdown[extruder], mm_countdown.runout[extruder]) < runout_distance_mm || did_pause_print) {
           // Reset runout only if it is smaller than runout_distance or printing is paused.
           // On Bowden systems retract may be larger than runout_distance_mm, so if retract
           // was added leave it in place, or the following unretract will cause runout event.
           (TERN(PROUI_EX, runout_mm_countdown[extruder], mm_countdown.runout[extruder])) = runout_distance_mm;
             mm_countdown.runout_reset.clear(extruder);
-      }
+        }
         else {
           // If runout is larger than runout distance, we cannot reset right now, as Bowden and retract
           // distance larger than runout_distance_mm leads to negative runout right after unretract.
@@ -468,7 +468,7 @@ class FilamentSensorBase {
         static void filament_motion_present(const uint8_t extruder) {
           // Same logic as filament_present
           if (mm_countdown.motion[extruder] < runout_distance_mm || did_pause_print) {
-          mm_countdown.motion[extruder] = runout_distance_mm;
+            mm_countdown.motion[extruder] = runout_distance_mm;
             mm_countdown.motion_reset.clear(extruder);
           }
           else
@@ -484,7 +484,7 @@ class FilamentSensorBase {
         if (!should_monitor_runout()) return;
 
         // No need to ignore retract/unretract movement since they complement each other
-          const uint8_t e = b->extruder;
+        const uint8_t e = b->extruder;
         const float mm = (b->direction_bits.e ? esteps : -esteps) * planner.mm_per_step[E_AXIS_N(e)];
 
         if (e < NUM_RUNOUT_SENSORS) {
