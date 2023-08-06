@@ -1991,7 +1991,10 @@
   //#define STATUS_ALT_BED_BITMAP     // Use the alternative bed bitmap
   //#define STATUS_ALT_FAN_BITMAP     // Use the alternative fan bitmap
   //#define STATUS_FAN_FRAMES 3       // :[0,1,2,3,4] Number of fan animation frames
+
+  // Only one STATUS_HEAT_* option can be enabled
   //#define STATUS_HEAT_PERCENT       // Show heating in a progress bar
+  //#define STATUS_HEAT_POWER         // Show heater output power as a vertical bar
 
   // Frivolous Game Options
   //#define MARLIN_BRICKOUT
@@ -2253,13 +2256,10 @@
 
   #if ENABLED(BLTOUCH)
     #define BABYSTEP_ZPROBE_OFFSET          // Combine M851 Z and Babystepping
-    //#define BABYSTEP_GLOBAL_Z             // Combine M424 Z and Babystepping
 
-    #if ANY(BABYSTEP_ZPROBE_OFFSET, BABYSTEP_GLOBAL_Z)
-      #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
-        //#define BABYSTEP_HOTEND_Z_OFFSET  // For multiple hotends, babystep relative Z offsets
-      #endif
-    #define BABYSTEP_GFX_OVERLAY            // Enable graphical overlay on Z-offset editor
+    #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
+      //#define BABYSTEP_HOTEND_Z_OFFSET  // For multiple hotends, babystep relative Z offsets
+      //#define BABYSTEP_GFX_OVERLAY          // Enable graphical overlay on Z-offset editor
     #endif
   #endif
 #endif
@@ -3841,6 +3841,7 @@
      * A non-zero value activates Volume-based Extrusion Limiting.
      */
     #define DEFAULT_VOLUMETRIC_EXTRUDER_LIMIT 0.00      // (mm^3/sec)
+    #define VOLUMETRIC_EXTRUDER_LIMIT_MAX     20        // (mm^3/sec)
   #endif
 #endif
 
