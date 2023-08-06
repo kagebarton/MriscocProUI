@@ -60,9 +60,9 @@ void ESDiag::draw() {
   DWINUI::ClearMainArea();
   Draw_Popup_Bkgd();
   DWINUI::Draw_Button(BTN_Continue, 86, 250, true);
-  //Draw_Select_Box(86, 250);
   DWINUI::cursor.y = 80;
   #define ES_LABEL(S) draw_es_label(F(STR_##S))
+/*
   #if USE_X_MIN
     ES_LABEL(X_MIN);
   #endif
@@ -80,22 +80,24 @@ void ESDiag::draw() {
   #if HAS_FILAMENT_SENSOR
     draw_es_label(F(STR_FILAMENT));
   #endif
-  //#if USE_Z_MIN_PROBE
-  //  draw_es_label(F(STR_Z_PROBE));
-  //#endif
-
-/*
-  TERN_(USE_X_MIN,     ES_LABEL(X_MIN)); TERN_(USE_X_MAX, ES_LABEL(X_MAX));
-  TERN_(USE_Y_MIN,     ES_LABEL(Y_MIN)); TERN_(USE_Y_MAX, ES_LABEL(Y_MAX));
-  TERN_(HAS_Z_MIN_PIN, ES_LABEL(Z_MIN)); TERN_(USE_Z_MAX, ES_LABEL(Z_MAX));
-  TERN_(HAS_FILAMENT_SENSOR, draw_es_label(F(STR_FILAMENT)));
-*/
+  #if USE_Z_MIN_PROBE
+    draw_es_label(F(STR_Z_PROBE));
+  #endif
+  //TERN_(USE_Z_MIN_PROBE, ES_LABEL(Z_PROBE)); 
+/*/
+  TERN_(USE_X_MIN, ES_LABEL(X_MIN)); TERN_(USE_X_MAX, ES_LABEL(X_MAX));
+  TERN_(USE_Y_MIN, ES_LABEL(Y_MIN)); TERN_(USE_Y_MAX, ES_LABEL(Y_MAX));
+  TERN_(USE_Z_MIN, ES_LABEL(Z_MIN)); TERN_(USE_Z_MAX, ES_LABEL(Z_MAX));
+  TERN_(HAS_FILAMENT_SENSOR, ES_LABEL(FILAMENT)); //draw_es_label(F(STR_FILAMENT)));
+  TERN_(USE_Z_MIN_PROBE, ES_LABEL(Z_PROBE)); //draw_es_label(F(STR_Z_PROBE));
+//*/
   update();
 }
 
 void ESDiag::update() {
   DWINUI::cursor.y = 80;
   #define ES_REPORT(S) draw_es_state(READ(S##_PIN) == S##_ENDSTOP_HIT_STATE)
+/*
   #if USE_X_MIN
     ES_REPORT(X_MIN);
   #endif
@@ -117,16 +119,22 @@ void ESDiag::update() {
       draw_es_state(READ(FIL_RUNOUT1_PIN) != FIL_RUNOUT1_STATE);
     #endif
   #endif
-  //#if USE_Z_MIN_PROBE
-  //  draw_es_state(READ(Z_MIN_PROBE_PIN) != Z_MIN_PROBE_ENDSTOP_INVERTING);
-  //#endif
-/*
-  TERN_(USE_X_MIN,     ES_REPORT(X_MIN);) TERN_(USE_X_MAX, ES_REPORT(X_MAX);)
-  TERN_(USE_Y_MIN,     ES_REPORT(Y_MIN);) TERN_(USE_Y_MAX, ES_REPORT(Y_MAX);)
-  TERN_(USE_Z_MIN, ES_REPORT(Z_MIN);) TERN_(USE_Z_MAX, ES_REPORT(Z_MAX);)
-  TERN_(HAS_FILAMENT_SENSOR, draw_es_state(READ(FIL_RUNOUT1_PIN) != FIL_RUNOUT1_STATE);)
-
-*/
+  #if USE_Z_MIN_PROBE
+    draw_es_state(READ(Z_MIN_PROBE_PIN) != Z_MIN_PROBE_ENDSTOP_HIT_STATE);
+  #endif
+  //TERN_(USE_Z_MIN_PROBE, ES_REPORT(Z_MIN_PROBE));
+/*/
+  TERN_(USE_X_MIN, ES_REPORT(X_MIN)); TERN_(USE_X_MAX, ES_REPORT(X_MAX));
+  TERN_(USE_Y_MIN, ES_REPORT(Y_MIN)); TERN_(USE_Y_MAX, ES_REPORT(Y_MAX));
+  IF_DISABLED(USE_Z_MIN_PROBE, TERN_(USE_Z_MIN, ES_REPORT(Z_MIN));) TERN_(USE_Z_MAX, ES_REPORT(Z_MAX));
+  #if PROUI_EX
+    TERN_(HAS_FILAMENT_SENSOR, draw_es_state(!FilamentSensorDevice::poll_runout_state(0)));
+  #else
+    TERN_(HAS_FILAMENT_SENSOR, draw_es_state(READ(FIL_RUNOUT1_PIN) != FIL_RUNOUT1_STATE));
+  #endif
+  //TERN_(USE_Z_MIN_PROBE, draw_es_state(READ(Z_MIN_PROBE_PIN) != Z_MIN_PROBE_ENDSTOP_HIT_STATE));
+  TERN_(USE_Z_MIN_PROBE, ES_REPORT(Z_MIN_PROBE));
+//*/
   DWIN_UpdateLCD();
 }
 
