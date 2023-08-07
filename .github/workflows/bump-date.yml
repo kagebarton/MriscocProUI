@@ -12,7 +12,7 @@ on:
 jobs:
   bump_date:
     name: Bump Distribution Date
-    if: github.repository == 'classicrocker883/MriscocProUI'
+    if: github.repository == 'classicrocker883/MRiscoCProUI'
 
     runs-on: ubuntu-latest
 

@@ -88,6 +88,7 @@ def Upload(source, target, env):
         _Send('M21')
         Responses = _Recv()
         if len(Responses) < 1 or not any('SD card ok' in r for r in Responses):
+            debugPrint(Responses)
             raise Exception('Error accessing SD card')
         debugPrint('SD Card OK')
         return True
@@ -180,7 +181,7 @@ def Upload(source, target, env):
                                                     'BOARD_CREALITY_V427', 'BOARD_CREALITY_V431',  'BOARD_CREALITY_V452', 'BOARD_CREALITY_V453',
                                                     'BOARD_CREALITY_V24S1']
     # "upload_random_name": generate a random 8.3 firmware filename to upload
-    upload_random_filename = upload_delete_old_bins and not marlin_long_filename_host_support
+    upload_random_filename = upload_delete_old_bins # and not marlin_long_filename_host_support
 
     # Heatshrink module is needed (only) for compression
     if upload_compression:

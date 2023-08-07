@@ -82,7 +82,8 @@ namespace LanguageNarrow_en {
   LSTR MSG_DISABLE_STEPPERS               = _UxGT("Disable Steppers");
   LSTR MSG_DEBUG_MENU                     = _UxGT("Debug Menu");
   LSTR MSG_PROGRESS_BAR_TEST              = _UxGT("Progress Bar Test");
-  LSTR MSG_ENDSTOP_TEST                   = _UxGT("End-stop Diagnostic");
+  LSTR MSG_ENDSTOP_TEST                   = _UxGT("Endstop Diagnostic");
+  LSTR MSG_Z_PROBE                        = _UxGT("Z-Probe");
   LSTR MSG_HOMING                         = _UxGT("Homing");
   LSTR MSG_AUTO_HOME                      = _UxGT("Auto Home");
   LSTR MSG_AUTO_HOME_A                    = _UxGT("Home @");
@@ -632,7 +633,6 @@ namespace LanguageNarrow_en {
   LSTR MSG_MANUAL_RESET                   = _UxGT("Reset Z-Probe");
   LSTR MSG_MANUAL_STOW                    = _UxGT("Stow Z-Probe");
   LSTR MSG_HOME_FIRST                     = _UxGT("Home %s First");
-  LSTR MSG_Z_PROBE                        = _UxGT("Z-Probe");
   LSTR MSG_ZPROBE_SETTINGS                = _UxGT("Probe Settings");
   LSTR MSG_ZPROBE_OFFSETS                 = _UxGT("Probe Offsets");
   LSTR MSG_ZPROBE_XOFFSET                 = _UxGT("Probe X Offset");

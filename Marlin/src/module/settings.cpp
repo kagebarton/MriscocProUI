@@ -2680,7 +2680,7 @@ void MarlinSettings::postprocess() {
           EEPROM_READ(gcode.coordinate_system);
         #else
           xyz_pos_t coordinate_system[MAX_COORDINATE_SYSTEMS];
-          EEPROM_READ(coordinate_system);
+          EEPROM_SKIP(coordinate_system);
         #endif
       }
       #endif

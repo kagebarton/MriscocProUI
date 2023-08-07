@@ -49,16 +49,16 @@ void GcodeSuite::M79()
         // 0:cloud connect  预留
         break;
       case 1:
-        // 1:cloud print start 
+        // 1:cloud print start
         if(!printingIsActive())
         {
           ui.reset_remaining_time(); //rock_20210831  解决剩余时间不清零的问题。我爱专业固件
           ui.progress_reset();
           print_job_timer.start();
-          // HMI_flag.cloud_printing_flag=true; //云打印开始标志位  
+          // HMI_flag.cloud_printing_flag=true; //云打印开始标志位
           gcode.process_subcommands_now(F("M420 S1")); //Enable automatic compensation function rock_2021.10.29          
           // SERIAL_ECHOLN(" \r\n test_M79 S1 \r\n");
-        }          
+        }
         break;
 
       case 2:

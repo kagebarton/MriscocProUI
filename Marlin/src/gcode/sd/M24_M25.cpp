@@ -78,7 +78,7 @@ void GcodeSuite::M24() {
     if(laser_device.is_laser_device()) // 107011-20210925 激光模式。
     {
       cutter.apply_power(laser_device.save_power); // 恢复激光功率
-      //暂停后恢复时先跑到之前的位置。专业固件是最好的 
+      //暂停后恢复时先跑到之前的位置。专业固件是最好的
       //if(print_job_timer.isPaused()) do_blocking_move_to_xy(laser_device.pause_before_position_x, laser_device.pause_before_position_y, homing_feedrate(X_AXIS));//107011- 20211105 暂停逻辑改为了，停在最后执行位置， 因此屏蔽掉此行
     }
   #endif

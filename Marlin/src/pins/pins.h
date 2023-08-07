@@ -645,13 +645,13 @@
 #elif MB(CHITU3D_V9)
   #include "stm32f1/pins_CHITU3D_V9.h"              // STM32F1                              env:chitu_f103 env:chitu_f103_maple
 #elif MB(CREALITY_V4)
-  #include "stm32f1/pins_CREALITY_V4.h"             // STM32F1, GD32F1                      env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple env:STM32F103RE_creality_maple env:GD32F303RE_creality_maple env:GD32F303RC_creality_maple
+  #include "stm32f1/pins_CREALITY_V4.h"             // STM32F1, GD32F3                      env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple env:STM32F103RE_creality_maple env:GD32F303RE_creality_maple env:GD32F303RC_creality_maple
 #elif MB(CREALITY_V4210)
   #include "stm32f1/pins_CREALITY_V4210.h"          // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple
 #elif MB(CREALITY_V425)
   #include "stm32f1/pins_CREALITY_V425.h"           // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple
 #elif MB(CREALITY_V422)
-  #include "stm32f1/pins_CREALITY_V422.h"           // STM32F1, GD32F1                      env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple env:STM32F103RE_creality_maple env:GD32F303RE_creality_maple env:GD32F303RC_creality_maple
+  #include "stm32f1/pins_CREALITY_V422.h"           // STM32F1, GD32F3                      env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple env:STM32F103RE_creality_maple env:GD32F303RE_creality_maple env:GD32F303RC_creality_maple
 #elif MB(CREALITY_V423)
   #include "stm32f1/pins_CREALITY_V423.h"           // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer
 #elif MB(CREALITY_V427)
@@ -789,7 +789,7 @@
 #elif MB(ARTILLERY_RUBY)
   #include "stm32f4/pins_ARTILLERY_RUBY.h"          // STM32F4                              env:Artillery_Ruby
 #elif MB(CREALITY_V24S1_301F4)
-  #include "stm32f4/pins_CREALITY_V24S1_301F4.h"    // STM32F4                              env:STM32F401RC_creality env:STM32F401RC_creality_jlink env:STM32F401RC_creality_stlink
+  #include "stm32f4/pins_CREALITY_V24S1_301F4.h"    // STM32F4                              env:STM32F401RC_creality env:STM32F401RC_creality_jlink env:STM32F401RC_creality_stlink env:STM32F401RE_creality
 #elif MB(OPULO_LUMEN_REV4)
   #include "stm32f4/pins_OPULO_LUMEN_REV4.h"        // STM32F4                              env:Opulo_Lumen_REV4
 #elif MB(FYSETC_SPIDER_KING407)
