@@ -645,13 +645,13 @@
 #elif MB(CHITU3D_V9)
   #include "stm32f1/pins_CHITU3D_V9.h"              // STM32F1                              env:chitu_f103 env:chitu_f103_maple
 #elif MB(CREALITY_V4)
-  #include "stm32f1/pins_CREALITY_V4.h"             // STM32F1, GD32F3                      env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple env:STM32F103RE_creality_maple env:GD32F303RE_creality_maple env:GD32F303RC_creality_maple
+  #include "stm32f1/pins_CREALITY_V4.h"             // STM32F1, GD32F3                      env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple env:STM32F103RC_creality_maple env:GD32F303RE_creality_maple env:GD32F303RC_creality_maple
 #elif MB(CREALITY_V4210)
   #include "stm32f1/pins_CREALITY_V4210.h"          // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple
 #elif MB(CREALITY_V425)
   #include "stm32f1/pins_CREALITY_V425.h"           // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple
 #elif MB(CREALITY_V422)
-  #include "stm32f1/pins_CREALITY_V422.h"           // STM32F1, GD32F3                      env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple env:STM32F103RE_creality_maple env:GD32F303RE_creality_maple env:GD32F303RC_creality_maple
+  #include "stm32f1/pins_CREALITY_V422.h"           // STM32F1, GD32F3                      env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer env:STM32F103RE_creality_maple env:STM32F103RC_creality_maple env:GD32F303RE_creality_maple env:GD32F303RC_creality_maple
 #elif MB(CREALITY_V423)
   #include "stm32f1/pins_CREALITY_V423.h"           // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_xfer env:STM32F103RC_creality env:STM32F103RC_creality_xfer
 #elif MB(CREALITY_V427)
@@ -690,15 +690,14 @@
   #include "stm32f1/pins_ERYONE_ERY32_MINI.h"       // STM32F1                              env:ERYONE_ERY32_MINI_maple
 #elif MB(PANDA_PI_V29)
   #include "stm32f1/pins_PANDA_PI_V29.h"            // STM32F1                              env:PANDA_PI_V29
-#elif MB(VOXELAB_AQUILA)
-  #include "gd32f1/pins_VOXELAB_AQUILA.h"           // GD32F1, N32F1/N32G4, STM32F1         env:GD32F103RC_voxelab_maple env:N32F103RC_voxelab_maple env:STM32F103RE_creality_maple env:STM32F103RC_creality_maple env:STM32F103RE_creality env:STM32F103RC_creality env:N32G455RE_voxelab_maple
 #elif MB(SOVOL_V131)
   #include "gd32f1/pins_SOVOL_V131.h"               // GD32F1                               env:GD32F103RET6_sovol_maple
 #elif MB(TRIGORILLA_V006)
   #include "gd32f1/pins_TRIGORILLA_V006.h"          // GD32F1                               env:trigorilla_v006
 #elif MB(KEDI_CONTROLLER_V1_2)
   #include "stm32f1/pins_KEDI_CONTROLLER_V1_2.h"    // STM32F1                              env:STM32F103RC_btt env:STM32F103RC_btt_USB env:STM32F103RC_btt_maple env:STM32F103RC_btt_USB_maple
-
+#elif MB(VOXELAB_AQUILA)
+  #include "gd32f1/pins_VOXELAB_AQUILA.h"           // GD32F1, N32F1/N32G4, STM32F1         env:GD32F103RC_voxelab_maple env:N32F103RC_voxelab_maple env:N32G455RE_voxelab_maple env:STM32F103RE_creality_maple env:STM32F103RC_creality_maple env:STM32F103RE_creality env:STM32F103RC_creality
 //
 // ARM Cortex-M4F
 //
@@ -739,11 +738,11 @@
 #elif MB(BTT_SKR_V2_0_REV_B)
   #include "stm32f4/pins_BTT_SKR_V2_0_REV_B.h"      // STM32F4                              env:BIGTREE_SKR_2 env:BIGTREE_SKR_2_USB env:BIGTREE_SKR_2_USB_debug env:BIGTREE_SKR_2_F429 env:BIGTREE_SKR_2_F429_USB env:BIGTREE_SKR_2_F429_USB_debug
 #elif MB(BTT_OCTOPUS_V1_0)
-  #include "stm32f4/pins_BTT_OCTOPUS_V1_0.h"        // STM32F4                              env:STM32F446ZE_btt env:STM32F446ZE_btt_USB
+  #include "stm32f4/pins_BTT_OCTOPUS_V1_0.h"        // STM32F4                              env:STM32F446ZE_btt env:STM32F446ZE_btt_usb_flash_drive
 #elif MB(BTT_OCTOPUS_V1_1)
-  #include "stm32f4/pins_BTT_OCTOPUS_V1_1.h"        // STM32F4                              env:STM32F446ZE_btt env:STM32F446ZE_btt_USB env:STM32F429ZG_btt env:STM32F429ZG_btt_USB env:STM32F407ZE_btt env:STM32F407ZE_btt_USB
+  #include "stm32f4/pins_BTT_OCTOPUS_V1_1.h"        // STM32F4                              env:STM32F446ZE_btt env:STM32F446ZE_btt_usb_flash_drive env:STM32F429ZG_btt env:STM32F429ZG_btt_usb_flash_drive env:STM32F407ZE_btt env:STM32F407ZE_btt_usb_flash_drive
 #elif MB(BTT_OCTOPUS_PRO_V1_0)
-  #include "stm32f4/pins_BTT_OCTOPUS_PRO_V1_0.h"    // STM32F4                              env:STM32F446ZE_btt env:STM32F446ZE_btt_USB env:STM32F429ZG_btt env:STM32F429ZG_btt_USB env:STM32H723ZE_btt
+  #include "stm32f4/pins_BTT_OCTOPUS_PRO_V1_0.h"    // STM32F4                              env:STM32F446ZE_btt env:STM32F446ZE_btt_usb_flash_drive env:STM32F429ZG_btt env:STM32F429ZG_btt_usb_flash_drive env:STM32H723ZE_btt
 #elif MB(LERDGE_K)
   #include "stm32f4/pins_LERDGE_K.h"                // STM32F4                              env:LERDGEK env:LERDGEK_usb_flash_drive
 #elif MB(LERDGE_S)

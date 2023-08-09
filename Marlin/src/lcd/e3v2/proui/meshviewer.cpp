@@ -42,9 +42,9 @@ uint8_t rmax;                               // Maximum radius
 #define zmin -20                            // rmin at z=-0.20
 #define zmax  20                            // rmax at z= 0.20
 #define width DWIN_WIDTH - 2 * margin
-#define r(z) ((z-zmin)*(rmax-rmin)/(zmax-zmin)+rmin)
-#define px(xp) (margin + (xp)*(width)/(sizex - 1))
-#define py(yp) (30 + DWIN_WIDTH - margin - (yp)*(width)/(sizey - 1))
+#define r(z) ((z - zmin) * (rmax - rmin) / (zmax - zmin) + rmin)
+#define px(xp) (margin + (xp) * (width) / (sizex - 1))
+#define py(yp) (30 + DWIN_WIDTH - margin - (yp) * (width) / (sizey - 1))
 
 #if ENABLED(TJC_DISPLAY)
   #define meshfont font8x16
@@ -69,48 +69,54 @@ void MeshViewerClass::DrawMeshGrid(const uint8_t csizex, const uint8_t csizey) {
 }
 
 void MeshViewerClass::DrawMeshPoint(const uint8_t x, const uint8_t y, const float z) {
+  if (isnan(z)) return;
+  #if LCD_BACKLIGHT_TIMEOUT_MINS
+    ui.refresh_backlight_timeout();
+  #endif
   const uint8_t fs = DWINUI::fontWidth(meshfont);
-  int16_t v = isnan(z) ? 0 : round(z * 100);
-  LIMIT(v, zmin, zmax);
-  NOLESS(max, z);
-  NOMORE(min, z);
+  int16_t v = round(z * 100);
+  NOLESS(max, z); NOMORE(min, z);
   const uint16_t color = DWINUI::RainbowInt(v, zmin, zmax);
-  DWINUI::Draw_FillCircle(color, px(x), py(y), r(v));
-  TERN_(TJC_DISPLAY, delay(100);)
+  DWINUI::Draw_FillCircle(color, px(x), py(y), r(_MAX(_MIN(v, zmax), zmin)));
   if (sizex < (ENABLED(TJC_DISPLAY) ? 8 : 9)) {
-    if (v == 0) DWINUI::Draw_Float(meshfont, 1, 2, px(x) - 2*fs, py(y) - fs, 0);
-    else DWINUI::Draw_Signed_Float(meshfont, 1, 2, px(x) - 3*fs, py(y) - fs, z);
+    if (v == 0) DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, px(x) - 2 * fs - 1, py(y) - fs, "0.00");
+    else DWINUI::Draw_Signed_Float(meshfont, 1, 2, px(x) - 3 * fs, py(y) - fs, z);
   }
   else {
     char str_1[9];
     str_1[0] = 0;
+    MString<12> msg;
     switch (v) {
-      case -999 ... -100:
-        DWINUI::Draw_Signed_Float(meshfont, 1, 1, px(x) - 3*fs, py(y) - fs, z);
+      case -999 ... -100:  // -9.99 .. -1.00 mm
+        DWINUI::Draw_Signed_Float(meshfont, 1, 1, px(x) - 3 * fs, py(y) - fs, z);
         break;
-      case -99 ... -1:
-        sprintf_P(str_1, PSTR("%.2f"), z);
+      case -99 ... -1:  // -0.99 .. -0.01 mm
+        msg.setf_P(PSTR("%02f"), p_float_t(z, 2));
+        //sprintf_P(str_1, PSTR("%.2f"), z);
         break;
       case 0:
         DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, px(x) - 4, py(y) - fs, "0");
         break;
-      case 1 ... 99:
-        sprintf_P(str_1, PSTR("%.2f"), z);
+      case 1 ... 99:  // 0.01 .. 0.99 mm
+        msg.setf_P(PSTR("%02f"), p_float_t(z, 2));
+        //sprintf_P(str_1, PSTR("%.2f"), z);
         break;
-      case 100 ... 999:
-        DWINUI::Draw_Signed_Float(meshfont, 1, 1, px(x) - 3*fs, py(y) - fs, z);
+      case 100 ... 999:  // 1.00 .. 9.99 mm
+        DWINUI::Draw_Signed_Float(meshfont, 1, 1, px(x) - 3 * fs, py(y) - fs, z);
         break;
     }
     if (str_1[0])
-      DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, px(x) - 2*fs, py(y) - fs, str_1);
+      DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, px(x) - 2 * fs, py(y) - fs, msg);
   }
+  SERIAL_FLUSH();
+  TERN_(TJC_DISPLAY, delay(100));
 }
 
 void MeshViewerClass::DrawMesh(bed_mesh_t zval, const uint8_t csizex, const uint8_t csizey) {
   DrawMeshGrid(csizex, csizey);
-   for (uint8_t y = 0; y < csizey; ++y) {
+  for (uint8_t y = 0; y < csizey; ++y) {
     hal.watchdog_refresh();
-     for (uint8_t x = 0; x < csizex; ++x) DrawMeshPoint(x, y, zval[x][y]);
+    for (uint8_t x = 0; x < csizex; ++x) DrawMeshPoint(x, y, zval[x][y]);
   }
 }
 
@@ -141,18 +147,21 @@ void MeshViewerClass::Draw(bool withsave/*=false*/, bool redraw/*=true*/) {
   }
   #if ENABLED(USE_GRID_MESHVIEWER)
     if(bedLevelTools.view_mesh) {
-      bedLevelTools.Set_Mesh_Viewer_Status(); }
+      bedLevelTools.Set_Mesh_Viewer_Status();
+    }
     else {
     char str_1[6], str_2[6] = "";
     ui.status_printf(0, F("minZ: %s | maxZ: +%s"),
       dtostrf(min, 1, 3, str_1),
-      dtostrf(max, 1, 3, str_2));
-    }
+      dtostrf(max, 1, 3, str_2)
+    );
+   }
   #else
     char str_1[6], str_2[6] = "";
     ui.status_printf(0, F("minZ: %s | maxZ: +%s"),
       dtostrf(min, 1, 3, str_1),
-      dtostrf(max, 1, 3, str_2));
+      dtostrf(max, 1, 3, str_2)
+    );
   #endif
 }
 

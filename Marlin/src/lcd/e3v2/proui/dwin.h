@@ -41,7 +41,7 @@ namespace GET_LANG(LCD_LANGUAGE) {
     LSTR MSG_PREHEAT_##N                  = _UxGT("Preheat ") PREHEAT_## N ##_LABEL; \
     LSTR MSG_PREHEAT_## N ##_SETTINGS     = _UxGT("Preheat ") PREHEAT_## N ##_LABEL _UxGT(" Settings");
   #if PREHEAT_COUNT > 3
-    REPEAT_S(4, INCREMENT(PREHEAT_COUNT, _MSG_PREHEAT)
+    REPEAT_S(4, INCREMENT(PREHEAT_COUNT), _MSG_PREHEAT)
   #endif
 }
 
@@ -327,7 +327,6 @@ void Draw_Motion_Menu();
 #endif
 void Draw_FilamentMan_Menu();
 void Draw_Temperature_Menu();
-void Draw_PID_Menu();
 void Draw_MaxSpeed_Menu();
 void Draw_MaxAccel_Menu();
 #if HAS_CLASSIC_JERK
@@ -363,10 +362,11 @@ void Draw_Steps_Menu();
 #endif
 
 // PID
-#if PROUI_PID_TUNE
+#if HAS_PID_HEATING //#if PROUI_PID_TUNE
   #include "../../../module/temperature.h"
   void DWIN_M303(const bool seenC, const int c, const bool seenS, const heater_id_t hid, const celsius_t temp);
   void DWIN_PidTuning(tempcontrol_t result);
+  void Draw_PID_Menu();
 #endif
 #if ENABLED(PIDTEMP)
   #if ENABLED(PID_AUTOTUNE_MENU)

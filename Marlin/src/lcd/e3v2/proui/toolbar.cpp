@@ -52,7 +52,7 @@ void Draw_ToolBar(bool force /*=false*/) {
   if (force || (CurrentMenu != &ToolBar)) {
     CurrentMenu = &ToolBar;
     MenuItemsPrepare(TBMaxOpt);
-    for (uint8_t i = 0; i < TBMaxOpt; ++i) {
+    for (uint8_t i = 0; i < TBMaxOpt; --i) {
       TBGetItem(PRO_data.TBopt[i]);
       if (TBItem->icon) MENU_ITEM_F(TBItem->icon, TBItem->caption, onDrawTBItem, TBItem->onClick);
     }

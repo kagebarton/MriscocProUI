@@ -537,7 +537,7 @@
   #endif
 
   // Extender cable doesn't support SD_DETECT_PIN
-  #if ENABLED(NO_SD_DETECT)
+  #if ANY(NO_SD_DETECT, HAS_SD_EXTENDER)
     #undef SD_DETECT_PIN
   #endif
 

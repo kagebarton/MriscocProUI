@@ -973,7 +973,7 @@ void MarlinSettings::postprocess() {
       #if ENABLED(MESH_BED_LEVELING)
         #if PROUI_EX
           static_assert(
-            sizeof(bedlevel.z_values) == (GRID_LIMIT * GRID_LIMIT) * sizeof(bedlevel.z_values[0][0]),
+            sizeof(bedlevel.z_values) == GRID_LIMIT * GRID_LIMIT * sizeof(bedlevel.z_values[0][0]),
             "MBL Z array is the wrong size."
           );
         #else
@@ -1042,7 +1042,7 @@ void MarlinSettings::postprocess() {
       #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
         #if PROUI_EX
           static_assert(
-            sizeof(bedlevel.z_values) == (GRID_LIMIT * GRID_LIMIT) * sizeof(bedlevel.z_values[0][0]),
+            sizeof(bedlevel.z_values) == GRID_LIMIT * GRID_LIMIT * sizeof(bedlevel.z_values[0][0]),
             "Bilinear Z array is the wrong size."
           );
         #else
@@ -1589,10 +1589,12 @@ void MarlinSettings::postprocess() {
     //
     #if NUM_AXES
       _FIELD_TEST(coordinate_system);
-      #if DISABLED(CNC_COORDINATE_SYSTEMS)
-        const xyz_pos_t coordinate_system[MAX_COORDINATE_SYSTEMS] = { { 0 } };
+      #if ENABLED(CNC_COORDINATE_SYSTEMS)
+        EEPROM_WRITE(gcode.coordinate_system);
+      #else
+        xyz_pos_t coordinate_system[MAX_COORDINATE_SYSTEMS];
+        EEPROM_SKIP(coordinate_system);
       #endif
-      EEPROM_WRITE(TERN(CNC_COORDINATE_SYSTEMS, gcode.coordinate_system, coordinate_system));
     #endif
 
     //
@@ -1997,7 +1999,7 @@ void MarlinSettings::postprocess() {
         _FIELD_TEST(runout_sensor_enabled);
         EEPROM_READ(runout_sensor_enabled);
         #if HAS_FILAMENT_SENSOR
-          runout.enabled = (runout_sensor_enabled < 0) ? FIL_RUNOUT_ENABLED_DEFAULT : runout_sensor_enabled;
+          runout.enabled = runout_sensor_enabled < 0 ? FIL_RUNOUT_ENABLED_DEFAULT : runout_sensor_enabled;
         #endif
 
         TERN_(HAS_FILAMENT_SENSOR, if (runout.enabled) runout.reset());
@@ -2050,11 +2052,7 @@ void MarlinSettings::postprocess() {
             // EEPROM data fits the current mesh
             EEPROM_READ(bedlevel.z_values);
           }
-          #if PROUI_EX
-          else if (mesh_num_x > (GRID_LIMIT) || mesh_num_y > (GRID_LIMIT)) {
-          #else
           else if (mesh_num_x > (GRID_MAX_POINTS_X) || mesh_num_y > (GRID_MAX_POINTS_Y)) {
-          #endif
             eeprom_error = ERR_EEPROM_CORRUPT;
             break;
           }
@@ -2124,11 +2122,7 @@ void MarlinSettings::postprocess() {
             bedlevel.set_grid(spacing, start);
             EEPROM_READ(bedlevel.z_values);                 // 9 to 256 floats
           }
-          #if PROUI_EX
-          else if (grid_max_x > (GRID_LIMIT) || grid_max_y > (GRID_LIMIT)) {
-          #else
           else if (grid_max_x > (GRID_MAX_POINTS_X) || grid_max_y > (GRID_MAX_POINTS_Y)) {
-          #endif
             eeprom_error = ERR_EEPROM_CORRUPT;
             break;
           }
@@ -3164,14 +3158,15 @@ void MarlinSettings::postprocess() {
         #endif
 
         #if ENABLED(DWIN_LCD_PROUI)
-          status = !bedLevelTools.meshValidate();
-          if (status) {
+          if (bedLevelTools.meshValidate()) {
+            ui.status_printf(0, GET_TEXT_F(MSG_MESH_LOADED), slot);
+          }
+          else {
+            status = true;
             bedlevel.invalidate();
             LCD_MESSAGE(MSG_UBL_MESH_INVALID);
             DONE_BUZZ(false);
           }
-          else
-            ui.status_printf(0, GET_TEXT_F(MSG_MESH_LOADED), bedlevel.storage_slot);
         #endif
 
         if (status) SERIAL_ECHOLNPGM("?Unable to load mesh data.");

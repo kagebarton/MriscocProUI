@@ -1298,7 +1298,7 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
       #endif
     #endif
 
-    #if HAS_BLTOUCH_HS_MODE
+    #if HAS_BLTOUCH_HS_MODE && DISABLED(PROUI_EX)
       constexpr char hs[] = STRINGIFY(BLTOUCH_HS_MODE);
       static_assert(!(strcmp(hs, "1") && strcmp(hs, "0x1") && strcmp(hs, "true") && strcmp(hs, "0") && strcmp(hs, "0x0") && strcmp(hs, "false")), \
          "BLTOUCH_HS_MODE must now be defined as true or false, indicating the default state.");
@@ -1495,7 +1495,7 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
 #endif
 
 #if ENABLED(LCD_BED_TRAMMING)
-  #ifndef BED_TRAMMING_INSET_LFRB
+  #if !defined(BED_TRAMMING_INSET_LFRB)
     #error "LCD_BED_TRAMMING requires BED_TRAMMING_INSET_LFRB values."
   #elif ENABLED(BED_TRAMMING_USE_PROBE)
     #if !HAS_BED_PROBE
@@ -1530,7 +1530,7 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
   #elif DISABLED(EEPROM_SETTINGS)
     #error "AUTO_BED_LEVELING_UBL requires EEPROM_SETTINGS."
   #elif DISABLED(PROUI_EX)
-    #if (!WITHIN(GRID_MAX_POINTS_X, 3, 255) || !WITHIN(GRID_MAX_POINTS_Y, 3, 255))
+    #if !WITHIN(GRID_MAX_POINTS_X, 3, 255) || !WITHIN(GRID_MAX_POINTS_Y, 3, 255)
       #error "GRID_MAX_POINTS_[XY] must be between 3 and 255."
     #endif
   #endif
@@ -1578,9 +1578,11 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
 #if HAS_MESH && HAS_CLASSIC_JERK
   static_assert(DEFAULT_ZJERK > 0.1, "Low DEFAULT_ZJERK values are incompatible with mesh-based leveling.");
 #endif
-// #if HAS_MESH && DGUS_LCD_UI_IA_CREALITY && GRID_MAX_POINTS > 25
-//   #error "DGUS_LCD_UI IA_CREALITY requires a mesh with no more than 25 points as defined by GRID_MAX_POINTS_X/Y."
-// #endif
+#if DISABLED(PROUI_EX)
+  #if HAS_MESH && DGUS_LCD_UI_IA_CREALITY && GRID_MAX_POINTS > 25
+    #error "DGUS_LCD_UI IA_CREALITY requires a mesh with no more than 25 points as defined by GRID_MAX_POINTS_X/Y."
+  #endif
+#endif
 
 #if ENABLED(G26_MESH_VALIDATION)
   #if !HAS_EXTRUDERS
@@ -2747,8 +2749,8 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
     #error "DWIN_LCD_PROUI requires SDSUPPORT to be enabled."
   #elif ALL(LCD_BED_LEVELING, PROBE_MANUALLY)
     #error "DWIN_LCD_PROUI does not support LCD_BED_LEVELING with PROBE_MANUALLY."
-  #elif ENABLED(MEDIASORT_MENU_ITEM) && DISABLED(SDCARD_SORT_ALPHA)
-    #error "MEDIASORT_MENU_ITEM requires SDCARD_SORT_ALPHA."
+  #elif ENABLED(MEDIASORT_MENU_ITEM) && !ALL(SDCARD_SORT_ALPHA, SDSORT_GCODE)
+    #error "MEDIASORT_MENU_ITEM requires SDCARD_SORT_ALPHA and SDSORT_GCODE."
   #elif ENABLED(RUNOUT_TUNE_ITEM) && DISABLED(HAS_FILAMENT_SENSOR)
     #error "RUNOUT_TUNE_ITEM requires HAS_FILAMENT_SENSOR."
   #elif ENABLED(PLR_TUNE_ITEM) && DISABLED(POWER_LOSS_RECOVERY)
@@ -2761,7 +2763,7 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
 #endif
 
 #if LCD_BACKLIGHT_TIMEOUT_MINS
-  #if !HAS_ENCODER_ACTION && !HAS_RESUME_CONTINUE
+  #if !HAS_ENCODER_ACTION && DISABLED(DWIN_LCD_PROUI)
     #error "LCD_BACKLIGHT_TIMEOUT_MINS requires an LCD with encoder or keypad."
   #elif ENABLED(NEOPIXEL_BKGD_INDEX_FIRST)
     #if PIN_EXISTS(LCD_BACKLIGHT)
@@ -2769,8 +2771,8 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
     #elif ENABLED(NEOPIXEL_BKGD_ALWAYS_ON)
       #error "LCD_BACKLIGHT_TIMEOUT is not compatible with NEOPIXEL_BKGD_ALWAYS_ON."
     #endif
-  #elif !PIN_EXISTS(LCD_BACKLIGHT) && DISABLED(HAS_DWIN_E3V2)
-    #error "LCD_BACKLIGHT_TIMEOUT_MINS requires either LCD_BACKLIGHT_PIN or NEOPIXEL_BKGD_INDEX_FIRST."
+  #elif !PIN_EXISTS(LCD_BACKLIGHT) && DISABLED(DWIN_LCD_PROUI)
+    #error "LCD_BACKLIGHT_TIMEOUT_MINS requires either LCD_BACKLIGHT_PIN, NEOPIXEL_BKGD_INDEX_FIRST or DWIN_LCD_PROUI."
   #endif
 #endif
 
@@ -3829,12 +3831,20 @@ static_assert(_PLUS_TEST(3), "DEFAULT_MAX_ACCELERATION values must be positive."
 /**
  * Sanity check WiFi options
  */
-#if ENABLED(ESP3D_WIFISUPPORT) && DISABLED(ARDUINO_ARCH_ESP32)
-  #error "ESP3D_WIFISUPPORT requires an ESP32 MOTHERBOARD."
-#elif ENABLED(WEBSUPPORT) && NONE(ARDUINO_ARCH_ESP32, WIFISUPPORT)
-  #error "WEBSUPPORT requires WIFISUPPORT and an ESP32 MOTHERBOARD."
-#elif ALL(ESP3D_WIFISUPPORT, WIFISUPPORT)
-  #error "Enable only one of ESP3D_WIFISUPPORT or WIFISUPPORT."
+#if ALL(WIFISUPPORT, ESP3D_WIFISUPPORT)
+  #error "Enable only one of WIFISUPPORT or ESP3D_WIFISUPPORT."
+#elif ENABLED(ESP3D_WIFISUPPORT) && DISABLED(ARDUINO_ARCH_ESP32)
+  #error "ESP3D_WIFISUPPORT requires an ESP32 motherboard."
+#elif ALL(ARDUINO_ARCH_ESP32, WIFISUPPORT)
+  #if !(defined(WIFI_SSID) && defined(WIFI_PWD))
+    #error "ESP32 motherboard with WIFISUPPORT requires WIFI_SSID and WIFI_PWD."
+  #endif
+#elif ENABLED(WIFI_CUSTOM_COMMAND)
+  #error "WIFI_CUSTOM_COMMAND requires an ESP32 motherboard and WIFISUPPORT."
+#elif ENABLED(OTASUPPORT)
+  #error "OTASUPPORT requires an ESP32 motherboard and WIFISUPPORT."
+#elif defined(WIFI_SSID) || defined(WIFI_PWD)
+  #error "WIFI_SSID and WIFI_PWD only apply to ESP32 motherboard with WIFISUPPORT."
 #endif
 
 /**
@@ -4139,8 +4149,8 @@ static_assert(WITHIN(MULTISTEPPING_LIMIT, 1, 128) && IS_POWER_OF_2(MULTISTEPPING
     #error "ONE_CLICK_PRINT is incompatible with BROWSE_MEDIA_ON_INSERT."
   #elif DISABLED(NO_SD_AUTOSTART)
     #error "NO_SD_AUTOSTART must be enabled for ONE_CLICK_PRINT."
-  #elif !defined(HAS_MARLINUI_MENU)
-    #error "ONE_CLICK_PRINT needs a display that has Marlin UI menus."
+  #elif NONE(HAS_MARLINUI_MENU, DWIN_LCD_PROUI)
+    #error "ONE_CLICK_PRINT needs a display that has Marlin UI menus or DWIN_LCD_PROUI."
   #endif
 #endif
 

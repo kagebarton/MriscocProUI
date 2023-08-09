@@ -75,6 +75,10 @@ void C108() {
     SERIAL_ECHOLNPGM(F("wait_for_user was "), wait_for_user);
     SERIAL_ECHOLNPGM(F("checkkey was "), checkkey);
   #endif
+  #if LCD_BACKLIGHT_TIMEOUT_MINS
+    ui.refresh_backlight_timeout();
+  #endif
+  if (!ui.backlight) ui.refresh_brightness();
   wait_for_user = false;
   DONE_BUZZ(true);
 }

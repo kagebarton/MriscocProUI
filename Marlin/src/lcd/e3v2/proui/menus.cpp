@@ -64,7 +64,7 @@ void Erase_Menu_Text(const int8_t line) {
   DWINUI::Draw_Box(1, HMI_data.Background_Color, {LBLX, ypos, DWIN_WIDTH - LBLX, MLINE - 2});
 }
 
-void Draw_Menu_Line(const uint8_t line, const uint8_t icon /*=0*/, const char * const label /*=nullptr*/, bool more /*=false*/, bool selected /*=false*/) {
+void Draw_Menu_Line(const uint8_t line, const uint8_t icon/*=0*/, const char * const label/*=nullptr*/, bool more/*=false*/, bool selected/*=false*/) {
   if (icon)  DWINUI::Draw_Icon(icon, ICOX, MBASE(line) - 3);
   if (label) DWINUI::Draw_String(LBLX, MBASE(line) - 1, (char*)label);
   if (more)  DWINUI::Draw_Icon(ICON_More, VALX + 16, MBASE(line) - 3);
@@ -72,7 +72,7 @@ void Draw_Menu_Line(const uint8_t line, const uint8_t icon /*=0*/, const char * 
   DWIN_Draw_HLine(HMI_data.SplitLine_Color, 16, MYPOS(line + 1), 240);
 }
 
-void Draw_Menu_Line(const uint8_t line, const uint8_t icon /*=0*/, FSTR_P label /*=nullptr*/, bool more /*=false*/, bool selected /*=false*/) {
+void Draw_Menu_Line(const uint8_t line, const uint8_t icon /*=0*/, FSTR_P label /*=nullptr*/, bool more/*=false*/, bool selected/*=false*/) {
   Draw_Menu_Line(line, icon, FTOP(label), more, selected);
 }
 
@@ -91,7 +91,7 @@ void Toggle_Chkb_Line(bool &checked) {
   Show_Chkb_Line(checked);
 }
 
-void Draw_Menu_IntValue(uint16_t bcolor, const uint8_t line, uint8_t iNum, const int32_t value /*=0*/) {
+void Draw_Menu_IntValue(uint16_t bcolor, const uint8_t line, uint8_t iNum, const int32_t value/*=0*/) {
   DWINUI::Draw_Signed_Int(HMI_data.Text_Color, bcolor, iNum , VALX, MBASE(line) - 1, value);
 }
 

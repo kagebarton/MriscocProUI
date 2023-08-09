@@ -243,6 +243,7 @@ void DWINUI::Draw_Button(uint8_t id, uint16_t x, uint16_t y, bool sel) {
     default: break;
   }
 }
+
 // -------------------------- Extra -------------------------------//
 
 // Draw a circle

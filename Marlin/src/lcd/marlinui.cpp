@@ -207,7 +207,7 @@ constexpr uint8_t epps = ENCODER_PULSES_PER_STEP;
     #ifdef NEOPIXEL_BKGD_INDEX_FIRST
       neo.reset_background_color();
       neo.show();
-    #elif PIN_EXISTS(LCD_BACKLIGHT) && DISABLED(HAS_DWIN_E3V2)
+    #elif PIN_EXISTS(LCD_BACKLIGHT)
       WRITE(LCD_BACKLIGHT_PIN, HIGH);
     #endif
   }
@@ -1682,7 +1682,7 @@ void MarlinUI::host_notify(const char * const cstr) {
 
   void MarlinUI::abort_print() {
     #if ENABLED(CV_LASER_MODULE)
-      if (laser_device.is_laser_device()) { laser_device.quick_stop(); }
+      if (laser_device.is_laser_device()) laser_device.quick_stop();
     #endif
     #if HAS_MEDIA
       wait_for_heatup = wait_for_user = false;
