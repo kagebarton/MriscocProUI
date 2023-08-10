@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------------
 # Cura JPEG Thumbnail creator
 # Professional firmware for Ender3v2
-# Miguel A. Risco-Castillo
+# ClassicRocker883
 # version: 1.5
 # date: 2023-05-23
 #

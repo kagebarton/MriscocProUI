@@ -2,8 +2,8 @@
 
 # ------------------------------------------------------------------------------
 # Prusa / Super Slicer post-processor script for the Professional Firmware
-# URL: https://github.com/mriscoc/Ender3V2S1
-# Miguel A. Risco-Castillo
+# URL: https://github.com/classicrocker883/MyProUI
+# ClassicRocker883
 # version: 1.7
 # date: 2023/08/02
 #
