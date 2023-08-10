@@ -1,6 +1,6 @@
 /**
  * Mesh Viewer for PRO UI
- * Author: Miguel A. Risco-Castillo (MRISCOC)
+ * Author: ClassicRocker883
  * version: 4.2.1
  * Date: 2023/05/05
  *
@@ -91,14 +91,14 @@ void MeshViewerClass::DrawMeshPoint(const uint8_t x, const uint8_t y, const floa
         DWINUI::Draw_Signed_Float(meshfont, 1, 1, px(x) - 3 * fs, py(y) - fs, z);
         break;
       case -99 ... -1:  // -0.99 .. -0.01 mm
-        msg.setf_P(PSTR("%02f"), p_float_t(z, 2));
+        msg.setf_P(PSTR("%.2f"), p_float_t(z, 2));
         //sprintf_P(str_1, PSTR("%.2f"), z);
         break;
       case 0:
         DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, px(x) - 4, py(y) - fs, "0");
         break;
       case 1 ... 99:  // 0.01 .. 0.99 mm
-        msg.setf_P(PSTR("%02f"), p_float_t(z, 2));
+        msg.setf_P(PSTR("%.2f"), p_float_t(z, 2));
         //sprintf_P(str_1, PSTR("%.2f"), z);
         break;
       case 100 ... 999:  // 1.00 .. 9.99 mm

@@ -1,6 +1,6 @@
 /**
  * Mesh Viewer for PRO UI
- * Author: Miguel A. Risco-Castillo (MRISCOC)
+ * Author: ClassicRocker883
  * version: 4.2.1
  * Date: 2023/05/05
  *

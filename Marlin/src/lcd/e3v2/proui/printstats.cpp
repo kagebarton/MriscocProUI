@@ -1,6 +1,6 @@
 /**
  * Print Stats page for PRO UI
- * Author: Miguel A. Risco-Castillo (MRISCOC)
+ * Author: ClassicRocker883
  * Version: 1.4.0
  * Date: 2022/12/03
  *

@@ -109,8 +109,8 @@ try:
         of.write(';MAXY:{:.3f}\n'.format(maxy))
         of.write(';MAXZ:{:.3f}\n'.format(maxz))
         of.write(';POSTPROCESSED\n')
-        of.write(';Header generated for the MRiscoC Professional Firmware\n')
-        of.write(';https://github.com/mriscoc/Ender3V2S1\n\n')
+        of.write(';Header generated for the MyProUI Professional Firmware\n')
+        of.write(';https://github.com/classicrocker883/MyProUI\n\n')
         of.write(lines)
 except:
     print('Error writing output file')
