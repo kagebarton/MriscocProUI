@@ -1,10 +1,10 @@
 # Professional Firmware for the Voxelab Aquila and Creality Ender-3 3D Printers 
 (or any other compatible 3D Printer)
 
-![GitHub contributors](https://img.shields.io/github/contributors/classicrocker883/MyProUI.svg)
-![GitHub Release Date](https://img.shields.io/github/release-date/classicrocker883/MyProUI.svg)
-[![Build Status](https://github.com/classicrocker883/MyProUI/workflows/CI/badge.svg)](https://github.com/classicrocker883/MyProUI/actions)
-[![Build Configs](https://github.com/classicrocker883/MyProUI/actions/workflows/compile-configs.yml/badge.svg?event=release)](https://github.com/classicrocker883/MyProUI/releases/latest)
+![GitHub contributors](https://img.shields.io/github/contributors/classicrocker883/MriscocProUI.svg)
+![GitHub Release Date](https://img.shields.io/github/release-date/classicrocker883/MriscocProUI.svg)
+[![Build Status](https://github.com/classicrocker883/MriscocProUI/workflows/CI/badge.svg)](https://github.com/classicrocker883/MriscocProUI/actions)
+[![Build Configs](https://github.com/classicrocker883/MriscocProUI/actions/workflows/compile-configs.yml/badge.svg?event=release)](https://github.com/classicrocker883/MriscocProUI/releases/latest)
 
 ## Universal RET6/RCT6 chips: G32, N32, H32, Creality 4.2.7 and 4.2.2 boards
 #### Don't forget to checkout the [thingiverse](https://www.thingiverse.com/classicrocker883/designs) models I designed
@@ -23,15 +23,14 @@
 ---
 
 ### - Please read this: -
-Many Updates have been included in the most recent MyProUI in the **2023-August** release.<br>
-(until @mriscoc unblocks me, I will not show or give credit for [he accused me of copying code which I originally written!](https://github.com/MarlinFirmware/Marlin/pull/26086) I tried to reason and explain things but until he does the right thing I will remove all mentions) <br>
+Many Updates have been included in the most recent MriscocProUI in the **2023-August** release.<br>
 H32->HC32 support is currently only in the branch **HC32-July**. You can find the original repo here [@shadow578/Marlin-H32](https://github.com/shadow578/Marlin-H32)<br>
 #### Important Info regarding HC32:
 * Not all features or options have been fully tested with this chip.  
-* * <ins>**FOREWARNING**</ins>: So far everything has been working great - as normal - except there are reports of it restarting after saving with no other negative effects. So far, that is the only issue. I just wanted to give advance notice and if there is anything else to report please do so under [Issues tab](https://github.com/classicrocker883/MyProUI/issues).
+* * <ins>**FOREWARNING**</ins>: So far everything has been working great - as normal - except there are reports of it restarting after saving with no other negative effects. So far, that is the only issue. I just wanted to give advance notice and if there is anything else to report please do so under [Issues tab](https://github.com/classicrocker883/MriscocProUI/issues).
 <br>
 
-General information about the firmware and updates is located in the _Wiki_ page [What's New In This Release](https://github.com/classicrocker883/MyProUI/wiki/What's-New-in-this-Release). <br> Other changes and updates are [addressed here](https://github.com/classicrocker883/MyProUI/releases/latest) ~~and are [addressed here](https://github.com/mriscoc/Ender3V2S1/releases/latest)~~.
+General information about the firmware and updates is located in the _Wiki_ page [What's New In This Release](https://github.com/classicrocker883/MriscocProUI/wiki/What's-New-in-this-Release). <br> Other changes and updates are [addressed here](https://github.com/classicrocker883/MriscocProUI/releases/latest) and are [addressed here](https://github.com/mriscoc/Ender3V2S1/releases/latest).
 
 #### One important change to note is the `Mesh Inset` now saves upon restart -- it is working as normal.
     /**
@@ -68,7 +67,7 @@ For MacOS or Linux, you're on your own...sorry.
 [Linear Advance Information](https://github.com/MarlinFirmware/MarlinDocumentation/blob/master/_features/lin_advance.md)
 
 The Precompiled binary files of this firmware can work with STM32 (STM32F103RET6/RCT6 - STMicroelectronics) and it's clones: G32 (GD32F103Rx - GigaDevice), N32 (N32F103Rx / N32G455x - Nation), and H32 (HC32F460x - Huada Semiconductor/HDSC). They can be downloaded from:
-[Latest Release](https://github.com/classicrocker883/MyProUI/releases/latest)
+[Latest Release](https://github.com/classicrocker883/MriscocProUI/releases/latest)
 
 <img height=260 src="https://enfss.voxelab3dp.com/10001/picture/2021/09/b849845bd0ffa889f00a782aae76ccf3.jpg" align="left" />
 <img height=260 src="https://enfss.voxelab3dp.com/10001/picture/2021/09/677b721574efca3daa5c0d39e438fee6.jpg" align="middle" /> 
@@ -122,10 +121,9 @@ Find me on [Facebook](https://www.facebook.com/yoboyyy)
 
 Join the Voxelab Aquila [Facebook Group](https://www.facebook.com/groups/voxelabaquila/)
 
-This is MyProUI firmware is maintained by [@classicrocker883](https://github.com/classicrocker883) (yours truly)
+This fork of Mriscoc's ProUI firmware is maintained by [@classicrocker883](https://github.com/classicrocker883) (yours truly)
 
-~~ProUI is a Marlin based firmware maintained by [@mriscoc](https://github.com/mriscoc)~~
-(until @mriscoc unblocks me, I will not show or give credit for [he accused me of copying code which I originally written!](https://github.com/MarlinFirmware/Marlin/pull/26086) I tried to reason and explain things but until he does the right thing I will remove all mentions)
+ProUI is a Marlin based firmware maintained by [@mriscoc](https://github.com/mriscoc)
 
 The fork for H32|HC32 firmware is maintained by [@shadow578](https://github.com/shadow578)
 

@@ -21,8 +21,11 @@
  */
 #pragma once
 
-// Edited by ClassicRocker883 for ProUI
-// https://github.com/classicrocker883/MyProUI
+// Edited by classicrocker883 for ProUI
+// https://github.com/classicrocker883/MriscocProUI
+
+// Created from Mriscoc's Professional Firmware
+// https://github.com/mriscoc/Ender3V2S1
 
 /**
  * Configuration.h

@@ -508,7 +508,7 @@
 #endif
 
 #if ENABLED(DWIN_LCD_PROUI)
- //#define DO_LIST_BIN_FILES 1
+  #define DO_LIST_BIN_FILES 1
   #define LCD_BRIGHTNESS_DEFAULT 100
 #endif
 

@@ -1,6 +1,6 @@
 /**
  * Bed Level Tools for Pro UI
- * Extended by: ClassicRocker883
+ * Extended by: Miguel A. Risco-Castillo (MRISCOC)
  * Version: 3.2.0
  * Date: 2023/05/03
  *

@@ -26,7 +26,7 @@
  * Includes code from CrealityOfficial laser support repository:
  * https://github.com/CrealityOfficial/Ender-3S1/tree/ender-3s1-lasermodel
  *
- * Adapted for Pro UI by ClassicRocker883
+ * Adapted for Pro UI by Miguel A. Risco-Castillo (MRISCOC)
  * Version: 1.2.3
  * Date: 2023/05/04
  */

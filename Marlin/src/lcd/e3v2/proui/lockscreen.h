@@ -1,6 +1,6 @@
 /**
  * Lock screen implementation for PRO UI
- * Author: ClassicRocker883
+ * Author: Miguel A. Risco-Castillo (MRISCOC)
  * Version: 2.3.3
  * Date: 2022/11/20
  *

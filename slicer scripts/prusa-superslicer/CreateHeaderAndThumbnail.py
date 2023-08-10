@@ -2,8 +2,8 @@
 
 # ------------------------------------------------------------------------------
 # Prusa / Super Slicer post-processor script for the Professional Firmware
-# URL: https://github.com/classicrocker883/MyProUI
-# ClassicRocker883
+# URL: https://github.com/mriscoc/Ender3V2S1
+# Miguel A. Risco-Castillo
 # version: 1.7
 # date: 2023/08/02
 #
@@ -109,8 +109,8 @@ try:
         of.write(';MAXY:{:.3f}\n'.format(maxy))
         of.write(';MAXZ:{:.3f}\n'.format(maxz))
         of.write(';POSTPROCESSED\n')
-        of.write(';Header generated for the MyProUI Professional Firmware\n')
-        of.write(';https://github.com/classicrocker883/MyProUI\n\n')
+        of.write(';Header generated for the MRiscoC Professional Firmware\n')
+        of.write(';https://github.com/mriscoc/Ender3V2S1\n\n')
         of.write(lines)
 except:
     print('Error writing output file')

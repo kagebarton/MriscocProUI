@@ -1,6 +1,6 @@
 /**
  * DWIN End Stops diagnostic page for PRO UI
- * Author: ClassicRocker883
+ * Author: Miguel A. Risco-Castillo (MRISCOC)
  * Version: 1.4.3
  * Date: 2023/05/10
  *

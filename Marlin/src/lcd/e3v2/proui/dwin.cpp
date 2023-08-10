@@ -1,6 +1,6 @@
 /**
  * DWIN Enhanced implementation for PRO UI
- * Author: ClassicRocker883
+ * Author: Miguel A. Risco-Castillo (MRISCOC)
  * Version: 3.25.3
  * Date: 2023/05/18
  *
@@ -2238,8 +2238,9 @@ void DWIN_RedrawScreen() {
       //Goto_Main_Menu();
       return card.openAndPrintFile(card.filename);
     }
-    else { fileprop.thumbsize = 0; Preview_Invalidate(); delete[] fileprop.thumbdata; fileprop.clear(); card.closefile(); return HMI_ReturnScreen(); }
+    else { delete[] fileprop.thumbdata; HMI_ReturnScreen(); return; }
   }
+
 #endif
 
 void Goto_ConfirmToPrint() {
@@ -2249,6 +2250,7 @@ void Goto_ConfirmToPrint() {
     card.openFileRead(fileprop.name, 100);
     getFileHeader();
     card.closefile();
+    if (fileprop.isConfig) return card.openAndPrintFile(card.filename);
   #endif
   #if ENABLED(CV_LASER_MODULE)
     if (fileprop.isLaser) {
@@ -2266,7 +2268,7 @@ void Goto_ConfirmToPrint() {
       card.openAndPrintFile(card.filename); // Direct print SD file
     }
   #else
-  if (fileprop.isConfig) return card.openAndPrintFile(card.filename); // Direct print SD file
+  card.openAndPrintFile(card.filename); // Direct print SD file
   #endif
 }
 

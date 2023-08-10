@@ -1,6 +1,6 @@
 /**
  * ToolBar for PRO UI
- * Author: ClassicRocker883
+ * Author: Miguel A. Risco-Castillo (MRISCOC)
  * version: 1.4.1
  * Date: 2023/05/18
  *

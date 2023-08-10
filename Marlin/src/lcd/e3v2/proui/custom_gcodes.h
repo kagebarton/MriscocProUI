@@ -1,6 +1,6 @@
 /**
  * Custom G-code implementation for PRO UI
- * Author: ClassicRocker883
+ * Author: Miguel A. Risco-Castillo (MRISCOC)
  * Version: 1.4.0
  * Date: 2023/05/03
  *

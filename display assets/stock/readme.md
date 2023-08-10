@@ -48,6 +48,6 @@ Be sure to leave **only** the `DWIN_SET` or `private` folder at the root of the 
 ---
 
 ### Updating printer firmware
-For update your printer firmware and get the latest version go here: <https://github.com/classicrocker883/MyProUI/releases/latest>  
+For update your printer firmware and get the latest version go here: <https://github.com/mriscoc/Ender3V2S1/releases/latest>  
 
 
