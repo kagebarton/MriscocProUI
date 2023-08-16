@@ -28,15 +28,8 @@
  */
 
 #define BOARD_INFO_NAME      "Aquila v1.0.1"
-
 #ifndef DEFAULT_MACHINE_NAME
-#define DEFAULT_MACHINE_NAME "Aquila"
-#endif
-#ifndef CUSTOM_MACHINE_NAME
-#define CUSTOM_MACHINE_NAME DEFAULT_MACHINE_NAME
-#endif
-#ifndef BOOT_MACHINE_NAME
-#define BOOT_MACHINE_NAME DEFAULT_MACHINE_NAME
+  #define DEFAULT_MACHINE_NAME "Aquila"
 #endif
 
 #define NO_MAPLE_WARNING     // Disable warning when compiling with Maple env

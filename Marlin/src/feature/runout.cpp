@@ -52,6 +52,9 @@ bool FilamentMonitorBase::enabled = true,
     uint8_t FilamentSensorDevice::motion_detected;
     countdown_t RunoutResponseDelayed::mm_countdown;
   #else
+    #if ENABLED(FILAMENT_MOTION_SENSOR)
+      uint8_t FilamentSensorDevice::motion_detected;
+    #endif
     countdown_t RunoutResponseDelayed::mm_countdown;
     #if ENABLED(FILAMENT_MOTION_SENSOR)
       uint8_t FilamentSensorEncoder::motion_detected;
@@ -75,6 +78,7 @@ bool FilamentMonitorBase::enabled = true,
 #if ENABLED(EXTENSIBLE_UI)
   #include "../lcd/extui/ui_api.h"
 #elif ENABLED(DWIN_LCD_PROUI)
+  #include "../lcd/marlinui.h"
   #include "../lcd/e3v2/proui/dwin.h"
 #endif
 
@@ -94,7 +98,7 @@ void event_filament_runout(const uint8_t extruder) {
   #endif
 
   TERN_(EXTENSIBLE_UI, ExtUI::onFilamentRunout(ExtUI::getTool(extruder)));
-  TERN_(DWIN_LCD_PROUI, DWIN_FilamentRunout(extruder));
+  TERN_(DWIN_LCD_PROUI, LCD_MESSAGE(MSG_RUNOUT_SENSOR));
 
   #if ANY(HOST_PROMPT_SUPPORT, HOST_ACTION_COMMANDS, MULTI_FILAMENT_SENSOR)
     const char tool = '0' + TERN0(MULTI_FILAMENT_SENSOR, extruder);

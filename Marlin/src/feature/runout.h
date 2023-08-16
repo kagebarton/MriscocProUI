@@ -80,11 +80,7 @@ class RunoutResponseDebounced;
 
 typedef TFilamentMonitor<
           TERN(HAS_FILAMENT_RUNOUT_DISTANCE, RunoutResponseDelayed, RunoutResponseDebounced),
-          #if PROUI_EX
-            FilamentSensorDevice
-          #else
-            FilamentSensor
-          #endif
+          TERN(PROUI_EX, FilamentSensorDevice, FilamentSensor)
         > FilamentMonitor;
 
 extern FilamentMonitor runout;
@@ -171,7 +167,7 @@ class TFilamentMonitor : public FilamentMonitorBase {
         if (ran_out) {
           #if ENABLED(FILAMENT_RUNOUT_SENSOR_DEBUG)
             SERIAL_ECHOPGM("Runout Sensors: ");
-            for (uint8_t i = 0; i < 8; ++i) SERIAL_ECHO('0' + char(runout_flags[i]));
+            for (uint8_t i = 0; i < 8; ++i) SERIAL_ECHO(i < NUM_RUNOUT_SENSORS ? runout_flags[i] : 0);  // ProUI
             SERIAL_ECHOLNPGM(" -> ", extruder, " RUN OUT");
           #endif
 
@@ -237,22 +233,20 @@ class FilamentSensorBase {
       #undef _INVERT_BIT
     }
 
-    #if DISABLED(PROUI_EX)
-      #if ENABLED(FILAMENT_SWITCH_AND_MOTION)
-        // Return a bitmask of motion pin states
-        static uint8_t poll_motion_pins() {
-          #define _OR_MOTION(N) | (READ(FIL_MOTION##N##_PIN) ? _BV((N) - 1) : 0)
-          return (0 REPEAT_1(NUM_MOTION_SENSORS, _OR_MOTION));
-          #undef _OR_MOTION
-        }
+    #if ENABLED(FILAMENT_SWITCH_AND_MOTION) && DISABLED(PROUI_EX)
+      // Return a bitmask of motion pin states
+      static uint8_t poll_motion_pins() {
+        #define _OR_MOTION(N) | (READ(FIL_MOTION##N##_PIN) ? _BV((N) - 1) : 0)
+        return (0 REPEAT_1(NUM_MOTION_SENSORS, _OR_MOTION));
+        #undef _OR_MOTION
+      }
 
-        // Return a bitmask of motion flag states (1 bits always indicates runout)
-        static uint8_t poll_motion_states() {
-          #define _OR_MOTION(N) | (FIL_MOTION##N##_STATE ? 0 : _BV(N - 1))
-          return poll_motion_pins() ^ uint8_t(0 REPEAT_1(NUM_MOTION_SENSORS, _OR_MOTION));
-          #undef _OR_MOTION
-        }
-      #endif
+      // Return a bitmask of motion flag states (1 bits always indicates runout)
+      static uint8_t poll_motion_states() {
+        #define _OR_MOTION(N) | (FIL_MOTION##N##_STATE ? 0 : _BV(N - 1))
+        return poll_motion_pins() ^ uint8_t(0 REPEAT_1(NUM_MOTION_SENSORS, _OR_MOTION));
+        #undef _OR_MOTION
+      }
     #endif
 };
 
@@ -362,7 +356,7 @@ class FilamentSensorBase {
       }
   };
 
- #endif // HAS_FILAMENT_SWITCH
+#endif // HAS_FILAMENT_SWITCH
 
 #if DISABLED(PROUI_EX)
   /**
@@ -407,10 +401,9 @@ class FilamentSensorBase {
     private:
       #if PROUI_EX
         static float runout_mm_countdown[NUM_RUNOUT_SENSORS];
-        static countdown_t mm_countdown;
-      #else
-        static countdown_t mm_countdown;
       #endif
+      static countdown_t mm_countdown;
+
     public:
       static float runout_distance_mm;
 

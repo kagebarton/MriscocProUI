@@ -203,16 +203,16 @@ bool BedLevelToolsClass::meshValidate() {
     const uint16_t total_width_px = DWIN_WIDTH - padding_x - padding_x;
     const uint16_t cell_width_px  = total_width_px / (GRID_MAX_POINTS_X);
     const uint16_t cell_height_px = total_width_px / (GRID_MAX_POINTS_Y);
-    const float v_max = abs(get_max_value()), v_min = abs(get_min_value()), range = _MAX(v_min, v_max), range2 = _MIN(v_min, v_max);
+    const float v_max = abs(get_max_value()), v_min = abs(get_min_value()), range = _MAX(v_min, v_max);
 
     // Clear background from previous selection and select new square
-    DWIN_Draw_Rectangle(1, Color_Bg_Black, _MAX(0, padding_x - gridline_width), _MAX(0, padding_y_top - gridline_width), padding_x + total_width_px, padding_y_top + total_width_px);
+    DWIN_Draw_Rectangle(1, DWINUI::backcolor, _MAX(0, padding_x - gridline_width), _MAX(0, padding_y_top - gridline_width), padding_x + total_width_px, padding_y_top + total_width_px);
     if (selected >= 0) {
       const auto selected_y = selected / (GRID_MAX_POINTS_X);
       const auto selected_x = selected - (GRID_MAX_POINTS_X) * selected_y;
       const auto start_y_px = padding_y_top + selected_y * cell_height_px;
       const auto start_x_px = padding_x + selected_x * cell_width_px;
-      DWIN_Draw_Rectangle(1, Color_White, _MAX(0, start_x_px - gridline_width), _MAX(0, start_y_px - gridline_width), start_x_px + cell_width_px, start_y_px + cell_height_px);
+      DWIN_Draw_Rectangle(1, DWINUI::textcolor, _MAX(0, start_x_px - gridline_width), _MAX(0, start_y_px - gridline_width), start_x_px + cell_width_px, start_y_px + cell_height_px);
     }
 
     // Draw value square grid
@@ -224,8 +224,8 @@ bool BedLevelToolsClass::meshValidate() {
       DWIN_Draw_Rectangle(1,                                                                                      // RGB565 colors: http://www.barth-dev.de/online/rgb565-color-picker/
         isnan(bedlevel.z_values[x][y]) ? Color_Grey : (                                                           // grey if undefined
           (bedlevel.z_values[x][y] < 0 ?
-            (uint16_t)round(0x1F * -bedlevel.z_values[x][y] / range) << 11 : // red if mesh point value is negative
-            (uint16_t)round(0x3F *  bedlevel.z_values[x][y] / range2) << 5) | // green if mesh point value is positive
+            (uint16_t)round(0x3F * -bedlevel.z_values[x][y] / range) << 5 : // red if mesh point value is negative
+            (uint16_t)round(0x1F * bedlevel.z_values[x][y] / range) << 11) | // green if mesh point value is positive
               _MIN(0x1F, (((uint8_t)abs(bedlevel.z_values[x][y]) / 10) * 4))),                                    // + blue stepping for every mm
         start_x_px, start_y_px, end_x_px, end_y_px
       );
@@ -237,7 +237,7 @@ bool BedLevelToolsClass::meshValidate() {
       if (viewer_print_value) {
         int8_t offset_x, offset_y = cell_height_px / 2 - fs;
         if (isnan(bedlevel.z_values[x][y])) {  // undefined
-          DWIN_Draw_String(false, meshfont, Color_White, Color_Bg_Blue, start_x_px + cell_width_px / 2 - 5, start_y_px + offset_y, F("X"));
+          DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, start_x_px + cell_width_px / 2 - 5, start_y_px + offset_y, F("X"));
         }
         else {                          // has value
           MString<12> msg;
@@ -247,8 +247,8 @@ bool BedLevelToolsClass::meshValidate() {
             msg.setf_P(PSTR("%02i"), uint16_t(abs(bedlevel.z_values[x][y] - int16_t(bedlevel.z_values[x][y])) * 100));
           offset_x = cell_width_px / 2 - (fs / 2) * strlen(msg) - 2;
           if ((GRID_MAX_POINTS_X) >= TERN(TJC_DISPLAY, 8, 10))
-            DWIN_Draw_String(false, meshfont, Color_White, Color_Bg_Blue, start_x_px - 2 + offset_x, start_y_px + offset_y, F("."));
-          DWIN_Draw_String(false, meshfont, Color_White, Color_Bg_Blue, start_x_px + 1 + offset_x, start_y_px + offset_y, msg);
+            DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, start_x_px - 2 + offset_x, start_y_px + offset_y, F("."));
+          DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, start_x_px + 1 + offset_x, start_y_px + offset_y, msg);
         }
         safe_delay(10);
         LCD_SERIAL.flushTX();
@@ -262,9 +262,9 @@ bool BedLevelToolsClass::meshValidate() {
     if (range2 > 3e+10F) { range2 = 0.0000001; }
     ui.set_status(
       &MString<47>(
-        F("Red "),  p_float_t(-range, 3),
-        F("..0.."), p_float_t(range2, 3),
-        F("+ Green")
+        F("Green "), p_float_t(-range2, 3),
+        F("..0.."),  p_float_t(range, 3),
+        F("+ Red")
       )
     );
     drawing_mesh = false;

@@ -192,8 +192,7 @@
 // Extended and default UI Colors
 #define Color_Black           0x0000 //changed 0
 #define Color_Green           0x07E0 //RGB(0,63,0)
-#define Color_Aqua            RGB(0,63,31)
-#define Color_Blue            0x015F //RGB(0,0,31)
+#define Color_Blue            0x001F //RGB(0,0,31)
 #define Color_Light_White     0xBDD7
 #define Color_Light_Green     0x3460
 #define Color_Cyan            0x07FF
@@ -201,7 +200,7 @@
 #define Color_Light_Blue      0x3A6A
 #define Color_Magenta         0xF81F
 #define Color_Light_Magenta   0x9813
-#define Color_Light_Red       0x8800
+#define Color_Light_Red       0xFA8A
 #define Color_Orange          0xFB00 //0xFA20
 #define Color_Light_Orange    0xFC80 //0xFBC0
 #define Color_Light_Yellow    0xFFE0 //0x8BE0
@@ -327,6 +326,17 @@ namespace DWINUI {
     t.y = frame.y - v;
     t.w = frame.w + 2 * v;
     t.h = frame.h + 2 * v;
+    return t;
+  }
+
+  // Reduce a frame box
+  //  v: value to reduce
+  inline frame_rect_t ReduceFrame(frame_rect_t frame, uint8_t v) {
+    frame_rect_t t;
+    t.x = frame.x + v;
+    t.y = frame.y + v;
+    t.w = frame.w - 2 * v;
+    t.h = frame.h - 2 * v;
     return t;
   }
 

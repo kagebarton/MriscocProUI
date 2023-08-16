@@ -85,28 +85,25 @@ void MeshViewerClass::DrawMeshPoint(const uint8_t x, const uint8_t y, const floa
   else {
     char str_1[9];
     str_1[0] = 0;
-    MString<12> msg;
     switch (v) {
       case -999 ... -100:  // -9.99 .. -1.00 mm
         DWINUI::Draw_Signed_Float(meshfont, 1, 1, px(x) - 3 * fs, py(y) - fs, z);
         break;
       case -99 ... -1:  // -0.99 .. -0.01 mm
-        msg.setf_P(PSTR("%.2f"), p_float_t(z, 2));
-        //sprintf_P(str_1, PSTR("%.2f"), z);
+        sprintf_P(str_1, PSTR("-.%2i"), -v);
         break;
       case 0:
         DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, px(x) - 4, py(y) - fs, "0");
         break;
       case 1 ... 99:  // 0.01 .. 0.99 mm
-        msg.setf_P(PSTR("%.2f"), p_float_t(z, 2));
-        //sprintf_P(str_1, PSTR("%.2f"), z);
+        sprintf_P(str_1, PSTR(".%2i"), v);
         break;
       case 100 ... 999:  // 1.00 .. 9.99 mm
         DWINUI::Draw_Signed_Float(meshfont, 1, 1, px(x) - 3 * fs, py(y) - fs, z);
         break;
     }
     if (str_1[0])
-      DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, px(x) - 2 * fs, py(y) - fs, msg);
+      DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, px(x) - 2 * fs, py(y) - fs, str_1);
   }
   SERIAL_FLUSH();
   TERN_(TJC_DISPLAY, delay(100));
@@ -123,15 +120,15 @@ void MeshViewerClass::DrawMesh(bed_mesh_t zval, const uint8_t csizex, const uint
 void MeshViewerClass::Draw(bool withsave/*=false*/, bool redraw/*=true*/) {
   Title.ShowCaption(GET_TEXT_F(MSG_MESH_VIEWER));
   #if ENABLED(USE_GRID_MESHVIEWER)
-  if(bedLevelTools.view_mesh) {
-    DWINUI::ClearMainArea();
-    bedLevelTools.viewer_print_value = true;
-    bedLevelTools.Draw_Bed_Mesh(-1, 1, 8, 10 + TITLE_HEIGHT);
-  }
-  else {
-    if (redraw) DrawMesh(bedlevel.z_values, GRID_MAX_POINTS_X, GRID_MAX_POINTS_Y);
-    else DWINUI::Draw_Box(1, HMI_data.Background_Color, {89,305,99,38});
-  }
+    if(bedLevelTools.view_mesh) {
+      DWINUI::ClearMainArea();
+      bedLevelTools.viewer_print_value = true;
+      bedLevelTools.Draw_Bed_Mesh(-1, 1, 8, 10 + TITLE_HEIGHT);
+    }
+    else {
+      if (redraw) DrawMesh(bedlevel.z_values, GRID_MAX_POINTS_X, GRID_MAX_POINTS_Y);
+      else DWINUI::Draw_Box(1, HMI_data.Background_Color, {89,305,99,38});
+    }
   #else
     if (redraw) DrawMesh(bedlevel.z_values, GRID_MAX_POINTS_X, GRID_MAX_POINTS_Y);
     else DWINUI::Draw_Box(1, HMI_data.Background_Color, {89,305,99,38});

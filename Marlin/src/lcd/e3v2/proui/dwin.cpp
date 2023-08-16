@@ -121,7 +121,7 @@
   #include "lockscreen.h"
 #endif
 
-#define DEBUG_OUT ENABLED(DEBUG_DWIN)
+//#define DEBUG_OUT ENABLED(DEBUG_DWIN)
 #include "../../../core/debug_out.h"
 
 #define PAUSE_HEAT
@@ -342,11 +342,11 @@ bool Host_Printing() { return Printing() && !IS_SD_FILE_OPEN(); }
 // Main Buttons
 //-----------------------------------------------------------------------------
 
-void ICON_Button(const bool selected, const int iconid, const frame_rect_t &ico, const frame_rect_t &ico2, FSTR_P caption) {
+void ICON_Button(const bool selected, const int iconid, const frame_rect_t &ico, FSTR_P caption) {
   DWINUI::Draw_IconWB(iconid + selected, ico.x, ico.y);
   if (selected) {
     DWINUI::Draw_Box(0, HMI_data.Cursor_Color, ico);
-    DWINUI::Draw_Box(0, HMI_data.Cursor_Color, ico2);
+    DWINUI::Draw_Box(0, HMI_data.Cursor_Color, DWINUI::ReduceFrame(ico, 1));
   }
   const uint16_t x = ico.x + (ico.w - strlen_P(FTOP(caption)) * DWINUI::fontWidth()) / 2,
                  y = (ico.y + ico.h - 20) - DWINUI::fontHeight() / 2;
@@ -358,8 +358,7 @@ void ICON_Button(const bool selected, const int iconid, const frame_rect_t &ico,
 //
 void ICON_Print() {
   constexpr frame_rect_t ico = { 17, 110 - TERN0(HAS_TOOLBAR, TBYOFFSET), 110, 100};
-  constexpr frame_rect_t ico2 = { 18, 111 - TERN0(HAS_TOOLBAR, TBYOFFSET), 108, 98};
-  ICON_Button(select_page.now == PAGE_PRINT, ICON_Print_0, ico, ico2, GET_TEXT_F(MSG_BUTTON_PRINT));
+  ICON_Button(select_page.now == PAGE_PRINT, ICON_Print_0, ico, GET_TEXT_F(MSG_BUTTON_PRINT));
 }
 
 //
@@ -367,8 +366,7 @@ void ICON_Print() {
 //
 void ICON_Prepare() {
   constexpr frame_rect_t ico = { 145, 110 - TERN0(HAS_TOOLBAR, TBYOFFSET), 110, 100};
-  constexpr frame_rect_t ico2 = { 146, 111 - TERN0(HAS_TOOLBAR, TBYOFFSET), 108, 98};
-  ICON_Button(select_page.now == PAGE_PREPARE, ICON_Prepare_0, ico, ico2, GET_TEXT_F(MSG_PREPARE));
+  ICON_Button(select_page.now == PAGE_PREPARE, ICON_Prepare_0, ico, GET_TEXT_F(MSG_PREPARE));
 }
 
 //
@@ -376,8 +374,7 @@ void ICON_Prepare() {
 //
 void ICON_Control() {
   constexpr frame_rect_t ico = { 17, 226 - TERN0(HAS_TOOLBAR, TBYOFFSET), 110, 100};
-  constexpr frame_rect_t ico2 = { 18, 227 - TERN0(HAS_TOOLBAR, TBYOFFSET), 108, 98};
-  ICON_Button(select_page.now == PAGE_CONTROL, ICON_Control_0, ico, ico2, GET_TEXT_F(MSG_CONTROL));
+  ICON_Button(select_page.now == PAGE_CONTROL, ICON_Control_0, ico, GET_TEXT_F(MSG_CONTROL));
 }
 
 //
@@ -386,11 +383,10 @@ void ICON_Control() {
 //
 void ICON_AdvSettings() {
   constexpr frame_rect_t ico = { 145, 226 - TERN0(HAS_TOOLBAR, TBYOFFSET), 110, 100};
-  constexpr frame_rect_t ico2 = { 146, 227 - TERN0(HAS_TOOLBAR, TBYOFFSET), 108, 98};
   #if ANY(AUTO_BED_LEVELING_BILINEAR, AUTO_BED_LEVELING_UBL, MESH_BED_LEVELING)
-  ICON_Button(select_page.now == PAGE_ADVANCE, ICON_Leveling_0, ico, ico2, GET_TEXT_F(MSG_BUTTON_LEVEL));
+  ICON_Button(select_page.now == PAGE_ADVANCE, ICON_Leveling_0, ico, GET_TEXT_F(MSG_BUTTON_LEVEL));
   #else
-  ICON_Button(select_page.now == PAGE_ADVANCE, ICON_Info_0, ico, ico2, GET_TEXT_F(MSG_BUTTON_ADVANCED));
+  ICON_Button(select_page.now == PAGE_ADVANCE, ICON_Info_0, ico, GET_TEXT_F(MSG_BUTTON_ADVANCED));
   #endif
 }
 
@@ -399,8 +395,7 @@ void ICON_AdvSettings() {
 //
 void ICON_Tune() {
   constexpr frame_rect_t ico = { 8, 232, 80, 100 };
-  constexpr frame_rect_t ico2 = { 9, 233, 78, 98 };
-  ICON_Button(select_print.now == PRINT_SETUP, ICON_Setup_0, ico, ico2, GET_TEXT_F(MSG_TUNE));
+  ICON_Button(select_print.now == PRINT_SETUP, ICON_Setup_0, ico, GET_TEXT_F(MSG_TUNE));
 }
 
 //
@@ -408,8 +403,7 @@ void ICON_Tune() {
 //
 void ICON_Pause() {
   constexpr frame_rect_t ico = { 96, 232, 80, 100 };
-  constexpr frame_rect_t ico2 = { 97, 233, 78, 98 };
-  ICON_Button(select_print.now == PRINT_PAUSE_RESUME, ICON_Pause_0, ico, ico2, GET_TEXT_F(MSG_BUTTON_PAUSE));
+  ICON_Button(select_print.now == PRINT_PAUSE_RESUME, ICON_Pause_0, ico, GET_TEXT_F(MSG_BUTTON_PAUSE));
 }
 
 //
@@ -417,8 +411,7 @@ void ICON_Pause() {
 //
 void ICON_Resume() {
   constexpr frame_rect_t ico = { 96, 232, 80, 100 };
-  constexpr frame_rect_t ico2 = { 97, 233, 78, 98 };
-  ICON_Button(select_print.now == PRINT_PAUSE_RESUME, ICON_Continue_0, ico, ico2, GET_TEXT_F(MSG_BUTTON_RESUME));
+  ICON_Button(select_print.now == PRINT_PAUSE_RESUME, ICON_Continue_0, ico, GET_TEXT_F(MSG_BUTTON_RESUME));
 }
 
 //
@@ -426,8 +419,7 @@ void ICON_Resume() {
 //
 void ICON_Stop() {
   constexpr frame_rect_t ico = { 184, 232, 80, 100 };
-  constexpr frame_rect_t ico2 = { 185, 233, 78, 98 };
-  ICON_Button(select_print.now == PRINT_STOP, ICON_Stop_0, ico, ico2, GET_TEXT_F(MSG_BUTTON_STOP));
+  ICON_Button(select_print.now == PRINT_STOP, ICON_Stop_0, ico, GET_TEXT_F(MSG_BUTTON_STOP));
 }
 
 //
@@ -653,9 +645,9 @@ void Goto_PrintDone() {
 void Draw_Main_Menu() {
   DWINUI::ClearMainArea();
   #if ENABLED(CV_LASER_MODULE)
-    Title.ShowCaption(laser_device.is_laser_device() ? F("Laser Engraver") : F("3D Printer"));
+    Title.ShowCaption(laser_device.is_laser_device() ? F("Laser Engraver") : CUSTOM_MACHINE_NAME);
   #else
-    Title.ShowCaption(MACHINE_NAME);
+    Title.ShowCaption(CUSTOM_MACHINE_NAME);
   #endif
   DWINUI::Draw_Icon(ICON_LOGO, 71, 52);  // CREALITY logo
   ICON_Print();
@@ -992,7 +984,7 @@ void onClickSDItem() {
 void onDrawFileName(MenuItemClass* menuitem, int8_t line) {
   const bool is_subdir = !card.flag.workDirIsRoot;
   if (is_subdir && menuitem->pos == 1) {
-    Draw_Menu_Line(line, ICON_ReadEEPROM, ".. BACK");
+    Draw_Menu_Line(line, ICON_ReadEEPROM, ".. Back");
   }
   else {
     uint8_t icon;
@@ -1108,7 +1100,7 @@ void Draw_Info_Menu() {
   sprintf_P(machine_size, PSTR("%ix%ix%i"), (int16_t)X_BED_SIZE, (int16_t)Y_BED_SIZE, (int16_t)Z_MAX_POS);
 
   DWINUI::Draw_CenteredString(92,  GET_TEXT_F(MSG_INFO_MACHINENAME));
-  DWINUI::Draw_CenteredString(112, F(MACHINE_NAME));
+  DWINUI::Draw_CenteredString(112, CUSTOM_MACHINE_NAME);
   DWINUI::Draw_CenteredString(145, GET_TEXT_F(MSG_INFO_SIZE));
   DWINUI::Draw_CenteredString(165, machine_size);
 
@@ -1290,7 +1282,7 @@ void HMI_Init() {
       #define BOOTSCREEN_TIMEOUT 1100
     #endif
     DWINUI::Draw_Box(1, Color_Black, { 5, 220, DWIN_WIDTH - 5, DWINUI::fontHeight() });
-    DWINUI::Draw_CenteredString(3, Color_White, 220, F(BOOT_MACHINE_NAME));
+    DWINUI::Draw_CenteredString(3, Color_White, 220, F(MACHINE_NAME));
     for (uint16_t t = 15; t <= 257; t += 10) {
       DWINUI::Draw_Icon(ICON_Bar, 15, 260);
       DWIN_Draw_Rectangle(1, HMI_data.Background_Color, t, 260, 257, 280);
@@ -1506,7 +1498,6 @@ bool IDisPopUp() {    // If ID is popup...
       || (checkkey == Homing)
       || (checkkey == Leveling)
       || (checkkey == PidProcess)
-      || (checkkey == PlotProcess)
       TERN_(HAS_ESDIAG, || (checkkey == ESDiagProcess))
       || (checkkey == Popup);
 }
@@ -1850,11 +1841,6 @@ void DWIN_Print_Aborted() {
   hostui.notify("Print Aborted");
   DWIN_Print_Finished();
 }
-
-#if HAS_FILAMENT_SENSOR
-  // Filament Runout process
-  void DWIN_FilamentRunout(const uint8_t extruder) { LCD_MESSAGE(MSG_RUNOUT_SENSOR); }
-#endif
 
 #if (ALT_COLOR_MENU == 1)
   void DWIN_SetColorDefaults() {
@@ -2229,16 +2215,30 @@ void DWIN_RedrawScreen() {
 #endif // HAS_LOCKSCREEN
 
 #if HAS_GCODE_PREVIEW
+// void ClearDataTo0x00() {
+//   uint16_t addr = 0x00;
+//   uint16_t length = fileprop.thumbsize;/*Specify the length of the data*/
+//   uint8_t data[length]; // Create an array to store the data
+//   memset(data, 0x00, length); // Set all elements of the array to 0x00
+
+//   DWINUI::WriteToSRAM(addr, length, data);
+// }
 
   void SetPreview() { Toggle_Chkb_Line(HMI_data.EnablePreview); }
 
   void onClick_ConfirmToPrint() {
     DWIN_ResetStatusLine();
+    // fileprop.clear();
+    // delete[] fileprop.thumbdata;
+    // DWINUI::WriteToSRAM(0x00, fileprop.thumbsize, fileprop.thumbdata);
+
     if (HMI_flag.select_flag) {     // Confirm
       //Goto_Main_Menu();
       return card.openAndPrintFile(card.filename);
     }
-    else { delete[] fileprop.thumbdata; HMI_ReturnScreen(); return; }
+    else {
+      return HMI_ReturnScreen(); 
+    }
   }
 
 #endif
@@ -2264,12 +2264,8 @@ void Goto_ConfirmToPrint() {
   #endif
   #if HAS_GCODE_PREVIEW
     if (HMI_data.EnablePreview) return Goto_Popup(Preview_DrawFromSD, onClick_ConfirmToPrint);
-    else {
-      card.openAndPrintFile(card.filename); // Direct print SD file
-    }
-  #else
-  card.openAndPrintFile(card.filename); // Direct print SD file
   #endif
+  card.openAndPrintFile(card.filename); // Direct print SD file
 }
 
 #if HAS_ESDIAG
@@ -3441,8 +3437,8 @@ void Draw_Tune_Menu() {
 #endif
 
 #if ENABLED(SHAPING_MENU)
-  void ApplyShapingFreq() { stepper.set_shaping_frequency(HMI_value.axis, MenuData.Value / 100); }
-  void ApplyShapingZeta() { stepper.set_shaping_damping_ratio(HMI_value.axis, MenuData.Value / 100); }
+  void ApplyShapingFreq() { stepper.set_shaping_frequency(HMI_value.axis, MenuData.Value * 0.01); }
+  void ApplyShapingZeta() { stepper.set_shaping_damping_ratio(HMI_value.axis, MenuData.Value * 0.01); }
 
   #if ENABLED(INPUT_SHAPING_X)
     void onDrawShapingXFreq(MenuItemClass* menuitem, int8_t line) { onDrawFloatMenu(menuitem, line, 2, stepper.get_shaping_frequency(X_AXIS)); }
@@ -4104,7 +4100,7 @@ void Draw_GetColor_Menu() {
     void LiveEditMeshZ() { *MenuData.P_Float = MenuData.Value / POW(10, 3); if (AutoMovToMesh) { bedLevelTools.MoveToZ(); } }
     void ApplyEditMeshX() { bedLevelTools.mesh_x = MenuData.Value; if (AutoMovToMesh) { bedLevelTools.MoveToXY(); } }
     void ApplyEditMeshY() { bedLevelTools.mesh_y = MenuData.Value; if (AutoMovToMesh) { bedLevelTools.MoveToXY(); } }
-    void ResetMesh() { bedLevelTools.mesh_reset(); EditZValueItem->redraw(); LCD_MESSAGE(MSG_MESH_RESET); }
+    void ResetMesh() { ((MenuItemPtrClass*)EditZValueItem)->value = 0; EditZValueItem->redraw(); LCD_MESSAGE(MSG_MESH_RESET); }
     void ResetMesh2() { bedLevelTools.mesh_reset(); LCD_MESSAGE(MSG_MESH_RESET); }
     void SetEditMeshX() { HMI_value.Select = 0; SetIntOnClick(0, GRID_MAX_POINTS_X - 1, bedLevelTools.mesh_x, ApplyEditMeshX, LiveEditMesh); }
     void SetEditMeshY() { HMI_value.Select = 1; SetIntOnClick(0, GRID_MAX_POINTS_Y - 1, bedLevelTools.mesh_y, ApplyEditMeshY, LiveEditMesh); }
@@ -4121,7 +4117,6 @@ void Draw_GetColor_Menu() {
     if (HMI_flag.select_flag) {
       HMI_ReturnScreen();
       ResetMesh();
-      DONE_BUZZ(true);
     }
     else { HMI_ReturnScreen(); }
   }
