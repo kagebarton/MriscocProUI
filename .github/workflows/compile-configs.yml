@@ -50,7 +50,7 @@ jobs:
         if ($TP); then TPTMP=-MPC; else TPTMP=; fi;
         if ($IS); then ISTMP=-IS; else ISTMP=; fi;
         if [ "$AQUILA_VER" = GD32 ]; then AVTMP="GD32"; else AVTMP="N32"; fi;
-        echo "filename=Aquila_${AVTMP}_Default-NP-ProUI${ISTMP}${TPTMP}.bin" >> $GITHUB_OUTPUT
+        echo "filename=Aquila_${AVTMP}_Default-NoPro${ISTMP}${TPTMP}.bin" >> $GITHUB_OUTPUT
         > Marlin/Configuration.h
         > Marlin/Configuration_adv.h
         > Marlin/Version.h
@@ -506,7 +506,7 @@ jobs:
         if ($TP); then TPTMP=-MPC; else TPTMP=; fi;
         if ($IS); then ISTMP=-IS; else ISTMP=; fi;
         if [ "$AQUILA_VER" = 427 ]; then AVTMP="427"; else AVTMP="422"; fi;
-        echo "filename=Aquila_${AVTMP}_Default-NP-ProUI${ISTMP}${TPTMP}.bin" >> $GITHUB_OUTPUT
+        echo "filename=Aquila_${AVTMP}_Default-NoPro${ISTMP}${TPTMP}.bin" >> $GITHUB_OUTPUT
         > Marlin/Configuration.h
         > Marlin/Configuration_adv.h
         > Marlin/Version.h

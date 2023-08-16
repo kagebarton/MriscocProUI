@@ -48,7 +48,7 @@ jobs:
       run: |
         if ($TP); then TPTMP=-MPC; else TPTMP=; fi;
         if ($IS); then ISTMP=-IS; else ISTMP=; fi;
-        echo "filename=Ender_GD32_Default-NP-ProUI${ISTMP}${TPTMP}.bin" >> $GITHUB_OUTPUT
+        echo "filename=Ender_GD32_Default-NoPro${ISTMP}${TPTMP}.bin" >> $GITHUB_OUTPUT
         > Marlin/Configuration.h
         > Marlin/Configuration_adv.h
         > Marlin/Version.h
@@ -517,7 +517,7 @@ jobs:
         if ($TP); then TPTMP=-MPC; else TPTMP=; fi;
         if ($IS); then ISTMP=-IS; else ISTMP=; fi;
         if [ "$AQUILA_VER" = 427 ]; then AVTMP="427"; else AVTMP="422"; fi;
-        echo "filename=Ender_${AVTMP}_Default-NP-ProUI${ISTMP}${TPTMP}.bin" >> $GITHUB_OUTPUT
+        echo "filename=Ender_${AVTMP}_Default-NoPro${ISTMP}${TPTMP}.bin" >> $GITHUB_OUTPUT
         > Marlin/Configuration.h
         > Marlin/Configuration_adv.h
         > Marlin/Version.h
