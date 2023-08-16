@@ -4096,11 +4096,18 @@ void Draw_GetColor_Menu() {
     #define Z_OFFSET_MIN -3
     #define Z_OFFSET_MAX  3
 
+    void manualValueUpdate() {
+      gcode.process_subcommands_now(
+        TS(F("M421I"), bedLevelTools.mesh_x, 'J', bedLevelTools.mesh_y, 'Z', p_float_t(0, 3))
+      );
+      planner.synchronize();
+    }
+
     void LiveEditMesh() { ((MenuItemPtrClass*)EditZValueItem)->value = &bedlevel.z_values[HMI_value.Select ? bedLevelTools.mesh_x : MenuData.Value][HMI_value.Select ? MenuData.Value : bedLevelTools.mesh_y]; EditZValueItem->redraw(); }
     void LiveEditMeshZ() { *MenuData.P_Float = MenuData.Value / POW(10, 3); if (AutoMovToMesh) { bedLevelTools.MoveToZ(); } }
     void ApplyEditMeshX() { bedLevelTools.mesh_x = MenuData.Value; if (AutoMovToMesh) { bedLevelTools.MoveToXY(); } }
     void ApplyEditMeshY() { bedLevelTools.mesh_y = MenuData.Value; if (AutoMovToMesh) { bedLevelTools.MoveToXY(); } }
-    void ResetMesh() { ((MenuItemPtrClass*)EditZValueItem)->value = 0; EditZValueItem->redraw(); LCD_MESSAGE(MSG_MESH_RESET); }
+    void ResetMesh() { manualValueUpdate(); EditZValueItem->redraw(); LCD_MESSAGE(MSG_MESH_RESET); }
     void ResetMesh2() { bedLevelTools.mesh_reset(); LCD_MESSAGE(MSG_MESH_RESET); }
     void SetEditMeshX() { HMI_value.Select = 0; SetIntOnClick(0, GRID_MAX_POINTS_X - 1, bedLevelTools.mesh_x, ApplyEditMeshX, LiveEditMesh); }
     void SetEditMeshY() { HMI_value.Select = 1; SetIntOnClick(0, GRID_MAX_POINTS_Y - 1, bedLevelTools.mesh_y, ApplyEditMeshY, LiveEditMesh); }
@@ -4116,20 +4123,12 @@ void Draw_GetColor_Menu() {
   void OnClick_ZeroMesh() {
     if (HMI_flag.select_flag) {
       HMI_ReturnScreen();
-      ResetMesh();
-    }
-    else { HMI_ReturnScreen(); }
-  }
-    void OnClick_ZeroMesh2() {
-    if (HMI_flag.select_flag) {
-      HMI_ReturnScreen();
       ResetMesh2();
       DONE_BUZZ(true);
     }
     else { HMI_ReturnScreen(); }
   }
   void ZeroMesh() { Goto_Popup(Popup_ZeroMesh, OnClick_ZeroMesh); }
-  void ZeroMesh2() { Goto_Popup(Popup_ZeroMesh, OnClick_ZeroMesh2); }
 
 #endif // HAS_MESH
 
@@ -4169,7 +4168,7 @@ void Draw_GetColor_Menu() {
         EDIT_ITEM(ICON_HomeY, MSG_MESH_Y, onDrawPInt8Menu, SetEditMeshY, &bedLevelTools.mesh_y);
         EditZValueItem = EDIT_ITEM(ICON_HomeZ, MSG_MESH_EDIT_Z, onDrawPFloat3Menu, SetEditZValue, &bedlevel.z_values[bedLevelTools.mesh_x][bedLevelTools.mesh_y]);
         TERN_(HAS_BED_PROBE, MENU_ITEM(ICON_HSMode, MSG_PROBE_WIZARD_PROBING, onDrawMenuItem, bedLevelTools.ProbeXY);)
-        MENU_ITEM(ICON_MeshReset, MSG_MESH_RESET, onDrawMenuItem, ZeroMesh);
+        MENU_ITEM(ICON_MeshReset, MSG_MESH_RESET, onDrawMenuItem, ResetMesh);
       }
       UpdateMenu(EditMeshMenu);
     }
@@ -4349,7 +4348,7 @@ void Draw_AdvancedSettings_Menu() {
       MENU_ITEM(ICON_UBLSaveMesh, MSG_UBL_SAVE_MESH, onDrawMenuItem, UBLMeshSave);
       MENU_ITEM(ICON_UBLLoadMesh, MSG_UBL_LOAD_MESH, onDrawMenuItem, UBLMeshLoad);
       MENU_ITEM(ICON_UBLSmartFill, MSG_UBL_SMART_FILLIN, onDrawMenuItem, UBLSmartFillMesh);
-      MENU_ITEM_F(ICON_SetZOffset, "Zero Current Mesh", onDrawMenuItem, ZeroMesh2);
+      MENU_ITEM_F(ICON_SetZOffset, "Zero Current Mesh", onDrawMenuItem, ZeroMesh);
     #endif
   }
   ui.reset_status(true);
@@ -4377,7 +4376,7 @@ void Draw_AdvancedSettings_Menu() {
       #if ENABLED(MESH_EDIT_MENU)
         MENU_ITEM(ICON_UBLActive, MSG_EDIT_MESH, onDrawSubMenu, Draw_EditMesh_Menu);
       #endif
-      MENU_ITEM_F(ICON_SetZOffset, "Zero Current Mesh", onDrawMenuItem, ZeroMesh2);
+      MENU_ITEM_F(ICON_SetZOffset, "Zero Current Mesh", onDrawMenuItem, ZeroMesh);
     #endif
   }
   ui.reset_status(true);
@@ -4401,7 +4400,7 @@ void Draw_AdvancedSettings_Menu() {
       MENU_ITEM(ICON_UBLActive, MSG_EDIT_MESH, onDrawSubMenu, Draw_EditMesh_Menu);
     #endif
     MENU_ITEM(ICON_MeshSave, MSG_UBL_SAVE_MESH, onDrawMenuItem, ManualMeshSave);
-    MENU_ITEM_F(ICON_SetZOffset, "Zero Current Mesh", onDrawMenuItem, ZeroMesh2);
+    MENU_ITEM_F(ICON_SetZOffset, "Zero Current Mesh", onDrawMenuItem, ZeroMesh);
   }
   ui.reset_status(true);
   UpdateMenu(AdvancedSettings);
