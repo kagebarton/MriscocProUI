@@ -136,23 +136,23 @@ void BedLevelToolsClass::manual_move(const uint8_t mesh_x, const uint8_t mesh_y,
 
 // Move / Probe methods. As examples, not yet used.
 void BedLevelToolsClass::MoveToXYZ() {
-  bedLevelTools.goto_mesh_value = true;
-  bedLevelTools.manual_move(bedLevelTools.mesh_x, bedLevelTools.mesh_y, false);
+  goto_mesh_value = true;
+  manual_move(mesh_x, mesh_y, false);
 }
 void BedLevelToolsClass::MoveToXY() {
-  bedLevelTools.goto_mesh_value = false;
-  bedLevelTools.manual_move(bedLevelTools.mesh_x, bedLevelTools.mesh_y, false);
+  goto_mesh_value = false;
+  manual_move(mesh_x, mesh_y, false);
 }
 void BedLevelToolsClass::MoveToZ() {
-  bedLevelTools.goto_mesh_value = true;
-  bedLevelTools.manual_move(bedLevelTools.mesh_x, bedLevelTools.mesh_y, true);
+  goto_mesh_value = true;
+  manual_move(mesh_x, mesh_y, true);
 }
 void BedLevelToolsClass::ProbeXY() {
   gcode.process_subcommands_now(
     MString<MAX_CMD_SIZE>(
       F("G28O\nG0Z"), uint16_t(Z_CLEARANCE_DEPLOY_PROBE),
-      F("\nG30X"), p_float_t(bedlevel.get_mesh_x(bedLevelTools.mesh_x), 2),
-      F("Y"), p_float_t(bedlevel.get_mesh_y(bedLevelTools.mesh_y), 2)
+      F("\nG30X"), p_float_t(bedlevel.get_mesh_x(mesh_x), 2),
+      F("Y"), p_float_t(bedlevel.get_mesh_y(mesh_y), 2)
     )
   );
 }
@@ -223,9 +223,9 @@ bool BedLevelToolsClass::meshValidate() {
       const auto end_y_px   = start_y_px + cell_height_px - 1 - gridline_width;
       DWIN_Draw_Rectangle(1,                                                                                      // RGB565 colors: http://www.barth-dev.de/online/rgb565-color-picker/
         isnan(bedlevel.z_values[x][y]) ? Color_Grey : (                                                           // grey if undefined
-          (bedlevel.z_values[x][y] < 0 ?
-            (uint16_t)round(0x3F * -bedlevel.z_values[x][y] / range) << 5 : // red if mesh point value is negative
-            (uint16_t)round(0x1F * bedlevel.z_values[x][y] / range) << 11) | // green if mesh point value is positive
+          (bedlevel.z_values[x][y] > 0 ?
+            (uint16_t)round(0x1F *  bedlevel.z_values[x][y] / range) << 11 : // red if mesh point value is positive
+            (uint16_t)round(0x3F * -bedlevel.z_values[x][y] / range) << 5) | // green if mesh point value is negative
               _MIN(0x1F, (((uint8_t)abs(bedlevel.z_values[x][y]) / 10) * 4))),                                    // + blue stepping for every mm
         start_x_px, start_y_px, end_x_px, end_y_px
       );
@@ -258,8 +258,8 @@ bool BedLevelToolsClass::meshValidate() {
 
   void BedLevelToolsClass::Set_Mesh_Viewer_Status() { // TODO: draw gradient with values as a legend instead
     float v_max = abs(get_max_value()), v_min = abs(get_min_value()), range = _MAX(v_min, v_max), range2 = _MIN(v_min, v_max);
-    if (range > 3e+10F) { range = 0.0000001; }
-    if (range2 > 3e+10F) { range2 = 0.0000001; }
+    if (range > 3e+10f) { range = 0.0000001; }
+    if (range2 > 3e+10f) { range2 = 0.0000001; }
     ui.set_status(
       &MString<47>(
         F("Green "), p_float_t(-range2, 3),

@@ -867,7 +867,7 @@ bool DWIN_lcd_sd_status = false;
 #if ENABLED(MEDIASORT_MENU_ITEM)
   void SetMediaSort() {
     Toggle_Chkb_Line(HMI_data.MediaSort);
-    card.setSortOn(HMI_data.MediaSort);
+    card.setSortOn(HMI_data.MediaSort ? TERN(SDSORT_REVERSE, AS_REV, AS_FWD) : AS_OFF);
   }
 #endif
 
@@ -1948,7 +1948,7 @@ void DWIN_SetDataDefaults() {
   HMI_data.FullManualTramming = false;
   #if ENABLED(MEDIASORT_MENU_ITEM)
     HMI_data.MediaSort = true;
-    card.setSortOn(true);
+    card.setSortOn(TERN(SDSORT_REVERSE, AS_REV, AS_FWD));
   #endif
   TERN_(HAS_SD_EXTENDER, HMI_data.MediaAutoMount = false;)
   #if ALL(INDIVIDUAL_AXIS_HOMING_SUBMENU, MESH_BED_LEVELING)
@@ -2027,7 +2027,7 @@ void DWIN_CopySettingsFrom(const char * const buff) {
   TERN_(PREVENT_COLD_EXTRUSION, ApplyExtMinT();)
   feedrate_percentage = 100;
   TERN_(BAUD_RATE_GCODE, if (HMI_data.Baud250K) { SetBaud250K(); } else { SetBaud115K(); })
-  TERN_(MEDIASORT_MENU_ITEM, card.setSortOn(HMI_data.MediaSort);)
+  TERN_(MEDIASORT_MENU_ITEM, card.setSortOn(HMI_data.MediaSort ? TERN(SDSORT_REVERSE, AS_REV, AS_FWD) : AS_OFF);)
   #if ALL(LED_CONTROL_MENU, HAS_COLOR_LEDS)
     leds.set_color(
       (HMI_data.Led_Color >> 16) & 0xFF,
@@ -2035,6 +2035,7 @@ void DWIN_CopySettingsFrom(const char * const buff) {
       (HMI_data.Led_Color >>  0) & 0xFF
       OPTARG(HAS_WHITE_LED, (HMI_data.Led_Color >> 24) & 0xFF)
     );
+    leds.update();
   #endif
   TERN_(PROUI_EX, ProEx.LoadSettings();)
 }

@@ -288,7 +288,7 @@ public:
   #endif
 
   #if LCD_BACKLIGHT_TIMEOUT_MINS
-    static constexpr uint8_t backlight_timeout_min = 1;
+    static constexpr uint8_t backlight_timeout_min = 0;
     static constexpr uint8_t backlight_timeout_max = 99;
     static uint8_t backlight_timeout_minutes;
     static millis_t backlight_off_ms;
