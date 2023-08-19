@@ -262,8 +262,8 @@ bool BedLevelToolsClass::meshValidate() {
     if (range2 > 3e+10f) { range2 = 0.0000001; }
     ui.set_status(
       &MString<47>(
-        F("Green "), p_float_t(-range2, 3),
-        F("..0.."),  p_float_t(range, 3),
+        F("Green "), p_float_t(-range, 3),
+        F("..0.."),  p_float_t(range2, 3),
         F("+ Red")
       )
     );
