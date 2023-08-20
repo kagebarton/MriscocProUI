@@ -529,6 +529,7 @@ void DWIN_DrawStatusMessage() {
 void Draw_Print_Labels() {
   DWINUI::Draw_String( 46, 173, GET_TEXT_F(MSG_INFO_PRINT_TIME));
   DWINUI::Draw_String(181, 173, GET_TEXT_F(MSG_REMAINING_TIME));
+  TERN_(SHOW_INTERACTION_TIME, DWINUI::Draw_String(251, 173, F("Until Filament Change"));)
 }
 
 static uint8_t _percent_done = 255;
@@ -555,6 +556,17 @@ static uint32_t _remain_time = 0;
     MString<12> buf;
     buf.setf(F("%02i:%02i "), remain_time / 3600, (remain_time % 3600) / 60);
     DWINUI::Draw_String(HMI_data.Text_Color, HMI_data.Background_Color, 181, 192, buf);
+  }
+#endif
+
+/// Not ready
+#if ENABLED(SHOW_INTERACTION_TIME)
+static uint32_t _interact_time = 0;
+  void Draw_Print_ProgressInteract() {
+    uint32_t interact_time = _interact_time;
+      MString<12> buf;
+      buf.setf(F("%02i:%02i "), interact_time / 3600, (interact_time % 3600) / 60);
+      DWINUI::Draw_String(HMI_data.Text_Color, HMI_data.Background_Color, 251, 192, buf);
   }
 #endif
 
@@ -590,6 +602,7 @@ void Draw_PrintProcess() {
   Draw_Print_ProgressBar();
   Draw_Print_ProgressElapsed();
   Draw_Print_ProgressRemain();
+  TERN_(SHOW_INTERACTION_TIME, Draw_Print_ProgressInteract();)
   ICON_Tune();
   ICON_ResumeOrPause();
   ICON_Stop();
@@ -628,6 +641,7 @@ void Draw_PrintDone() {
     DWINUI::Draw_Icon(ICON_RemainTime, 150, 171);
     Draw_Print_ProgressElapsed();
     Draw_Print_ProgressRemain();
+    TERN_(SHOW_INTERACTION_TIME, Draw_Print_ProgressInteract();)
     DWINUI::Draw_Button(BTN_Continue, 86, 273, true);
   }
 }
@@ -823,9 +837,9 @@ void update_variable() {
     if (_new_hotend_target)
       { DWINUI::Draw_Int(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 3, 25 + 4 * STAT_CHR_W + 6, 384, _hotendtarget); }
 
-    static int16_t _flow = planner.flow_percentage[0];
-    if (_flow != planner.flow_percentage[0]) {
-      _flow = planner.flow_percentage[0];
+    static int16_t _flow = planner.flow_percentage[active_extruder];
+    if (_flow != planner.flow_percentage[active_extruder]) {
+      _flow = planner.flow_percentage[active_extruder];
       DWINUI::Draw_Int(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 3, 116 + 2 * STAT_CHR_W, 417, _flow);
     }
   #endif
@@ -1059,7 +1073,7 @@ void DWIN_Draw_Dashboard() {
     DWIN_Draw_DegreeSymbol(HMI_data.Indicator_Color, 25 + 4 * STAT_CHR_W + 39, 384);
 
     DWINUI::Draw_Icon(ICON_StepE, 112, 417);
-    DWINUI::Draw_Int(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 3, 116 + 2 * STAT_CHR_W, 417, planner.flow_percentage[0]);
+    DWINUI::Draw_Int(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 3, 116 + 2 * STAT_CHR_W, 417, planner.flow_percentage[active_extruder]);
     DWINUI::Draw_String(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 116 + 5 * STAT_CHR_W + 2, 417, F("%"));
   #endif
 
@@ -1311,7 +1325,7 @@ void EachMomentUpdate() {
       if (checkkey == ESDiagProcess) { esDiag.update(); }
     #endif
     #if PROUI_TUNING_GRAPH
-      if (checkkey == PidProcess || checkkey == PlotProcess) {
+      if (checkkey == PidProcess TERN_(PLOT_TUNE_ITEM, || checkkey == PlotProcess)) {
         TERN_(PIDTEMP, if (HMI_value.tempControl == PID_EXTR_START) { plot.update(thermalManager.wholeDegHotend(0)); })
         TERN_(PIDTEMPBED, if (HMI_value.tempControl == PID_BED_START) { plot.update(thermalManager.wholeDegBed()); })
       }
@@ -1319,6 +1333,12 @@ void EachMomentUpdate() {
         TERN_(MPCTEMP, if (HMI_value.tempControl == MPCTEMP_START) { plot.update(thermalManager.wholeDegHotend(0)); })
       }
     #endif
+  }
+  
+  if (checkkey == PlotProcess) {
+    if (HMI_flag.pause_flag || print_job_timer.isPaused()) {
+      HMI_ReturnScreen();
+    }
   }
 
   #if HAS_STATUS_MESSAGE_TIMEOUT
@@ -1367,6 +1387,14 @@ void EachMomentUpdate() {
         _remain_time = ui.get_remaining_time();
         Draw_Print_ProgressRemain();
       }
+
+      #if ENABLED(SHOW_INTERACTION_TIME)
+        // Interaction time
+        if (_interact_time != ui.get_interaction_time()) {
+          _interact_time = ui.get_interaction_time();
+          Draw_Print_ProgressInteract();
+        }
+      #endif
 
       // Elapse print time
       const uint16_t min = (print_job_timer.duration() % 3600) / 60;
@@ -1498,6 +1526,7 @@ bool IDisPopUp() {    // If ID is popup...
       || (checkkey == Homing)
       || (checkkey == Leveling)
       || (checkkey == PidProcess)
+      TERN_(PLOT_TUNE_ITEM, || (checkkey == PlotProcess))
       TERN_(HAS_ESDIAG, || (checkkey == ESDiagProcess))
       || (checkkey == Popup);
 }
@@ -1509,7 +1538,7 @@ void HMI_SaveProcessID(const uint8_t id) {
       TERN_(HAS_ESDIAG, || (id == ESDiagProcess))
       || (id == PrintDone)
       || (id == Leveling)
-      || (id == PlotProcess)
+      TERN_(PLOT_TUNE_ITEM, || (id == PlotProcess))
       || (id == WaitResponse)) { wait_for_user = true; }
     checkkey = id;
   }
@@ -2026,7 +2055,7 @@ void DWIN_CopySettingsFrom(const char * const buff) {
   DWINUI::SetColors(HMI_data.Text_Color, HMI_data.Background_Color, HMI_data.TitleBg_Color);
   TERN_(PREVENT_COLD_EXTRUSION, ApplyExtMinT();)
   feedrate_percentage = 100;
-  TERN_(BAUD_RATE_GCODE, if (HMI_data.Baud250K) { SetBaud250K(); } else { SetBaud115K(); })
+    TERN_(BAUD_RATE_GCODE, if (HMI_data.Baud250K) { SetBaud250K(); } else { SetBaud115K(); })
   TERN_(MEDIASORT_MENU_ITEM, card.setSortOn(HMI_data.MediaSort ? TERN(SDSORT_REVERSE, AS_REV, AS_FWD) : AS_OFF);)
   #if ALL(LED_CONTROL_MENU, HAS_COLOR_LEDS)
     leds.set_color(
@@ -2155,7 +2184,7 @@ void DWIN_RedrawScreen() {
     DWINUI::Draw_Button(BTN_Purge, 26, 280);
     DWINUI::Draw_Button(BTN_Continue, 146, 280);
     Draw_Select_Highlight(true);
-  }
+  } 
 
   void onClick_FilamentPurge() {
     if (HMI_flag.select_flag) {
@@ -2638,7 +2667,7 @@ void SetSpeed() { SetPIntOnClick(MIN_PRINT_SPEED, MAX_PRINT_SPEED); }
 
 #endif // ADVANCED_PAUSE_FEATURE
 
-void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refresh_e_factor(0); }); }
+void SetFlow() { SetPIntOnClick(MIN_PRINT_FLOW, MAX_PRINT_FLOW, []{ planner.refresh_e_factor(active_extruder); }); }
 
 #if ENABLED(SHOW_SPEED_IND)
   void SetSpdInd() { Toggle_Chkb_Line(HMI_data.SpdInd); }
@@ -3196,7 +3225,7 @@ void Draw_Move_Menu() {
     EDIT_ITEM(ICON_Axis, MSG_LIVE_MOVE, onDrawChkbMenu, SetLiveMove, &EnableLiveMove);
   }
   UpdateMenu(MoveMenu);
-  if (!all_axes_trusted()) { LCD_MESSAGE_F("WARNING: Current position is unknown, Home axes."); }
+  if (!all_axes_trusted()) { LCD_MESSAGE_F("..WARNING: Current position is unknown, Home axes."); }
 }
 
 #if HAS_HOME_OFFSET
@@ -3253,7 +3282,7 @@ void Draw_Move_Menu() {
       #endif
     }
     UpdateMenu(ProbeSetMenu);
-    LCD_MESSAGE_F("..HS Mode is High Speed for Probe ");
+    LCD_MESSAGE_F("HS Mode is High Speed for Probe.");
   }
 
 #endif
@@ -3375,7 +3404,7 @@ void Draw_Tune_Menu() {
       MENU_ITEM(ICON_Box, MSG_BRIGHTNESS_OFF, onDrawMenuItem, TurnOffBacklight);
     #endif
     EDIT_ITEM(ICON_Speed, MSG_SPEED, onDrawPIntMenu, SetSpeed, &feedrate_percentage);
-    EDIT_ITEM(ICON_Flow, MSG_FLOW, onDrawPIntMenu, SetFlow, &planner.flow_percentage[0]);
+    EDIT_ITEM(ICON_Flow, MSG_FLOW, onDrawPIntMenu, SetFlow, &planner.flow_percentage[active_extruder]);
     #if HAS_HOTEND
       HotendTargetItem = EDIT_ITEM(ICON_SetEndTemp, MSG_UBL_SET_TEMP_HOTEND, onDrawPIntMenu, SetHotendTemp, &thermalManager.temp_hotend[0].target);
     #endif
@@ -3543,7 +3572,7 @@ void Draw_FilamentMan_Menu() {
       MENU_ITEM(ICON_FWRetract, MSG_FWRETRACT, onDrawSubMenu, Draw_FWRetract_Menu);
     #endif
     EDIT_ITEM(ICON_Speed, MSG_SPEED, onDrawPIntMenu, SetSpeed, &feedrate_percentage);
-    EDIT_ITEM(ICON_Flow, MSG_FLOW, onDrawPIntMenu, SetFlow, &planner.flow_percentage[0]);
+    EDIT_ITEM(ICON_Flow, MSG_FLOW, onDrawPIntMenu, SetFlow, &planner.flow_percentage[active_extruder]);
     #if ENABLED(ADVANCED_PAUSE_FEATURE)
       MENU_ITEM(ICON_FilMan, MSG_FILAMENTCHANGE, onDrawMenuItem, ChangeFilament);
     #endif
@@ -3978,7 +4007,8 @@ void Draw_GetColor_Menu() {
       MENU_ITEM_F(ICON_More, "Have Nozzle Touch Bed", onDrawMenuItem);
     }
     UpdateMenu(ZOffsetWizMenu);
-    if (!axis_is_trusted(Z_AXIS)) { LCD_MESSAGE_F("WARNING: unknown Z position, Home Z axis..."); }
+    if (!axis_is_trusted(Z_AXIS)) { LCD_MESSAGE_F("..WARNING: unknown Z position, Home Z axis."); }
+    else LCD_MESSAGE_F("..Center Nozzle - As Nozzle touches bed, is Z-Offset.");
   }
 
 #endif
@@ -4188,7 +4218,7 @@ void Draw_GetColor_Menu() {
         MENU_ITEM(ICON_SetHome, MSG_MESH_CENTER, onDrawMenuItem, CenterMeshArea);
       }
       UpdateMenu(MeshInsetMenu);
-      LCD_MESSAGE_F("..Center Area sets mesh equidistant by side of largest inset value");
+      LCD_MESSAGE_F("..Center Area sets mesh equidistant by greatest inset from edge.");
     }
   #endif
 

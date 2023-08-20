@@ -344,6 +344,7 @@ public:
       #if ENABLED(SET_INTERACTION_TIME)
         static uint32_t interaction_time;
         FORCE_INLINE static void set_interaction_time(const uint32_t r) { interaction_time = r; }
+        FORCE_INLINE static uint32_t get_interaction_time() { return interaction_time; }
         FORCE_INLINE static void reset_interaction_time() { set_interaction_time(0); }
       #endif
     #endif
