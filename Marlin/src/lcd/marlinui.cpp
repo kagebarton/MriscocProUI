@@ -75,8 +75,8 @@ constexpr uint8_t epps = ENCODER_PULSES_PER_STEP;
 #endif
 
 #if ENABLED(ENCODER_RATE_MULTIPLIER) && ENABLED(ENC_MENU_ITEM)
-  int MarlinUI::enc_rateA; // = 135
-  int MarlinUI::enc_rateB; // = 25
+  uint MarlinUI::enc_rateA = 135;
+  uint MarlinUI::enc_rateB = 25;
 #endif
 
 #if HAS_STATUS_MESSAGE
