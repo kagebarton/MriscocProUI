@@ -2559,7 +2559,7 @@ void ApplyMove() {
   void SetProbeOffsetZ() { SetPFloatOnClick(-10, 10, 2); }
 
   #if PROUI_EX
-    void SetProbeZSpeed()  { SetPIntOnClick(60, Z_PROBE_FEEDRATE_FAST); }
+    void SetProbeZSpeed()  { SetPIntOnClick(60, 1000); }
     void ApplyProbeMultiple() { PRO_data.multiple_probing = (MenuData.Value > 1) ? MenuData.Value : 0; }
     void SetProbeMultiple()  { SetIntOnClick(0, 4, PRO_data.multiple_probing, ApplyProbeMultiple); }
   #endif
