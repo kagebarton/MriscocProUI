@@ -568,7 +568,7 @@ namespace LanguageNarrow_en {
   LSTR MSG_FILAMENT_SWAP_EXTRA            = _UxGT("Swap Extra");
   LSTR MSG_FILAMENT_PURGE_LENGTH          = _UxGT("Purge Length");
   LSTR MSG_TOOL_CHANGE                    = _UxGT("Tool Change");
-  LSTR MSG_TOOL_CHANGE_ZLIFT              = _UxGT("Z Raise");
+  LSTR MSG_TOOL_CHANGE_ZLIFT              = _UxGT("Raise Z");
   LSTR MSG_SINGLENOZZLE_PRIME_SPEED       = _UxGT("Prime Speed");
   LSTR MSG_SINGLENOZZLE_WIPE_RETRACT      = _UxGT("Wipe Retract");
   LSTR MSG_SINGLENOZZLE_RETRACT_SPEED     = _UxGT("Retract Speed");

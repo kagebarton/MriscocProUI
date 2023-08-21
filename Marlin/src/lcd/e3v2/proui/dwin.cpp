@@ -2642,7 +2642,11 @@ void SetSpeed() { SetPIntOnClick(MIN_PRINT_SPEED, MAX_PRINT_SPEED); }
 #if ENABLED(NOZZLE_PARK_FEATURE)
   void ParkHead() {
     LCD_MESSAGE(MSG_FILAMENT_PARK_ENABLED);
-    queue.inject(F("G28O\nG27"));
+    queue.inject(F("G28O\nG27 P1"));
+  }
+  void RaiseHead() {
+    LCD_MESSAGE(MSG_FILAMENT_PARK_ENABLED);
+    queue.inject(F("G27 P3"));
   }
 #endif
 
@@ -4008,7 +4012,7 @@ void Draw_GetColor_Menu() {
     }
     UpdateMenu(ZOffsetWizMenu);
     if (!axis_is_trusted(Z_AXIS)) { LCD_MESSAGE_F("..WARNING: unknown Z position, Home Z axis."); }
-    else LCD_MESSAGE_F("..Center Nozzle - As Nozzle touches bed, is Z-Offset.");
+    else { LCD_MESSAGE_F("..Center Nozzle - As Nozzle touches bed, save Z-Offset."); }
   }
 
 #endif
@@ -4017,7 +4021,7 @@ void Draw_GetColor_Menu() {
 
   void Draw_Homing_Menu() {
     checkkey = Menu;
-    if (SET_MENU(HomingMenu, MSG_HOMING, 7)) {
+    if (SET_MENU(HomingMenu, MSG_HOMING, 8)) {
       BACK_ITEM(Draw_Prepare_Menu);
       MENU_ITEM(ICON_Homing, MSG_AUTO_HOME, onDrawMenuItem, AutoHome);
       #if HAS_X_AXIS
@@ -4031,6 +4035,7 @@ void Draw_GetColor_Menu() {
       #endif
       #if ENABLED(NOZZLE_PARK_FEATURE)
         MENU_ITEM(ICON_Park, MSG_FILAMENT_PARK_ENABLED, onDrawMenuItem, ParkHead);
+        MENU_ITEM(ICON_MoveZ, MSG_TOOL_CHANGE_ZLIFT, onDrawMenuItem, RaiseHead);
       #endif
       #if ENABLED(MESH_BED_LEVELING)
         EDIT_ITEM(ICON_ZAfterHome, MSG_Z_AFTER_HOME, onDrawPInt8Menu, SetZAfterHoming, &HMI_data.z_after_homing);
