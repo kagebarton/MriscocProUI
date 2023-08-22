@@ -4378,7 +4378,7 @@ void Draw_AdvancedSettings_Menu() {
       #endif
       #if ENABLED(USE_GRID_MESHVIEWER)
         MENU_ITEM(ICON_Level, MSG_MESH_VIEW, onDrawSubMenu, DWIN_MeshViewer);
-        EDIT_ITEM_F(ICON_PrintSize, "Change Mesh Viewer", onDrawChkbMenu, SetViewMesh, &bedLevelTools.view_mesh);
+        EDIT_ITEM(ICON_PrintSize, MSG_CHANGE_MESH_VIEWER, onDrawChkbMenu, SetViewMesh, &bedLevelTools.view_mesh);
       #endif
       EDIT_ITEM(ICON_UBLSlot, MSG_UBL_STORAGE_SLOT, onDrawUBLSlot, SetUBLSlot, &bedlevel.storage_slot);
       MENU_ITEM(ICON_UBLSaveMesh, MSG_UBL_SAVE_MESH, onDrawMenuItem, UBLMeshSave);
@@ -4407,7 +4407,7 @@ void Draw_AdvancedSettings_Menu() {
       MENU_ITEM(ICON_Level, MSG_AUTO_MESH, onDrawMenuItem, AutoLevStart);
       #if ENABLED(USE_GRID_MESHVIEWER)
         MENU_ITEM(ICON_Level, MSG_MESH_VIEW, onDrawSubMenu, DWIN_MeshViewer);
-        EDIT_ITEM_F(ICON_PrintSize, "Change Mesh Viewer", onDrawChkbMenu, SetViewMesh, &bedLevelTools.view_mesh);
+        EDIT_ITEM(ICON_PrintSize, MSG_CHANGE_MESH_VIEWER, onDrawChkbMenu, SetViewMesh, &bedLevelTools.view_mesh);
       #endif
       #if ENABLED(MESH_EDIT_MENU)
         MENU_ITEM(ICON_UBLActive, MSG_EDIT_MESH, onDrawSubMenu, Draw_EditMesh_Menu);
@@ -4430,7 +4430,7 @@ void Draw_AdvancedSettings_Menu() {
     MENU_ITEM(ICON_PrintSize, MSG_MESH_LEVELING, onDrawSubMenu, Draw_MeshSet_Menu);
     #if ENABLED(USE_GRID_MESHVIEWER)
       MENU_ITEM(ICON_Level, MSG_MESH_VIEW, onDrawSubMenu, DWIN_MeshViewer);
-      EDIT_ITEM_F(ICON_PrintSize, "Change Mesh Viewer", onDrawChkbMenu, SetViewMesh, &bedLevelTools.view_mesh);
+      EDIT_ITEM(ICON_PrintSize, MSG_CHANGE_MESH_VIEWER, onDrawChkbMenu, SetViewMesh, &bedLevelTools.view_mesh);
     #endif
     #if ENABLED(MESH_EDIT_MENU)
       MENU_ITEM(ICON_UBLActive, MSG_EDIT_MESH, onDrawSubMenu, Draw_EditMesh_Menu);
