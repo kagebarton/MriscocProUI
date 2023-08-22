@@ -59,7 +59,9 @@
 #define Def_Coordinate_Color  Color_Brown //
 #define Def_Bottom_Color      Color_Silver //
 #define Def_Leds_Color        0xFFFFFFFF
-#define Def_CaseLight_Brightness 255
+#if CASELIGHT_USES_BRIGHTNESS
+  #define Def_CaseLight_Brightness 255
+#endif
 #ifdef Z_AFTER_HOMING
   #define DEF_Z_AFTER_HOMING Z_AFTER_HOMING
 #else
