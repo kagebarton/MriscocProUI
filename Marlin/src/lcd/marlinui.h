@@ -208,8 +208,8 @@ public:
   #endif 
 
   #if ENABLED(ENCODER_RATE_MULTIPLIER) && ENABLED(ENC_MENU_ITEM)
-    static uint8_t enc_rateA;
-    static uint8_t enc_rateB;
+    static int enc_rateA;
+    static int enc_rateB;
   #endif
 
   static void init();
