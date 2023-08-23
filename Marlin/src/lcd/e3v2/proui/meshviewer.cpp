@@ -34,7 +34,7 @@
   #include "bedlevel_tools.h"
 #endif
 
-//bool meshredraw;                            // Redraw mesh points
+bool meshredraw;                            // Redraw mesh points
 uint8_t sizex, sizey;                       // Mesh XY size
 uint8_t rmax;                               // Maximum radius
 #define margin 25                           // XY Margins
@@ -78,35 +78,26 @@ void MeshViewerClass::DrawMeshPoint(const uint8_t x, const uint8_t y, const floa
   NOLESS(max, z); NOMORE(min, z);
   const uint16_t color = DWINUI::RainbowInt(v, zmin, zmax);
   DWINUI::Draw_FillCircle(color, px(x), py(y), r(_MAX(_MIN(v, zmax), zmin)));
-  if (sizex < (ENABLED(TJC_DISPLAY) ? 8 : 9)) {
-    if (v == 0) DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, px(x) - 2 * fs - 1, py(y) - fs, "0.00");
-    else DWINUI::Draw_Signed_Float(meshfont, 1, 2, px(x) - 3 * fs, py(y) - fs, z);
+  TERN_(TJC_DISPLAY, delay(100));
+  const uint16_t fy = py(y) - fs;
+  if (sizex < TERN(TJC_DISPLAY, 8, 9)) {
+    if (v == 0) DWINUI::Draw_Float(meshfont, 1, 2, px(x) - 2 * fs, fy, 0);
+    else DWINUI::Draw_Signed_Float(meshfont, 1, 2, px(x) - 3 * fs, fy, z);
   }
   else {
-    char str_1[9];
-    str_1[0] = 0;
+    char msg[9]; msg[0] = '\0';
     switch (v) {
-      case -999 ... -100:  // -9.99 .. -1.00 mm
-        DWINUI::Draw_Signed_Float(meshfont, 1, 1, px(x) - 3 * fs, py(y) - fs, z);
-        break;
-      case -99 ... -1:  // -0.99 .. -0.01 mm
-        sprintf_P(str_1, PSTR("-.%2i"), -v);
-        break;
-      case 0:
-        DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, px(x) - 4, py(y) - fs, "0");
-        break;
-      case 1 ... 99:  // 0.01 .. 0.99 mm
-        sprintf_P(str_1, PSTR(".%2i"), v);
-        break;
-      case 100 ... 999:  // 1.00 .. 9.99 mm
-        DWINUI::Draw_Signed_Float(meshfont, 1, 1, px(x) - 3 * fs, py(y) - fs, z);
-        break;
+      case -999 ... -100:  // -9.99 .. -1.00 || 1.00 .. 9.99 
+      case  100 ...  999: DWINUI::Draw_Signed_Float(meshfont, 1, 1, px(x) - 3 * fs, fy, z); break;
+      case  -99 ...   -1: sprintf_P(msg, PSTR("-.%2i"), -v); break; // -0.99 .. -0.01 mm
+      case    1 ...   99: sprintf_P(msg, PSTR( ".%2i"),  v); break; //  0.01 ..  0.99 mm
+      default:
+        DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, px(x) - 4, fy, "0");
+        return;
     }
-    if (str_1[0])
-      DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, px(x) - 2 * fs, py(y) - fs, str_1);
+    DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, px(x) - 2 * fs, fy, msg);
   }
   SERIAL_FLUSH();
-  TERN_(TJC_DISPLAY, delay(100));
 }
 
 void MeshViewerClass::DrawMesh(bed_mesh_t zval, const uint8_t csizex, const uint8_t csizey) {
@@ -162,11 +153,12 @@ void MeshViewerClass::Draw(bool withsave/*=false*/, bool redraw/*=true*/) {
   #endif
 }
 
-void Draw_MeshViewer() { MeshViewer.Draw(true, true); }
+void Draw_MeshViewer() { MeshViewer.Draw(true, meshredraw); }
 
 void onClick_MeshViewer() { if (HMI_flag.select_flag) SaveMesh(); HMI_ReturnScreen(); }
 
-void Goto_MeshViewer(bool redraw) {
+void Goto_MeshViewer(const bool redraw) {
+  meshredraw = redraw;
   if (leveling_is_valid()) { Goto_Popup(Draw_MeshViewer, onClick_MeshViewer); }
   else { HMI_ReturnScreen(); }
 }

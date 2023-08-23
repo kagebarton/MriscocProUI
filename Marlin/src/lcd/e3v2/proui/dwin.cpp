@@ -2121,7 +2121,7 @@ void MarlinUI::refresh() { /* Nothing to see here */ }
   void MarlinUI::_set_brightness() { DWIN_LCD_Brightness(backlight ? brightness : 0); }
 #endif
 
-void MarlinUI::kill_screen(FSTR_P const lcd_error, FSTR_P const lcd_component) {
+void MarlinUI::kill_screen(FSTR_P const lcd_error, FSTR_P const) {
   DWIN_Draw_Popup(ICON_BLTouch, GET_TEXT_F(MSG_PRINTER_KILLED), lcd_error);
   DWINUI::Draw_CenteredString(HMI_data.PopupTxt_Color, 270, GET_TEXT_F(MSG_TURN_OFF));
   DWIN_UpdateLCD();
