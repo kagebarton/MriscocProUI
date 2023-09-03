@@ -3413,10 +3413,12 @@
 
 #if ENABLED(DWIN_LCD_PROUI)
 // Professional firmware features:
-  #define PROUI_EX 1            // Extended UI features (15152 bytes of flash)
+  //#define PROUI_EX 1            // Extended UI features (15152 bytes of flash)
   #ifdef PROUI_EX
     #define HAS_GCODE_PREVIEW 1
     #define HAS_TOOLBAR 1
+  #else
+    #define HAS_GCODE_PREVIEW_NOPRO 1
   #endif
   #define DISABLE_TUNING_GRAPH 0// Graph Temp as grid plot - PID/MPC Tuning (1624 bytes of flash)
   #define HAS_ESDIAG 1          // View End-stop switch continuity (560 bytes of flash)
