@@ -344,6 +344,8 @@ _iconNames = {
    202 : 'ICON_Fade',
    203 : 'ICON_Mesh',
    204 : 'ICON_Tilt',
+   205 : 'ICON_Brightness',
+   206 : 'ICON_Probe',
    249 : 'ICON_AxisD',
    250 : 'ICON_AxisBR',
    251 : 'ICON_AxisTR',
