@@ -99,6 +99,8 @@
 
 #if HAS_GCODE_PREVIEW
   #include "gcode_preview.h"
+#elif HAS_GCODE_PREVIEW_NOPRO
+  #include "gcode_preview_nopro.h"
 #endif
 
 #if HAS_TOOLBAR
@@ -628,6 +630,12 @@ void Draw_PrintDone() {
     const bool haspreview = Preview_Valid();
     if (haspreview) {
       Preview_Show();
+      DWINUI::Draw_Button(BTN_Continue, 86, 295, true);
+    }
+  #elif HAS_GCODE_PREVIEW_NOPRO
+    const bool haspreview = preview.valid();
+    if (haspreview) {
+      preview.show();
       DWINUI::Draw_Button(BTN_Continue, 86, 295, true);
     }
   #else
@@ -1817,6 +1825,7 @@ void DWIN_LevelingDone() {
 void DWIN_Print_Started() {
   DEBUG_ECHOLNPGM("DWIN_Print_Started: ", SD_Printing());
   TERN_(HAS_GCODE_PREVIEW, if (Host_Printing()) { Preview_Invalidate(); })
+  TERN_(HAS_GCODE_PREVIEW_NOPRO, if (Host_Printing()) { preview.invalidate(); })
   ui.progress_reset();
   ui.reset_remaining_time();
   HMI_flag.pause_flag = false;
@@ -2001,7 +2010,7 @@ void DWIN_SetDataDefaults() {
     #endif
   #endif
   TERN_(ADAPTIVE_STEP_SMOOTHING, HMI_data.AdaptiveStepSmoothing = true;)
-  TERN_(HAS_GCODE_PREVIEW, HMI_data.EnablePreview = true;)
+  TERN_(HAS_GCODE_PREVIEW || HAS_GCODE_PREVIEW_NOPRO, HMI_data.EnablePreview = true;)
   #if PROUI_EX
     PRO_data.x_bed_size = DEF_X_BED_SIZE;
     PRO_data.y_bed_size = DEF_Y_BED_SIZE;
@@ -2122,7 +2131,7 @@ void MarlinUI::refresh() { /* Nothing to see here */ }
 #endif
 
 void MarlinUI::kill_screen(FSTR_P const lcd_error, FSTR_P const) {
-  DWIN_Draw_Popup(ICON_BLTouch, GET_TEXT_F(MSG_PRINTER_KILLED), lcd_error);
+  DWIN_Draw_Popup(ICON_AutoLeveling, GET_TEXT_F(MSG_PRINTER_KILLED), lcd_error);
   DWINUI::Draw_CenteredString(HMI_data.PopupTxt_Color, 270, GET_TEXT_F(MSG_TURN_OFF));
   DWIN_UpdateLCD();
 }
@@ -2244,26 +2253,14 @@ void DWIN_RedrawScreen() {
 
 #endif // HAS_LOCKSCREEN
 
-#if HAS_GCODE_PREVIEW
-// void ClearDataTo0x00() {
-//   uint16_t addr = 0x00;
-//   uint16_t length = fileprop.thumbsize;/*Specify the length of the data*/
-//   uint8_t data[length]; // Create an array to store the data
-//   memset(data, 0x00, length); // Set all elements of the array to 0x00
-
-//   DWINUI::WriteToSRAM(addr, length, data);
-// }
+#if HAS_GCODE_PREVIEW || HAS_GCODE_PREVIEW_NOPRO
 
   void SetPreview() { Toggle_Chkb_Line(HMI_data.EnablePreview); }
 
   void onClick_ConfirmToPrint() {
     DWIN_ResetStatusLine();
-    // fileprop.clear();
-    // delete[] fileprop.thumbdata;
-    // DWINUI::WriteToSRAM(0x00, fileprop.thumbsize, fileprop.thumbdata);
 
     if (HMI_flag.select_flag) {     // Confirm
-      //Goto_Main_Menu();
       return card.openAndPrintFile(card.filename);
     }
     else {
@@ -2294,6 +2291,8 @@ void Goto_ConfirmToPrint() {
   #endif
   #if HAS_GCODE_PREVIEW
     if (HMI_data.EnablePreview) return Goto_Popup(Preview_DrawFromSD, onClick_ConfirmToPrint);
+  #elif HAS_GCODE_PREVIEW_NOPRO
+    if (HMI_data.EnablePreview) return Goto_Popup(preview.drawFromSD, onClick_ConfirmToPrint);
   #endif
   card.openAndPrintFile(card.filename); // Direct print SD file
 }
@@ -3461,11 +3460,6 @@ void Draw_Tune_Menu() {
     #endif
     #if ENABLED(CASE_LIGHT_MENU)
       EDIT_ITEM(ICON_CaseLight, MSG_CASE_LIGHT, onDrawChkbMenu, SetCaseLight, &caselight.on);
-    #elif ENABLED(LED_CONTROL_MENU) && DISABLED(CASE_LIGHT_USE_NEOPIXEL)
-      EDIT_ITEM(ICON_LedControl, MSG_LEDS, onDrawChkbMenu, SetLedStatus, &leds.lights_on);
-    #endif
-    #if ENABLED(CASE_LIGHT_MENU)
-      EDIT_ITEM(ICON_CaseLight, MSG_CASE_LIGHT, onDrawChkbMenu, SetCaseLight, &caselight.on);
       #if CASELIGHT_USES_BRIGHTNESS
         // Avoid heavy interference with print job disabling live update of brightness in tune menu
         EnableLiveCaseLightBrightness = false;
@@ -4489,7 +4483,7 @@ void Draw_AdvancedSettings_Menu() {
       EDIT_ITEM(ICON_Sound, MSG_TICK, onDrawChkbMenu, SetEnableTick, &ui.tick_on);
       EDIT_ITEM(ICON_Sound, MSG_SOUND, onDrawChkbMenu, SetEnableSound, &ui.sound_on);
     #endif
-    #if HAS_GCODE_PREVIEW
+    #if HAS_GCODE_PREVIEW || HAS_GCODE_PREVIEW_NOPRO
       EDIT_ITEM(ICON_File, MSG_HAS_PREVIEW, onDrawChkbMenu, SetPreview, &HMI_data.EnablePreview);
     #endif
     #if ENABLED(BAUD_RATE_GCODE)
@@ -4544,7 +4538,7 @@ void Draw_Advanced_Menu() { // From Control Menu || Default-NP Advaned Settings 
       EDIT_ITEM(ICON_Sound, MSG_TICK, onDrawChkbMenu, SetEnableTick, &ui.tick_on);
       EDIT_ITEM(ICON_Sound, MSG_SOUND, onDrawChkbMenu, SetEnableSound, &ui.sound_on);
     #endif
-    #if HAS_GCODE_PREVIEW
+    #if HAS_GCODE_PREVIEW || HAS_GCODE_PREVIEW_NOPRO
       EDIT_ITEM(ICON_File, MSG_HAS_PREVIEW, onDrawChkbMenu, SetPreview, &HMI_data.EnablePreview);
     #endif
     #if ENABLED(BAUD_RATE_GCODE)

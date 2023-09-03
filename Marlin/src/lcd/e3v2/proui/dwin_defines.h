@@ -58,7 +58,7 @@
 #define Def_Indicator_Color   Color_Cyan //
 #define Def_Coordinate_Color  Color_Brown //
 #define Def_Bottom_Color      Color_Silver //
-#define Def_Leds_Color        0xFFFFFFFF
+#define Def_Leds_Color        LEDColorWhite()
 #if CASELIGHT_USES_BRIGHTNESS
   #define Def_CaseLight_Brightness 255
 #endif
@@ -75,9 +75,9 @@
 // Only for Professional Firmware UI extensions
 //=============================================================================
 
-#if ENABLED(HAS_GCODE_PREVIEW) && DISABLED(PROUI_EX)
-  #error "HAS_GCODE_PREVIEW requires PROUI_EX."
-#endif
+// #if ENABLED(HAS_GCODE_PREVIEW) && DISABLED(PROUI_EX)
+//   #error "HAS_GCODE_PREVIEW requires PROUI_EX."
+// #endif
 #if ENABLED(HAS_TOOLBAR) && DISABLED(PROUI_EX)
   #error "HAS_TOOLBAR requires PROUI_EX."
 #endif
