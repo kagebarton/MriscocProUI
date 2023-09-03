@@ -160,6 +160,7 @@ namespace LanguageNarrow_it {
   LSTR MSG_MESH_VIEWER                    = _UxGT("Visualiz. Mesh");
   LSTR MSG_EDIT_MESH                      = _UxGT("Modifica Mesh");
   LSTR MSG_MESH_VIEW                      = _UxGT("Visualizza Mesh");
+  LSTR MSG_CHANGE_MESH                    = _UxGT("Normale visualiz. Mesh");
   LSTR MSG_EDITING_STOPPED                = _UxGT("Modif. Mesh Fermata");
   LSTR MSG_NO_VALID_MESH                  = _UxGT("Mesh non valida");
   LSTR MSG_ACTIVATE_MESH                  = _UxGT("Attiva livellamento");
@@ -590,14 +591,11 @@ namespace LanguageNarrow_it {
   LSTR MSG_BABYSTEP_N                     = _UxGT("Babystep @");
   LSTR MSG_BABYSTEP_TOTAL                 = _UxGT("Totali");
   LSTR MSG_ENDSTOP_ABORT                  = _UxGT("Interrompi se FC");
-  LSTR MSG_HEATING_FAILED_LCD             = _UxGT("Risc.Fallito"); // Max 12 characters
+  LSTR MSG_ERR_HEATING_FAILED             = _UxGT("Risc.Fallito"); // Max 12 characters
   LSTR MSG_ERR_REDUNDANT_TEMP             = _UxGT("Err: TEMP RIDONDANTE");
-  LSTR MSG_THERMAL_RUNAWAY                = _UxGT("TEMP FUORI CONTROLLO");
-  LSTR MSG_TEMP_MALFUNCTION               = _UxGT("MALFUNZIONAMENTO TEMP");
-  LSTR MSG_THERMAL_RUNAWAY_BED            = _UxGT("TEMP PIAT.FUORI CTRL");
-  LSTR MSG_THERMAL_RUNAWAY_CHAMBER        = _UxGT("T.CAMERA FUORI CTRL");
-  LSTR MSG_THERMAL_RUNAWAY_COOLER         = _UxGT("RAFFREDAM.FUORI CTRL");
-  LSTR MSG_COOLING_FAILED                 = _UxGT("Raffreddam. fallito");
+  LSTR MSG_ERR_THERMAL_RUNAWAY            = _UxGT("TEMP FUORI CONTROLLO");
+  LSTR MSG_ERR_TEMP_MALFUNCTION           = _UxGT("MALFUNZIONAMENTO TEMP");
+  LSTR MSG_ERR_COOLING_FAILED             = _UxGT("Raffreddam. fallito");
   LSTR MSG_ERR_MAXTEMP                    = _UxGT("Err: TEMP MASSIMA");
   LSTR MSG_ERR_MINTEMP                    = _UxGT("Err: TEMP MINIMA");
   LSTR MSG_HALTED                         = _UxGT("STAMPANTE FERMATA");
