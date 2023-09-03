@@ -41,7 +41,6 @@
 
 #if HAS_MEDIA
   #include "../../../sd/cardreader.h"
-  #include "file_header.h"
 #endif
 
 #if NEED_HEX_PRINT
@@ -98,6 +97,7 @@
 #endif
 
 #if HAS_GCODE_PREVIEW
+  #include "file_header.h"
   #include "gcode_preview.h"
 #elif HAS_GCODE_PREVIEW_NOPRO
   #include "gcode_preview_nopro.h"
@@ -949,6 +949,7 @@ void onClickSDItem() {
     if (card.fileIsBinary())
       return DWIN_Popup_Confirm(ICON_Error, F("Please check filenames"), F("Only G-code can be printed"));
     else
+      DWIN_Print_Header(card.longest_filename()); // Save filename
       return Goto_ConfirmToPrint();
   }
 }
@@ -2010,7 +2011,8 @@ void DWIN_SetDataDefaults() {
     #endif
   #endif
   TERN_(ADAPTIVE_STEP_SMOOTHING, HMI_data.AdaptiveStepSmoothing = true;)
-  TERN_(HAS_GCODE_PREVIEW || HAS_GCODE_PREVIEW_NOPRO, HMI_data.EnablePreview = true;)
+  TERN_(HAS_GCODE_PREVIEW, HMI_data.EnablePreview = true;)
+  TERN_(HAS_GCODE_PREVIEW_NOPRO, HMI_data.EnablePreview = true;)
   #if PROUI_EX
     PRO_data.x_bed_size = DEF_X_BED_SIZE;
     PRO_data.y_bed_size = DEF_Y_BED_SIZE;
@@ -2264,7 +2266,7 @@ void DWIN_RedrawScreen() {
       return card.openAndPrintFile(card.filename);
     }
     else {
-      return HMI_ReturnScreen(); 
+      HMI_ReturnScreen(); 
     }
   }
 
@@ -4391,7 +4393,7 @@ void Draw_AdvancedSettings_Menu() {
       #endif
       #if ENABLED(USE_GRID_MESHVIEWER)
         MENU_ITEM(ICON_Level, MSG_MESH_VIEW, onDrawSubMenu, DWIN_MeshViewer);
-        EDIT_ITEM(ICON_PrintSize, MSG_CHANGE_MESH_VIEWER, onDrawChkbMenu, SetViewMesh, &bedLevelTools.view_mesh);
+        EDIT_ITEM(ICON_PrintSize, MSG_CHANGE_MESH, onDrawChkbMenu, SetViewMesh, &bedLevelTools.view_mesh);
       #endif
       EDIT_ITEM(ICON_UBLSlot, MSG_UBL_STORAGE_SLOT, onDrawUBLSlot, SetUBLSlot, &bedlevel.storage_slot);
       MENU_ITEM(ICON_UBLSaveMesh, MSG_UBL_SAVE_MESH, onDrawMenuItem, UBLMeshSave);
@@ -4420,7 +4422,7 @@ void Draw_AdvancedSettings_Menu() {
       MENU_ITEM(ICON_Level, MSG_AUTO_MESH, onDrawMenuItem, AutoLevStart);
       #if ENABLED(USE_GRID_MESHVIEWER)
         MENU_ITEM(ICON_Level, MSG_MESH_VIEW, onDrawSubMenu, DWIN_MeshViewer);
-        EDIT_ITEM(ICON_PrintSize, MSG_CHANGE_MESH_VIEWER, onDrawChkbMenu, SetViewMesh, &bedLevelTools.view_mesh);
+        EDIT_ITEM(ICON_PrintSize, MSG_CHANGE_MESH, onDrawChkbMenu, SetViewMesh, &bedLevelTools.view_mesh);
       #endif
       #if ENABLED(MESH_EDIT_MENU)
         MENU_ITEM(ICON_UBLActive, MSG_EDIT_MESH, onDrawSubMenu, Draw_EditMesh_Menu);
@@ -4443,7 +4445,7 @@ void Draw_AdvancedSettings_Menu() {
     MENU_ITEM(ICON_PrintSize, MSG_MESH_LEVELING, onDrawSubMenu, Draw_MeshSet_Menu);
     #if ENABLED(USE_GRID_MESHVIEWER)
       MENU_ITEM(ICON_Level, MSG_MESH_VIEW, onDrawSubMenu, DWIN_MeshViewer);
-      EDIT_ITEM(ICON_PrintSize, MSG_CHANGE_MESH_VIEWER, onDrawChkbMenu, SetViewMesh, &bedLevelTools.view_mesh);
+      EDIT_ITEM(ICON_PrintSize, MSG_CHANGE_MESH, onDrawChkbMenu, SetViewMesh, &bedLevelTools.view_mesh);
     #endif
     #if ENABLED(MESH_EDIT_MENU)
       MENU_ITEM(ICON_UBLActive, MSG_EDIT_MESH, onDrawSubMenu, Draw_EditMesh_Menu);

@@ -75,7 +75,7 @@ typedef struct {
 
 } fileprop_t;
 
-fileprop_t fileprop;
+extern fileprop_t fileprop;
 
 void getValue(const char * const buf, PGM_P const key, float &value) {
   if (value != 0.0f) return;

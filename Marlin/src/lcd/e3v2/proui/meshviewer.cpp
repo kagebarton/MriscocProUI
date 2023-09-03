@@ -74,7 +74,7 @@ void MeshViewerClass::DrawMeshPoint(const uint8_t x, const uint8_t y, const floa
     ui.refresh_backlight_timeout();
   #endif
   const uint8_t fs = DWINUI::fontWidth(meshfont);
-  int16_t v = round(z * 100);
+  const int16_t v = round(z * 100);
   NOLESS(max, z); NOMORE(min, z);
   const uint16_t color = DWINUI::RainbowInt(v, zmin, zmax);
   DWINUI::Draw_FillCircle(color, px(x), py(y), r(_MAX(_MIN(v, zmax), zmin)));
@@ -100,7 +100,7 @@ void MeshViewerClass::DrawMeshPoint(const uint8_t x, const uint8_t y, const floa
   SERIAL_FLUSH();
 }
 
-void MeshViewerClass::DrawMesh(bed_mesh_t zval, const uint8_t csizex, const uint8_t csizey) {
+void MeshViewerClass::DrawMesh(const bed_mesh_t zval, const uint8_t csizex, const uint8_t csizey) {
   DrawMeshGrid(csizex, csizey);
   for (uint8_t y = 0; y < csizey; ++y) {
     hal.watchdog_refresh();
@@ -108,22 +108,22 @@ void MeshViewerClass::DrawMesh(bed_mesh_t zval, const uint8_t csizex, const uint
   }
 }
 
-void MeshViewerClass::Draw(bool withsave/*=false*/, bool redraw/*=true*/) {
+void MeshViewerClass::Draw(const bool withsave/*=false*/, const bool redraw/*=true*/) {
   Title.ShowCaption(GET_TEXT_F(MSG_MESH_VIEWER));
-  #if ENABLED(USE_GRID_MESHVIEWER)
-    if(bedLevelTools.view_mesh) {
+  
+  const bool see_mesh = TERN0(USE_GRID_MESHVIEWER, bedLevelTools.view_mesh);
+  if (see_mesh) {
+    #if USE_GRID_MESHVIEWER
       DWINUI::ClearMainArea();
       bedLevelTools.viewer_print_value = true;
       bedLevelTools.Draw_Bed_Mesh(-1, 1, 8, 10 + TITLE_HEIGHT);
-    }
-    else {
-      if (redraw) DrawMesh(bedlevel.z_values, GRID_MAX_POINTS_X, GRID_MAX_POINTS_Y);
-      else DWINUI::Draw_Box(1, HMI_data.Background_Color, {89,305,99,38});
-    }
-  #else
+    #endif
+  }
+  else {
     if (redraw) DrawMesh(bedlevel.z_values, GRID_MAX_POINTS_X, GRID_MAX_POINTS_Y);
     else DWINUI::Draw_Box(1, HMI_data.Background_Color, {89,305,99,38});
-  #endif
+  }
+
   if (withsave) {
     DWIN_Draw_Box(1, HMI_data.Background_Color, 120, 300, 31, 42); // draw black box to fill previous button select_box
     DWINUI::Draw_Button(BTN_Continue, 146, 305);
@@ -133,24 +133,15 @@ void MeshViewerClass::Draw(bool withsave/*=false*/, bool redraw/*=true*/) {
   else {
     DWINUI::Draw_Button(BTN_Continue, 86, 305, true);
   }
-  #if ENABLED(USE_GRID_MESHVIEWER)
-    if(bedLevelTools.view_mesh) {
-      bedLevelTools.Set_Mesh_Viewer_Status();
+
+  if (see_mesh) {
+    TERN_(USE_GRID_MESHVIEWER, bedLevelTools.Set_Mesh_Viewer_Status();)
     }
-    else {
-    char str_1[6], str_2[6] = "";
-    ui.status_printf(0, F("minZ: %s | maxZ: +%s"),
-      dtostrf(min, 1, 3, str_1),
-      dtostrf(max, 1, 3, str_2)
+  else {
+    ui.set_status_and_level(MString<32>(
+      F("Zmin: "), p_float_t(min, 3), F(" | "), p_float_t(max, 3), F("+"), F(" :Zmax"))
     );
-   }
-  #else
-    char str_1[6], str_2[6] = "";
-    ui.status_printf(0, F("minZ: %s | maxZ: +%s"),
-      dtostrf(min, 1, 3, str_1),
-      dtostrf(max, 1, 3, str_2)
-    );
-  #endif
+  }
 }
 
 void Draw_MeshViewer() { MeshViewer.Draw(true, meshredraw); }
