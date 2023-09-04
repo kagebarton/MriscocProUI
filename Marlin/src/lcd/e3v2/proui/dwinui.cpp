@@ -28,8 +28,8 @@
 #include "dwin.h"
 
 xy_int_t DWINUI::cursor = { 0 };
-uint16_t DWINUI::textcolor = HMI_data.Text_Color; // Text color
-uint16_t DWINUI::backcolor = HMI_data.Background_Color; // Background color
+uint16_t DWINUI::textcolor = Def_Text_Color; // Text color
+uint16_t DWINUI::backcolor = Def_Background_Color; // Background color
 uint16_t DWINUI::buttoncolor = HMI_data.TitleBg_Color; // Title color
 uint8_t  DWINUI::fontid = font8x16; // Font size 8x16
 FSTR_P const DWINUI::Author = F(STRING_CONFIG_H_AUTHOR);
@@ -38,8 +38,8 @@ void (*DWINUI::onTitleDraw)(TitleClass* title) = nullptr;
 
 void DWINUI::init() {
   cursor.reset();
-  textcolor = HMI_data.Text_Color;
-  backcolor = HMI_data.Background_Color;
+  textcolor = Def_Text_Color;
+  backcolor = Def_Background_Color;
   buttoncolor = HMI_data.TitleBg_Color;
   fontid = font8x16;
 }
@@ -102,6 +102,9 @@ void DWINUI::SetTextColor(uint16_t fgcolor) {
 }
 void DWINUI::SetBackgroundColor(uint16_t bgcolor) {
   backcolor = bgcolor;
+}
+void DWINUI::SetButtonColor(uint16_t alcolor) {
+  buttoncolor = alcolor;
 }
 
 // Moves cursor to point

@@ -281,6 +281,7 @@ namespace DWINUI {
   void SetColors(uint16_t fgcolor, uint16_t bgcolor, uint16_t alcolor);
   void SetTextColor(uint16_t fgcolor);
   void SetBackgroundColor(uint16_t bgcolor);
+  void SetButtonColor(uint16_t alcolor);
 
   // Moves cursor to point
   //  x: abscissa of the display

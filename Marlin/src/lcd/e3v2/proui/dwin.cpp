@@ -948,9 +948,10 @@ void onClickSDItem() {
 
     if (card.fileIsBinary())
       return DWIN_Popup_Confirm(ICON_Error, F("Please check filenames"), F("Only G-code can be printed"));
-    else
+    else {
       DWIN_Print_Header(card.longest_filename()); // Save filename
       return Goto_ConfirmToPrint();
+    }
   }
 }
 
@@ -2011,8 +2012,9 @@ void DWIN_SetDataDefaults() {
     #endif
   #endif
   TERN_(ADAPTIVE_STEP_SMOOTHING, HMI_data.AdaptiveStepSmoothing = true;)
-  TERN_(HAS_GCODE_PREVIEW, HMI_data.EnablePreview = true;)
-  TERN_(HAS_GCODE_PREVIEW_NOPRO, HMI_data.EnablePreview = true;)
+  #if HAS_GCODE_PREVIEW || HAS_GCODE_PREVIEW_NOPRO
+    HMI_data.EnablePreview = true;
+  #endif
   #if PROUI_EX
     PRO_data.x_bed_size = DEF_X_BED_SIZE;
     PRO_data.y_bed_size = DEF_Y_BED_SIZE;
@@ -3792,7 +3794,7 @@ void DWIN_ApplyColor(const int8_t element, const bool ldef /* = false*/) {
   switch (element) {
     case  2: HMI_data.Background_Color = ldef ? Def_Background_Color : color; DWINUI::SetBackgroundColor(HMI_data.Background_Color); break;
     case  3: HMI_data.Cursor_Color     = ldef ? Def_Cursor_Color     : color; break;
-    case  4: HMI_data.TitleBg_Color    = ldef ? Def_TitleBg_Color    : color; break;
+    case  4: HMI_data.TitleBg_Color    = ldef ? Def_TitleBg_Color    : color; DWINUI::SetButtonColor(HMI_data.TitleBg_Color); break;
     case  5: HMI_data.TitleTxt_Color   = ldef ? Def_TitleTxt_Color   : color; break;
     case  6: HMI_data.Text_Color       = ldef ? Def_Text_Color       : color; DWINUI::SetTextColor(HMI_data.Text_Color); break;
     case  7: HMI_data.Selected_Color   = ldef ? Def_Selected_Color   : color; break;

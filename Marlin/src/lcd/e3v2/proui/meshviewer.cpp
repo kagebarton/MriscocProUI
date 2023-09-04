@@ -30,7 +30,7 @@
 #include "../../../feature/bedlevel/bedlevel.h"
 #include "meshviewer.h"
 
-#if ENABLED(USE_GRID_MESHVIEWER)
+#if USE_GRID_MESHVIEWER
   #include "bedlevel_tools.h"
 #endif
 

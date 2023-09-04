@@ -140,6 +140,7 @@
 #define ICON_Mesh              203
 #define ICON_Tilt              204
 #define ICON_Brightness        205
+#define ICON_Probe             206
 
 #define ICON_Folder       ICON_More
 #define ICON_AdvSet       ICON_Language
