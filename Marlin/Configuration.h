@@ -3419,7 +3419,7 @@
   #else
     #define HAS_GCODE_PREVIEW_NOPRO 1
   #endif
-  #define DISABLE_TUNING_GRAPH 0// Graph Temp as grid plot - PID/MPC Tuning (1624 bytes of flash)
+  #define DISABLE_TUNING_GRAPH 0// Temp plot graph - PID/MPC Tuning (1624 bytes of flash)
   #define HAS_ESDIAG 1          // View End-stop switch continuity (560 bytes of flash)
   #define HAS_CGCODE 1          // Extra Gcode options (3320 bytes of flash)
   //#define HAS_LOCKSCREEN 1    // Simple lockscreen as to not accidentally change something (568 bytes of flash)
