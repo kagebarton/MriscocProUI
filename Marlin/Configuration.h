@@ -3437,7 +3437,7 @@
     #define HS_MENU_ITEM        // BLTOUCH_HS_MODE menu option (56 bytes of flash)
   #endif
   #if DISABLED(DISABLE_TUNING_GRAPH)
-    #define PLOT_TUNE_ITEM      // Temperature Plot Graph item in Tune Menu (688 bytes of flash)
+    #define PLOT_TUNE_ITEM      // Temperature Plot Graph item in Tune/Prepare Menu (688 bytes of flash)
   #endif
   //#define PLR_TUNE_ITEM       // Power-loss Recovery option in Tune Menu (POWER_LOSS_RECOVERY 3400 bytes of flash)
   //#define JD_TUNE_ITEM        // Juntion Deviation item in Tune Menu (only if JD is enabled)
