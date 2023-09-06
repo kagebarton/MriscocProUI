@@ -437,7 +437,7 @@ class Planner {
     #endif
 
     #if HAS_EXTRUDERS
-      static uint16_t flow_percentage[EXTRUDERS];   // Extrusion factor for each extruder
+      static int16_t flow_percentage[EXTRUDERS];   // Extrusion factor for each extruder
       static float e_factor[EXTRUDERS];             // The flow percentage and volumetric multiplier combine to scale E movement
     #endif
 

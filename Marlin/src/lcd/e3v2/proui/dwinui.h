@@ -385,23 +385,23 @@ namespace DWINUI {
   }
 
   // Draw a signed integer
-  inline void Draw_Signed_Int(uint8_t bShow, fontid_t fid, uint16_t color, uint16_t bColor, uint8_t iNum, uint16_t x, uint16_t y, long value) {
+  inline void Draw_Signed_Int(uint8_t bShow, fontid_t fid, uint16_t color, uint16_t bColor, uint8_t iNum, uint16_t x, uint16_t y, signed long value) {
     Draw_Int(bShow, 1, fid, color, bColor, iNum, x, y, value);
   }
-  inline void Draw_Signed_Int(uint8_t iNum, long value) {
+  inline void Draw_Signed_Int(uint8_t iNum, signed long value) {
     Draw_Int(false, 1, fontid, textcolor, backcolor, iNum, cursor.x, cursor.y, value);
     MoveBy(iNum * fontWidth(fontid), 0);
   }
-  inline void Draw_Signed_Int(uint8_t iNum, uint16_t x, uint16_t y, long value) {
+  inline void Draw_Signed_Int(uint8_t iNum, uint16_t x, uint16_t y, signed long value) {
     Draw_Int(false, 1, fontid, textcolor, backcolor, iNum, x, y, value);
   }
-  inline void Draw_Signed_Int(uint16_t color, uint8_t iNum, uint16_t x, uint16_t y, long value) {
+  inline void Draw_Signed_Int(uint16_t color, uint8_t iNum, uint16_t x, uint16_t y, signed long value) {
     Draw_Int(false, 1, fontid, color, backcolor, iNum, x, y, value);
   }
-  inline void Draw_Signed_Int(uint16_t color, uint16_t bColor, uint8_t iNum, uint16_t x, uint16_t y, long value) {
+  inline void Draw_Signed_Int(uint16_t color, uint16_t bColor, uint8_t iNum, uint16_t x, uint16_t y, signed long value) {
     Draw_Int(true, 1, fontid, color, bColor, iNum, x, y, value);
   }
-  inline void Draw_Signed_Int(fontid_t fid, uint16_t color, uint16_t bColor, uint8_t iNum, uint16_t x, uint16_t y, long value) {
+  inline void Draw_Signed_Int(fontid_t fid, uint16_t color, uint16_t bColor, uint8_t iNum, uint16_t x, uint16_t y, signed long value) {
     Draw_Int(true, 1, fid, color, bColor, iNum, x, y, value);
   }
 

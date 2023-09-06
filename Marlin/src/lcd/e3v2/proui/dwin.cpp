@@ -848,7 +848,7 @@ void update_variable() {
     static int16_t _flow = planner.flow_percentage[active_extruder];
     if (_flow != planner.flow_percentage[active_extruder]) {
       _flow = planner.flow_percentage[active_extruder];
-      DWINUI::Draw_Int(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 3, 116 + 2 * STAT_CHR_W, 417, _flow);
+      DWINUI::Draw_Signed_Int(DWIN_FONT_STAT, HMI_data.Indicator_Color, HMI_data.Background_Color, 3, 116 + 2 * STAT_CHR_W, 417, _flow);
     }
   #endif
 
