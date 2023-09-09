@@ -27,21 +27,12 @@
 #include "../common/dwin_color.h"
 #include "dwin_lcd.h"
 
-#undef ICON_Folder
-#undef ICON_AdvSet
-#undef ICON_HomeOffset
-#undef ICON_HomeOffsetX
-#undef ICON_HomeOffsetY
-#undef ICON_HomeOffsetZ
-#undef ICON_PIDNozzle
-#undef ICON_PIDbed
-
 #define ICON_AdvSet            ICON_Language
 #define ICON_BedSizeX          ICON_PrintSize
 #define ICON_BedSizeY          ICON_PrintSize
 #define ICON_BedTramming       ICON_SetHome
 #define ICON_Binary            ICON_Contact
-#define ICON_BltouchReset      ICON_StockConfiguration
+#define ICON_BltouchReset      ICON_ResumeEEPROM
 #define ICON_Cancel            ICON_StockConfiguration
 #define ICON_CustomPreheat     ICON_SetBedTemp
 #define ICON_Error             ICON_TempTooHigh
@@ -63,7 +54,7 @@
 #define ICON_HomeX             ICON_MoveX
 #define ICON_HomeY             ICON_MoveY
 #define ICON_HomeZ             ICON_MoveZ
-#define ICON_HomeOffset        ICON_AdvSet
+#define ICON_HomeOffset        ICON_Language
 #define ICON_HomeOffsetX       ICON_StepX
 #define ICON_HomeOffsetY       ICON_StepY
 #define ICON_HomeOffsetZ       ICON_StepZ
@@ -72,7 +63,7 @@
 #define ICON_InputShaping      ICON_MaxAccelerated
 #define ICON_InvertE0          ICON_StepE
 #define ICON_JDmm              ICON_MaxJerk
-#define ICON_Tram              ICON_SetEndTemp
+#define ICON_Tram              ICON_Step
 #define ICON_Level             ICON_Mesh
 #define ICON_Lock              ICON_Cool
 #define ICON_ManualMesh        ICON_Mesh
@@ -89,8 +80,8 @@
 #define ICON_MeshSave          ICON_WriteEEPROM
 #define ICON_MeshViewer        ICON_HotendTemp
 #define ICON_MoveZ0            ICON_SetEndTemp
-#define ICON_Park              ICON_Motion
-#define ICON_ParkPos           ICON_AdvSet
+#define ICON_Park              ICON_SetHome
+#define ICON_ParkPos           ICON_AxisC
 #define ICON_ParkPosX          ICON_StepX
 #define ICON_ParkPosY          ICON_StepY
 #define ICON_ParkPosZ          ICON_StepZ
@@ -111,9 +102,13 @@
 #define ICON_Preheat9          ICON_CustomPreheat
 #define ICON_Preheat10         ICON_CustomPreheat
 #define ICON_PrintStatsReset   ICON_RemainTime
-#define ICON_ProbeDeploy       ICON_SetEndTemp
+#define ICON_ProbeDeploy       ICON_Probe
 #define ICON_ProbeMargin       ICON_PrintSize
 #define ICON_ProbeMultiple     ICON_SetHome
+#define ICON_ProbeOffset       ICON_AxisC
+#define ICON_ProbeOffsetX      ICON_StepX
+#define ICON_ProbeOffsetY      ICON_StepY
+#define ICON_ProbeOffsetZ      ICON_StepZ
 #define ICON_ProbeSet          ICON_SetEndTemp
 #define ICON_ProbeStow         ICON_SetEndTemp
 #define ICON_ProbeTest         ICON_SetEndTemp

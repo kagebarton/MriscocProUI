@@ -147,16 +147,3 @@
 #define ICON_AxisBL            252
 #define ICON_AxisTL            253
 #define ICON_AxisC             254
-
-#define ICON_Folder       ICON_More
-#define ICON_AdvSet       ICON_Language
-#define ICON_HomeOffset   ICON_AdvSet
-#define ICON_HomeOffsetX  ICON_StepX
-#define ICON_HomeOffsetY  ICON_StepY
-#define ICON_HomeOffsetZ  ICON_StepZ
-#define ICON_ProbeOffset  ICON_AdvSet
-#define ICON_ProbeOffsetX ICON_StepX
-#define ICON_ProbeOffsetY ICON_StepY
-#define ICON_ProbeOffsetZ ICON_StepZ
-#define ICON_PIDNozzle    ICON_SetEndTemp
-#define ICON_PIDbed       ICON_SetBedTemp

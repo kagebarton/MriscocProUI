@@ -212,7 +212,7 @@ select_t select_page{0}, select_print{0};
 bool hash_changed = true; // Flag to know if message status was changed
 bool blink = false;
 uint8_t checkkey = 255, last_checkkey = MainMenu;
-//bool htemp = false;
+bool force_scroll = false;
 
 char DateTime[16+1] =
 {
@@ -487,12 +487,14 @@ void DWIN_DrawStatusMessage() {
 
     // If the string fits the status line do not scroll it
     if (slen <= LCD_WIDTH) {
+      if (force_scroll) goto EXIT_SCROLL;
       if (hash_changed) {
         DWIN_DrawStatusLine(ui.status_message);
         hash_changed = false;
       }
     }
     else {
+      EXIT_SCROLL:
       // String is larger than the available line space
 
       // Get a pointer to the next valid UTF8 character
@@ -2141,7 +2143,7 @@ void MarlinUI::kill_screen(FSTR_P const lcd_error, FSTR_P const) {
 }
 
 void DWIN_RebootScreen() {
-  DWIN_Frame_Clear(Color_Bg_Black);
+  DWIN_Frame_Clear(Color_Black);
   DWIN_JPG_ShowAndCache(0);
   DWINUI::Draw_CenteredString(Color_White, 220, GET_TEXT_F(MSG_PLEASE_WAIT_REBOOT));
   DWIN_UpdateLCD();
@@ -2171,8 +2173,8 @@ void DWIN_RedrawScreen() {
     switch (message) {
       case PAUSE_MESSAGE_PARKING:  DWIN_Popup_Pause(GET_TEXT_F(MSG_PAUSE_PRINT_PARKING));    break;                // M125
       case PAUSE_MESSAGE_CHANGING: DWIN_Popup_Pause(GET_TEXT_F(MSG_FILAMENT_CHANGE_INIT));   break;                // pause_print (M125, M600)
-      case PAUSE_MESSAGE_UNLOAD:   DWIN_Popup_Pause(GET_TEXT_F(MSG_FILAMENT_CHANGE_UNLOAD)); break;                // Unload of pause and Unload of M702
       case PAUSE_MESSAGE_WAITING:  DWIN_Popup_Pause(GET_TEXT_F(MSG_ADVANCED_PAUSE_WAITING), BTN_Continue); break;
+      case PAUSE_MESSAGE_UNLOAD:   DWIN_Popup_Pause(GET_TEXT_F(MSG_FILAMENT_CHANGE_UNLOAD)); break;                // Unload of pause and Unload of M702
       case PAUSE_MESSAGE_INSERT:   DWIN_Popup_Pause(GET_TEXT_F(MSG_FILAMENT_CHANGE_INSERT), BTN_Continue); break;
       case PAUSE_MESSAGE_LOAD:     DWIN_Popup_Pause(GET_TEXT_F(MSG_FILAMENT_CHANGE_LOAD));   break;
       case PAUSE_MESSAGE_PURGE:    DWIN_Popup_Pause(GET_TEXT_F(TERN(ADVANCED_PAUSE_CONTINUOUS_PURGE, MSG_FILAMENT_CHANGE_CONT_PURGE, MSG_FILAMENT_CHANGE_PURGE))); break;
@@ -3102,7 +3104,7 @@ void Draw_Prepare_Menu() {
   checkkey = Menu;
   if (SET_MENU(PrepareMenu, MSG_PREPARE, 10 + PREHEAT_COUNT)) {
     BACK_ITEM(Goto_Main_Menu);
-    MENU_ITEM(ICON_Axis, MSG_MOVE_AXIS, onDrawSubMenu, Draw_Move_Menu);
+    MENU_ITEM(blink ? ICON_Axis : ICON_AxisD, MSG_MOVE_AXIS, onDrawSubMenu, Draw_Move_Menu);
     #if ENABLED(INDIVIDUAL_AXIS_HOMING_SUBMENU)
       MENU_ITEM(ICON_Homing, MSG_HOMING, onDrawSubMenu, Draw_Homing_Menu);
     #else
@@ -3134,18 +3136,18 @@ void Draw_Tramming_Menu() {
     BACK_ITEM(Draw_Prepare_Menu);
     #if ENABLED(TRAMWIZ_MENU_ITEM)
       #if HAS_BED_PROBE
-        MENU_ITEM(ICON_ProbeSet, MSG_TRAMMING_WIZARD, onDrawMenuItem, TramwizStart);
+        MENU_ITEM(ICON_Tram, MSG_TRAMMING_WIZARD, onDrawMenuItem, TramwizStart);
         EDIT_ITEM(ICON_Version, MSG_BED_TRAMMING_MANUAL, onDrawChkbMenu, SetManualTramming, &HMI_data.FullManualTramming);
         EDIT_ITEM_F(ICON_ResumeEEPROM, "Calculate Average", onDrawChkbMenu, SetCalcAvg, &HMI_data.CalcAvg);
       #else
         MENU_ITEM_F(ICON_MoveZ0, "Home Z and disable", onDrawMenuItem, HomeZandDisable);
       #endif
     #endif
-    MENU_ITEM(ICON_Axis, MSG_TRAM_FL, onDrawMenuItem, []{ (void)tram(0); });
-    MENU_ITEM(ICON_Axis, MSG_TRAM_FR, onDrawMenuItem, []{ (void)tram(1); });
-    MENU_ITEM(ICON_Axis, MSG_TRAM_BR, onDrawMenuItem, []{ (void)tram(2); });
-    MENU_ITEM(ICON_Axis, MSG_TRAM_BL, onDrawMenuItem, []{ (void)tram(3); });
-    MENU_ITEM(ICON_SetHome, MSG_TRAM_C, onDrawMenuItem, []{ (void)tram(4); });
+    MENU_ITEM(ICON_AxisBL, MSG_TRAM_FL, onDrawMenuItem, []{ (void)tram(0); });
+    MENU_ITEM(ICON_AxisBR, MSG_TRAM_FR, onDrawMenuItem, []{ (void)tram(1); });
+    MENU_ITEM(ICON_AxisTR, MSG_TRAM_BR, onDrawMenuItem, []{ (void)tram(2); });
+    MENU_ITEM(ICON_AxisTL, MSG_TRAM_BL, onDrawMenuItem, []{ (void)tram(3); });
+    MENU_ITEM(ICON_AxisC, MSG_TRAM_C, onDrawMenuItem, []{ (void)tram(4); });
     MENU_ITEM(ICON_HomeZ, MSG_AUTO_HOME_Z, onDrawMenuItem, HomeZ);
   }
   UpdateMenu(TrammingMenu);
@@ -3226,7 +3228,7 @@ void Draw_Move_Menu() {
       gcode.process_subcommands_now(F("G92E0"));  // reset extruder position
       EDIT_ITEM(ICON_Extruder, MSG_MOVE_E, onDrawPFloatMenu, SetMoveE, &current_position.e);
     #endif
-    EDIT_ITEM(ICON_Axis, MSG_LIVE_MOVE, onDrawChkbMenu, SetLiveMove, &EnableLiveMove);
+    EDIT_ITEM(blink ? ICON_AxisC : ICON_SetHome, MSG_LIVE_MOVE, onDrawChkbMenu, SetLiveMove, &EnableLiveMove);
   }
   UpdateMenu(MoveMenu);
   if (!all_axes_trusted()) { LCD_MESSAGE_F("..WARNING: Current position is unknown, Home axes."); }
@@ -3276,7 +3278,7 @@ void Draw_Move_Menu() {
         EDIT_ITEM(ICON_Homing, MSG_ZPROBE_MULTIPLE, onDrawPInt8Menu, SetProbeMultiple, &PRO_data.multiple_probing);
       #endif
       #if ENABLED(BLTOUCH)
-        MENU_ITEM(ICON_ProbeStow, MSG_MANUAL_STOW, onDrawMenuItem, ProbeStow);
+        MENU_ITEM(ICON_Tilt, MSG_MANUAL_STOW, onDrawMenuItem, ProbeStow);
         MENU_ITEM(ICON_ProbeDeploy, MSG_MANUAL_DEPLOY, onDrawMenuItem, ProbeDeploy);
         MENU_ITEM(ICON_BltouchReset, MSG_MANUAL_RESET, onDrawMenuItem, bltouch._reset);
         MENU_ITEM(ICON_ProbeTest, MSG_M48_TEST, onDrawMenuItem, ProbeTest);
@@ -3285,6 +3287,7 @@ void Draw_Move_Menu() {
         #endif
       #endif
     }
+    force_scroll = true;
     UpdateMenu(ProbeSetMenu);
     LCD_MESSAGE_F("HS Mode is High Speed for Probe.");
   }
@@ -4015,13 +4018,13 @@ void Draw_GetColor_Menu() {
     if (SET_MENU(ZOffsetWizMenu, MSG_PROBE_WIZARD, 6)) {
       BACK_ITEM(Draw_Prepare_Menu);
       MENU_ITEM(ICON_Homing, MSG_AUTO_HOME, onDrawMenuItem, AutoHome);
-      MENU_ITEM(ICON_SetHome, MSG_MOVE_NOZZLE_TO_BED, onDrawMenuItem, SetMoveZto0);
+      MENU_ITEM(ICON_AxisD, MSG_MOVE_NOZZLE_TO_BED, onDrawMenuItem, SetMoveZto0);
       EDIT_ITEM(ICON_Fade, MSG_XATC_UPDATE_Z_OFFSET, onDrawPFloat2Menu, SetZOffset, &BABY_Z_VAR);
-      MENU_ITEM_F(0,"For Best Results:\n", onDrawMenuItem);
-      MENU_ITEM_F(ICON_More, "Have Nozzle Touch Bed", onDrawMenuItem);
+      MENU_ITEM_F(ICON_Probe,"For Best Results:\n", onDrawMenuItem);
+      MENU_ITEM_F(ICON_Cancel, "Have Nozzle Touch Bed", onDrawMenuItem);
     }
     UpdateMenu(ZOffsetWizMenu);
-    if (!axis_is_trusted(Z_AXIS)) { LCD_MESSAGE_F("..WARNING: unknown Z position, Home Z axis."); }
+    if (!axis_is_trusted(Z_AXIS)) { LCD_MESSAGE_F("..CAUTION: unknown Z position, Home Z axis."); }
     else { LCD_MESSAGE_F("..Center Nozzle - As Nozzle touches bed, save Z-Offset."); }
   }
 
@@ -4508,7 +4511,7 @@ void Draw_AdvancedSettings_Menu() {
 }
 #endif
 
-void Draw_Advanced_Menu() { // From Control Menu || Default-NP Advaned Settings Menu
+void Draw_Advanced_Menu() { // From Control_Menu (Control) || Default-NP AdvancedSettings_Menu (Level)
   checkkey = Menu;
   if (SET_MENU(AdvancedMenu, MSG_ADVANCED_SETTINGS, 18)) {
     BACK_ITEM(Draw_Control_Menu);
