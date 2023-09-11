@@ -9,7 +9,6 @@ on:
   pull_request:
     branches:
     - 2023-August
-    - HC32-August-B
     paths-ignore:
     - config/**
     - data/**
@@ -18,7 +17,6 @@ on:
   push:
     branches:
     - 2023-August
-    - HC32-August-B
     paths-ignore:
     - config/**
     - data/**
@@ -172,8 +170,8 @@ jobs:
     - name: Install PlatformIO
       run: |
         pip install -U pip
-        pip install -U platformio
         pip install -U wheel
+        pip install -U platformio
         pio upgrade --dev
         pio pkg update --global
 
