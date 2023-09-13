@@ -339,6 +339,8 @@ _iconNames = {
     89 : 'ICON_Confirm_E',
     90 : 'ICON_Info_0',
     91 : 'ICON_Info_1',
+    93 : 'ICON_Printer_0',
+    # 94 : 'ICON_Printer_1',
    200 : 'ICON_Checkbox_F',
    201 : 'ICON_Checkbox_T',
    202 : 'ICON_Fade',
