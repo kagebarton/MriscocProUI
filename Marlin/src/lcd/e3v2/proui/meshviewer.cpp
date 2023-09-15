@@ -115,7 +115,6 @@ void MeshViewerClass::Draw(const bool withsave/*=false*/, const bool redraw/*=tr
   if (see_mesh) {
     #if USE_GRID_MESHVIEWER
       DWINUI::ClearMainArea();
-      bedLevelTools.viewer_print_value = true;
       bedLevelTools.Draw_Bed_Mesh(-1, 1, 8, 10 + TITLE_HEIGHT);
     #endif
   }

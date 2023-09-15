@@ -45,7 +45,6 @@ BedLevelToolsClass bedLevelTools;
 
 #if ENABLED(USE_GRID_MESHVIEWER)
   bool BedLevelToolsClass::view_mesh = false;
-  bool BedLevelToolsClass::viewer_print_value = true;
 #endif
 bool BedLevelToolsClass::goto_mesh_value = false;
 uint8_t BedLevelToolsClass::mesh_x = 0;
@@ -234,25 +233,23 @@ bool BedLevelToolsClass::meshValidate() {
 
       // Draw value text on
       const uint8_t fs = DWINUI::fontWidth(meshfont);
-      if (viewer_print_value) {
-        int8_t offset_x, offset_y = cell_height_px / 2 - fs;
-        if (isnan(bedlevel.z_values[x][y])) {  // undefined
-          DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, start_x_px + cell_width_px / 2 - 5, start_y_px + offset_y, F("X"));
-        }
-        else {                          // has value
-          MString<12> msg;
-          if ((GRID_MAX_POINTS_X) < TERN(TJC_DISPLAY, 8, 10))
-            msg.set(p_float_t(abs(bedlevel.z_values[x][y]), 2));
-          else
-            msg.setf(F("%02i"), uint16_t(abs(bedlevel.z_values[x][y] - int16_t(bedlevel.z_values[x][y])) * 100));
-          offset_x = cell_width_px / 2 - (fs / 2) * msg.length() - 2;
-          if ((GRID_MAX_POINTS_X) >= TERN(TJC_DISPLAY, 8, 10))
-            DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, start_x_px - 2 + offset_x, start_y_px + offset_y, F("."));
-          DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, start_x_px + 1 + offset_x, start_y_px + offset_y, msg);
-        }
-        safe_delay(10);
-        LCD_SERIAL.flushTX();
+      int8_t offset_x, offset_y = cell_height_px / 2 - fs;
+      if (isnan(bedlevel.z_values[x][y])) {  // undefined
+        DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, start_x_px + cell_width_px / 2 - 5, start_y_px + offset_y, F("X"));
       }
+      else {                          // has value
+        MString<12> msg;
+        if ((GRID_MAX_POINTS_X) < TERN(TJC_DISPLAY, 8, 10))
+          msg.set(p_float_t(abs(bedlevel.z_values[x][y]), 2));
+        else
+          msg.setf(F("%02i"), uint16_t(abs(bedlevel.z_values[x][y] - int16_t(bedlevel.z_values[x][y])) * 100));
+        offset_x = cell_width_px / 2 - (fs / 2) * msg.length() - 2;
+        if ((GRID_MAX_POINTS_X) >= TERN(TJC_DISPLAY, 8, 10))
+          DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, start_x_px - 2 + offset_x, start_y_px + offset_y, F("."));
+        DWIN_Draw_String(false, meshfont, DWINUI::textcolor, DWINUI::backcolor, start_x_px + 1 + offset_x, start_y_px + offset_y, msg);
+      }
+      safe_delay(10);
+      LCD_SERIAL.flushTX();
     }
   }
 

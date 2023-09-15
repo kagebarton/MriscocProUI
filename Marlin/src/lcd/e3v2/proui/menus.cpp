@@ -72,7 +72,7 @@ void Draw_Menu_Line(const uint8_t line, const uint8_t icon/*=0*/, const char * c
   DWIN_Draw_HLine(HMI_data.SplitLine_Color, 16, MYPOS(line + 1), 240);
 }
 
-void Draw_Menu_Line(const uint8_t line, const uint8_t icon /*=0*/, FSTR_P label /*=nullptr*/, bool more/*=false*/, bool selected/*=false*/) {
+void Draw_Menu_Line(const uint8_t line, const uint8_t icon/*=0*/, FSTR_P label/*=nullptr*/, bool more/*=false*/, bool selected/*=false*/) {
   Draw_Menu_Line(line, icon, FTOP(label), more, selected);
 }
 
@@ -176,7 +176,7 @@ void DrawItemEdit(const bool selected) {
 //  val: value / scaled value
 //  LiveUpdate: live update function when the encoder changes
 //  Apply: update function when the encoder is pressed
-void SetOnClick(uint8_t process, const int32_t lo, const int32_t hi, uint8_t dp, const int32_t val, void (*Apply)() /*= nullptr*/, void (*LiveUpdate)() /*= nullptr*/) {
+void SetOnClick(uint8_t process, const int32_t lo, const int32_t hi, uint8_t dp, const int32_t val, void (*Apply)()/*=nullptr*/, void (*LiveUpdate)()/*=nullptr*/) {
   checkkey = process;
   MenuData.MinValue = lo;
   MenuData.MaxValue = hi;
@@ -194,7 +194,7 @@ void SetOnClick(uint8_t process, const int32_t lo, const int32_t hi, uint8_t dp,
 //  val: value
 //  LiveUpdate: live update function when the encoder changes
 //  Apply: update function when the encoder is pressed
-void SetValueOnClick(uint8_t process, const int32_t lo, const int32_t hi, const int32_t val, void (*Apply)() /*= nullptr*/, void (*LiveUpdate)() /*= nullptr*/) {
+void SetValueOnClick(uint8_t process, const int32_t lo, const int32_t hi, const int32_t val, void (*Apply)()/*=nullptr*/, void (*LiveUpdate)()/*=nullptr*/) {
   SetOnClick(process, lo, hi, 0, val, Apply, LiveUpdate);
   DrawItemEdit(true);
 }
@@ -206,7 +206,7 @@ void SetValueOnClick(uint8_t process, const int32_t lo, const int32_t hi, const 
 //  val: value
 //  LiveUpdate: live update function when the encoder changes
 //  Apply: update function when the encoder is pressed
-void SetValueOnClick(uint8_t process, const float lo, const float hi, uint8_t dp, const float val, void (*Apply)() /*= nullptr*/, void (*LiveUpdate)() /*= nullptr*/) {
+void SetValueOnClick(uint8_t process, const float lo, const float hi, uint8_t dp, const float val, void (*Apply)()/*=nullptr*/, void (*LiveUpdate)()/*=nullptr*/) {
   const int32_t value =  round(val * POW(10, dp));
   SetOnClick(process, lo * POW(10, dp), hi * POW(10, dp), dp, value, Apply, LiveUpdate);
   DrawItemEdit(true);
@@ -218,7 +218,7 @@ void SetValueOnClick(uint8_t process, const float lo, const float hi, uint8_t dp
 //  val: value
 //  LiveUpdate: live update function when the encoder changes
 //  Apply: update function when the encoder is pressed
-void SetIntOnClick(const int32_t lo, const int32_t hi, const int32_t val, void (*Apply)() /*= nullptr*/, void (*LiveUpdate)() /*= nullptr*/) {
+void SetIntOnClick(const int32_t lo, const int32_t hi, const int32_t val, void (*Apply)()/*=nullptr*/, void (*LiveUpdate)()/*=nullptr*/) {
   SetValueOnClick(SetInt, lo, hi, val, Apply, LiveUpdate);
 }
 
@@ -227,7 +227,7 @@ void SetIntOnClick(const int32_t lo, const int32_t hi, const int32_t val, void (
 //  hi: high limit
 //  LiveUpdate: live update function when the encoder changes
 //  Apply: update function when the encoder is pressed
-void SetPIntOnClick(const int32_t lo, const int32_t hi, void (*Apply)() /*= nullptr*/, void (*LiveUpdate)() /*= nullptr*/) {
+void SetPIntOnClick(const int32_t lo, const int32_t hi, void (*Apply)()/*=nullptr*/, void (*LiveUpdate)()/*=nullptr*/) {
   MenuData.P_Int = (int16_t*)static_cast<MenuItemPtrClass*>(CurrentMenu->SelectedItem())->value;
   const int32_t value = *MenuData.P_Int;
   SetValueOnClick(SetPInt, lo, hi, value, Apply, LiveUpdate);
@@ -239,7 +239,7 @@ void SetPIntOnClick(const int32_t lo, const int32_t hi, void (*Apply)() /*= null
 //  hi: high limit
 //  dp: decimal places
 //  val: value
-void SetFloatOnClick(const float lo, const float hi, uint8_t dp, const float val, void (*Apply)() /*= nullptr*/, void (*LiveUpdate)() /*= nullptr*/) {
+void SetFloatOnClick(const float lo, const float hi, uint8_t dp, const float val, void (*Apply)()/*=nullptr*/, void (*LiveUpdate)()/*=nullptr*/) {
   SetValueOnClick(SetFloat, lo, hi, dp, val, Apply, LiveUpdate);
 }
 
@@ -248,7 +248,7 @@ void SetFloatOnClick(const float lo, const float hi, uint8_t dp, const float val
 //  hi: high limit
 //  LiveUpdate: live update function when the encoder changes
 //  Apply: update function when the encoder is pressed
-void SetPFloatOnClick(const float lo, const float hi, uint8_t dp, void (*Apply)() /*= nullptr*/, void (*LiveUpdate)() /*= nullptr*/) {
+void SetPFloatOnClick(const float lo, const float hi, uint8_t dp, void (*Apply)()/*=nullptr*/, void (*LiveUpdate)()/*=nullptr*/) {
   MenuData.P_Float = (float*)static_cast<MenuItemPtrClass*>(CurrentMenu->SelectedItem())->value;
   SetValueOnClick(SetPFloat, lo, hi, dp, *MenuData.P_Float, Apply, LiveUpdate);
 }
@@ -395,7 +395,7 @@ void CustomMenuItemClass::draw(int8_t line) {
   if (onDraw != nullptr) (*onDraw)(static_cast<MenuItemClass*>(this), line);
 }
 
-void CustomMenuItemClass::redraw(bool erase /*=false*/) {
+void CustomMenuItemClass::redraw(bool erase/*=false*/) {
   const int8_t line = CurrentMenu->line(this->pos);
   if (erase) Erase_Menu_Text(line);
   draw(line);
@@ -530,7 +530,7 @@ void UpdateMenu(MenuClass* &menu) {
   menu->draw();
 }
 
-void ReDrawMenu(bool force /*= false*/) {
+void ReDrawMenu(bool force/*=false*/) {
   if (CurrentMenu && (force || checkkey==Menu)) CurrentMenu->draw();
   if (force) DrawItemEdit(true);
 }
