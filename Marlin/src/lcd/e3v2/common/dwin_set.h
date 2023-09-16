@@ -133,7 +133,8 @@
 #define ICON_Info_0             90
 #define ICON_Info_1             91
 
-//changed Additional Icons
+// Additional Icons
+#define ICON_Printer_0          93
 #define ICON_Box               200
 #define ICON_Checkbox          201
 #define ICON_Fade              202

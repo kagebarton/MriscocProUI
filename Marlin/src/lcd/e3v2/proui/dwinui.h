@@ -28,13 +28,11 @@
 #include "dwin_lcd.h"
 
 #define ICON_AdvSet            ICON_Language
-#define ICON_BedSizeX          ICON_PrintSize
-#define ICON_BedSizeY          ICON_PrintSize
-#define ICON_BedTramming       ICON_SetHome
+#define ICON_BedSize           ICON_PrintSize
 #define ICON_Binary            ICON_Contact
 #define ICON_BltouchReset      ICON_ResumeEEPROM
 #define ICON_Cancel            ICON_StockConfiguration
-#define ICON_CustomPreheat     ICON_SetBedTemp
+#define ICON_CustomPreheat     ICON_BedTemp
 #define ICON_Error             ICON_TempTooHigh
 #define ICON_ESDiag            ICON_Info
 #define ICON_ExtrudeMinT       ICON_HotendTemp
@@ -46,24 +44,20 @@
 #define ICON_Flow              ICON_StepE
 #define ICON_Folder            ICON_More
 #define ICON_FWRetract         ICON_StepE
-#define ICON_FWRetLength       ICON_StepE
-#define ICON_FWRetSpeed        ICON_Setspeed
-#define ICON_FWRetZRaise       ICON_MoveZ
-#define ICON_FWRecSpeed        ICON_Setspeed
-#define ICON_FWRecExtra        ICON_StepE
+#define ICON_FWZRaise          ICON_MoveZ
+#define ICON_FWSpeed           ICON_Setspeed
 #define ICON_HomeX             ICON_MoveX
 #define ICON_HomeY             ICON_MoveY
 #define ICON_HomeZ             ICON_MoveZ
-#define ICON_HomeOffset        ICON_Language
+#define ICON_HomeOffset        ICON_PrintSize
 #define ICON_HomeOffsetX       ICON_StepX
 #define ICON_HomeOffsetY       ICON_StepY
 #define ICON_HomeOffsetZ       ICON_StepZ
 #define ICON_Host              ICON_Contact
-#define ICON_HSMode            ICON_StockConfiguration
+#define ICON_HSMode            ICON_MaxAccZ
 #define ICON_InputShaping      ICON_MaxAccelerated
 #define ICON_InvertE0          ICON_StepE
 #define ICON_JDmm              ICON_MaxJerk
-#define ICON_Tram              ICON_Step
 #define ICON_Level             ICON_Mesh
 #define ICON_Lock              ICON_Cool
 #define ICON_ManualMesh        ICON_Mesh
@@ -74,20 +68,20 @@
 #define ICON_MeshEditX         ICON_MoveX
 #define ICON_MeshEditY         ICON_MoveY
 #define ICON_MeshEditZ         ICON_MoveZ
-#define ICON_MeshNext          ICON_Axis
-#define ICON_MeshPoints        ICON_SetEndTemp
+#define ICON_MeshNext          ICON_AxisD
+#define ICON_MeshPoints        ICON_HotendTemp
 #define ICON_MeshReset         ICON_StockConfiguration
 #define ICON_MeshSave          ICON_WriteEEPROM
-#define ICON_MeshViewer        ICON_HotendTemp
-#define ICON_MoveZ0            ICON_SetEndTemp
+#define ICON_MeshViewer        ICON_Mesh
+#define ICON_MoveZ0            ICON_CloseMotor
 #define ICON_Park              ICON_SetHome
 #define ICON_ParkPos           ICON_AxisC
 #define ICON_ParkPosX          ICON_StepX
 #define ICON_ParkPosY          ICON_StepY
 #define ICON_ParkPosZ          ICON_StepZ
 #define ICON_PhySet            ICON_PrintSize
-#define ICON_PIDNozzle         ICON_SetEndTemp
-#define ICON_PIDBed            ICON_SetBedTemp
+#define ICON_PIDNozzle         ICON_HotendTemp
+#define ICON_PIDBed            ICON_BedTemp
 #define ICON_PIDCycles         ICON_ResumeEEPROM
 #define ICON_PIDValue          ICON_Contact
 #define ICON_PrintStats        ICON_PrintTime
@@ -109,16 +103,15 @@
 #define ICON_ProbeOffsetX      ICON_StepX
 #define ICON_ProbeOffsetY      ICON_StepY
 #define ICON_ProbeOffsetZ      ICON_StepZ
-#define ICON_ProbeSet          ICON_SetEndTemp
-#define ICON_ProbeStow         ICON_SetEndTemp
-#define ICON_ProbeTest         ICON_SetEndTemp
+#define ICON_ProbeStow         ICON_Tilt
+#define ICON_ProbeTest         ICON_Zoffset
 #define ICON_ProbeZSpeed       ICON_MaxSpeedZ
 #define ICON_Pwrlossr          ICON_Motion
 #define ICON_Reboot            ICON_ResumeEEPROM
 #define ICON_Runout            ICON_MaxAccE
 #define ICON_Scolor            ICON_MaxSpeed
 #define ICON_SetBaudRate       ICON_Setspeed
-#define ICON_SetCustomPreheat  ICON_SetEndTemp
+#define ICON_SetCustomPreheat  ICON_BedTemp
 #define ICON_SetPreheat1       ICON_SetPLAPreheat
 #define ICON_SetPreheat2       ICON_SetABSPreheat
 #define ICON_SetPreheat3       ICON_SetCustomPreheat
@@ -138,13 +131,13 @@
 #define ICON_TMCYSet           ICON_MoveY
 #define ICON_TMCZSet           ICON_MoveZ
 #define ICON_TMCESet           ICON_Extruder
-#define ICON_UBLActive         ICON_HotendTemp
+#define ICON_Tram              ICON_Step
+#define ICON_UBLActive         ICON_Fade
 #define ICON_UBLSlot           ICON_ResumeEEPROM
 #define ICON_UBLSaveMesh       ICON_WriteEEPROM
 #define ICON_UBLLoadMesh       ICON_ReadEEPROM
-#define ICON_UBLTiltGrid       ICON_PrintSize
 #define ICON_UBLSmartFill      ICON_StockConfiguration
-#define ICON_ZAfterHome        ICON_SetEndTemp
+#define ICON_ZAfterHome        ICON_Tilt
 
 //LASER CRC
 #define ICON_LaserFocus        ICON_MoveZ
@@ -158,10 +151,10 @@
 #define ICON_LedControl        ICON_Motion
 
 //MPC
-#define ICON_MPCNozzle         ICON_SetEndTemp
+#define ICON_MPCNozzle         ICON_HotendTemp
 #define ICON_MPCValue          ICON_Contact
 #define ICON_MPCHeater         ICON_Temperature
-#define ICON_MPCHeatCap        ICON_SetBedTemp
+#define ICON_MPCHeatCap        ICON_BedTemp
 #define ICON_MPCFan            ICON_FanSpeed
 
 // Buttons
