@@ -510,6 +510,9 @@ namespace DWINUI {
   //  y: Upper coordinate of the string
   //  *string: The string
   void Draw_CenteredString(bool bShow, fontid_t fid, uint16_t color, uint16_t bColor, uint16_t x1, uint16_t x2, uint16_t y, const char * const string);
+  inline void Draw_CenteredString(bool bShow, fontid_t fid, uint16_t color, uint16_t bColor, uint16_t x, uint16_t y, const char * const string) {
+    Draw_CenteredString(bShow, fid, color, bColor, 2 * x, 0, y, string);
+  }
   inline void Draw_CenteredString(bool bShow, fontid_t fid, uint16_t color, uint16_t bColor, uint16_t y, const char * const string) {
     Draw_CenteredString(bShow, fid, color, bColor, 0, DWIN_WIDTH, y, string);
   }

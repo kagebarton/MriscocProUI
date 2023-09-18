@@ -254,6 +254,8 @@ Nozzle nozzle;
         _MIN(Z_MAX_POS,                         // Maximum height is fixed
           #ifdef NOZZLE_PARK_Z_RAISE_MIN
             NOZZLE_PARK_Z_RAISE_MIN +           // Minimum raise...
+          #else
+            Z_POST_CLEARANCE +                  // Minimum raise...
           #endif
           current_position.z                    // ...over current position
         )

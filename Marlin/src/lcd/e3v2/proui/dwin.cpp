@@ -739,7 +739,7 @@ void _draw_ZOffsetIcon() {
     static bool _leveling_active = false;
     _draw_iconblink(_leveling_active, planner.leveling_active, ICON_Zoffset, ICON_SetZOffset, 186, 417);
   #else
-    DWINUI::Draw_Icon(ICON_SetZOffset, 186, 416);
+    DWINUI::Draw_Icon(ICON_SetZOffset, 186, 417);
   #endif
 }
 
@@ -830,7 +830,7 @@ void update_variable() {
                _new_bed_target = _bedtarget != bt;
     if (_new_bed_temp) { _bedtemp = bc; }
     if (_new_bed_target) { _bedtarget = bt; }
-    if (thermalManager.degBedNear(bt) || thermalManager.isHeatingBed()) {
+    if (thermalManager.degBedNear(bt) || thermalManager.isHeatingBed() || (bc > 44)) {
       DWIN_Draw_Box(1, HMI_data.Background_Color, 9, 417, 20, 20);
       DWINUI::Draw_Icon(ICON_BedTemp, 9, 417);
     }
@@ -1885,16 +1885,25 @@ void DWIN_Print_Finished() {
 // Print was aborted
 void DWIN_Print_Aborted() {
   DEBUG_ECHOLNPGM("DWIN_Print_Aborted");
-  #if PROUI_EX
     if (all_axes_homed()) {
       char cmd[34] = "";
-      const int16_t zpos = current_position.z + PRO_data.Park_point.z;
+      #if ENABLED(NOZZLE_PARK_FEATURE)
+        xyz_pos_t park = NOZZLE_PARK_POINT;
+      #endif
+      const int16_t zpos = current_position.z + TERN(NOZZLE_PARK_FEATURE,
+      NOZZLE_PARK_Z_RAISE_MIN, Z_POST_CLEARANCE);
       _MIN(zpos, Z_MAX_POS);
-      sprintf_P(cmd, PSTR("G0 F3000 Z%i\nG0 F3000 Y%i"), zpos, PRO_data.Park_point.y);
+      const int16_t ypos = current_position.y + TERN(NOZZLE_PARK_FEATURE,
+      park.y, 200);
+      _MIN(ypos, Y_MAX_POS);
+      sprintf_P(cmd, PSTR("G0 F3000 Z%i\nG0 F3000 Y%i"), zpos, ypos);
       queue.inject(cmd);
     }
+  #ifdef SD_FINISHED_RELEASECOMMAND
+    queue.inject(SD_FINISHED_RELEASECOMMAND);
   #endif
   hostui.notify("Print Aborted");
+  LCD_MESSAGE_F("Print Aborted");
   DWIN_Print_Finished();
 }
 
@@ -2080,7 +2089,10 @@ void DWIN_CopySettingsTo(char * const buff) {
 void DWIN_CopySettingsFrom(const char * const buff) {
   DEBUG_ECHOLNPGM("DWIN_CopySettingsFrom");
   memcpy(&HMI_data, buff, sizeof(HMI_data_t));
-  TERN_(PROUI_EX, memcpy(&PRO_data, buff + sizeof(HMI_data_t), sizeof(PRO_data));)
+  #if PROUI_EX
+  memcpy(&PRO_data, buff + sizeof(HMI_data_t), sizeof(PRO_data));
+  ProEx.LoadSettings();
+  #endif
   DWINUI::SetColors(HMI_data.Text_Color, HMI_data.Background_Color, HMI_data.TitleBg_Color);
   TERN_(PREVENT_COLD_EXTRUSION, ApplyExtMinT();)
   feedrate_percentage = 100;
@@ -2095,7 +2107,6 @@ void DWIN_CopySettingsFrom(const char * const buff) {
     );
     leds.update();
   #endif
-  TERN_(PROUI_EX, ProEx.LoadSettings();)
 }
 
 // Initialize or re-initialize the LCD
@@ -2659,8 +2670,19 @@ void SetSpeed() { SetPIntOnClick(MIN_PRINT_SPEED, MAX_PRINT_SPEED); }
     queue.inject(F("G28O\nG27 P1"));
   }
   void RaiseHead() {
-    LCD_MESSAGE(MSG_FILAMENT_PARK_ENABLED);
+    char cmd[20] = "";
+    sprintf_P(cmd, PSTR("Raise Z by %i"), TERN(NOZZLE_PARK_FEATURE, NOZZLE_PARK_Z_RAISE_MIN, Z_POST_CLEARANCE));
+    LCD_MESSAGE_F(cmd);
     queue.inject(F("G27 P3"));
+  }
+#else
+  void RaiseHead() {
+    LCD_MESSAGE(MSG_TOOL_CHANGE_ZLIFT);
+    char cmd[20] = "";
+    const int16_t zpos = current_position.z + Z_POST_CLEARANCE;
+    if (axis_is_trusted(Z_AXIS)) _MIN(zpos, Z_MAX_POS);
+    sprintf_P(cmd, PSTR("G0 F3000 Z%i"), zpos);
+    queue.inject(cmd);
   }
 #endif
 
@@ -3242,7 +3264,7 @@ void Draw_Move_Menu() {
       gcode.process_subcommands_now(F("G92E0"));  // reset extruder position
       EDIT_ITEM(ICON_Extruder, MSG_MOVE_E, onDrawPFloatMenu, SetMoveE, &current_position.e);
     #endif
-    EDIT_ITEM(blink ? ICON_AxisC : ICON_SetHome, MSG_LIVE_MOVE, onDrawChkbMenu, SetLiveMove, &EnableLiveMove);
+    EDIT_ITEM(ICON_AxisC, MSG_LIVE_MOVE, onDrawChkbMenu, SetLiveMove, &EnableLiveMove);
   }
     UpdateMenu(MoveMenu);
   if (!all_axes_trusted()) { LCD_MESSAGE_F("..WARNING: Current position is unknown, Home axes."); }
@@ -4060,8 +4082,8 @@ void Draw_GetColor_Menu() {
       #endif
       #if ENABLED(NOZZLE_PARK_FEATURE)
         MENU_ITEM(ICON_Park, MSG_FILAMENT_PARK_ENABLED, onDrawMenuItem, ParkHead);
-        MENU_ITEM(ICON_MoveZ, MSG_TOOL_CHANGE_ZLIFT, onDrawMenuItem, RaiseHead);
       #endif
+      MENU_ITEM(ICON_MoveZ, MSG_TOOL_CHANGE_ZLIFT, onDrawMenuItem, RaiseHead);
       #if ENABLED(MESH_BED_LEVELING)
         EDIT_ITEM(ICON_ZAfterHome, MSG_Z_AFTER_HOME, onDrawPInt8Menu, SetZAfterHoming, &HMI_data.z_after_homing);
       #endif
