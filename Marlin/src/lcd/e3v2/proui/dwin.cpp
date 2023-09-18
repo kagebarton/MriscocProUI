@@ -2090,8 +2090,8 @@ void DWIN_CopySettingsFrom(const char * const buff) {
   DEBUG_ECHOLNPGM("DWIN_CopySettingsFrom");
   memcpy(&HMI_data, buff, sizeof(HMI_data_t));
   #if PROUI_EX
-  memcpy(&PRO_data, buff + sizeof(HMI_data_t), sizeof(PRO_data));
-  ProEx.LoadSettings();
+    memcpy(&PRO_data, buff + sizeof(HMI_data_t), sizeof(PRO_data));
+    ProEx.LoadSettings();
   #endif
   DWINUI::SetColors(HMI_data.Text_Color, HMI_data.Background_Color, HMI_data.TitleBg_Color);
   TERN_(PREVENT_COLD_EXTRUSION, ApplyExtMinT();)
