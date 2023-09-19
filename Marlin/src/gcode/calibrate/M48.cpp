@@ -58,11 +58,13 @@
 
 void GcodeSuite::M48() {
 
-#if ENABLED(DWIN_LCD_PROUI)
+#if ENABLED(BLTOUCH)
   // Store the original value of bltouch.high_speed_mode
   const bool prev_high_speed_mode = bltouch.high_speed_mode;
   // Set bltouch.high_speed_mode to 0
   bltouch.high_speed_mode = false;
+#endif
+#if ENABLED(DWIN_LCD_PROUI)
   DWIN_Popup_Pause(GET_TEXT_F(MSG_M48_TEST));
   HMI_SaveProcessID(NothingToDo);
 #endif
@@ -283,11 +285,10 @@ void GcodeSuite::M48() {
   TERN_(HAS_PTC, ptc.set_enabled(true));
 
   report_current_position();
-  #if ENABLED(DWIN_LCD_PROUI)
-    // Restore the previous value of bltouch.high_speed_mode
-    bltouch.high_speed_mode = prev_high_speed_mode;
-    HMI_ReturnScreen();
-  #endif
+
+  // Restore the previous value of bltouch.high_speed_mode
+  TERN_(BLTOUCH, bltouch.high_speed_mode = prev_high_speed_mode;)
+  TERN_(DWIN_LCD_PROUI, HMI_ReturnScreen();)
 }
 
 #endif // Z_MIN_PROBE_REPEATABILITY_TEST
