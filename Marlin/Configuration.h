@@ -132,7 +132,7 @@
 //#define BLUETOOTH
 
 // Name displayed in the LCD "Ready" message and Info menu
-#define CUSTOM_MACHINE_NAME "Voxelab Aquila X3"
+#define CUSTOM_MACHINE_NAME "Aquila"
 
 // Printer's unique ID, used by some programs to differentiate between machines.
 // Choose your own or use a service like https://www.uuidgenerator.net/version4
@@ -1376,8 +1376,6 @@
  *    - Normally-open (NO) also connect to 5V.
  */
 //#define Z_MIN_PROBE_PIN PB1 // Pin 32 is the RAMPS default
-#define Z_MIN_PROBE_PIN PB0   //Aquila X3 board configuration
-#define SERVO0_PIN PB1        //https://reprap.org/forum/read.php?415,893383
 
 /**
  * Probe Type
@@ -1397,7 +1395,7 @@
  * A Fix-Mounted Probe either doesn't deploy or needs manual deployment.
  *   (e.g., an inductive probe or a nozzle-based probe-switch.)
  */
-#define FIX_MOUNTED_PROBE
+//#define FIX_MOUNTED_PROBE
 
 /**
  * Use the nozzle as the probe, as with a conductive
@@ -1419,7 +1417,7 @@
 /**
  * The BLTouch probe uses a Hall effect sensor and emulates a servo.
  */
-//#define BLTOUCH  // 3D/CR/BLTouch version
+#define BLTOUCH  // 3D/CR/BLTouch version
 
 /**
  * MagLev V4 probe by MDD
@@ -1571,7 +1569,7 @@
  *     |    [-]    |
  *     O-- FRONT --+
  */
-#define NOZZLE_TO_PROBE_OFFSET { -30.0, 0, 0 }
+#define NOZZLE_TO_PROBE_OFFSET { -45.0, -7.0, 0 }
 
 // Enable and set to use a specific tool for probing. Disable to allow any tool.
 //#define PROBING_TOOL 0
@@ -2396,21 +2394,21 @@
 // Preheat Constants - Up to 10 are supported without changes
 //
 #define PREHEAT_1_LABEL       "PLA"
-#define PREHEAT_1_TEMP_HOTEND 200
-#define PREHEAT_1_TEMP_BED     50
+#define PREHEAT_1_TEMP_HOTEND 210
+#define PREHEAT_1_TEMP_BED     60
 //#define PREHEAT_1_TEMP_CHAMBER 35
 #define PREHEAT_1_FAN_SPEED     0 // Value from 0 to 255
 
-#define PREHEAT_2_LABEL       "Warmup Bed"
-#define PREHEAT_2_TEMP_HOTEND 0
-#define PREHEAT_2_TEMP_BED     50
-#define PREHEAT_2_FAN_SPEED     0
+//#define PREHEAT_2_LABEL       "ABS" //PETG 
+//#define PREHEAT_2_TEMP_HOTEND 240
+//#define PREHEAT_2_TEMP_BED     75
+//#define PREHEAT_2_TEMP_CHAMBER 35
+//#define PREHEAT_2_FAN_SPEED     0 // Value from 0 to 255
 
-//#define PREHEAT_3_LABEL       "ABS" //PETG 
-//#define PREHEAT_3_TEMP_HOTEND 240
-//#define PREHEAT_3_TEMP_BED     75
-//#define PREHEAT_3_TEMP_CHAMBER 35
-//#define PREHEAT_3_FAN_SPEED     0 // Value from 0 to 255
+//#define PREHEAT_3_LABEL       "Warmup"
+//#define PREHEAT_3_TEMP_HOTEND 200
+//#define PREHEAT_3_TEMP_BED     50
+//#define PREHEAT_3_FAN_SPEED     0
 
 //#define PREHEAT_4_LABEL       "TPU"
 //#define PREHEAT_4_TEMP_HOTEND 230
