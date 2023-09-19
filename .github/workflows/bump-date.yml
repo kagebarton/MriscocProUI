@@ -28,9 +28,12 @@ jobs:
         # Inline Bump Script
         if [[ ! "$( git log -1 --pretty=%B )" =~ ^\[cron\] ]]; then
           DIST=$( date +"%Y-%m-%d" )
+          sed -E -i "s/(\/\/#define +STRING_DISTRIBUTION_DATE) .*/\1 \"$DIST\"/g" Marlin/configurations/Voxelab\ Aquila/BLT/Version.h && \
+          sed -E -i 's/(\/\/#define STRING_DISTRIBUTION_DATE) .*$/\1 \"$DIST\"/g' Marlin/configurations/Voxelab\ Aquila/MM/Version.h && \
+          eval "sed -E -i 's/(#define +STRING_DISTRIBUTION_DATE) .*$/\2 \"$DIST\"/g' Marlin/configurations/Voxelab\ Aquila/UBL/Version.h" && \
           eval "sed -E -i 's/(#define STRING_DISTRIBUTION_DATE) .*$/\1 \"$DIST\"/g' Marlin/configurations/Voxelab\ Aquila/X3/Version.h" && \
-          eval "sed -E -i 's/(#define STRING_DISTRIBUTION_DATE) .*$/\1 \"$DIST\"/g' Marlin/src/inc/Version.h" && \
-          eval "sed -E -i 's/(//#define STRING_DISTRIBUTION_DATE) .*$/\1 \"$DIST\"/g' Marlin/Version.h" && \
+          eval "sed -E -i 's/(#define +STRING_DISTRIBUTION_DATE) .*$/\1 \"$DIST\"/g' Marlin/src/inc/Version.h" && \
+          eval "sed -E -i 's/(//#define STRING_DISTRIBUTION_DATE) .*$/\2 \"$DIST\"/g' Marlin/Version.h" && \
           git config user.name "classicrocker883" && \
           git config user.email "andrewleduc88@yahoo.com" && \
           git add . && \
