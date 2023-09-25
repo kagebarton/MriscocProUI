@@ -26,8 +26,8 @@
 
 ### - Please read this: -
 Many Updates have been included in the most recent MRiscoCProUI for the **2023-September** release.  
-This release has many changes done to the **UI**.  
-New ICON's have been added, and old ones enhanced. The issue being whoever edited them before saved as .*JPG* which in many editors lowers the quality of the image. I painstakingly remastered almost every single one.
+This release has many changes to the **UI**.  
+New ICON's have been added, and old ones enhanced. Whoever edited them before saved directly as .*JPG* which in many editors lowers the quality of the image. I painstakingly remastered almost every single one; preserving the original quality.
 
 You must [REFLASH](https://github.com/classicrocker883/MRiscoCProUI/wiki/HOW-TO-UPDATE-THE-DISPLAY) the *LCD Display* with the new **DWIN_SET**; which is located in the `display assets` folder.
 
