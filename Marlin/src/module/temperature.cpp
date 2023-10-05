@@ -894,6 +894,9 @@ volatile bool Temperature::raw_temps_ready = false;
 
       // Run UI update
       ui.update();
+
+      // Run Beeper queue update
+      TERN_(HAS_BEEPER, buzzer.tick());
     }
     wait_for_heatup = false;
 
