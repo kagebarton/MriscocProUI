@@ -18,12 +18,12 @@ jobs:
 
     steps:
 
-    - name: Check out 2023-September
+    - name: Check out 2023-October
       uses: actions/checkout@v3
       with:
-        ref: 2023-September
+        ref: 2023-October
 
-    - name: Bump Date (2023-September)
+    - name: Bump Date (2023-October)
       run: |
         # Inline Bump Script
         if [[ ! "$( git log -1 --pretty=%B )" =~ ^\[cron\] ]]; then
