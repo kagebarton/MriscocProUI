@@ -563,8 +563,8 @@ jobs:
     - name: Run PlatformIO
       id: build_configs
       run: |
-        if [ "$SKR" = V3 ]; then AVTMP="V3"; fi;
-        if [ "$SKR" = V2 ]; then AVTMP="V2"; fi;
+        if [ "$SKR" = V3 ]; then AVTMP="V3"; else
+        if [ "$SKR" = V2 ]; then AVTMP="V2"; else
         if [ "$SKR" = V31 ]; then AVTMP="V3-1"; fi;
         echo "filename=Aquila_SKR-Mini-E3-${AVTMP}_UBL-ProUI.bin" >> $GITHUB_OUTPUT        
         > Marlin/Configuration.h
@@ -581,13 +581,13 @@ jobs:
         if [ "$SKR" = V31 ]; then DBORD='V3_0_1'; else DBORD='V2_0' fi;
         sed -i "s/[^ ]*#define MOTHERBOARD BOARD_.*/#define MOTHERBOARD BOARD_BTT_SKR_MINI_E3_$DBORD/g" Marlin/Configuration.h
         fi;
-        if [ "$SKR" = V3 ]; then STMP="STM32G0B1RE_btt"; fi;
-        if [ "$SKR" = V2 ]; then STMP="STM32F103RC_btt"; fi;
-        if [ "$SKR" = V31 ]; then STMP="STM32F401RC_btt"; fi;
-        sed -i "s/default_envs =.*/default_envs = ${STMP}/g" platformio.ini
+        if [ "$SKR" = V3 ]; then STMP="STM32G0B1RE"; else
+        if [ "$SKR" = V2 ]; then STMP="STM32F103RC"; else
+        if [ "$SKR" = V31 ]; then STMP="STM32F401RC"; fi;
+        sed -i "s/default_envs =.*/default_envs = ${STMP}_btt/g" platformio.ini
         pio run
         mkdir temp
-        mv .pio/build/${STMP}/*.bin temp/build.bin
+        mv .pio/build/${STMP}_btt/*.bin temp/build.bin
       env:
         SKR: ${{ matrix.chip }}
         TP: ${{ matrix.temp }}
@@ -643,8 +643,8 @@ jobs:
     - name: Run PlatformIO
       id: build_configs
       run: |
-        if [ "$SKR" = V3 ]; then AVTMP="V3"; fi;
-        if [ "$SKR" = V2 ]; then AVTMP="V2"; fi;
+        if [ "$SKR" = V3 ]; then AVTMP="V3"; else
+        if [ "$SKR" = V2 ]; then AVTMP="V2"; else
         if [ "$SKR" = V31 ]; then AVTMP="V3-1"; fi;
         echo "filename=Aquila_SKR-Mini-E3-${AVTMP}_MM-ProUI.bin" >> $GITHUB_OUTPUT        
         > Marlin/Configuration.h
@@ -661,13 +661,13 @@ jobs:
         if [ "$SKR" = V31 ]; then DBORD='V3_0_1'; else DBORD='V2_0' fi;
         sed -i "s/[^ ]*#define MOTHERBOARD BOARD_.*/#define MOTHERBOARD BOARD_BTT_SKR_MINI_E3_$DBORD/g" Marlin/Configuration.h
         fi;
-        if [ "$SKR" = V3 ]; then STMP="STM32G0B1RE_btt"; fi;
-        if [ "$SKR" = V2 ]; then STMP="STM32F103RC_btt"; fi;
-        if [ "$SKR" = V31 ]; then STMP="STM32F401RC_btt"; fi;
-        sed -i "s/default_envs =.*/default_envs = ${STMP}/g" platformio.ini
+        if [ "$SKR" = V3 ]; then STMP="STM32G0B1RE"; else
+        if [ "$SKR" = V2 ]; then STMP="STM32F103RC"; else
+        if [ "$SKR" = V31 ]; then STMP="STM32F401RC"; fi;
+        sed -i "s/default_envs =.*/default_envs = ${STMP}_btt/g" platformio.ini
         pio run
         mkdir temp
-        mv .pio/build/${STMP}/*.bin temp/build.bin
+        mv .pio/build/${STMP}_btt/*.bin temp/build.bin
       env:
         SKR: ${{ matrix.chip }}
         TP: ${{ matrix.temp }}
