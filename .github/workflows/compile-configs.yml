@@ -565,7 +565,7 @@ jobs:
       run: |
         if [ "$SKR" = V3 ]; then AVTMP="V3"; else
         if [ "$SKR" = V2 ]; then AVTMP="V2"; else
-        if [ "$SKR" = V31 ]; then AVTMP="V3-1"; fi;
+        if [ "$SKR" = V31 ]; then AVTMP="V3-1"; fi; fi; fi;
         echo "filename=Aquila_SKR-Mini-E3-${AVTMP}_UBL-ProUI.bin" >> $GITHUB_OUTPUT        
         > Marlin/Configuration.h
         > Marlin/Configuration_adv.h
@@ -583,7 +583,7 @@ jobs:
         fi;
         if [ "$SKR" = V3 ]; then STMP="STM32G0B1RE"; else
         if [ "$SKR" = V2 ]; then STMP="STM32F103RC"; else
-        if [ "$SKR" = V31 ]; then STMP="STM32F401RC"; fi;
+        if [ "$SKR" = V31 ]; then STMP="STM32F401RC"; fi; fi; fi;
         sed -i "s/default_envs =.*/default_envs = ${STMP}_btt/g" platformio.ini
         pio run
         mkdir temp
@@ -645,7 +645,7 @@ jobs:
       run: |
         if [ "$SKR" = V3 ]; then AVTMP="V3"; else
         if [ "$SKR" = V2 ]; then AVTMP="V2"; else
-        if [ "$SKR" = V31 ]; then AVTMP="V3-1"; fi;
+        if [ "$SKR" = V31 ]; then AVTMP="V3-1"; fi; fi; fi;
         echo "filename=Aquila_SKR-Mini-E3-${AVTMP}_MM-ProUI.bin" >> $GITHUB_OUTPUT        
         > Marlin/Configuration.h
         > Marlin/Configuration_adv.h
@@ -663,7 +663,7 @@ jobs:
         fi;
         if [ "$SKR" = V3 ]; then STMP="STM32G0B1RE"; else
         if [ "$SKR" = V2 ]; then STMP="STM32F103RC"; else
-        if [ "$SKR" = V31 ]; then STMP="STM32F401RC"; fi;
+        if [ "$SKR" = V31 ]; then STMP="STM32F401RC"; fi; fi; fi;
         sed -i "s/default_envs =.*/default_envs = ${STMP}_btt/g" platformio.ini
         pio run
         mkdir temp
