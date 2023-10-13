@@ -530,7 +530,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        chip: [V3,V2,V31]
+        chip: [V3_0,V2_0,V3_0_1]
         temp: [true,false]
     steps:
     - uses: actions/checkout@v3
@@ -563,10 +563,11 @@ jobs:
     - name: Run PlatformIO
       id: build_configs
       run: |
-        if [ "$SKR" = V3 ]; then AVTMP="V3";
-        elif [ "$SKR" = V2 ]; then AVTMP="V2";
-        elif [ "$SKR" = V31 ]; then AVTMP="V3-1"; fi;
-        echo "filename=Aquila_SKR-Mini-E3-${AVTMP}_UBL-ProUI.bin" >> $GITHUB_OUTPUT        
+        if [ "$SKR" = V3_0 ]; then AVTMP="V3"
+        elif [ "$SKR" = V2_0 ]; then AVTMP="V2"
+        elif [ "$SKR" = V3_0_1 ]; then AVTMP="V3-0-1"
+        fi;
+        echo "filename=Aquila_SKR-Mini-E3-${AVTMP}_MM-ProUI.bin" >> $GITHUB_OUTPUT
         > Marlin/Configuration.h
         > Marlin/Configuration_adv.h
         > Marlin/Version.h
@@ -578,12 +579,12 @@ jobs:
         cp configurations/Voxelab\ Aquila/BTT-SKR_Mini_E3_V2/ConfigurationUBL.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/BTT-SKR_Mini_E3_V2/Configuration_advUBL.h Marlin/Configuration_adv.h
         cp configurations/Voxelab\ Aquila/BTT-SKR_Mini_E3_V2/Version.h Marlin/Version.h
-        if [ "$SKR" = V31 ]; then DBORD='V3_0_1'; else DBORD='V2_0' fi;
-        sed -i "s/[^ ]*#define MOTHERBOARD BOARD_.*/#define MOTHERBOARD BOARD_BTT_SKR_MINI_E3_$DBORD/g" Marlin/Configuration.h
         fi;
-        if [ "$SKR" = V3 ]; then STMP="STM32G0B1RE";
-        elif [ "$SKR" = V2 ]; then STMP="STM32F103RC";
-        elif [ "$SKR" = V31 ]; then STMP="STM32F401RC"; fi;
+        sed -i "s/[^ ]*#define MOTHERBOARD BOARD_.*/#define MOTHERBOARD BOARD_BTT_SKR_MINI_E3_$SKR/g" Marlin/Configuration.h
+        if [ "$SKR" = V3 ]; then STMP="STM32G0B1RE"
+        elif [ "$SKR" = V2 ]; then STMP="STM32F103RC"
+        elif [ "$SKR" = V31 ]; then STMP="STM32F401RC"
+        fi;
         sed -i "s/default_envs =.*/default_envs = ${STMP}_btt/g" platformio.ini
         pio run
         mkdir temp
@@ -610,7 +611,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        chip: [V3,V2,V31]
+        chip: [V3_0,V2_0,V3_0_1]
         temp: [true,false]
     steps:
     - uses: actions/checkout@v3
@@ -643,10 +644,11 @@ jobs:
     - name: Run PlatformIO
       id: build_configs
       run: |
-        if [ "$SKR" = V3 ]; then AVTMP="V3";
-        elif [ "$SKR" = V2 ]; then AVTMP="V2";
-        elif [ "$SKR" = V31 ]; then AVTMP="V3-1"; fi;
-        echo "filename=Aquila_SKR-Mini-E3-${AVTMP}_MM-ProUI.bin" >> $GITHUB_OUTPUT        
+        if [ "$SKR" = V3_0 ]; then AVTMP="V3"
+        elif [ "$SKR" = V2_0 ]; then AVTMP="V2"
+        elif [ "$SKR" = V3_0_1 ]; then AVTMP="V3-0-1"
+        fi;
+        echo "filename=Aquila_SKR-Mini-E3-${AVTMP}_MM-ProUI.bin" >> $GITHUB_OUTPUT
         > Marlin/Configuration.h
         > Marlin/Configuration_adv.h
         > Marlin/Version.h
@@ -658,12 +660,12 @@ jobs:
         cp configurations/Voxelab\ Aquila/BTT-SKR_Mini_E3_V2/ConfigurationMM.h Marlin/Configuration.h
         cp configurations/Voxelab\ Aquila/BTT-SKR_Mini_E3_V2/Configuration_advMM.h Marlin/Configuration_adv.h
         cp configurations/Voxelab\ Aquila/BTT-SKR_Mini_E3_V2/Version.h Marlin/Version.h
-        if [ "$SKR" = V31 ]; then DBORD='V3_0_1'; else DBORD='V2_0' fi;
-        sed -i "s/[^ ]*#define MOTHERBOARD BOARD_.*/#define MOTHERBOARD BOARD_BTT_SKR_MINI_E3_$DBORD/g" Marlin/Configuration.h
         fi;
-        if [ "$SKR" = V3 ]; then STMP="STM32G0B1RE";
-        elif [ "$SKR" = V2 ]; then STMP="STM32F103RC";
-        elif [ "$SKR" = V31 ]; then STMP="STM32F401RC"; fi;
+        sed -i "s/[^ ]*#define MOTHERBOARD BOARD_.*/#define MOTHERBOARD BOARD_BTT_SKR_MINI_E3_$SKR/g" Marlin/Configuration.h
+        if [ "$SKR" = V3 ]; then STMP="STM32G0B1RE"
+        elif [ "$SKR" = V2 ]; then STMP="STM32F103RC"
+        elif [ "$SKR" = V31 ]; then STMP="STM32F401RC"
+        fi;
         sed -i "s/default_envs =.*/default_envs = ${STMP}_btt/g" platformio.ini
         pio run
         mkdir temp
