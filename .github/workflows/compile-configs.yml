@@ -570,7 +570,7 @@ jobs:
         > Marlin/Version.h
         if [ "$SKR" = V3_0 ]; then
         cp configurations/BTT-SKR_Mini_E3_V3/ConfigurationUBL.h Marlin/Configuration.h
-        cp configurations/BTT-SKR_Mini_E3_V3/Configuration_advUBL.h Marlin/Configuration_adv.h
+        cp configurations/BTT-SKR_Mini_E3_V3/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/BTT-SKR_Mini_E3_V3/Version.h Marlin/Version.h
         else
         cp configurations/BTT-SKR_Mini_E3_V2/ConfigurationUBL.h Marlin/Configuration.h
@@ -645,7 +645,7 @@ jobs:
         > Marlin/Version.h
         if [ "$SKR" = V3_0 ]; then
         cp configurations/BTT-SKR_Mini_E3_V3/ConfigurationMM.h Marlin/Configuration.h
-        cp configurations/BTT-SKR_Mini_E3_V3/Configuration_advMM.h Marlin/Configuration_adv.h
+        cp configurations/BTT-SKR_Mini_E3_V3/Configuration_adv.h Marlin/Configuration_adv.h
         cp configurations/BTT-SKR_Mini_E3_V3/Version.h Marlin/Version.h
         else
         cp configurations/BTT-SKR_Mini_E3_V2/ConfigurationMM.h Marlin/Configuration.h
