@@ -610,7 +610,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        chip: [V3,V2]
+        chip: [V3,V2,V31]
         temp: [true,false]
     steps:
     - uses: actions/checkout@v3
