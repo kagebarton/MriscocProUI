@@ -530,7 +530,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        chip: [V3_0,V2_0,V3_0_1]
+        chip: [V3_0,V2_0]
         temp: [true,false]
     steps:
     - uses: actions/checkout@v3
@@ -563,15 +563,12 @@ jobs:
     - name: Run PlatformIO
       id: build_configs
       run: |
-        if [ "$SKR" = V3_0 ]; then AVTMP="V3"
-        elif [ "$SKR" = V2_0 ]; then AVTMP="V2"
-        elif [ "$SKR" = V3_0_1 ]; then AVTMP="V3-0-1"
-        fi;
+        if [ "$SKR" = V3_0 ]; then AVTMP="V3"; else AVTMP="V2"; fi;
         echo "filename=Aquila_SKR-Mini-E3-${AVTMP}_MM-ProUI.bin" >> $GITHUB_OUTPUT
         > Marlin/Configuration.h
         > Marlin/Configuration_adv.h
         > Marlin/Version.h
-        if [ "$SKR" = V3 ]; then
+        if [ "$SKR" = V3_0 ]; then
         cp configurations/BTT-SKR_Mini_E3_V3/ConfigurationUBL.h Marlin/Configuration.h
         cp configurations/BTT-SKR_Mini_E3_V3/Configuration_advUBL.h Marlin/Configuration_adv.h
         cp configurations/BTT-SKR_Mini_E3_V3/Version.h Marlin/Version.h
@@ -581,10 +578,7 @@ jobs:
         cp configurations/BTT-SKR_Mini_E3_V2/Version.h Marlin/Version.h
         fi;
         sed -i "s/[^ ]*#define MOTHERBOARD BOARD_.*/#define MOTHERBOARD BOARD_BTT_SKR_MINI_E3_$SKR/g" Marlin/Configuration.h
-        if [ "$SKR" = V3_0 ]; then STMP="STM32G0B1RE"
-        elif [ "$SKR" = V2_0 ]; then STMP="STM32F103RC"
-        elif [ "$SKR" = V3_0_1 ]; then STMP="STM32F401RC"
-        fi;
+        if [ "$SKR" = V3_0 ]; then STMP="STM32G0B1RE"; else STMP="STM32F103RC"; fi;
         sed -i "s/default_envs =.*/default_envs = ${STMP}_btt/g" platformio.ini
         pio run
         mkdir temp
@@ -611,7 +605,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        chip: [V3_0,V2_0,V3_0_1]
+        chip: [V3_0,V2_0]
         temp: [true,false]
     steps:
     - uses: actions/checkout@v3
@@ -644,15 +638,12 @@ jobs:
     - name: Run PlatformIO
       id: build_configs
       run: |
-        if [ "$SKR" = V3_0 ]; then AVTMP="V3"
-        elif [ "$SKR" = V2_0 ]; then AVTMP="V2"
-        elif [ "$SKR" = V3_0_1 ]; then AVTMP="V3-0-1"
-        fi;
+        if [ "$SKR" = V3_0 ]; then AVTMP="V3"; else AVTMP="V2"; fi;
         echo "filename=Aquila_SKR-Mini-E3-${AVTMP}_MM-ProUI.bin" >> $GITHUB_OUTPUT
         > Marlin/Configuration.h
         > Marlin/Configuration_adv.h
         > Marlin/Version.h
-        if [ "$SKR" = V3 ]; then
+        if [ "$SKR" = V3_0 ]; then
         cp configurations/BTT-SKR_Mini_E3_V3/ConfigurationMM.h Marlin/Configuration.h
         cp configurations/BTT-SKR_Mini_E3_V3/Configuration_advMM.h Marlin/Configuration_adv.h
         cp configurations/BTT-SKR_Mini_E3_V3/Version.h Marlin/Version.h
@@ -662,10 +653,7 @@ jobs:
         cp configurations/BTT-SKR_Mini_E3_V2/Version.h Marlin/Version.h
         fi;
         sed -i "s/[^ ]*#define MOTHERBOARD BOARD_.*/#define MOTHERBOARD BOARD_BTT_SKR_MINI_E3_$SKR/g" Marlin/Configuration.h
-        if [ "$SKR" = V3_0 ]; then STMP="STM32G0B1RE"
-        elif [ "$SKR" = V2_0 ]; then STMP="STM32F103RC"
-        elif [ "$SKR" = V3_0_1 ]; then STMP="STM32F401RC"
-        fi;
+        if [ "$SKR" = V3_0 ]; then STMP="STM32G0B1RE"; else STMP="STM32F103RC"; fi;
         sed -i "s/default_envs =.*/default_envs = ${STMP}_btt/g" platformio.ini
         pio run
         mkdir temp
