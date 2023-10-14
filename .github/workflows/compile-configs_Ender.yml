@@ -8,7 +8,7 @@ on:
     types: [prereleased]
 
 jobs:
-  Build-Default-E:            # Default-NP for Ender-3
+  Build-Default-E:            # Default NoPro for Ender-3
     name: Build Default Files E
     runs-on: ubuntu-latest
     strategy:
@@ -83,7 +83,7 @@ jobs:
         asset_path: temp/build.bin
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
-  Build-Manual-Mesh-E:        # Manual Mesh - MM for Ender-3
+  Build-Manual-Mesh-E:        # MM Pro for Ender-3
     name: Build Manual-Mesh Files E
     runs-on: ubuntu-latest
     strategy:
@@ -158,7 +158,7 @@ jobs:
         asset_path: temp/build.bin
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
-  Build-UBL-ProUI-E:            # UBL-Pro for Ender-3
+  Build-UBL-ProUI-E:            # UBL Pro for Ender-3
     name: Build UBL Pro Files E
     runs-on: ubuntu-latest
     strategy:
@@ -238,7 +238,7 @@ jobs:
   #   runs-on: ubuntu-latest
   #   strategy:
   #     matrix:
-    #     printer: [AQUILA,ENDER]
+  #       printer: [AQUILA,ENDER]
   #       grid: [3,5,7]
   #       temp: [true,false]
   #       inshape: [true,false]
@@ -304,7 +304,7 @@ jobs:
   #       mkdir temp
   #       mv .pio/build/GD32F303RE_creality_maple/*.bin temp/build.bin
   #     env:
-    #     PR: ${{ matrix.printer}}
+  #       PR: ${{ matrix.printer}}
   #       GRID: ${{ matrix.grid }}
   #       TP: ${{ matrix.temp }}
   #       IS: ${{ matrix.inshape }}
@@ -322,6 +322,7 @@ jobs:
   #       asset_path: temp/build.bin
   #       asset_name: ${{ steps.build_configs.outputs.filename }}
   #       asset_content_type: application/x-binary
+
   Build-BLTouch-E:            # BLTouch Pro for Ender-3
     name: Build BLT Pro Files E
     runs-on: ubuntu-latest
@@ -397,7 +398,7 @@ jobs:
         asset_path: temp/build.bin
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
-  Build-Default-E4:            # Default-NP for Ender-3
+  Build-Default-E4:            # Default NoPro for Ender-3
     name: Build Default Files Ender E4
     runs-on: ubuntu-latest
     strategy:
@@ -477,7 +478,7 @@ jobs:
         asset_path: temp/build.bin
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
-  Build-Manual-Mesh-E4:        # Manual Mesh - MM for Ender-3
+  Build-Manual-Mesh-E4:        # MM Pro for Ender-3
     name: Build Manual-Mesh Files E4
     runs-on: ubuntu-latest
     strategy:
@@ -557,7 +558,7 @@ jobs:
         asset_path: temp/build.bin
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
-  Build-UBL-ProUI-E4:            # UBL-Pro for Ender-3
+  Build-UBL-ProUI-E4:            # UBL Pro for Ender-3
     name: Build UBL Pro Files E4
     runs-on: ubuntu-latest
     strategy:
