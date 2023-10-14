@@ -687,29 +687,6 @@ jobs:
         asset_path: temp/build.bin
         asset_name: ${{ steps.build_configs.outputs.filename }}
         asset_content_type: application/x-binary
-
-#        if [ "$SKR" = V3 ]; then AVTMP="V3"; fi; 
-#        if [ "$SKR" = V2 ]; then AVTMP="V2"; fi;
-#        if [ "$SKR" = V31 ]; then AVTMP="V3-1"; fi;
-#        echo "filename=Aquila_SKR-Mini-E3-${AVTMP}_MM-ProUI.bin" >> $GITHUB_OUTPUT        
-#        > Marlin/Configuration.h
-#        > Marlin/Configuration_adv.h
-#        > Marlin/Version.h
-#        if [ "$SKR" = V3 ] || [ "$SKR" = V31 ]; then
-#        cp configurations/Voxelab\ Aquila/BTT-SKR_Mini_E3_V3/ConfigurationMM.h Marlin/Configuration.h
-#        cp configurations/Voxelab\ Aquila/BTT-SKR_Mini_E3_V3/Configuration_adv.h Marlin/Configuration_adv.h
-#        cp configurations/Voxelab\ Aquila/BTT-SKR_Mini_E3_V3/Version.h Marlin/Version.h
-#        fi;
-#        if [ "$SKR" = V2 ]; then
-#        cp configurations/Voxelab\ Aquila/BTT-SKR_Mini_E3_V2/ConfigurationMM.h Marlin/Configuration.h
-#        cp configurations/Voxelab\ Aquila/BTT-SKR_Mini_E3_V2/Configuration_adv.h Marlin/Configuration_adv.h
-#        cp configurations/Voxelab\ Aquila/BTT-SKR_Mini_E3_V2/Version.h Marlin/Version.h
-#        fi;
-#        if [ "$SKR" = V3 ]; then STMP="STM32G0B1RE_btt"; fi;
-#        if [ "$SKR" = V31 ]; then STMP="STM32F401RC_btt"; fi;
-#        if [ "$SKR" = V2 ]; then STMP="STM32F103RC_btt"; fi;
-
-
   Build-Default-A4:            # Default-NP for Aquila 427
     name: Build Default Files A4
     runs-on: ubuntu-latest
