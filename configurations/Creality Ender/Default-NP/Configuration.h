@@ -3411,6 +3411,7 @@
 
 #define DWIN_LCD_PROUI          // Pro UI by MRiscoC
 //#define HAS_DACAI 1
+//#define TJC_DISPLAY
 
 #if ENABLED(DWIN_LCD_PROUI)
 // Professional firmware features:
@@ -3433,7 +3434,7 @@
     #define ACTIVATE_MESH_ITEM  // Active Mesh Leveling menu option (152 bytes of flash)
   #endif
   #if ENABLED(FILAMENT_RUNOUT_SENSOR) // (2528 bytes of flash)
-    #define RUNOUT_TUNE_ITEM    // Filament Runout option in Tune Menu 
+    #define RUNOUT_TUNE_ITEM    // Filament Runout option in Tune Menu
   #endif
   #if ENABLED(BLTOUCH)
     //#define HS_MENU_ITEM      // BLTOUCH_HS_MODE menu option (56 bytes of flash)
