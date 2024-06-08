@@ -100,7 +100,7 @@
  *
  * :[2400, 9600, 19200, 38400, 57600, 115200, 250000, 500000, 1000000]
  */
-#define BAUDRATE 250000
+#define BAUDRATE 500000
 #define BAUD_RATE_GCODE     // Enable G-code M575 to set the baud rate
 
 /**
@@ -1259,7 +1259,7 @@
  * Override with M92 (when enabled below)
  *                                      X, Y, Z [, I [, J [, K...]]], E0 [, E1[, E2...]]
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 415 }
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 702 }
 
 //#define LIMITED_MAX_STEPS_EDITING
 #if ENABLED(LIMITED_MAX_STEPS_EDITING)
@@ -1615,7 +1615,7 @@
  *     |    [-]    |
  *     O-- FRONT --+
  */
-#define NOZZLE_TO_PROBE_OFFSET { 28.7, -2.5, -1.5 }
+#define NOZZLE_TO_PROBE_OFFSET { 28.7, -2.5, -1.82 }
 
 // Enable and set to use a specific tool for probing. Disable to allow any tool.
 //#define PROBING_TOOL 0
