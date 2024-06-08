@@ -2067,7 +2067,7 @@ void DWIN_SetDataDefaults() {
     HMI_data.BedLevT = LEVELING_BED_TEMP;
   #endif
   TERN_(PROUI_ITEM_ENC, ui.rev_rate = false;)
-  TERN_(BAUD_RATE_GCODE, HMI_data.Baud250K = (BAUDRATE == 250000);)
+  TERN_(BAUD_RATE_GCODE, HMI_data.Baud250K = (BAUDRATE == 500000);)
   TERN_(PROUI_ITEM_TRAM, HMI_data.CalcAvg = true;)
   TERN_(SHOW_SPEED_IND, HMI_data.SpdInd = false;)
   TERN_(HAS_BED_PROBE, HMI_data.FullManualTramming = false;)
@@ -2461,7 +2461,7 @@ void ApplyMove() {
 
 #if ENABLED(BAUD_RATE_GCODE)
   void SetBaud115K() { queue.inject(F("M575B115")); }
-  void SetBaud250K() { queue.inject(F("M575B250")); }
+  void SetBaud250K() { queue.inject(F("M575B500")); }
   void SetBaudRate() {
     Toggle_Chkb_Line(HMI_data.Baud250K);
     if (HMI_data.Baud250K) { SetBaud250K(); } else { SetBaud115K(); }

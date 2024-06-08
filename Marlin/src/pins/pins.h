@@ -714,7 +714,6 @@
   #include "stm32f1/pins_ORCA_3D_SPRINGER.h"        // STM32F1                              env:STM32F103VC_orca3d
 #elif MB(CREALITY_CR4NS)
   #include "stm32f1/pins_CREALITY_CR4NS.h"          // STM32F1                              env:STM32F103RE_creality env:STM32F103RE_creality_maple
-
 //
 // ARM Cortex-M4F
 //

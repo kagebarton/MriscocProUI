@@ -3621,7 +3621,7 @@ static_assert(_PLUS_TEST(3), "DEFAULT_MAX_ACCELERATION values must be positive."
 
 #if !BLOCK_BUFFER_SIZE
   #error "BLOCK_BUFFER_SIZE must be non-zero."
-#elif BLOCK_BUFFER_SIZE > 64
+#elif BLOCK_BUFFER_SIZE > 512
   #error "A very large BLOCK_BUFFER_SIZE is not needed and takes longer to drain the buffer on pause / cancel."
 #endif
 
