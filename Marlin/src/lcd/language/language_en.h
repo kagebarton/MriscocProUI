@@ -1046,7 +1046,7 @@ namespace LanguageWide_en {
     LSTR MSG_MPC_TARGET                     = _UxGT("MPC target:     Celsius");
     LSTR MSG_PID_TARGET                     = _UxGT("PID target:     Celsius");
     LSTR MSG_TARGET                         = _UxGT("Target:     Celsius");
-    LSTR MSG_250K_BAUD                      = _UxGT("250K baud");
+    LSTR MSG_250K_BAUD                      = _UxGT("500K baud");
     LSTR MSG_SCREW_INSET                    = _UxGT("Bed Screw Inset");
     LSTR MSG_SPEED_IND                      = _UxGT("Speed Indicator");
     LSTR MSG_ZERO_MESH                      = _UxGT("Zero Current Point");
