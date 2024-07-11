@@ -2009,7 +2009,7 @@ void DWIN_SetDataDefaults() {
   #if ALL(HAS_HEATED_BED, PREHEAT_BEFORE_LEVELING)
     HMI_data.BedLevT = LEVELING_BED_TEMP;
   #endif
-  TERN_(BAUD_RATE_GCODE, HMI_data.Baud250K = (BAUDRATE == 250000);)
+  TERN_(BAUD_RATE_GCODE, HMI_data.Baud250K = (BAUDRATE == 500000);)
   HMI_data.CalcAvg = true;
   TERN_(SHOW_SPEED_IND, HMI_data.SpdInd = false;)
   HMI_data.FullManualTramming = false;
@@ -2508,7 +2508,7 @@ void ApplyMove() {
 
 #if ENABLED(BAUD_RATE_GCODE)
   void SetBaud115K() { queue.inject(F("M575B115")); }
-  void SetBaud250K() { queue.inject(F("M575B250")); }
+  void SetBaud250K() { queue.inject(F("M575B500")); }
   void SetBaudRate() {
     Toggle_Chkb_Line(HMI_data.Baud250K);
     if (HMI_data.Baud250K) { SetBaud250K(); } else { SetBaud115K(); }
@@ -4524,7 +4524,7 @@ void Draw_AdvancedSettings_Menu() {
       EDIT_ITEM(ICON_File, MSG_HAS_PREVIEW, onDrawChkbMenu, SetPreview, &HMI_data.EnablePreview);
     #endif
     #if ENABLED(BAUD_RATE_GCODE)
-      EDIT_ITEM_F(ICON_SetBaudRate, "250K baud", onDrawChkbMenu, SetBaudRate, &HMI_data.Baud250K);
+      EDIT_ITEM_F(ICON_SetBaudRate, "500K baud", onDrawChkbMenu, SetBaudRate, &HMI_data.Baud250K);
     #endif
     #if ENABLED(MEDIASORT_MENU_ITEM)
       EDIT_ITEM(ICON_File, MSG_MEDIA_SORT, onDrawChkbMenu, SetMediaSort, &HMI_data.MediaSort);
@@ -4579,7 +4579,7 @@ void Draw_Advanced_Menu() { // From Control_Menu (Control) || Default-NP Advance
       EDIT_ITEM(ICON_File, MSG_HAS_PREVIEW, onDrawChkbMenu, SetPreview, &HMI_data.EnablePreview);
     #endif
     #if ENABLED(BAUD_RATE_GCODE)
-      EDIT_ITEM_F(ICON_SetBaudRate, "250K baud", onDrawChkbMenu, SetBaudRate, &HMI_data.Baud250K);
+      EDIT_ITEM_F(ICON_SetBaudRate, "500K baud", onDrawChkbMenu, SetBaudRate, &HMI_data.Baud250K);
     #endif
     #if ENABLED(MEDIASORT_MENU_ITEM)
       EDIT_ITEM(ICON_File, MSG_MEDIA_SORT, onDrawChkbMenu, SetMediaSort, &HMI_data.MediaSort);
