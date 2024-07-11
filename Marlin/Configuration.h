@@ -100,7 +100,7 @@
  *
  * :[2400, 9600, 19200, 38400, 57600, 115200, 250000, 500000, 1000000]
  */
-#define BAUDRATE 115200
+#define BAUDRATE 250000
 #define BAUD_RATE_GCODE     // Enable G-code M575 to set the baud rate
 
 /**
@@ -1246,7 +1246,7 @@
  * Override with M92
  *                                      X, Y, Z [, I [, J [, K...]]], E0 [, E1[, E2...]]
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 98 }
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 415 }
 
 //#define LIMITED_MAX_STEPS_EDITING
 #if ENABLED(LIMITED_MAX_STEPS_EDITING)
@@ -1584,7 +1584,7 @@
  *     |    [-]    |
  *     O-- FRONT --+
  */
-#define NOZZLE_TO_PROBE_OFFSET { -45.0, -7.0, 0 }
+#define NOZZLE_TO_PROBE_OFFSET { 28.7, -2.5, -1.5 }
 
 // Enable and set to use a specific tool for probing. Disable to allow any tool.
 //#define PROBING_TOOL 0
@@ -2487,7 +2487,7 @@
  *
  *   Caveats: The ending Z should be the same as starting Z.
  */
-//#define NOZZLE_CLEAN_FEATURE
+#define NOZZLE_CLEAN_FEATURE
 
 #if ENABLED(NOZZLE_CLEAN_FEATURE)
   #define NOZZLE_CLEAN_PATTERN_LINE     // Provide 'G12 P0' - a simple linear cleaning pattern
@@ -3436,7 +3436,7 @@
   #define HAS_CUSTOM_COLORS 1   // Able to change display colors (2040 bytes of flash)
   #define ALT_COLOR_MENU 0      // Color palette options >> 0 = Voxelab Default | 1 = Alternate Aquila | 2 = Ender3V2 Default
   #if ENABLED(AUTO_BED_LEVELING_UBL)
-    //#define ACTIVATE_MESH_ITEM// Active Mesh Leveling menu option (152 bytes of flash)
+    #define ACTIVATE_MESH_ITEM// Active Mesh Leveling menu option (152 bytes of flash)
   #endif
   #if ENABLED(FILAMENT_RUNOUT_SENSOR) // (2528 bytes of flash)
     #define RUNOUT_TUNE_ITEM    // Filament Runout option in Tune Menu
