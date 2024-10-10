@@ -180,3 +180,4 @@ tags
 .env
 desktop.ini
 !MarlinSimulator.exe
+.vscode/extensions.json
