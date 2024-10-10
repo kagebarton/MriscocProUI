@@ -188,3 +188,4 @@ sqlite*.db
 .zed/
 *mcp*.db
 github-app.yml
+.vscode/extensions.json
