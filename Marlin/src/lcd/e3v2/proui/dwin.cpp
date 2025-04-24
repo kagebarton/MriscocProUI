@@ -2515,7 +2515,7 @@ void ApplyMove() {
 #endif
 
 #if ENABLED(BAUD_RATE_GCODE)
-  void SetBaud115K() { queue.inject(F("M575B115")); }
+  void SetBaud115K() { queue.inject(F("M575")); }
   void SetBaud250K() { queue.inject(F("M575B250")); }
   void SetBaudRate() {
     Toggle_Chkb_Line(HMI_data.Baud250K);
