@@ -3548,7 +3548,7 @@
 // Professional firmware features:
   #define PROUI_EX 1            // Extended UI features (15152 bytes of flash)
   //#define CV_LASER_MODULE
-  #define HAS_GCODE_PREVIEW 1
+  //#define HAS_GCODE_PREVIEW 1
   #define DISABLE_TUNING_GRAPH 0// PID/MPC Tuning Plot Graph (1624 bytes of flash)
   #define HAS_ESDIAG 1          // View End-stop switch continuity (560 bytes of flash)
   //#define HAS_CGCODE 1        // Extra Gcode options (3320 bytes of flash)
@@ -3561,13 +3561,13 @@
     #define HS_MENU_ITEM        // BLTOUCH_HS_MODE menu option (56 bytes of flash)
   #endif
   #define PROUI_ITEM_PLOT       // Temp Plot Graph item in Tune/Prepare Menu (688 bytes of flash)
-  #define PROUI_ITEM_PLR        // Power-loss Recovery option in Tune Menu (POWER_LOSS_RECOVERY 3400 bytes of flash)
+  //#define PROUI_ITEM_PLR        // Power-loss Recovery option in Tune Menu (POWER_LOSS_RECOVERY 3400 bytes of flash)
   //#define PROUI_ITEM_JD       // Juntion Deviation item in Tune Menu (only if JD is enabled)
   #define PROUI_ITEM_ADVK       // Linear Advance item in Tune Menu (only if LA is enabled)
   #define SHOW_REAL_POS
   //#define CCLOUD_PRINT_SUPPORT// Menu item: enable/disable Creality Cloud Print Support (192 bytes of flash)
   #define PROUI_ITEM_TRAM       // Menu item: enable Tramming Wizard (2304 bytes of flash)
-  #define PROUI_MEDIASORT       // Menu item: enable/disable file list sorting (104 bytes of flash)
+  //#define PROUI_MEDIASORT       // Menu item: enable/disable file list sorting (104 bytes of flash)
   #define PROUI_ITEM_ENC        // Menu item: enable to reverse encoder direction (144 bytes of flash)
   //#define ENC_MENU_ITEM       // Menu item: faster/slower encoder rate (272 bytes of flash)
   #define SHOW_SPEED_IND        // Menu item: blink speed in mm/s along with speed percentage (296 bytes of flash)

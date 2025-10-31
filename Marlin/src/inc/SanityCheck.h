@@ -443,7 +443,7 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
     #error "SDCARD_SORT_ALPHA requires an LCD that supports it. (It doesn't apply to M20, etc.)"
   #elif SDSORT_LIMIT > 256
     #error "SDSORT_LIMIT must be 256 or smaller."
-  #elif SDSORT_LIMIT < 10
+  #elif SDSORT_LIMIT < 0
     #error "SDSORT_LIMIT should be greater than 9 to be useful."
   #elif ENABLED(SDSORT_DYNAMIC_RAM) && DISABLED(SDSORT_USES_RAM)
     #error "SDSORT_DYNAMIC_RAM requires SDSORT_USES_RAM (which reads the directory into RAM)."
