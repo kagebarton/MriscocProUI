@@ -1722,6 +1722,10 @@ void Stepper::isr() {
 
   // Loop until all events for this ISR have been issued
   do {
+    // Enable ISRs before pulse generation to reduce USART processing latency.
+    // hal.isr_off() masks ALL interrupts on STM32, so keeping them off through
+    // the pulse phases (#27131) overruns the 1-byte USART RX register at high baud.
+    hal.isr_on();
 
     hal_timer_t interval = 0;
 
