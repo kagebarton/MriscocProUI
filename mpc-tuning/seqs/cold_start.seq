@@ -1,0 +1,15 @@
+# Cold start to 240, then 120 s holds at 220, 240, 220. Start with the nozzle at room temperature.
+# Reproduces logs/side_cold1.log. Score with score_cold.py; the holds show the step response.
+M155 S1;2
+# Hotend idle timeout off, or it cuts the heater 360 s after passing 180 C
+M86 S0;2
+# Record the MPC constants in the log. Add e.g. "M306 E0 D5 K0.1;2" here to test other values.
+M306;2
+M109 S240;ok
+M105;120
+M104 S220;120
+M104 S240;120
+M104 S220;120
+M104 S0;1
+# Restore the idle timeout
+M86 S360 T180 E0 B0;2

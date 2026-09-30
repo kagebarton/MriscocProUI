@@ -1,0 +1,14 @@
+# M109 steps 240 -> 220 -> 240 from a cold start. Reproduces the first half of logs/side_D5.log.
+# Score with score_steps.py (real release vs predicted) and score_cold.py (the cold start).
+M107;2
+M155 S1;2
+M86 S0;2
+M306;2
+M109 S240;ok
+M105;90
+M109 R220;ok
+M105;70
+M109 S240;ok
+M105;70
+M104 S0;1
+M86 S360 T180 E0 B0;2

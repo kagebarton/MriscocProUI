@@ -1,0 +1,26 @@
+# The start sequence for PETG 240 / bed 75, heating at the nozzle wiper 3 mm above the bed.
+# Reproduces logs/real_petg_k05.log (the run behind the final K0.05). Homes and moves the head.
+# Score with score_start.py.
+M107;2
+M155 S1;2
+M86 S0;2
+M306;2
+M140 S75;1
+M104 S120;1
+M109 R120;ok
+M190 S75;ok
+M105;90
+M104 S240;1
+G28;ok
+G29 L0;1
+G29 F10;1
+G29 A;1
+G1 X177 Y245 F5000;1
+G1 Z3 F240;1
+M109 S240;ok
+M105;50
+M104 S0;1
+M140 S0;1
+G1 Z10 F240;1
+M420 S0;1
+M86 S360 T180 E0 B0;2
