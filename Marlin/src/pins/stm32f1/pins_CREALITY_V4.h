@@ -419,9 +419,11 @@
 // SDIO pins
 #if !defined(__STM32F1__)
   #define SDIO_D0_PIN                       PC8
-  #define SDIO_D1_PIN                       PC9
-  #define SDIO_D2_PIN                       PC10
-  #define SDIO_D3_PIN                       PC11
+  #ifndef TMC_UART_PIN_Y                          // The TMC UART mod wires PC9 (SDIO_D1) to the Y driver, so keep SDIO 1-bit
+    #define SDIO_D1_PIN                     PC9
+    #define SDIO_D2_PIN                     PC10
+    #define SDIO_D3_PIN                     PC11
+  #endif
   #define SDIO_CK_PIN                       PC12
   #define SDIO_CMD_PIN                      PD2
 #endif

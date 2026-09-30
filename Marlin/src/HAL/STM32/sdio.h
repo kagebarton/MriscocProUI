@@ -21,9 +21,12 @@
  */
 #pragma once
 
-#define SDIO_D0_PIN   PC8
-#define SDIO_D1_PIN   PC9
-#define SDIO_D2_PIN   PC10
-#define SDIO_D3_PIN   PC11
-#define SDIO_CK_PIN   PC12
-#define SDIO_CMD_PIN  PD2
+// Default pins, unless the pins file defines its own set (leaving out D1-D3 for a 1-bit bus)
+#ifndef SDIO_D0_PIN
+  #define SDIO_D0_PIN   PC8
+  #define SDIO_D1_PIN   PC9
+  #define SDIO_D2_PIN   PC10
+  #define SDIO_D3_PIN   PC11
+  #define SDIO_CK_PIN   PC12
+  #define SDIO_CMD_PIN  PD2
+#endif
