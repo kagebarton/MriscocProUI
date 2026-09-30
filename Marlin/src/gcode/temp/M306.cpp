@@ -49,6 +49,8 @@
  *                            S0 : Autotuning method AUTO (default)
  *                            S1 : Autotuning method DIFFERENTIAL
  *                            S2 : Autotuning method ASYMPTOTIC
+ *                            With D or M set, C, R, D, M and K are kept and only A and F are measured.
+ *                            Set D0 M0 first for a full tune.
  */
 
 void GcodeSuite::M306() {

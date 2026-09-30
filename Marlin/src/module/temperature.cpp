@@ -1089,8 +1089,18 @@ void Temperature::factory_reset() {
     temp_samples[0] = temp_samples[1] = temp_samples[2] = current_temp;
     time_fastest = rate_fastest = 0;
 
+    // With dead time or a side mass, run the model through the heat-up so it has caught up by the hold
+    const bool run_model = hotend.mpc.models_lag();
+    const millis_t model_interval_ms = SEC_TO_MS(MPC_dT);
+    millis_t next_model_ms = curr_time_ms + model_interval_ms;
+
     for (marlin.heatup_start(); ;) { // Can be interrupted with M108
       if (housekeeping() == CANCELLED) return CANCELLED;
+
+      if (run_model && ELAPSED(curr_time_ms, next_model_ms)) {
+        get_pid_output_hotend(e); // Only updates the model. The heater stays at full power.
+        next_model_ms += model_interval_ms;
+      }
 
       if (ELAPSED(curr_time_ms, next_test_time_ms)) {
         if (current_temp < 100.0f) {
@@ -1166,6 +1176,13 @@ void Temperature::factory_reset() {
     constexpr millis_t settle_time = 20000UL, test_duration = 20000UL;
     millis_t settle_end_ms = curr_time_ms + settle_time,
              test_end_ms = settle_end_ms + test_duration;
+    #if ENABLED(MPC_SIDE_MASS)
+      // Give the side mass three time constants to catch up, or its soak would read as ambient loss
+      if (mpc.side_heat_capacity > 0.0f && mpc.side_xfer_coeff > 0.0f) {
+        settle_end_ms += SEC_TO_MS(_MIN(3.0f * mpc.side_heat_capacity / mpc.side_xfer_coeff, 300.0f));
+        test_end_ms = settle_end_ms + test_duration;
+      }
+    #endif
     float total_energy_fan0 = 0.0f;
     #if HAS_FAN
       bool fan0_done = false;
@@ -1279,6 +1296,17 @@ void Temperature::factory_reset() {
     if (tuner.measure_ambient_temp() != MPC_autotuner::MeasurementState::SUCCESS) return;
     hotend.modeled_ambient_temp = tuner.get_ambient_temp();
 
+    // The fit below has no dead time or side mass, so it would fold them into C and R.
+    // With either set, keep C, R and the lag terms as tuned, and only measure A and F.
+    const bool keep_model = mpc.models_lag();
+    const MPC_t tuned = mpc;
+    if (keep_model) {
+      // Restart the model from the cooled hotend so it can follow the heat-up
+      hotend.modeled_block_temp = hotend.modeled_sensor_temp = degHotend(e);
+      TERN_(MPC_SIDE_MASS, hotend.modeled_side_temp = hotend.modeled_block_temp);
+      TERN_(MPC_DEADTIME, ZERO(hotend.pwm_history));
+    }
+
     #if HAS_FAN
       set_fan_speed(TERN(SINGLEFAN, 0, e), 0);
       Fan::sync_speeds();
@@ -1327,15 +1355,22 @@ void Temperature::factory_reset() {
       mpc.sensor_responsiveness = tuner.get_rate_fastest() / (tuner.get_rate_fastest() * tuner.get_time_fastest() + tuner.get_ambient_temp() - tuner.get_temp_fastest());
     }
 
-    hotend.modeled_block_temp = asymp_temp + (tuner.get_ambient_temp() - asymp_temp) * exp(-block_responsiveness * tuner.get_elapsed_heating_time());
-    hotend.modeled_sensor_temp = tuner.get_last_measured_temp();
+    const celsius_float_t fitted_block_temp = asymp_temp + (tuner.get_ambient_temp() - asymp_temp) * exp(-block_responsiveness * tuner.get_elapsed_heating_time());
+    const float fitted_block_heat_capacity = mpc.block_heat_capacity,
+                fitted_sensor_responsiveness = mpc.sensor_responsiveness;
+    if (keep_model)
+      mpc = tuned; // Hold with the tuned model, which followed the heat-up
+    else {
+      hotend.modeled_block_temp = fitted_block_temp;
+      hotend.modeled_sensor_temp = tuner.get_last_measured_temp();
+    }
 
     // Allow the system to stabilize under MPC, then get a better measure of ambient loss with and without fan
-    SERIAL_ECHOLNPGM(STR_MPC_MEASURING_AMBIENT, hotend.modeled_block_temp);
+    SERIAL_ECHOLNPGM(STR_MPC_MEASURING_AMBIENT, fitted_block_temp);
     TERN(DWIN_LCD_PROUI, LCD_ALERTMESSAGE(MSG_MPC_MEASURING_AMBIENT), LCD_MESSAGE(MSG_MPC_MEASURING_AMBIENT));
 
     // Use the estimated overshoot of the temperature as the target to achieve.
-    hotend.target = hotend.modeled_block_temp;
+    hotend.target = fitted_block_temp;
     if (tuner.measure_transfer() != MPC_autotuner::MeasurementState::SUCCESS) return;
 
     // Update the transfer coefficients
@@ -1344,6 +1379,12 @@ void Temperature::factory_reset() {
       const float ambient_xfer_coeff_fan255 = tuner.get_power_fan255() / (hotend.target - tuner.get_ambient_temp());
       mpc.applyFanAdjustment(ambient_xfer_coeff_fan255);
     #endif
+
+    if (keep_model) {
+      // Hand the fit back so the refinement below works on it as usual
+      mpc.block_heat_capacity = fitted_block_heat_capacity;
+      mpc.sensor_responsiveness = fitted_sensor_responsiveness;
+    }
 
     if (tuning_type == AUTO || tuning_type == FORCE_ASYMPTOTIC) {
       // Calculate a new and better asymptotic temperature and re-evaluate the other constants
@@ -1372,6 +1413,14 @@ void Temperature::factory_reset() {
         mpc.block_heat_capacity = mpc.heater_power / tuner.get_rate_fastest();
         mpc.sensor_responsiveness = tuner.get_rate_fastest() / (tuner.get_rate_fastest() * tuner.get_time_fastest() + tuner.get_ambient_temp() - tuner.get_temp_fastest());
       }
+    }
+
+    if (keep_model) {
+      // Report the fit as a hint that the hotend has changed, then put the tuned values back
+      SERIAL_ECHOLNPGM("MPC dead time or side mass set: keeping C and R. Without them the fit gives C", mpc.block_heat_capacity,
+                       " R", p_float_t(mpc.sensor_responsiveness, 4));
+      mpc.block_heat_capacity = tuned.block_heat_capacity;
+      mpc.sensor_responsiveness = tuned.sensor_responsiveness;
     }
 
     SERIAL_ECHOLNPGM(STR_MPC_AUTOTUNE_FINISHED);

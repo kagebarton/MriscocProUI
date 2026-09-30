@@ -412,6 +412,8 @@ typedef struct { float p, i, d, c, f; } raw_pidcf_t;
       void applyFanAdjustment(const float) {}
     #endif
     float fanCoefficient() { return SUM_TERN(MPC_INCLUDE_FAN, ambient_xfer_coeff_fan0, fan255_adjustment); }
+    // Dead time or a side mass, which M306 T can't measure
+    bool models_lag() const { return TERN0(MPC_DEADTIME, heater_deadtime > 0.0f) || TERN0(MPC_SIDE_MASS, side_heat_capacity > 0.0f); }
   } MPC_t;
 
   #define MPC_dT ((OVERSAMPLENR * float(ACTUAL_ADC_SAMPLES)) / (TEMP_TIMER_FREQUENCY))
