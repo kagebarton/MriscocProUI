@@ -1,0 +1,881 @@
+diff --git a/.gitignore b/.gitignore
+index 742475e25a..60e6906205 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -180,3 +180,4 @@ tags
+ .env
+ desktop.ini
+ !MarlinSimulator.exe
++.vscode/extensions.json
+diff --git a/Marlin/Configuration.h b/Marlin/Configuration.h
+index 3d8da66740..6121b0d8ca 100644
+--- a/Marlin/Configuration.h
++++ b/Marlin/Configuration.h
+@@ -102,7 +102,7 @@
+  *
+  * :[2400, 9600, 19200, 38400, 57600, 115200, 250000, 500000, 1000000]
+  */
+-#define BAUDRATE 115200
++#define BAUDRATE 500000
+ #define BAUD_RATE_GCODE     // Enable G-code M575 to set the baud rate
+ 
+ /**
+@@ -159,6 +159,11 @@
+  *          TMC5130, TMC5130_STANDALONE, TMC5160, TMC5160_STANDALONE
+  * :['A4988', 'A5984', 'DRV8825', 'LV8729', 'TB6560', 'TB6600', 'TMC2100', 'TMC2130', 'TMC2130_STANDALONE', 'TMC2160', 'TMC2160_STANDALONE', 'TMC2208', 'TMC2208_STANDALONE', 'TMC2209', 'TMC2209_STANDALONE', 'TMC2240', 'TMC2660', 'TMC2660_STANDALONE', 'TMC5130', 'TMC5130_STANDALONE', 'TMC5160', 'TMC5160_STANDALONE']
+  */
++//#define TMC_UART_PIN_X PC6
++//#define TMC_UART_PIN_Y PC9
++//#define TMC_UART_PIN_Z PA13  // Z standalone for now: Z UART on PA13 hangs Dec+ builds at the logo
++#define TMC_UART_PIN_E PA15
++ 
+ #define X_DRIVER_TYPE TMC2208_STANDALONE
+ #define Y_DRIVER_TYPE TMC2208_STANDALONE
+ #define Z_DRIVER_TYPE TMC2208_STANDALONE
+@@ -173,7 +178,7 @@
+ //#define U_DRIVER_TYPE  A4988
+ //#define V_DRIVER_TYPE  A4988
+ //#define W_DRIVER_TYPE  A4988
+-#define E0_DRIVER_TYPE TMC2208_STANDALONE
++#define E0_DRIVER_TYPE TMC2208
+ //#define E1_DRIVER_TYPE A4988
+ //#define E2_DRIVER_TYPE A4988
+ //#define E3_DRIVER_TYPE A4988
+@@ -588,7 +593,7 @@
+  *   998 : Dummy Table that ALWAYS reads 25°C or the temperature defined below.
+  *   999 : Dummy Table that ALWAYS reads 100°C or the temperature defined below.
+  */
+-#define TEMP_SENSOR_0 1
++#define TEMP_SENSOR_0 11
+ #define TEMP_SENSOR_1 0
+ #define TEMP_SENSOR_2 0
+ #define TEMP_SENSOR_3 0
+@@ -712,8 +717,8 @@
+  * PIDTEMP : PID temperature control (~4.1K)
+  * MPCTEMP : Predictive Model temperature control. (~1.8K without auto-tune)
+  */
+-#define PIDTEMP           // See the PID Tuning Guide at https://reprap.org/wiki/PID_Tuning
+-//#define MPCTEMP         // See https://marlinfw.org/docs/features/model_predictive_control.html
++//#define PIDTEMP           // See the PID Tuning Guide at https://reprap.org/wiki/PID_Tuning
++#define MPCTEMP         // See https://marlinfw.org/docs/features/model_predictive_control.html
+ 
+ #define PID_MAX  255      // Limit hotend current while PID is active (see PID_FUNCTIONAL_RANGE below); 255=full current
+ #define PID_K1     0.95   // Smoothing factor within any PID loop
+@@ -757,21 +762,27 @@
+   #define MPC_AUTOTUNE_MENU                           // Add MPC auto-tuning to the "Advanced Settings" menu. (~350 bytes of flash)
+ 
+   #define MPC_MAX 255                                 // (0..255) Current to nozzle while MPC is active.
+-  #define MPC_HEATER_POWER { 40.0f }                  // (W) Nominal heat cartridge powers.
++  #define MPC_HEATER_POWER { 53.0f }                  // (W) Nominal heat cartridge powers.
+   //#define MPC_PTC                                   // Hotend power changes with temperature (e.g., PTC heat cartridges).
+   #if ENABLED(MPC_PTC)
+     #define MPC_HEATER_ALPHA { 0.0028f }              // Temperature coefficient of resistance of the heat cartridges.
+     #define MPC_HEATER_REFTEMP { 20 }                 // (°C) Reference temperature for MPC_HEATER_POWER and MPC_HEATER_ALPHA.
+   #endif
+ 
++  #define MPC_DEADTIME                                // Model a dead time between heater and sensor (e.g., large blocks, cartridge thermistors).
++  #if ENABLED(MPC_DEADTIME)
++    #define MPC_HEATER_DEADTIME { 4.5f }              // (s) Delay from a heater power change to the modeled block. Set with M306 D. Not measured by M306 T.
++  #endif
++
+   #define MPC_INCLUDE_FAN                             // Model the fan speed?
+ 
+-  // Measured physical constants from M306
+-  #define MPC_BLOCK_HEAT_CAPACITY { 16.7f }           // (J/K) Heat block heat capacities.
+-  #define MPC_SENSOR_RESPONSIVENESS { 0.22f }         // (K/s per ∆K) Rate of change of sensor temperature from heat block.
+-  #define MPC_AMBIENT_XFER_COEFF { 0.068f }           // (W/K) Heat transfer coefficients from heat block to room air with fan off.
++  // Physical constants fitted to measured Volcano heat-ups and steps (2026-09-23), not from M306 T.
++  // M306 T assumes no dead time and overestimates C for this hotend, so re-running it undoes these.
++  #define MPC_BLOCK_HEAT_CAPACITY { 16.95f }          // (J/K) Heat block heat capacities.
++  #define MPC_SENSOR_RESPONSIVENESS { 0.2673f }       // (K/s per ∆K) Rate of change of sensor temperature from heat block.
++  #define MPC_AMBIENT_XFER_COEFF { 0.0654f }          // (W/K) Heat transfer coefficients from heat block to room air with fan off.
+   #if ENABLED(MPC_INCLUDE_FAN)
+-    #define MPC_AMBIENT_XFER_COEFF_FAN255 { 0.097f }  // (W/K) Heat transfer coefficients from heat block to room air with fan on full.
++    #define MPC_AMBIENT_XFER_COEFF_FAN255 { 0.1018f } // (W/K) Heat transfer coefficients from heat block to room air with fan on full.
+   #endif
+ 
+   // For one fan and multiple hotends MPC needs to know how to apply the fan cooling effect.
+@@ -782,17 +793,17 @@
+ 
+   // Filament Heat Capacity (joules/kelvin/mm)
+   // Set at runtime with M306 H<value>
+-  #define FILAMENT_HEAT_CAPACITY_PERMM { 5.6e-3f }    // 0.0056 J/K/mm for 1.75mm PLA (0.0149 J/K/mm for 2.85mm PLA).
++  #define FILAMENT_HEAT_CAPACITY_PERMM { 3.5e-3f }    // 0.0056 J/K/mm for 1.75mm PLA (0.0149 J/K/mm for 2.85mm PLA).
+                                                       // 0.0036 J/K/mm for 1.75mm PETG (0.0094 J/K/mm for 2.85mm PETG).
+                                                       // 0.00515 J/K/mm for 1.75mm ABS (0.0137 J/K/mm for 2.85mm ABS).
+                                                       // 0.00522 J/K/mm for 1.75mm Nylon (0.0138 J/K/mm for 2.85mm Nylon).
+ 
+   // Advanced options
+-  #define MPC_SMOOTHING_FACTOR 0.5f                   // (0.0...1.0) Noisy temperature sensors may need a lower value for stabilization.
++  #define MPC_SMOOTHING_FACTOR 0.25f                   // (0.0...1.0) Noisy temperature sensors may need a lower value for stabilization.
+   #define MPC_MIN_AMBIENT_CHANGE 1.0f                 // (K/s) Modeled ambient temperature rate of change, when correcting model inaccuracies.
+-  #define MPC_STEADYSTATE 0.5f                        // (K/s) Temperature change rate for steady state logic to be enforced.
++  #define MPC_STEADYSTATE 1.0f                        // (K/s) Temperature change rate for steady state logic to be enforced.
+ 
+-  #define MPC_TUNING_POS { X_CENTER, Y_CENTER, 1.0f } // (mm) M306 Autotuning position, ideally bed center at first layer height.
++  #define MPC_TUNING_POS { X_CENTER, Y_CENTER, 0.1f } // (mm) M306 Autotuning position, ideally bed center at first layer height.
+   #define MPC_TUNING_END_Z 10.0f                      // (mm) M306 Autotuning final Z position.
+   //#define EVENT_GCODE_AFTER_MPC_TUNE "M84"          // G-code to execute after MPC tune finished and Z raised.
+ #endif
+@@ -832,9 +843,9 @@
+ 
+   // 120V 250W silicone heater into 4mm borosilicate (MendelMax 1.5+)
+   // from FOPDT model - kp=.39 Tp=405 Tdead=66, Tc set to 79.2, aggressive factor of .15 (vs .1, 1, 10)
+-  #define DEFAULT_BED_KP 128.06
+-  #define DEFAULT_BED_KI  24.95
+-  #define DEFAULT_BED_KD 438.07
++  #define DEFAULT_BED_KP 54.26
++  #define DEFAULT_BED_KI 10.60
++  #define DEFAULT_BED_KD 185.22
+ 
+   // FIND YOUR OWN: "M303 E-1 C8 S90" to run autotune on the bed at 90 degreesC for 8 cycles.
+ #else
+@@ -1343,7 +1354,7 @@
+  * Override with M92 (when enabled below)
+  *                                      X, Y, Z [, I [, J [, K...]]], E0 [, E1[, E2...]]
+  */
+-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 98 }
++#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 702 }
+ 
+ //#define LIMITED_MAX_STEPS_EDITING
+ #if ENABLED(LIMITED_MAX_STEPS_EDITING)
+@@ -1469,7 +1480,7 @@
+  * The probe replaces the Z-MIN endstop and is used for Z homing.
+  * (Automatically enables USE_PROBE_FOR_Z_HOMING.)
+  */
+-//#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN  // Probe connected to BLTouch port
++#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN  // Klackender
+ 
+ // Force the use of the probe for Z-axis homing
+ #define USE_PROBE_FOR_Z_HOMING  // Manual mesh not have a probe
+@@ -1529,7 +1540,7 @@
+ /**
+  * The BLTouch probe uses a Hall effect sensor and emulates a servo.
+  */
+-#define BLTOUCH  // 3D/CR/BLTouch version
++//#define BLTOUCH  // 3D/CR/BLTouch version
+ 
+ /**
+  * MagLev V4 probe by MDD
+@@ -1600,7 +1611,7 @@
+  * Magnetically Mounted Probe
+  * For probes such as Euclid, Klicky, Klackender, etc.
+  */
+-//#define MAG_MOUNTED_PROBE
++#define MAG_MOUNTED_PROBE
+ #if ENABLED(MAG_MOUNTED_PROBE)
+   #define PROBE_DEPLOY_FEEDRATE (133*60)  // (mm/min) Probe deploy speed
+   #define PROBE_STOW_FEEDRATE   (133*60)  // (mm/min) Probe stow speed
+@@ -1619,16 +1630,16 @@
+     #define MAG_MOUNTED_PRE_STOW   { PROBE_DEPLOY_FEEDRATE, { 15, 160, 30 } }  // Safe position for servo deactivation
+   #endif
+ 
+-  #define MAG_MOUNTED_DEPLOY_1 { PROBE_DEPLOY_FEEDRATE, { 245, 114, 30 } }  // Move to side Dock & Attach probe
+-  #define MAG_MOUNTED_DEPLOY_2 { PROBE_DEPLOY_FEEDRATE, { 210, 114, 30 } }  // Move probe off dock
+-  #define MAG_MOUNTED_DEPLOY_3 { PROBE_DEPLOY_FEEDRATE, {   0,   0,  0 } }  // Extra move if needed
+-  #define MAG_MOUNTED_DEPLOY_4 { PROBE_DEPLOY_FEEDRATE, {   0,   0,  0 } }  // Extra move if needed
+-  #define MAG_MOUNTED_DEPLOY_5 { PROBE_DEPLOY_FEEDRATE, {   0,   0,  0 } }  // Extra move if needed
+-  #define MAG_MOUNTED_STOW_1   { PROBE_STOW_FEEDRATE,   { 245, 114, 20 } }  // Move to dock
+-  #define MAG_MOUNTED_STOW_2   { PROBE_STOW_FEEDRATE,   { 245, 114,  0 } }  // Place probe beside remover
+-  #define MAG_MOUNTED_STOW_3   { PROBE_STOW_FEEDRATE,   { 230, 114,  0 } }  // Side move to remove probe
+-  #define MAG_MOUNTED_STOW_4   { PROBE_STOW_FEEDRATE,   { 210, 114, 20 } }  // Side move to remove probe
+-  #define MAG_MOUNTED_STOW_5   { PROBE_STOW_FEEDRATE,   {   0,   0,  0 } }  // Extra move if needed
++  #define MAG_MOUNTED_DEPLOY_1 { PROBE_DEPLOY_FEEDRATE, { 235+12, 114, 20 } }  // Move to side Dock & Attach probe
++  #define MAG_MOUNTED_DEPLOY_2 { PROBE_DEPLOY_FEEDRATE, { 235-35, 114, 20 } }  // Move probe off dock
++  //#define MAG_MOUNTED_DEPLOY_3 { PROBE_DEPLOY_FEEDRATE, {   0,   0,  0 } }  // Extra move if needed
++  //#define MAG_MOUNTED_DEPLOY_4 { PROBE_DEPLOY_FEEDRATE, {   0,   0,  0 } }  // Extra move if needed
++  //#define MAG_MOUNTED_DEPLOY_5 { PROBE_DEPLOY_FEEDRATE, {   0,   0,  0 } }  // Extra move if needed
++  #define MAG_MOUNTED_STOW_1   { PROBE_STOW_FEEDRATE,   { 235+12, 114, 20 } }  // Move to dock
++  #define MAG_MOUNTED_STOW_2   { PROBE_STOW_FEEDRATE,   { 235+12, 114,  1 } }  // Place probe beside remover
++  #define MAG_MOUNTED_STOW_3   { PROBE_STOW_FEEDRATE,   { 235-35, 114,  1 } }  // Side move to remove probe
++  #define MAG_MOUNTED_STOW_4   { PROBE_STOW_FEEDRATE,   { 235-35, 114, 20 } }  // Side move to remove probe
++  //#define MAG_MOUNTED_STOW_5   { PROBE_STOW_FEEDRATE,   {   0,   0,  0 } }  // Extra move if needed
+ #endif
+ 
+ // Duet Smart Effector (for delta printers) - https://docs.duet3d.com/en/Duet3D_hardware/Accessories/Smart_Effector
+@@ -1718,7 +1729,7 @@
+  *     |    [-]    |
+  *     O-- FRONT --+
+  */
+-#define NOZZLE_TO_PROBE_OFFSET { -45.0, -7.0, 0 } // (mm) X, Y, Z distance from Nozzle tip to Probe trigger-point
++#define NOZZLE_TO_PROBE_OFFSET { 4.5, 26.5, -2.77 } // (mm) X, Y, Z distance from Nozzle tip to Probe trigger-point
+ 
+ // Enable and set to use a specific tool for probing. Disable to allow any tool.
+ //#define PROBING_TOOL 0
+@@ -1730,7 +1741,7 @@
+ 
+ // Most probes should stay away from the edges of the bed, but
+ // with NOZZLE_AS_PROBE this can be negative for a wider probing area.
+-#define PROBING_MARGIN 0
++#define PROBING_MARGIN 15
+ 
+ // X and Y axis travel speed between probes.
+ // Leave undefined to use the average of the current XY homing feedrate.
+@@ -1924,7 +1935,7 @@
+ #define Z_CLEARANCE_FOR_HOMING  10    // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ...
+                                       // You'll need this much clearance above Z_MAX_POS to avoid grinding.
+ 
+-//#define Z_AFTER_HOMING        10    // (mm) Height to move to after homing (if Z was homed)
++#define Z_AFTER_HOMING        17.25    // (mm) Height to move to after homing (if Z was homed)
+ //#define XY_AFTER_HOMING { 10, 10 }  // (mm) Move to an XY position after homing (and raising Z)
+ 
+ //#define EVENT_GCODE_AFTER_HOMING "M300 P440 S200"  // Commands to run after G28 (and move to XY_AFTER_HOMING)
+@@ -1959,15 +1970,15 @@
+ // @section geometry
+ 
+ // The size of the printable area
+-#define X_BED_SIZE 220
+-#define Y_BED_SIZE 220
++#define X_BED_SIZE 235
++#define Y_BED_SIZE 235
+ 
+ // Travel limits (linear=mm, rotational=°) after homing, corresponding to endstop positions.
+-#define X_MIN_POS 0
+-#define Y_MIN_POS 0
++#define X_MIN_POS -2.5
++#define Y_MIN_POS -6
+ #define Z_MIN_POS 0
+-#define X_MAX_POS 230
+-#define Y_MAX_POS 220
++#define X_MAX_POS X_BED_SIZE +17
++#define Y_MAX_POS Y_BED_SIZE +10
+ #define Z_MAX_POS 250
+ //#define I_MIN_POS 0
+ //#define I_MAX_POS 50
+@@ -2300,8 +2311,8 @@
+ 
+   //#define MESH_EDIT_GFX_OVERLAY   // Display a graphics overlay while editing the mesh
+ 
+-  #define MESH_INSET 10             // Set Mesh bounds as an inset region of the bed
+   #define GRID_MAX_POINTS_X 7       // Don't use more than 9 points per axis, implementation limited
++  #define MESH_INSET 25             // Set Mesh bounds as an inset region of the bed
+   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
+ 
+   //#define UBL_HILBERT_CURVE       // Use Hilbert distribution for less travel when probing multiple points
+@@ -2597,7 +2608,7 @@
+ 
+ #if ENABLED(NOZZLE_PARK_FEATURE)
+   // Specify a park position as { X, Y, Z_raise }
+-  #define NOZZLE_PARK_POINT { 0, 200, 50 }
++  #define NOZZLE_PARK_POINT { 153, 245, 50 }
+   #define NOZZLE_PARK_MOVE          0   // Park motion: 0 = XY Move, 1 = X Only, 2 = Y Only, 3 = X before Y, 4 = Y before X
+   #define NOZZLE_PARK_Z_RAISE_MIN  10   // (mm) Always raise Z by at least this distance
+   #define NOZZLE_PARK_XY_FEEDRATE 125   // (mm/s) X and Y axes feedrate (also used for delta Z axis)
+@@ -2642,7 +2653,7 @@
+  *
+  *   Caveats: The ending Z should be the same as starting Z.
+  */
+-//#define NOZZLE_CLEAN_FEATURE
++#define NOZZLE_CLEAN_FEATURE
+ 
+ #if ENABLED(NOZZLE_CLEAN_FEATURE)
+   #define NOZZLE_CLEAN_PATTERN_LINE     // Provide 'G12 P0' - a simple linear cleaning pattern
+@@ -2652,7 +2663,7 @@
+   // Default pattern to use when 'P' is not provided to G12. One of the enabled options above.
+   #define NOZZLE_CLEAN_DEFAULT_PATTERN 0
+ 
+-  #define NOZZLE_CLEAN_STROKES     4    // Default number of pattern repetitions
++  #define NOZZLE_CLEAN_STROKES     5    // Default number of pattern repetitions
+ 
+   #if ENABLED(NOZZLE_CLEAN_PATTERN_ZIGZAG)
+     #define NOZZLE_CLEAN_TRIANGLES  3   // Default number of triangles
+@@ -2660,8 +2671,8 @@
+ 
+   // Specify positions for each tool as { { X, Y, Z }, { X, Y, Z } }
+   // Dual hotend system may use { {  -20, (Y_BED_SIZE / 2), (Z_MIN_POS + 1) },  {  420, (Y_BED_SIZE / 2), (Z_MIN_POS + 1) }}
+-  #define NOZZLE_CLEAN_START_POINT { {  30, 30, (Z_MIN_POS + 1) } }
+-  #define NOZZLE_CLEAN_END_POINT   { { 100, 30, (Z_MIN_POS + 1) } }
++  #define NOZZLE_CLEAN_START_POINT { { 177, 242, (Z_MIN_POS + 1) } }
++  #define NOZZLE_CLEAN_END_POINT   { { 153, 242, (Z_MIN_POS + 1) } }
+ 
+   #if ENABLED(NOZZLE_CLEAN_PATTERN_CIRCLE)
+     #define NOZZLE_CLEAN_CIRCLE_RADIUS 6.5                      // (mm) Circular pattern radius
+@@ -2670,7 +2681,7 @@
+   #endif
+ 
+   // Move the nozzle to the initial position after cleaning
+-  #define NOZZLE_CLEAN_GOBACK
++  //#define NOZZLE_CLEAN_GOBACK
+ 
+   // For a purge/clean station that's always at the gantry height (thus no Z move)
+   //#define NOZZLE_CLEAN_NO_Z
+@@ -2679,7 +2690,7 @@
+   //#define NOZZLE_CLEAN_NO_Y
+ 
+   // Require a minimum hotend temperature for cleaning
+-  #define NOZZLE_CLEAN_MIN_TEMP 170
++  //#define NOZZLE_CLEAN_MIN_TEMP 170
+   //#define NOZZLE_CLEAN_HEATUP       // Heat up the nozzle instead of skipping wipe
+ 
+   // Explicit wipe G-code script applies to a G12 with no arguments.
+@@ -3588,10 +3599,10 @@
+ 
+   #define PROUI_EX 1            // Extended UI features (15152 bytes of flash)
+   //#define CV_LASER_MODULE
+-  #define HAS_GCODE_PREVIEW 1
++  //#define HAS_GCODE_PREVIEW 1
+   #define DISABLE_TUNING_GRAPH 0// PID/MPC Tuning Plot Graph (1624 bytes of flash)
+   #define HAS_ESDIAG 1          // View End-stop switch continuity (560 bytes of flash)
+-  #define HAS_CGCODE 1          // Extra Gcode options (3320 bytes of flash)
++  //#define HAS_CGCODE 1        // Extra Gcode options (3320 bytes of flash)
+   //#define HAS_LOCKSCREEN 1    // Simple lockscreen as to not accidentally change something (568 bytes of flash)
+   #define USE_GRID_MESHVIEWER 1 // Enable two mesh graph types : one (1560 bytes of flash)
+   #define HAS_CUSTOM_COLORS 1   // Able to change display colors (2040 bytes of flash)
+@@ -3601,13 +3612,13 @@
+     #define HS_MENU_ITEM        // BLTOUCH_HS_MODE menu option (56 bytes of flash)
+   #endif
+   #define PROUI_ITEM_PLOT       // Temp Plot Graph item in Tune/Prepare Menu (688 bytes of flash)
+-  #define PROUI_ITEM_PLR        // Power-loss Recovery option in Tune Menu (POWER_LOSS_RECOVERY 3400 bytes of flash)
++  //#define PROUI_ITEM_PLR        // Power-loss Recovery option in Tune Menu (POWER_LOSS_RECOVERY 3400 bytes of flash)
+   //#define PROUI_ITEM_JD       // Juntion Deviation item in Tune Menu (only if JD is enabled)
+   #define PROUI_ITEM_ADVK       // Linear Advance item in Tune Menu (only if LA is enabled)
+   #define SHOW_REAL_POS
+   //#define CCLOUD_PRINT_SUPPORT// Menu item: enable/disable Creality Cloud Print Support (192 bytes of flash)
+   #define PROUI_ITEM_TRAM       // Menu item: enable Tramming Wizard (2304 bytes of flash)
+-  #define PROUI_MEDIASORT       // Menu item: enable/disable file list sorting (104 bytes of flash)
++  //#define PROUI_MEDIASORT       // Menu item: enable/disable file list sorting (104 bytes of flash)
+   #define PROUI_ITEM_ENC        // Menu item: enable to reverse encoder direction (144 bytes of flash)
+   //#define ENC_MENU_ITEM       // Menu item: faster/slower encoder rate (272 bytes of flash)
+   #define SHOW_SPEED_IND        // Menu item: blink speed in mm/s along with speed percentage (296 bytes of flash)
+diff --git a/Marlin/Configuration_adv.h b/Marlin/Configuration_adv.h
+index 66236ac52d..78577b5ddc 100644
+--- a/Marlin/Configuration_adv.h
++++ b/Marlin/Configuration_adv.h
+@@ -1280,17 +1280,17 @@
+  *
+  * Tune with M593 D<factor> F<frequency>
+  */
+-//#define INPUT_SHAPING_X
+-//#define INPUT_SHAPING_Y
++#define INPUT_SHAPING_X
++#define INPUT_SHAPING_Y
+ //#define INPUT_SHAPING_Z
+ #if ANY(INPUT_SHAPING_X, INPUT_SHAPING_Y, INPUT_SHAPING_Z)
+   #if ENABLED(INPUT_SHAPING_X)
+-    #define SHAPING_FREQ_X  40.0        // (Hz) The default dominant resonant frequency on the X axis.
+-    #define SHAPING_ZETA_X   0.15       // Damping ratio of the X axis (range: 0.0 = no damping to 1.0 = critical damping).
++    #define SHAPING_FREQ_X  48.40        // (Hz) The default dominant resonant frequency on the X axis.
++    #define SHAPING_ZETA_X   0.20       // Damping ratio of the X axis (range: 0.0 = no damping to 1.0 = critical damping).
+   #endif
+   #if ENABLED(INPUT_SHAPING_Y)
+-    #define SHAPING_FREQ_Y  40.0        // (Hz) The default dominant resonant frequency on the Y axis.
+-    #define SHAPING_ZETA_Y   0.15       // Damping ratio of the Y axis (range: 0.0 = no damping to 1.0 = critical damping).
++    #define SHAPING_FREQ_Y  44.40        // (Hz) The default dominant resonant frequency on the Y axis.
++    #define SHAPING_ZETA_Y   0.10       // Damping ratio of the Y axis (range: 0.0 = no damping to 1.0 = critical damping).
+   #endif
+   #if ENABLED(INPUT_SHAPING_Z)
+     #define SHAPING_FREQ_Z  40.0        // (Hz) The default dominant resonant frequency on the Z axis.
+@@ -1865,7 +1865,7 @@
+    * an option on the LCD screen to continue the print from the last-known
+    * point in the file.
+    */
+-  #define POWER_LOSS_RECOVERY               // (3400 bytes of flash)
++  //#define POWER_LOSS_RECOVERY           // (3400 bytes of flash)
+   #if ENABLED(POWER_LOSS_RECOVERY)
+     #define PLR_ENABLED_DEFAULT       false // Power-Loss Recovery enabled by default. (Set with 'M413 Sn' & M500)
+     //#define PLR_HEAT_BED_ON_REBOOT        // Heat up bed immediately on reboot to mitigate object detaching/warping.
+@@ -1923,21 +1923,17 @@
+ 
+   // SD Card Sorting options
+   #if ENABLED(SDCARD_SORT_ALPHA)
+-    #define SDSORT_QUICK           true   // Use Quick Sort as a sorting algorithm. Otherwise use Bubble Sort.
+-    #define SDSORT_REVERSE         false  // Default to sorting file names in reverse order.
+-    #define SDSORT_LIMIT           80     // Maximum number of sorted items (10-256). Costs 27 bytes each.
+-    #define SDSORT_FOLDERS        -1      // -1=above  0=none  1=below
+-    #define SDSORT_GCODE           true   // Enable G-code M34 to set sorting behaviors: M34 S<-1|0|1> F<-1|0|1>
+-    #define SDSORT_USES_STACK      false  // Prefer the stack for pre-sorting to give back some SRAM. (Negated by next 2 options.)
+-    #define SDSORT_USES_RAM        true   // Pre-allocate a static array for faster pre-sorting.
+-    #if ENABLED(SDSORT_USES_RAM)
+-      #define SDSORT_CACHE_NAMES   true   // Keep sorted items in RAM longer for speedy performance. Most expensive option.
+-      #if ENABLED(SDSORT_CACHE_NAMES)
+-        #define SDSORT_DYNAMIC_RAM true   // Use dynamic allocation (within SD menus). Least expensive option. Set SDSORT_LIMIT before use!
+-        #define SDSORT_CACHE_VFATS 2      // Maximum number of 13-byte VFAT entries to use for sorting.
+-                                          /// NOTE: Only affects SCROLL_LONG_FILENAMES with SDSORT_CACHE_NAMES but not SDSORT_DYNAMIC_RAM.
+-      #endif
+-    #endif
++    #define SDSORT_QUICK       true   // Use Quick Sort as a sorting algorithm. Otherwise use Bubble Sort.
++    #define SDSORT_REVERSE     false  // Default to sorting file names in reverse order.
++    #define SDSORT_LIMIT       1     // Maximum number of sorted items (10-256). Costs 27 bytes each.
++    #define SDSORT_FOLDERS     -1     // -1=above  0=none  1=below
++    #define SDSORT_GCODE       true   // Enable G-code M34 to set sorting behaviors: M34 S<-1|0|1> F<-1|0|1>
++    #define SDSORT_USES_RAM    false   // Pre-allocate a static array for faster pre-sorting.
++    #define SDSORT_USES_STACK  true  // Prefer the stack for pre-sorting to give back some SRAM. (Negated by next 2 options.)
++    #define SDSORT_CACHE_NAMES false   // Keep sorted items in RAM longer for speedy performance. Most expensive option.
++    #define SDSORT_DYNAMIC_RAM false   // Use dynamic allocation (within SD menus). Least expensive option. Set SDSORT_LIMIT before use!
++    #define SDSORT_CACHE_VFATS 2      // Maximum number of 13-byte VFAT entries to use for sorting.
++                                      /// NOTE: Only affects SCROLL_LONG_FILENAMES with SDSORT_CACHE_NAMES but not SDSORT_DYNAMIC_RAM.
+   #endif
+ 
+   // Allow international symbols in long filenames. To display correctly, the
+@@ -2656,7 +2652,7 @@
+ //
+ // G2/G3 Arc Support
+ //
+-#define ARC_SUPPORT                   // Requires ~3226 bytes
++//#define ARC_SUPPORT                   // Requires ~3226 bytes
+ #if ENABLED(ARC_SUPPORT)
+   #define MIN_ARC_SEGMENT_MM      0.1 // (mm) Minimum length of each arc segment
+   #define MAX_ARC_SEGMENT_MM      1.0 // (mm) Maximum length of each arc segment
+@@ -2671,7 +2667,7 @@
+ //#define BEZIER_CURVE_SUPPORT        // Requires ~2666 bytes
+ 
+ #if ANY(ARC_SUPPORT, BEZIER_CURVE_SUPPORT)
+-  //#define CNC_WORKSPACE_PLANES      // Allow G2/G3/G5 to operate in XY, ZX, or YZ planes
++  #define CNC_WORKSPACE_PLANES      // Allow G2/G3/G5 to operate in XY, ZX, or YZ planes
+ #endif
+ 
+ /**
+@@ -2761,18 +2757,18 @@
+ 
+ // The number of linear moves that can be in the planner at once.
+ #if ALL(HAS_MEDIA, DIRECT_STEPPING)
+-  #define BLOCK_BUFFER_SIZE  32
++  #define BLOCK_BUFFER_SIZE 64
+ #elif HAS_MEDIA
+-  #define BLOCK_BUFFER_SIZE 32
++  #define BLOCK_BUFFER_SIZE 64
+ #else
+-  #define BLOCK_BUFFER_SIZE 32
++  #define BLOCK_BUFFER_SIZE 64
+ #endif
+ 
+ // @section serial
+ 
+ // The ASCII buffer for serial input
+ #define MAX_CMD_SIZE 96
+-#define BUFSIZE 32
++#define BUFSIZE 8
+ 
+ /**
+  * Host Transmit Buffer Size
+@@ -2791,7 +2787,7 @@
+  * To use flow control, set this buffer size to at least 1024 bytes.
+  * :[0, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
+  */
+-//#define RX_BUFFER_SIZE 1024
++#define RX_BUFFER_SIZE 128
+ 
+ #if RX_BUFFER_SIZE >= 1024
+   // Enable to have the controller send XON/XOFF control characters to
+@@ -2859,7 +2855,7 @@
+ //#define NO_TIMEOUTS 1000 // (ms)
+ 
+ // Some clients will have this feature soon. This could make the NO_TIMEOUTS unnecessary.
+-//#define ADVANCED_OK // (128 bytes of flash)
++#define ADVANCED_OK // (128 bytes of flash)
+ 
+ // Printrun may have trouble receiving long strings all at once.
+ // This option inserts short delays between lines of serial output.
+@@ -3068,21 +3064,21 @@
+                                                   // This short retract is done immediately, before parking the nozzle.
+   #define FILAMENT_CHANGE_UNLOAD_FEEDRATE     20  // (mm/s) Unload filament feedrate. This can be pretty fast.
+   #define FILAMENT_CHANGE_UNLOAD_ACCEL        25  // (mm/s^2) Lower acceleration may allow a faster feedrate.
+-  #define FILAMENT_CHANGE_UNLOAD_LENGTH      120  // (mm) The length of filament for a complete unload.
++  #define FILAMENT_CHANGE_UNLOAD_LENGTH       0  // (mm) The length of filament for a complete unload.
+                                                   //   For Bowden, the full length of the tube and nozzle.
+                                                   //   For direct drive, the full length of the nozzle.
+                                                   //   Set to 0 for manual unloading.
+   #define FILAMENT_CHANGE_SLOW_LOAD_FEEDRATE   6  // (mm/s) Slow move when starting load.
+-  #define FILAMENT_CHANGE_SLOW_LOAD_LENGTH    50  // (mm) Slow length, to allow time to insert material.
++  #define FILAMENT_CHANGE_SLOW_LOAD_LENGTH     0  // (mm) Slow length, to allow time to insert material.
+                                                   // 0 to disable start loading and skip to fast load only
+   #define FILAMENT_CHANGE_FAST_LOAD_FEEDRATE  12  // (mm/s) Load filament feedrate. This can be pretty fast.
+   #define FILAMENT_CHANGE_FAST_LOAD_ACCEL     25  // (mm/s^2) Lower acceleration may allow a faster feedrate.
+-  #define FILAMENT_CHANGE_FAST_LOAD_LENGTH    10  // (mm) Load length of filament, from extruder gear to nozzle.
++  #define FILAMENT_CHANGE_FAST_LOAD_LENGTH     0  // (mm) Load length of filament, from extruder gear to nozzle.
+                                                   //   For Bowden, the full length of the tube and nozzle.
+                                                   //   For direct drive, the full length of the nozzle.
+   //#define ADVANCED_PAUSE_CONTINUOUS_PURGE       // Purge continuously up to the purge length until interrupted.
+   #define ADVANCED_PAUSE_PURGE_FEEDRATE        3  // (mm/s) Extrude feedrate (after loading). Should be slower than load feedrate.
+-  #define ADVANCED_PAUSE_PURGE_LENGTH         50  // (mm) Length to extrude after loading.
++  #define ADVANCED_PAUSE_PURGE_LENGTH         40  // (mm) Length to extrude after loading.
+                                                   //   Set to 0 for manual extrusion.
+                                                   //   Filament can be extruded repeatedly from the Filament Change menu
+                                                   //   until extrusion is consistent, and to purge old filament.
+@@ -3156,7 +3152,7 @@
+   #endif
+ 
+   #if AXIS_IS_TMC_CONFIG(X)
+-    #define X_CURRENT       800        // (mA) RMS current. Multiply by 1.414 for peak current.
++    #define X_CURRENT       900        // (mA) RMS current. Multiply by 1.414 for peak current.
+     #define X_CURRENT_HOME  X_CURRENT  // (mA) RMS current for homing. (Typically lower than *_CURRENT.)
+     #define X_MICROSTEPS     16        // 0..256
+     #define X_RSENSE          0.11
+@@ -3176,7 +3172,7 @@
+   #endif
+ 
+   #if AXIS_IS_TMC_CONFIG(Y)
+-    #define Y_CURRENT       800
++    #define Y_CURRENT       1000
+     #define Y_CURRENT_HOME  Y_CURRENT
+     #define Y_MICROSTEPS     16
+     #define Y_RSENSE          0.11
+@@ -3196,7 +3192,7 @@
+   #endif
+ 
+   #if AXIS_IS_TMC_CONFIG(Z)
+-    #define Z_CURRENT       800
++    #define Z_CURRENT       700
+     #define Z_CURRENT_HOME  Z_CURRENT
+     #define Z_MICROSTEPS     16
+     #define Z_RSENSE          0.11
+@@ -3531,7 +3527,7 @@
+    * M912 - Clear stepper driver overtemperature pre-warn condition flag.
+    * M122 - Report driver parameters (Requires TMC_DEBUG)
+    */
+-  //#define MONITOR_DRIVER_STATUS
++  #define MONITOR_DRIVER_STATUS
+ 
+   #if ENABLED(MONITOR_DRIVER_STATUS)
+     #define CURRENT_STEP_DOWN     50  // [mA]
+@@ -4135,7 +4131,7 @@
+ //#define MEATPACK_ON_SERIAL_PORT_1
+ //#define MEATPACK_ON_SERIAL_PORT_2
+ 
+-//#define GCODE_CASE_INSENSITIVE  // Accept G-code sent to the firmware in lowercase
++#define GCODE_CASE_INSENSITIVE  // Accept G-code sent to the firmware in lowercase
+ 
+ //#define REPETIER_GCODE_M360     // Add commands originally from Repetier FW
+ 
+diff --git a/Marlin/src/HAL/STM32/sdio.h b/Marlin/src/HAL/STM32/sdio.h
+index cf5539c3c7..ec633c82b0 100644
+--- a/Marlin/src/HAL/STM32/sdio.h
++++ b/Marlin/src/HAL/STM32/sdio.h
+@@ -21,9 +21,12 @@
+  */
+ #pragma once
+ 
+-#define SDIO_D0_PIN   PC8
+-#define SDIO_D1_PIN   PC9
+-#define SDIO_D2_PIN   PC10
+-#define SDIO_D3_PIN   PC11
+-#define SDIO_CK_PIN   PC12
+-#define SDIO_CMD_PIN  PD2
++// Default pins, unless the pins file defines its own set (leaving out D1-D3 for a 1-bit bus)
++#ifndef SDIO_D0_PIN
++  #define SDIO_D0_PIN   PC8
++  #define SDIO_D1_PIN   PC9
++  #define SDIO_D2_PIN   PC10
++  #define SDIO_D3_PIN   PC11
++  #define SDIO_CK_PIN   PC12
++  #define SDIO_CMD_PIN  PD2
++#endif
+diff --git a/Marlin/src/gcode/queue.cpp b/Marlin/src/gcode/queue.cpp
+index 148123df6b..239e0848e3 100644
+--- a/Marlin/src/gcode/queue.cpp
++++ b/Marlin/src/gcode/queue.cpp
+@@ -543,7 +543,7 @@ void GCodeQueue::get_serial_commands() {
+               case 112:
+                 marlin.kill(FPSTR(M112_KILL_STR), nullptr, true);
+                 break;
+-              case 401:
++              case 410:
+                 motion.quickstop_stepper();
+                 break;
+             }
+diff --git a/Marlin/src/gcode/temp/M306.cpp b/Marlin/src/gcode/temp/M306.cpp
+index 08af1b8132..076a2689df 100644
+--- a/Marlin/src/gcode/temp/M306.cpp
++++ b/Marlin/src/gcode/temp/M306.cpp
+@@ -36,6 +36,7 @@
+  * Set MPC values manually for the specified or active extruder:
+  *  A<watts/kelvin>           Ambient heat transfer coefficient (no fan).
+  *  C<joules/kelvin>          Block heat capacity.
++ *  D<seconds>                Heater dead time. (Requires MPC_DEADTIME)
+  *  F<watts/kelvin>           Ambient heat transfer coefficient (fan on full).
+  *  H<joules/kelvin/mm>       Filament heat capacity per mm.
+  *  P<watts>                  Heater power.
+@@ -75,7 +76,7 @@ void GcodeSuite::M306() {
+     }
+   #endif
+ 
+-  if (parser.seen("ACFPRH")) {
++  if (parser.seen("ACFPRH" TERN_(MPC_DEADTIME, "D"))) {
+     MPC_t &mpc = thermalManager.temp_hotend[e].mpc;
+     if (parser.seenval('P')) mpc.heater_power = parser.value_float();
+     #if ENABLED(MPC_PTC)
+@@ -83,6 +84,9 @@ void GcodeSuite::M306() {
+       if (parser.seenval('Q')) mpc.heater_reftemp = parser.value_float();
+     #endif
+     if (parser.seenval('C')) mpc.block_heat_capacity = parser.value_float();
++    #if ENABLED(MPC_DEADTIME)
++      if (parser.seenval('D')) mpc.heater_deadtime = constrain(parser.value_float(), 0.0f, MPC_DEADTIME_MAX);
++    #endif
+     if (parser.seenval('R')) mpc.sensor_responsiveness = parser.value_float();
+     if (parser.seenval('A')) mpc.ambient_xfer_coeff_fan0 = parser.value_float();
+     #if ENABLED(MPC_INCLUDE_FAN)
+@@ -109,6 +113,9 @@ void GcodeSuite::M306_report(const bool forReplay/*=true*/) {
+                            " Q", p_float_t(mpc.heater_reftemp, 2),
+                          #endif
+                          " C", p_float_t(mpc.block_heat_capacity, 2),
++                         #if ENABLED(MPC_DEADTIME)
++                           " D", p_float_t(mpc.heater_deadtime, 2),
++                         #endif
+                          " R", p_float_t(mpc.sensor_responsiveness, 4),
+                          " A", p_float_t(mpc.ambient_xfer_coeff_fan0, 4),
+                          #if ENABLED(MPC_INCLUDE_FAN)
+diff --git a/Marlin/src/inc/SanityCheck.h b/Marlin/src/inc/SanityCheck.h
+index 95447c0283..cbffb50c9d 100644
+--- a/Marlin/src/inc/SanityCheck.h
++++ b/Marlin/src/inc/SanityCheck.h
+@@ -421,7 +421,7 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
+     #error "SDCARD_SORT_ALPHA requires an LCD that supports it. (It doesn't apply to M20, etc.)"
+   #elif SDSORT_LIMIT > 256
+     #error "SDSORT_LIMIT must be 256 or smaller."
+-  #elif SDSORT_LIMIT < 10
++  #elif SDSORT_LIMIT < 0
+     #error "SDSORT_LIMIT should be greater than 9 to be useful."
+   #elif ENABLED(SDSORT_DYNAMIC_RAM) && DISABLED(SDSORT_USES_RAM)
+     #error "SDSORT_DYNAMIC_RAM requires SDSORT_USES_RAM (which reads the directory into RAM)."
+@@ -1041,6 +1041,10 @@ static_assert(NUM_SERVOS <= NUM_SERVO_PLUGS, "NUM_SERVOS (or some servo index) i
+   #error "PID_MAX must be an integer from 0 to 255."
+ #endif
+ 
++#if ENABLED(MPC_DEADTIME) && !defined(MPC_HEATER_DEADTIME)
++  #error "MPC_DEADTIME requires MPC_HEATER_DEADTIME."
++#endif
++
+ #if ENABLED(MPC_INCLUDE_FAN)
+   #if !HAS_FAN
+     #error "MPC_INCLUDE_FAN requires at least one fan."
+@@ -3808,7 +3812,7 @@ static_assert(_PLUS_TEST(3), "DEFAULT_MAX_ACCELERATION values must be positive."
+ 
+ #if !BLOCK_BUFFER_SIZE
+   #error "BLOCK_BUFFER_SIZE must be non-zero."
+-#elif BLOCK_BUFFER_SIZE > 64
++#elif BLOCK_BUFFER_SIZE > 512
+   #error "A very large BLOCK_BUFFER_SIZE is not needed and takes longer to drain the buffer on pause / cancel."
+ #endif
+ 
+diff --git a/Marlin/src/lcd/dwin/proui/dwin.cpp b/Marlin/src/lcd/dwin/proui/dwin.cpp
+index e3e8b6d944..ca3653ecaf 100644
+--- a/Marlin/src/lcd/dwin/proui/dwin.cpp
++++ b/Marlin/src/lcd/dwin/proui/dwin.cpp
+@@ -2546,7 +2546,7 @@ void ApplyMove() {
+ #endif
+ 
+ #if ENABLED(BAUD_RATE_GCODE)
+-  void SetBaud115K() { queue.inject(F("M575B115")); }
++  void SetBaud115K() { queue.inject(F("")); }
+   void SetBaud250K() { queue.inject(F("M575B250")); }
+   void SetBaudRate() {
+     Toggle_Chkb_Line(HMI_data.Baud250K);
+diff --git a/Marlin/src/module/settings.cpp b/Marlin/src/module/settings.cpp
+index 5321f0ce8a..b6ec0d376a 100644
+--- a/Marlin/src/module/settings.cpp
++++ b/Marlin/src/module/settings.cpp
+@@ -3980,6 +3980,11 @@ void MarlinSettings::reset() {
+     constexpr float _filament_heat_capacity_permm[] = FILAMENT_HEAT_CAPACITY_PERMM;
+     static_assert(HOTENDS == COUNT(_filament_heat_capacity_permm), "FILAMENT_HEAT_CAPACITY_PERMM requires values for all (" STRINGIFY(HOTENDS) ") hotends.");
+ 
++    #if ENABLED(MPC_DEADTIME)
++      constexpr float _mpc_heater_deadtime[] = MPC_HEATER_DEADTIME;
++      static_assert(HOTENDS == COUNT(_mpc_heater_deadtime), "MPC_HEATER_DEADTIME requires values for all (" STRINGIFY(HOTENDS) ") hotends.");
++    #endif
++
+     HOTEND_LOOP() {
+       MPC_t &mpc = thermalManager.temp_hotend[e].mpc;
+       mpc.heater_power = _mpc_heater_power[e];
+@@ -3994,6 +3999,7 @@ void MarlinSettings::reset() {
+         mpc.fan255_adjustment = _mpc_ambient_xfer_coeff_fan255[e] - _mpc_ambient_xfer_coeff[e];
+       #endif
+       mpc.filament_heat_capacity_permm = _filament_heat_capacity_permm[e];
++      TERN_(MPC_DEADTIME, mpc.heater_deadtime = _mpc_heater_deadtime[e]);
+     }
+ 
+   #endif // MPCTEMP
+diff --git a/Marlin/src/module/stepper.cpp b/Marlin/src/module/stepper.cpp
+index 4fae7a5f1b..c7d4032e48 100644
+--- a/Marlin/src/module/stepper.cpp
++++ b/Marlin/src/module/stepper.cpp
+@@ -1610,6 +1610,10 @@ void Stepper::isr() {
+ 
+   // Loop until all events for this ISR have been issued
+   do {
++    // Enable ISRs before pulse generation to reduce USART processing latency.
++    // hal.isr_off() masks ALL interrupts on STM32, so keeping them off through
++    // the pulse phases (#27131) overruns the 1-byte USART RX register at high baud.
++    hal.isr_on();
+ 
+     hal_timer_t interval = 0;
+ 
+diff --git a/Marlin/src/module/temperature.cpp b/Marlin/src/module/temperature.cpp
+index 5139c212bd..2a19f4e197 100644
+--- a/Marlin/src/module/temperature.cpp
++++ b/Marlin/src/module/temperature.cpp
+@@ -1818,6 +1818,9 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
+       if (isnan(hotend.modeled_block_temp)) {
+         hotend.modeled_ambient_temp = _MIN(30.0f, hotend.celsius); // Cap initial value at reasonable max room temperature of 30C
+         hotend.modeled_block_temp = hotend.modeled_sensor_temp = hotend.celsius;
++        #if ENABLED(MPC_DEADTIME)
++          for (auto &pwm : hotend.pwm_history) pwm = hotend.soft_pwm_amount;
++        #endif
+       }
+ 
+       #if HOTENDS == 1
+@@ -1846,9 +1849,23 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
+         }
+       }
+ 
++      #if ENABLED(MPC_DEADTIME)
++        // Heater power reaches the modeled block only after the dead time. Record this step's PWM,
++        // feed the model the PWM from that long ago, and total the PWM still on its way.
++        const uint8_t delay_steps = _MIN(uint8_t(_MAX(mpc.heater_deadtime, 0.0f) * RECIPROCAL(MPC_dT) + 0.5f), MPC_DEADTIME_SAMPLES - 1);
++        hotend.pwm_history_index = (hotend.pwm_history_index + 1) % MPC_DEADTIME_SAMPLES;
++        hotend.pwm_history[hotend.pwm_history_index] = hotend.soft_pwm_amount;
++        uint16_t in_flight_pwm = 0;
++        for (uint8_t i = 0; i < delay_steps; ++i)
++          in_flight_pwm += hotend.pwm_history[(hotend.pwm_history_index + MPC_DEADTIME_SAMPLES - i) % MPC_DEADTIME_SAMPLES];
++        const uint8_t model_pwm = hotend.pwm_history[(hotend.pwm_history_index + MPC_DEADTIME_SAMPLES - delay_steps) % MPC_DEADTIME_SAMPLES];
++      #else
++        const uint8_t model_pwm = hotend.soft_pwm_amount;
++      #endif
++
+       // Update the modeled temperatures
+       const float _heater_power = DIV_TERN(MPC_PTC, mpc.heater_power, 1.0f + mpc.heater_alpha * (hotend.modeled_block_temp - mpc.heater_reftemp));
+-      float blocktempdelta = hotend.soft_pwm_amount * _heater_power * (MPC_dT / 127) / mpc.block_heat_capacity;
++      float blocktempdelta = model_pwm * _heater_power * (MPC_dT / 127) / mpc.block_heat_capacity;
+       blocktempdelta += (hotend.modeled_ambient_temp - hotend.modeled_block_temp) * ambient_xfer_coeff * MPC_dT / mpc.block_heat_capacity;
+       hotend.modeled_block_temp += blocktempdelta;
+ 
+@@ -1865,11 +1882,21 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
+       if (WITHIN(hotend.soft_pwm_amount, 1, 126) || fabs(blocktempdelta + delta_to_apply) < (MPC_STEADYSTATE * MPC_dT))
+         hotend.modeled_ambient_temp += delta_to_apply > 0.f ? _MAX(delta_to_apply, MPC_MIN_AMBIENT_CHANGE * MPC_dT) : _MIN(delta_to_apply, -MPC_MIN_AMBIENT_CHANGE * MPC_dT);
+ 
++      #if ENABLED(MPC_DEADTIME)
++        // Plan from the block temperature expected once in-flight heat arrives, net of losses meanwhile
++        const float planned_block_temp = hotend.modeled_block_temp
++          + (in_flight_pwm * _heater_power * (MPC_dT / 127)
++             + (hotend.modeled_ambient_temp - hotend.modeled_block_temp) * ambient_xfer_coeff * (delay_steps * MPC_dT)
++            ) / mpc.block_heat_capacity;
++      #else
++        const float planned_block_temp = hotend.modeled_block_temp;
++      #endif
++
+       float power = 0.0;
+       if (hotend.target != 0 && !is_idling) {
+         // Plan power level to get to target temperature in 2 seconds
+-        power = (hotend.target - hotend.modeled_block_temp) * mpc.block_heat_capacity * 0.5f;
+-        power -= (hotend.modeled_ambient_temp - hotend.modeled_block_temp) * ambient_xfer_coeff;
++        power = (hotend.target - planned_block_temp) * mpc.block_heat_capacity * 0.5f;
++        power -= (hotend.modeled_ambient_temp - planned_block_temp) * ambient_xfer_coeff;
+       }
+ 
+       float pid_output = power * 254.0f / _heater_power + 1.0f;        // Ensure correct quantization into a range of 0 to 127
+diff --git a/Marlin/src/module/temperature.h b/Marlin/src/module/temperature.h
+index 2029a008a0..ffd30072ee 100644
+--- a/Marlin/src/module/temperature.h
++++ b/Marlin/src/module/temperature.h
+@@ -397,6 +397,9 @@ typedef struct { float p, i, d, c, f; } raw_pidcf_t;
+     float sensor_responsiveness;        // M306 R
+     float ambient_xfer_coeff_fan0;      // M306 A
+     float filament_heat_capacity_permm; // M306 H
++    #if ENABLED(MPC_DEADTIME)
++      float heater_deadtime;            // M306 D
++    #endif
+     #if ENABLED(MPC_INCLUDE_FAN)
+       float fan255_adjustment;          // M306 F
+       void applyFanAdjustment(const float cf) { fan255_adjustment = cf - ambient_xfer_coeff_fan0; }
+@@ -408,6 +411,11 @@ typedef struct { float p, i, d, c, f; } raw_pidcf_t;
+ 
+   #define MPC_dT ((OVERSAMPLENR * float(ACTUAL_ADC_SAMPLES)) / (TEMP_TIMER_FREQUENCY))
+ 
++  #if ENABLED(MPC_DEADTIME)
++    #define MPC_DEADTIME_MAX 8.0f       // (s) Longest heater dead time that can be modeled
++    #define MPC_DEADTIME_SAMPLES (uint8_t((MPC_DEADTIME_MAX) / (MPC_dT)) + 1)
++  #endif
++
+ #endif
+ 
+ #if ENABLED(G26_MESH_VALIDATION) && ANY(HAS_MARLINUI_MENU, EXTENSIBLE_UI)
+@@ -458,6 +466,10 @@ struct PIDHeaterInfo : public HeaterInfo {
+     float modeled_ambient_temp,
+           modeled_block_temp,
+           modeled_sensor_temp;
++    #if ENABLED(MPC_DEADTIME)
++      uint8_t pwm_history[MPC_DEADTIME_SAMPLES];  // Heater PWM of recent MPC steps, still on its way to the sensor
++      uint8_t pwm_history_index;                  // Newest entry
++    #endif
+     float fanCoefficient() { return mpc.fanCoefficient(); }
+     void applyFanAdjustment(const float cf) { mpc.applyFanAdjustment(cf); }
+   };
+diff --git a/Marlin/src/pins/stm32f1/pins_CREALITY_V4.h b/Marlin/src/pins/stm32f1/pins_CREALITY_V4.h
+index ec776fb363..a5e83ef90c 100644
+--- a/Marlin/src/pins/stm32f1/pins_CREALITY_V4.h
++++ b/Marlin/src/pins/stm32f1/pins_CREALITY_V4.h
+@@ -362,6 +362,33 @@
+ 
+ #endif
+ 
++// Added this section for TMC2208 uart control - Requires hardware modification
++#if HAS_TMC_UART
++
++  #ifdef TMC_UART_PIN_E
++    #define E0_SERIAL_TX_PIN TMC_UART_PIN_E
++    #define E0_SERIAL_RX_PIN TMC_UART_PIN_E
++  #endif
++
++  #ifdef TMC_UART_PIN_X
++    #define X_SERIAL_TX_PIN TMC_UART_PIN_X
++    #define X_SERIAL_RX_PIN TMC_UART_PIN_X
++  #endif
++
++  #ifdef TMC_UART_PIN_Y
++    #define Y_SERIAL_TX_PIN TMC_UART_PIN_Y
++    #define Y_SERIAL_RX_PIN TMC_UART_PIN_Y
++  #endif
++
++  #ifdef TMC_UART_PIN_Z
++    #define Z_SERIAL_TX_PIN TMC_UART_PIN_Z
++    #define Z_SERIAL_RX_PIN TMC_UART_PIN_Z
++  #endif
++
++  #define TMC_BAUD_RATE 19200
++
++#endif
++
+ // Pins for documentation and sanity checks only.
+ // Changing these will not change the pin they are on.
+ 
+@@ -393,9 +420,11 @@
+ // SDIO pins
+ #if !defined(__STM32F1__)
+   #define SDIO_D0_PIN                       PC8
+-  #define SDIO_D1_PIN                       PC9
+-  #define SDIO_D2_PIN                       PC10
+-  #define SDIO_D3_PIN                       PC11
++  #ifndef TMC_UART_PIN_Y                          // The TMC UART mod wires PC9 (SDIO_D1) to the Y driver, so keep SDIO 1-bit
++    #define SDIO_D1_PIN                     PC9
++    #define SDIO_D2_PIN                     PC10
++    #define SDIO_D3_PIN                     PC11
++  #endif
+   #define SDIO_CK_PIN                       PC12
+   #define SDIO_CMD_PIN                      PD2
+ #endif
+diff --git a/buildroot/share/PlatformIO/ldscripts/creality.ld b/buildroot/share/PlatformIO/ldscripts/creality.ld
+index 8b330c9457..785345543c 100644
+--- a/buildroot/share/PlatformIO/ldscripts/creality.ld
++++ b/buildroot/share/PlatformIO/ldscripts/creality.ld
+@@ -1,7 +1,7 @@
+ MEMORY
+ {
+   ram (rwx) : ORIGIN = 0x20000000, LENGTH = 64K - 40
+-  rom (rx)  : ORIGIN = 0x08007000, LENGTH = 512K - 64K
++  rom (rx)  : ORIGIN = 0x08007000, LENGTH = 512K - 28K
+ }
+ 
+ /* Provide memory region aliases for common.inc */
+diff --git a/platformio.ini b/platformio.ini
+index 584a5680a3..3d3d619094 100644
+--- a/platformio.ini
++++ b/platformio.ini
+@@ -36,7 +36,8 @@
+ [platformio]
+ src_dir      = Marlin
+ boards_dir   = buildroot/share/PlatformIO/boards
+-default_envs = GD32F103RC_voxelab_maple
++#default_envs = GD32F103RC_voxelab_maple
++default_envs = STM32F103RE_creality
+ include_dir  = Marlin
+ extra_configs =
+     Marlin/config.ini

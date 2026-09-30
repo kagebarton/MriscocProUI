@@ -1,0 +1,51 @@
+diff --git a/Marlin/src/inc/SanityCheck.h b/Marlin/src/inc/SanityCheck.h
+index 15043d8102..f7ab706c90 100644
+--- a/Marlin/src/inc/SanityCheck.h
++++ b/Marlin/src/inc/SanityCheck.h
+@@ -3780,7 +3780,7 @@ static_assert(_PLUS_TEST(3), "DEFAULT_MAX_ACCELERATION values must be positive."
+ 
+ #if !BLOCK_BUFFER_SIZE
+   #error "BLOCK_BUFFER_SIZE must be non-zero."
+-#elif BLOCK_BUFFER_SIZE > 64
++#elif BLOCK_BUFFER_SIZE > 512
+   #error "A very large BLOCK_BUFFER_SIZE is not needed and takes longer to drain the buffer on pause / cancel."
+ #endif
+ 
+diff --git a/Marlin/src/pins/stm32f1/pins_CREALITY_V4.h b/Marlin/src/pins/stm32f1/pins_CREALITY_V4.h
+index 34b1e633df..4d70a0eafb 100644
+--- a/Marlin/src/pins/stm32f1/pins_CREALITY_V4.h
++++ b/Marlin/src/pins/stm32f1/pins_CREALITY_V4.h
+@@ -322,6 +322,33 @@
+ 
+ #endif
+ 
++// Added this section for TMC2208 uart control - Requires hardware modification
++#if HAS_TMC_UART
++
++  #ifdef TMC_UART_PIN_E
++    #define E0_SERIAL_TX_PIN TMC_UART_PIN_E
++    #define E0_SERIAL_RX_PIN TMC_UART_PIN_E
++  #endif
++
++  #ifdef TMC_UART_PIN_X
++    #define X_SERIAL_TX_PIN TMC_UART_PIN_X
++    #define X_SERIAL_RX_PIN TMC_UART_PIN_X
++  #endif
++
++  #ifdef TMC_UART_PIN_Y
++    #define Y_SERIAL_TX_PIN TMC_UART_PIN_Y
++    #define Y_SERIAL_RX_PIN TMC_UART_PIN_Y
++  #endif
++
++  #ifdef TMC_UART_PIN_Z
++    #define Z_SERIAL_TX_PIN TMC_UART_PIN_Z
++    #define Z_SERIAL_RX_PIN TMC_UART_PIN_Z
++  #endif
++
++  #define TMC_BAUD_RATE 19200
++
++#endif
++
+ // Pins for documentation and sanity checks only.
+ // Changing these will not change the pin they are on.
+ 

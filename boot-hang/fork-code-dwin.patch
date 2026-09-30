@@ -1,0 +1,170 @@
+diff --git a/.gitignore b/.gitignore
+index 742475e25a..60e6906205 100755
+--- a/.gitignore
++++ b/.gitignore
+@@ -180,3 +180,4 @@ tags
+ .env
+ desktop.ini
+ !MarlinSimulator.exe
++.vscode/extensions.json
+diff --git a/Marlin/src/gcode/queue.cpp b/Marlin/src/gcode/queue.cpp
+index 4ab48e478b..ca7cd7736b 100644
+--- a/Marlin/src/gcode/queue.cpp
++++ b/Marlin/src/gcode/queue.cpp
+@@ -274,6 +274,7 @@ void GCodeQueue::flush_and_request_resend(const serial_index_t serial_ind) {
+   SERIAL_FLUSH();
+   SERIAL_ECHOLNPGM(STR_RESEND, serial_state[serial_ind.index].last_N + 1);
+   SERIAL_ECHOLNPGM(STR_OK);
++  ok_to_send();
+ }
+ 
+ static bool serial_data_available(serial_index_t index) {
+diff --git a/Marlin/src/inc/SanityCheck.h b/Marlin/src/inc/SanityCheck.h
+index 6ef808d231..8077e9ff76 100644
+--- a/Marlin/src/inc/SanityCheck.h
++++ b/Marlin/src/inc/SanityCheck.h
+@@ -443,7 +443,7 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
+     #error "SDCARD_SORT_ALPHA requires an LCD that supports it. (It doesn't apply to M20, etc.)"
+   #elif SDSORT_LIMIT > 256
+     #error "SDSORT_LIMIT must be 256 or smaller."
+-  #elif SDSORT_LIMIT < 10
++  #elif SDSORT_LIMIT < 0
+     #error "SDSORT_LIMIT should be greater than 9 to be useful."
+   #elif ENABLED(SDSORT_DYNAMIC_RAM) && DISABLED(SDSORT_USES_RAM)
+     #error "SDSORT_DYNAMIC_RAM requires SDSORT_USES_RAM (which reads the directory into RAM)."
+@@ -3888,7 +3888,7 @@ static_assert(_PLUS_TEST(3), "DEFAULT_MAX_ACCELERATION values must be positive."
+ 
+ #if !BLOCK_BUFFER_SIZE
+   #error "BLOCK_BUFFER_SIZE must be non-zero."
+-#elif BLOCK_BUFFER_SIZE > 64
++#elif BLOCK_BUFFER_SIZE > 512
+   #error "A very large BLOCK_BUFFER_SIZE is not needed and takes longer to drain the buffer on pause / cancel."
+ #endif
+ 
+diff --git a/Marlin/src/lcd/dwin/proui/dwin.cpp b/Marlin/src/lcd/dwin/proui/dwin.cpp
+index 48778538e1..00b81d627f 100644
+--- a/Marlin/src/lcd/dwin/proui/dwin.cpp
++++ b/Marlin/src/lcd/dwin/proui/dwin.cpp
+@@ -2548,7 +2548,7 @@ void ApplyMove() {
+ #endif
+ 
+ #if ENABLED(BAUD_RATE_GCODE)
+-  void SetBaud115K() { queue.inject(F("M575B115")); }
++  void SetBaud115K() { queue.inject(F("")); }
+   void SetBaud250K() { queue.inject(F("M575B250")); }
+   void SetBaudRate() {
+     Toggle_Chkb_Line(HMI_data.Baud250K);
+diff --git a/Marlin/src/module/stepper.cpp b/Marlin/src/module/stepper.cpp
+index 9e24e59e87..33eb1bc930 100644
+--- a/Marlin/src/module/stepper.cpp
++++ b/Marlin/src/module/stepper.cpp
+@@ -1496,12 +1496,6 @@ void Stepper::apply_directions() {
+  */
+ 
+ HAL_STEP_TIMER_ISR() {
+-  #ifndef __AVR__
+-    // Disable interrupts, to avoid ISR preemption while we reprogram the period
+-    // (AVR enters the ISR with global interrupts disabled, so no need to do it here)
+-    hal.isr_off();
+-  #endif
+-
+   HAL_timer_isr_prologue(MF_TIMER_STEP);
+ 
+   Stepper::isr();
+@@ -1527,6 +1521,12 @@ void Stepper::isr() {
+     static hal_timer_t smoothLinAdvISR = 0;
+   #endif
+ 
++  #ifndef __AVR__
++    // Disable interrupts, to avoid ISR preemption while we reprogram the period
++    // (AVR enters the ISR with global interrupts disabled, so no need to do it here)
++    hal.isr_off();
++  #endif
++
+   // Program timer compare for the maximum period, so it does NOT
+   // flag an interrupt while this ISR is running - So changes from small
+   // periods to big periods are respected and the timer does not reset to 0
+@@ -1548,6 +1548,8 @@ void Stepper::isr() {
+   // We need this variable here to be able to use it in the following loop
+   hal_timer_t min_ticks;
+   do {
++    // Enable ISRs to reduce USART processing latency
++    hal.isr_on();
+ 
+     hal_timer_t interval = 0;
+ 
+@@ -1591,9 +1593,6 @@ void Stepper::isr() {
+         if (is_babystep) nextBabystepISR = babystepping_isr();
+       #endif
+ 
+-      // Enable ISRs to reduce latency for higher priority ISRs, or all ISRs if no prioritization.
+-      hal.isr_on();
+-
+       // ^== Time critical. NOTHING besides pulse generation should be above here!!!
+ 
+       if (!nextMainISR) nextMainISR = block_phase_isr(); // Manage acc/deceleration, get next block
+diff --git a/Marlin/src/pins/stm32f1/pins_CREALITY_V4.h b/Marlin/src/pins/stm32f1/pins_CREALITY_V4.h
+index 986c58555b..1288a1c7f2 100644
+--- a/Marlin/src/pins/stm32f1/pins_CREALITY_V4.h
++++ b/Marlin/src/pins/stm32f1/pins_CREALITY_V4.h
+@@ -322,6 +322,33 @@
+ 
+ #endif
+ 
++// Added this section for TMC2208 uart control - Requires hardware modification
++#if HAS_TMC_UART
++
++  #ifdef TMC_UART_PIN_E
++    #define E0_SERIAL_TX_PIN TMC_UART_PIN_E
++    #define E0_SERIAL_RX_PIN TMC_UART_PIN_E
++  #endif
++
++  #ifdef TMC_UART_PIN_X
++    #define X_SERIAL_TX_PIN TMC_UART_PIN_X
++    #define X_SERIAL_RX_PIN TMC_UART_PIN_X
++  #endif
++
++  #ifdef TMC_UART_PIN_Y
++    #define Y_SERIAL_TX_PIN TMC_UART_PIN_Y
++    #define Y_SERIAL_RX_PIN TMC_UART_PIN_Y
++  #endif
++
++  #ifdef TMC_UART_PIN_Z
++    #define Z_SERIAL_TX_PIN TMC_UART_PIN_Z
++    #define Z_SERIAL_RX_PIN TMC_UART_PIN_Z
++  #endif
++
++  #define TMC_BAUD_RATE 19200
++
++#endif
++
+ // Pins for documentation and sanity checks only.
+ // Changing these will not change the pin they are on.
+ 
+diff --git a/buildroot/share/PlatformIO/ldscripts/creality.ld b/buildroot/share/PlatformIO/ldscripts/creality.ld
+index 8b330c9457..785345543c 100644
+--- a/buildroot/share/PlatformIO/ldscripts/creality.ld
++++ b/buildroot/share/PlatformIO/ldscripts/creality.ld
+@@ -1,7 +1,7 @@
+ MEMORY
+ {
+   ram (rwx) : ORIGIN = 0x20000000, LENGTH = 64K - 40
+-  rom (rx)  : ORIGIN = 0x08007000, LENGTH = 512K - 64K
++  rom (rx)  : ORIGIN = 0x08007000, LENGTH = 512K - 28K
+ }
+ 
+ /* Provide memory region aliases for common.inc */
+diff --git a/platformio.ini b/platformio.ini
+index 48fb72b42b..8c954a214b 100644
+--- a/platformio.ini
++++ b/platformio.ini
+@@ -36,7 +36,8 @@
+ [platformio]
+ src_dir      = Marlin
+ boards_dir   = buildroot/share/PlatformIO/boards
+-default_envs = GD32F103RC_voxelab_maple
++#default_envs = GD32F103RC_voxelab_maple
++default_envs = STM32F103RE_creality
+ include_dir  = Marlin
+ extra_configs =
+     Marlin/config.ini

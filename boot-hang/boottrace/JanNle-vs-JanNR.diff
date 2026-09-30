@@ -1,0 +1,208 @@
+diff -ruN -x .git -x .pio -x __pycache__ wt_JanNR/Marlin/src/gcode/feature/nonlinear/M592.cpp wt_JanNle/Marlin/src/gcode/feature/nonlinear/M592.cpp
+--- wt_JanNR/Marlin/src/gcode/feature/nonlinear/M592.cpp	2026-09-29 16:15:07.556738171 -0400
++++ wt_JanNle/Marlin/src/gcode/feature/nonlinear/M592.cpp	2026-09-29 17:07:53.059238606 -0400
+@@ -30,7 +30,7 @@
+ void GcodeSuite::M592_report(const bool forReplay/*=true*/) {
+   TERN_(MARLIN_SMALL_BUILD, return);
+   report_heading_etc(forReplay, F(STR_NONLINEAR_EXTRUSION));
+-  const nonlinear_settings_t &sns = stepper.ne.settings;
++  const nonlinear_settings_t &sns = stepper.nle.settings;
+   SERIAL_ECHOLNPGM("  M592 S", sns.enabled, " A", sns.coeff.A, " B", sns.coeff.B, " C", sns.coeff.C);
+ }
+ 
+@@ -48,8 +48,8 @@
+ void GcodeSuite::M592() {
+   if (!parser.seen_any()) return M592_report();
+ 
+-  nonlinear_t &ne = stepper.ne;
+-  nonlinear_settings_t &sns = ne.settings;
++  nonlinear_t &nle = stepper.nle;
++  nonlinear_settings_t &sns = nle.settings;
+ 
+   if (parser.seen('S')) sns.enabled = parser.value_bool();
+   if (parser.seenval('A')) sns.coeff.A = parser.value_float();
+@@ -57,9 +57,9 @@
+   if (parser.seenval('C')) sns.coeff.C = parser.value_float();
+ 
+   #if ENABLED(SMOOTH_LIN_ADVANCE)
+-    ne.q30.A = _BV32(30) * (sns.coeff.A * planner.mm_per_step[E_AXIS_N(0)] * planner.mm_per_step[E_AXIS_N(0)]);
+-    ne.q30.B = _BV32(30) * (sns.coeff.B * planner.mm_per_step[E_AXIS_N(0)]);
+-    ne.q30.C = _BV32(30) * sns.coeff.C;
++    nle.q30.A = _BV32(30) * (sns.coeff.A * planner.mm_per_step[E_AXIS_N(0)] * planner.mm_per_step[E_AXIS_N(0)]);
++    nle.q30.B = _BV32(30) * (sns.coeff.B * planner.mm_per_step[E_AXIS_N(0)]);
++    nle.q30.C = _BV32(30) * sns.coeff.C;
+   #endif
+ }
+ 
+diff -ruN -x .git -x .pio -x __pycache__ wt_JanNR/Marlin/src/lcd/menu/menu_advanced.cpp wt_JanNle/Marlin/src/lcd/menu/menu_advanced.cpp
+--- wt_JanNR/Marlin/src/lcd/menu/menu_advanced.cpp	2026-09-29 16:15:07.608326464 -0400
++++ wt_JanNle/Marlin/src/lcd/menu/menu_advanced.cpp	2026-09-29 17:07:53.059358101 -0400
+@@ -139,7 +139,7 @@
+     #endif // LIN_ADVANCE
+ 
+     #if ENABLED(NONLINEAR_EXTRUSION)
+-      EDIT_ITEM(bool, MSG_NLE_ON, &stepper.ne.settings.enabled);
++      EDIT_ITEM(bool, MSG_NLE_ON, &stepper.nle.settings.enabled);
+     #endif
+ 
+     #if HAS_VOLUMETRIC_EXTRUSION
+diff -ruN -x .git -x .pio -x __pycache__ wt_JanNR/Marlin/src/lcd/menu/menu_tune.cpp wt_JanNle/Marlin/src/lcd/menu/menu_tune.cpp
+--- wt_JanNR/Marlin/src/lcd/menu/menu_tune.cpp	2026-09-29 16:15:07.610112670 -0400
++++ wt_JanNle/Marlin/src/lcd/menu/menu_tune.cpp	2026-09-29 17:07:53.059456687 -0400
+@@ -243,7 +243,7 @@
+   // Nonlinear Extrusion state
+   //
+   #if ENABLED(NONLINEAR_EXTRUSION)
+-    EDIT_ITEM(bool, MSG_NLE_ON, &stepper.ne.settings.enabled);
++    EDIT_ITEM(bool, MSG_NLE_ON, &stepper.nle.settings.enabled);
+   #endif
+ 
+   //
+diff -ruN -x .git -x .pio -x __pycache__ wt_JanNR/Marlin/src/module/ft_motion.cpp wt_JanNle/Marlin/src/module/ft_motion.cpp
+--- wt_JanNR/Marlin/src/module/ft_motion.cpp	2026-09-29 16:15:07.790892439 -0400
++++ wt_JanNle/Marlin/src/module/ft_motion.cpp	2026-09-29 17:08:08.047110647 -0400
+@@ -483,7 +483,7 @@
+ 
+     if (use_advance_lead) {
+       const float advK = planner.get_advance_k();
+-      if (advK || TERN0(NONLINEAR_EXTRUSION, stepper.ne.settings.enabled)) {
++      if (advK || TERN0(NONLINEAR_EXTRUSION, stepper.nle.settings.enabled)) {
+         float traj_e = traj_coords.e;
+         const float traj_e_delta = traj_e - prev_traj_e; // extruder delta in mm, always positive for use_advance_lead (printing moves)
+         const float e_rate = traj_e_delta * FTM_FS;      // extruder velocity in mm/s
+@@ -491,8 +491,8 @@
+         traj_coords.e += e_rate * advK;
+ 
+         #if ENABLED(NONLINEAR_EXTRUSION)
+-          if (stepper.ne.settings.enabled) {
+-            const nonlinear_coeff_t &coeff = stepper.ne.settings.coeff;
++          if (stepper.nle.settings.enabled) {
++            const nonlinear_coeff_t &coeff = stepper.nle.settings.coeff;
+             const float multiplier = max(coeff.C, coeff.A * sq(e_rate) + coeff.B * e_rate + coeff.C),
+                         nle_term = traj_e_delta * (multiplier - 1);
+ 
+diff -ruN -x .git -x .pio -x __pycache__ wt_JanNR/Marlin/src/module/planner.cpp wt_JanNle/Marlin/src/module/planner.cpp
+--- wt_JanNR/Marlin/src/module/planner.cpp	2026-09-29 16:15:07.792115985 -0400
++++ wt_JanNle/Marlin/src/module/planner.cpp	2026-09-29 17:07:53.059953284 -0400
+@@ -3286,8 +3286,8 @@
+   #if ENABLED(EDITABLE_STEPS_PER_UNIT)
+     LOOP_DISTINCT_AXES(i) mm_per_step[i] = 1.0f / settings.axis_steps_per_mm[i];
+     #if ALL(NONLINEAR_EXTRUSION, SMOOTH_LIN_ADVANCE)
+-      stepper.ne.q30.A = _BV32(30) * (stepper.ne.settings.coeff.A * sq(mm_per_step[E_AXIS_N(0)]));
+-      stepper.ne.q30.B = _BV32(30) * (stepper.ne.settings.coeff.B * mm_per_step[E_AXIS_N(0)]);
++      stepper.nle.q30.A = _BV32(30) * (stepper.nle.settings.coeff.A * sq(mm_per_step[E_AXIS_N(0)]));
++      stepper.nle.q30.B = _BV32(30) * (stepper.nle.settings.coeff.B * mm_per_step[E_AXIS_N(0)]);
+     #endif
+   #endif
+   set_position_mm(current_position);
+diff -ruN -x .git -x .pio -x __pycache__ wt_JanNR/Marlin/src/module/settings.cpp wt_JanNle/Marlin/src/module/settings.cpp
+--- wt_JanNR/Marlin/src/module/settings.cpp	2026-09-29 16:16:30.549609362 -0400
++++ wt_JanNle/Marlin/src/module/settings.cpp	2026-09-29 17:07:53.060344963 -0400
+@@ -1929,7 +1929,7 @@
+     // Nonlinear Extrusion
+     //
+     #if ENABLED(NONLINEAR_EXTRUSION)
+-      EEPROM_WRITE(stepper.ne.settings);
++      EEPROM_WRITE(stepper.nle.settings);
+     #endif
+ 
+     //
+@@ -3147,7 +3147,7 @@
+       // Nonlinear Extrusion
+       //
+       #if ENABLED(NONLINEAR_EXTRUSION)
+-        EEPROM_READ(stepper.ne.settings);
++        EEPROM_READ(stepper.nle.settings);
+       #endif
+ 
+       //
+@@ -4023,7 +4023,7 @@
+   //
+   // Nonlinear Extrusion
+   //
+-  TERN_(NONLINEAR_EXTRUSION, stepper.ne.settings.reset());
++  TERN_(NONLINEAR_EXTRUSION, stepper.nle.settings.reset());
+ 
+   //
+   // Input Shaping
+diff -ruN -x .git -x .pio -x __pycache__ wt_JanNR/Marlin/src/module/stepper.cpp wt_JanNle/Marlin/src/module/stepper.cpp
+--- wt_JanNR/Marlin/src/module/stepper.cpp	2026-09-29 16:16:30.551609398 -0400
++++ wt_JanNle/Marlin/src/module/stepper.cpp	2026-09-29 17:07:53.060704982 -0400
+@@ -267,7 +267,7 @@
+  * Standard Motion Non-linear Extrusion state
+  */
+ #if ENABLED(NONLINEAR_EXTRUSION)
+-  nonlinear_t Stepper::ne;              // Initialized by settings.load
++  nonlinear_t Stepper::nle;             // Initialized by settings.load
+ #endif
+ 
+ #if HAS_ZV_SHAPING
+@@ -2265,11 +2265,11 @@
+ 
+   #if NONLINEAR_EXTRUSION_Q24
+     void Stepper::calc_nonlinear_e(const uint32_t step_rate) {
+-      const uint32_t velocity_q24 = ne.scale_q24 * step_rate; // Scale step_rate first so all intermediate values stay in range of 8.24 fixed point math
+-      int32_t vd_q24 = ((((int64_t(ne.q24.A) * velocity_q24) >> 24) * velocity_q24) >> 24) + ((int64_t(ne.q24.B) * velocity_q24) >> 24);
++      const uint32_t velocity_q24 = nle.scale_q24 * step_rate; // Scale step_rate first so all intermediate values stay in range of 8.24 fixed point math
++      int32_t vd_q24 = ((((int64_t(nle.q24.A) * velocity_q24) >> 24) * velocity_q24) >> 24) + ((int64_t(nle.q24.B) * velocity_q24) >> 24);
+       NOLESS(vd_q24, 0);
+ 
+-      advance_dividend.e = (uint64_t(ne.q24.C + vd_q24) * ne.edividend) >> 24;
++      advance_dividend.e = (uint64_t(nle.q24.C + vd_q24) * nle.edividend) >> 24;
+     }
+   #endif
+ 
+@@ -2944,17 +2944,17 @@
+ 
+         // Calculate Nonlinear Extrusion fixed-point quotients
+         #if NONLINEAR_EXTRUSION_Q24
+-          ne.edividend = advance_dividend.e;
+-          const float scale = (float(ne.edividend) / advance_divisor) * planner.mm_per_step[E_AXIS_N(current_block->extruder)];
+-          ne.scale_q24 = _BV32(24) * scale;
+-          if (ne.settings.enabled && current_block->direction_bits.e && XYZ_HAS_STEPS(current_block)) {
+-            ne.q24.A = _BV32(24) * ne.settings.coeff.A;
+-            ne.q24.B = _BV32(24) * ne.settings.coeff.B;
+-            ne.q24.C = _BV32(24) * ne.settings.coeff.C;
++          nle.edividend = advance_dividend.e;
++          const float scale = (float(nle.edividend) / advance_divisor) * planner.mm_per_step[E_AXIS_N(current_block->extruder)];
++          nle.scale_q24 = _BV32(24) * scale;
++          if (nle.settings.enabled && current_block->direction_bits.e && XYZ_HAS_STEPS(current_block)) {
++            nle.q24.A = _BV32(24) * nle.settings.coeff.A;
++            nle.q24.B = _BV32(24) * nle.settings.coeff.B;
++            nle.q24.C = _BV32(24) * nle.settings.coeff.C;
+           }
+           else {
+-            ne.q24.A = ne.q24.B = 0;
+-            ne.q24.C = _BV32(24);
++            nle.q24.A = nle.q24.B = 0;
++            nle.q24.C = _BV32(24);
+           }
+         #endif
+ 
+@@ -3010,11 +3010,11 @@
+         const bool forward_e = step_rate > 0;
+ 
+         #if ENABLED(NONLINEAR_EXTRUSION)
+-          if (ne.settings.enabled && forward_e && XYZ_HAS_STEPS(current_block)) {
++          if (nle.settings.enabled && forward_e && XYZ_HAS_STEPS(current_block)) {
+             // Maximum polynomial value is just above 1, like 1.05..1.2, less than 2 anyway, so we can use 30 bits for fractional part
+-            int32_t vd_q30 = ne.q30.A * sq(step_rate) + ne.q30.B * step_rate;
++            int32_t vd_q30 = nle.q30.A * sq(step_rate) + nle.q30.B * step_rate;
+             NOLESS(vd_q30, 0);
+-            step_rate = (int64_t(step_rate) * (ne.q30.C + vd_q30)) >> 30;
++            step_rate = (int64_t(step_rate) * (nle.q30.C + vd_q30)) >> 30;
+           }
+         #endif
+ 
+diff -ruN -x .git -x .pio -x __pycache__ wt_JanNR/Marlin/src/module/stepper.h wt_JanNle/Marlin/src/module/stepper.h
+--- wt_JanNR/Marlin/src/module/stepper.h	2026-09-29 16:15:07.794116022 -0400
++++ wt_JanNle/Marlin/src/module/stepper.h	2026-09-29 17:07:53.061014967 -0400
+@@ -398,7 +398,7 @@
+     #endif
+ 
+     #if ENABLED(NONLINEAR_EXTRUSION)
+-      static nonlinear_t ne;
++      static nonlinear_t nle;
+     #endif
+ 
+     #if ENABLED(ADAPTIVE_STEP_SMOOTHING_TOGGLE)

@@ -1,0 +1,14 @@
+--- wt_FA/Marlin/src/HAL/STM32/HAL.cpp	2026-09-29 16:46:50.207120633 -0400
++++ wt_FAT/Marlin/src/HAL/STM32/HAL.cpp	2026-09-29 17:07:53.025490017 -0400
+@@ -173,9 +173,11 @@
+ volatile uint32_t systick_uptime_millis = 0;
+ systickCallback_t systick_user_callback;
+ void systick_attach_callback(systickCallback_t cb) { systick_user_callback = cb; }
++extern "C" void boottrace_tick();
+ void HAL_SYSTICK_Callback() {
+   systick_uptime_millis++;
+   if (systick_user_callback) systick_user_callback();
++  boottrace_tick();
+ }
+ 
+ #endif // HAL_STM32

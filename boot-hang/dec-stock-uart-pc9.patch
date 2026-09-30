@@ -1,0 +1,76 @@
+diff --git a/Marlin/src/HAL/STM32/sdio.h b/Marlin/src/HAL/STM32/sdio.h
+index cf5539c3c7..ec633c82b0 100644
+--- a/Marlin/src/HAL/STM32/sdio.h
++++ b/Marlin/src/HAL/STM32/sdio.h
+@@ -21,9 +21,12 @@
+  */
+ #pragma once
+ 
+-#define SDIO_D0_PIN   PC8
+-#define SDIO_D1_PIN   PC9
+-#define SDIO_D2_PIN   PC10
+-#define SDIO_D3_PIN   PC11
+-#define SDIO_CK_PIN   PC12
+-#define SDIO_CMD_PIN  PD2
++// Default pins, unless the pins file defines its own set (leaving out D1-D3 for a 1-bit bus)
++#ifndef SDIO_D0_PIN
++  #define SDIO_D0_PIN   PC8
++  #define SDIO_D1_PIN   PC9
++  #define SDIO_D2_PIN   PC10
++  #define SDIO_D3_PIN   PC11
++  #define SDIO_CK_PIN   PC12
++  #define SDIO_CMD_PIN  PD2
++#endif
+diff --git a/Marlin/src/pins/stm32f1/pins_CREALITY_V4.h b/Marlin/src/pins/stm32f1/pins_CREALITY_V4.h
+index ec776fb363..a5e83ef90c 100644
+--- a/Marlin/src/pins/stm32f1/pins_CREALITY_V4.h
++++ b/Marlin/src/pins/stm32f1/pins_CREALITY_V4.h
+@@ -362,6 +362,33 @@
+ 
+ #endif
+ 
++// Added this section for TMC2208 uart control - Requires hardware modification
++#if HAS_TMC_UART
++
++  #ifdef TMC_UART_PIN_E
++    #define E0_SERIAL_TX_PIN TMC_UART_PIN_E
++    #define E0_SERIAL_RX_PIN TMC_UART_PIN_E
++  #endif
++
++  #ifdef TMC_UART_PIN_X
++    #define X_SERIAL_TX_PIN TMC_UART_PIN_X
++    #define X_SERIAL_RX_PIN TMC_UART_PIN_X
++  #endif
++
++  #ifdef TMC_UART_PIN_Y
++    #define Y_SERIAL_TX_PIN TMC_UART_PIN_Y
++    #define Y_SERIAL_RX_PIN TMC_UART_PIN_Y
++  #endif
++
++  #ifdef TMC_UART_PIN_Z
++    #define Z_SERIAL_TX_PIN TMC_UART_PIN_Z
++    #define Z_SERIAL_RX_PIN TMC_UART_PIN_Z
++  #endif
++
++  #define TMC_BAUD_RATE 19200
++
++#endif
++
+ // Pins for documentation and sanity checks only.
+ // Changing these will not change the pin they are on.
+ 
+@@ -393,9 +420,11 @@
+ // SDIO pins
+ #if !defined(__STM32F1__)
+   #define SDIO_D0_PIN                       PC8
+-  #define SDIO_D1_PIN                       PC9
+-  #define SDIO_D2_PIN                       PC10
+-  #define SDIO_D3_PIN                       PC11
++  #ifndef TMC_UART_PIN_Y                          // The TMC UART mod wires PC9 (SDIO_D1) to the Y driver, so keep SDIO 1-bit
++    #define SDIO_D1_PIN                     PC9
++    #define SDIO_D2_PIN                     PC10
++    #define SDIO_D3_PIN                     PC11
++  #endif
+   #define SDIO_CK_PIN                       PC12
+   #define SDIO_CMD_PIN                      PD2
+ #endif

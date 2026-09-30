@@ -1,0 +1,230 @@
+diff --git a/Marlin/Configuration.h b/Marlin/Configuration.h
+index b4900bec71..291f5b1a45 100644
+--- a/Marlin/Configuration.h
++++ b/Marlin/Configuration.h
+@@ -770,14 +770,20 @@
+     #define MPC_HEATER_REFTEMP { 20 }                 // (°C) Reference temperature for MPC_HEATER_POWER and MPC_HEATER_ALPHA.
+   #endif
+ 
++  #define MPC_DEADTIME                                // Model a dead time between heater and sensor (e.g., large blocks, cartridge thermistors).
++  #if ENABLED(MPC_DEADTIME)
++    #define MPC_HEATER_DEADTIME { 4.5f }              // (s) Delay from a heater power change to the modeled block. Set with M306 D. Not measured by M306 T.
++  #endif
++
+   #define MPC_INCLUDE_FAN                             // Model the fan speed?
+ 
+-  // Measured physical constants from M306
+-  #define MPC_BLOCK_HEAT_CAPACITY { 20.99f }           // (J/K) Heat block heat capacities.
+-  #define MPC_SENSOR_RESPONSIVENESS { 0.1397f }         // (K/s per ∆K) Rate of change of sensor temperature from heat block.
+-  #define MPC_AMBIENT_XFER_COEFF { 0.0821f }           // (W/K) Heat transfer coefficients from heat block to room air with fan off.
++  // Physical constants fitted to measured Volcano heat-ups and steps (2026-09-23), not from M306 T.
++  // M306 T assumes no dead time and overestimates C for this hotend, so re-running it undoes these.
++  #define MPC_BLOCK_HEAT_CAPACITY { 16.95f }          // (J/K) Heat block heat capacities.
++  #define MPC_SENSOR_RESPONSIVENESS { 0.2673f }       // (K/s per ∆K) Rate of change of sensor temperature from heat block.
++  #define MPC_AMBIENT_XFER_COEFF { 0.0654f }          // (W/K) Heat transfer coefficients from heat block to room air with fan off.
+   #if ENABLED(MPC_INCLUDE_FAN)
+-    #define MPC_AMBIENT_XFER_COEFF_FAN255 { 0.1106f }  // (W/K) Heat transfer coefficients from heat block to room air with fan on full.
++    #define MPC_AMBIENT_XFER_COEFF_FAN255 { 0.1018f } // (W/K) Heat transfer coefficients from heat block to room air with fan on full.
+   #endif
+ 
+   // For one fan and multiple hotends MPC needs to know how to apply the fan cooling effect.
+@@ -788,7 +794,7 @@
+ 
+   // Filament Heat Capacity (joules/kelvin/mm)
+   // Set at runtime with M306 H<value>
+-  #define FILAMENT_HEAT_CAPACITY_PERMM { 5.6e-3f }    // 0.0056 J/K/mm for 1.75mm PLA (0.0149 J/K/mm for 2.85mm PLA).
++  #define FILAMENT_HEAT_CAPACITY_PERMM { 3.5e-3f }    // 0.0056 J/K/mm for 1.75mm PLA (0.0149 J/K/mm for 2.85mm PLA).
+                                                       // 0.0036 J/K/mm for 1.75mm PETG (0.0094 J/K/mm for 2.85mm PETG).
+                                                       // 0.00515 J/K/mm for 1.75mm ABS (0.0137 J/K/mm for 2.85mm ABS).
+                                                       // 0.00522 J/K/mm for 1.75mm Nylon (0.0138 J/K/mm for 2.85mm Nylon).
+@@ -3638,7 +3644,9 @@
+   //#define HAS_GCODE_PREVIEW 1
+   #define DISABLE_TUNING_GRAPH 0// PID/MPC Tuning Plot Graph (1624 bytes of flash)
+   #define HAS_ESDIAG 1          // View End-stop switch continuity (560 bytes of flash)
+-  #define HAS_CGCODE 1          // Extra Gcode options (3320 bytes of flash)
++  //#define HAS_CGCODE 1        // Extra Gcode options (3320 bytes of flash)
++                                // Keep off: libproui.a's C115/C*_report hard-code MSerial1's layout for the default
++                                // serial buffers (RX 128 / TX 64), so with RX_BUFFER_SIZE 2048 the boot banner (C115) hard-faults
+   //#define HAS_LOCKSCREEN 1    // Simple lockscreen as to not accidentally change something (568 bytes of flash)
+   #define USE_GRID_MESHVIEWER 1 // Enable two mesh graph types : one (1560 bytes of flash)
+   #define HAS_CUSTOM_COLORS 1   // Able to change display colors (2040 bytes of flash)
+diff --git a/Marlin/src/gcode/temp/M306.cpp b/Marlin/src/gcode/temp/M306.cpp
+index 08af1b8132..076a2689df 100644
+--- a/Marlin/src/gcode/temp/M306.cpp
++++ b/Marlin/src/gcode/temp/M306.cpp
+@@ -36,6 +36,7 @@
+  * Set MPC values manually for the specified or active extruder:
+  *  A<watts/kelvin>           Ambient heat transfer coefficient (no fan).
+  *  C<joules/kelvin>          Block heat capacity.
++ *  D<seconds>                Heater dead time. (Requires MPC_DEADTIME)
+  *  F<watts/kelvin>           Ambient heat transfer coefficient (fan on full).
+  *  H<joules/kelvin/mm>       Filament heat capacity per mm.
+  *  P<watts>                  Heater power.
+@@ -75,7 +76,7 @@ void GcodeSuite::M306() {
+     }
+   #endif
+ 
+-  if (parser.seen("ACFPRH")) {
++  if (parser.seen("ACFPRH" TERN_(MPC_DEADTIME, "D"))) {
+     MPC_t &mpc = thermalManager.temp_hotend[e].mpc;
+     if (parser.seenval('P')) mpc.heater_power = parser.value_float();
+     #if ENABLED(MPC_PTC)
+@@ -83,6 +84,9 @@ void GcodeSuite::M306() {
+       if (parser.seenval('Q')) mpc.heater_reftemp = parser.value_float();
+     #endif
+     if (parser.seenval('C')) mpc.block_heat_capacity = parser.value_float();
++    #if ENABLED(MPC_DEADTIME)
++      if (parser.seenval('D')) mpc.heater_deadtime = constrain(parser.value_float(), 0.0f, MPC_DEADTIME_MAX);
++    #endif
+     if (parser.seenval('R')) mpc.sensor_responsiveness = parser.value_float();
+     if (parser.seenval('A')) mpc.ambient_xfer_coeff_fan0 = parser.value_float();
+     #if ENABLED(MPC_INCLUDE_FAN)
+@@ -109,6 +113,9 @@ void GcodeSuite::M306_report(const bool forReplay/*=true*/) {
+                            " Q", p_float_t(mpc.heater_reftemp, 2),
+                          #endif
+                          " C", p_float_t(mpc.block_heat_capacity, 2),
++                         #if ENABLED(MPC_DEADTIME)
++                           " D", p_float_t(mpc.heater_deadtime, 2),
++                         #endif
+                          " R", p_float_t(mpc.sensor_responsiveness, 4),
+                          " A", p_float_t(mpc.ambient_xfer_coeff_fan0, 4),
+                          #if ENABLED(MPC_INCLUDE_FAN)
+diff --git a/Marlin/src/inc/SanityCheck.h b/Marlin/src/inc/SanityCheck.h
+index bfa9c00bf9..3d52f873e5 100644
+--- a/Marlin/src/inc/SanityCheck.h
++++ b/Marlin/src/inc/SanityCheck.h
+@@ -1049,6 +1049,10 @@ static_assert(NUM_SERVOS <= NUM_SERVO_PLUGS, "NUM_SERVOS (or some servo index) i
+   #error "PID_MAX must be an integer from 0 to 255."
+ #endif
+ 
++#if ENABLED(MPC_DEADTIME) && !defined(MPC_HEATER_DEADTIME)
++  #error "MPC_DEADTIME requires MPC_HEATER_DEADTIME."
++#endif
++
+ #if ENABLED(MPC_INCLUDE_FAN)
+   #if !HAS_FAN
+     #error "MPC_INCLUDE_FAN requires at least one fan."
+diff --git a/Marlin/src/module/settings.cpp b/Marlin/src/module/settings.cpp
+index d547d7971f..fd4919eff8 100644
+--- a/Marlin/src/module/settings.cpp
++++ b/Marlin/src/module/settings.cpp
+@@ -3997,6 +3997,11 @@ void MarlinSettings::reset() {
+     constexpr float _filament_heat_capacity_permm[] = FILAMENT_HEAT_CAPACITY_PERMM;
+     static_assert(HOTENDS == COUNT(_filament_heat_capacity_permm), "FILAMENT_HEAT_CAPACITY_PERMM requires values for all (" STRINGIFY(HOTENDS) ") hotends.");
+ 
++    #if ENABLED(MPC_DEADTIME)
++      constexpr float _mpc_heater_deadtime[] = MPC_HEATER_DEADTIME;
++      static_assert(HOTENDS == COUNT(_mpc_heater_deadtime), "MPC_HEATER_DEADTIME requires values for all (" STRINGIFY(HOTENDS) ") hotends.");
++    #endif
++
+     HOTEND_LOOP() {
+       MPC_t &mpc = thermalManager.temp_hotend[e].mpc;
+       mpc.heater_power = _mpc_heater_power[e];
+@@ -4011,6 +4016,7 @@ void MarlinSettings::reset() {
+         mpc.fan255_adjustment = _mpc_ambient_xfer_coeff_fan255[e] - _mpc_ambient_xfer_coeff[e];
+       #endif
+       mpc.filament_heat_capacity_permm = _filament_heat_capacity_permm[e];
++      TERN_(MPC_DEADTIME, mpc.heater_deadtime = _mpc_heater_deadtime[e]);
+     }
+ 
+   #endif // MPCTEMP
+diff --git a/Marlin/src/module/temperature.cpp b/Marlin/src/module/temperature.cpp
+index a9f4788869..fbb1577dcd 100644
+--- a/Marlin/src/module/temperature.cpp
++++ b/Marlin/src/module/temperature.cpp
+@@ -1775,6 +1775,9 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
+       if (isnan(hotend.modeled_block_temp)) {
+         hotend.modeled_ambient_temp = _MIN(30.0f, hotend.celsius); // Cap initial value at reasonable max room temperature of 30C
+         hotend.modeled_block_temp = hotend.modeled_sensor_temp = hotend.celsius;
++        #if ENABLED(MPC_DEADTIME)
++          for (auto &pwm : hotend.pwm_history) pwm = hotend.soft_pwm_amount;
++        #endif
+       }
+ 
+       #if HOTENDS == 1
+@@ -1803,9 +1806,23 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
+         }
+       }
+ 
++      #if ENABLED(MPC_DEADTIME)
++        // Heater power reaches the modeled block only after the dead time. Record this step's PWM,
++        // feed the model the PWM from that long ago, and total the PWM still on its way.
++        const uint8_t delay_steps = _MIN(uint8_t(_MAX(mpc.heater_deadtime, 0.0f) * RECIPROCAL(MPC_dT) + 0.5f), MPC_DEADTIME_SAMPLES - 1);
++        hotend.pwm_history_index = (hotend.pwm_history_index + 1) % MPC_DEADTIME_SAMPLES;
++        hotend.pwm_history[hotend.pwm_history_index] = hotend.soft_pwm_amount;
++        uint16_t in_flight_pwm = 0;
++        for (uint8_t i = 0; i < delay_steps; ++i)
++          in_flight_pwm += hotend.pwm_history[(hotend.pwm_history_index + MPC_DEADTIME_SAMPLES - i) % MPC_DEADTIME_SAMPLES];
++        const uint8_t model_pwm = hotend.pwm_history[(hotend.pwm_history_index + MPC_DEADTIME_SAMPLES - delay_steps) % MPC_DEADTIME_SAMPLES];
++      #else
++        const uint8_t model_pwm = hotend.soft_pwm_amount;
++      #endif
++
+       // Update the modeled temperatures
+       const float _heater_power = DIV_TERN(MPC_PTC, mpc.heater_power, 1.0f + mpc.heater_alpha * (hotend.modeled_block_temp - mpc.heater_reftemp));
+-      float blocktempdelta = hotend.soft_pwm_amount * _heater_power * (MPC_dT / 127) / mpc.block_heat_capacity;
++      float blocktempdelta = model_pwm * _heater_power * (MPC_dT / 127) / mpc.block_heat_capacity;
+       blocktempdelta += (hotend.modeled_ambient_temp - hotend.modeled_block_temp) * ambient_xfer_coeff * MPC_dT / mpc.block_heat_capacity;
+       hotend.modeled_block_temp += blocktempdelta;
+ 
+@@ -1822,11 +1839,21 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
+       if (WITHIN(hotend.soft_pwm_amount, 1, 126) || fabs(blocktempdelta + delta_to_apply) < (MPC_STEADYSTATE * MPC_dT))
+         hotend.modeled_ambient_temp += delta_to_apply > 0.f ? _MAX(delta_to_apply, MPC_MIN_AMBIENT_CHANGE * MPC_dT) : _MIN(delta_to_apply, -MPC_MIN_AMBIENT_CHANGE * MPC_dT);
+ 
++      #if ENABLED(MPC_DEADTIME)
++        // Plan from the block temperature expected once in-flight heat arrives, net of losses meanwhile
++        const float planned_block_temp = hotend.modeled_block_temp
++          + (in_flight_pwm * _heater_power * (MPC_dT / 127)
++             + (hotend.modeled_ambient_temp - hotend.modeled_block_temp) * ambient_xfer_coeff * (delay_steps * MPC_dT)
++            ) / mpc.block_heat_capacity;
++      #else
++        const float planned_block_temp = hotend.modeled_block_temp;
++      #endif
++
+       float power = 0.0;
+       if (hotend.target != 0 && !is_idling) {
+         // Plan power level to get to target temperature in 2 seconds
+-        power = (hotend.target - hotend.modeled_block_temp) * mpc.block_heat_capacity * 0.5f;
+-        power -= (hotend.modeled_ambient_temp - hotend.modeled_block_temp) * ambient_xfer_coeff;
++        power = (hotend.target - planned_block_temp) * mpc.block_heat_capacity * 0.5f;
++        power -= (hotend.modeled_ambient_temp - planned_block_temp) * ambient_xfer_coeff;
+       }
+ 
+       float pid_output = power * 254.0f / _heater_power + 1.0f;        // Ensure correct quantization into a range of 0 to 127
+diff --git a/Marlin/src/module/temperature.h b/Marlin/src/module/temperature.h
+index 9f6c0bebcb..d645ce42f5 100644
+--- a/Marlin/src/module/temperature.h
++++ b/Marlin/src/module/temperature.h
+@@ -398,6 +398,9 @@ typedef struct { float p, i, d, c, f; } raw_pidcf_t;
+     float sensor_responsiveness;        // M306 R
+     float ambient_xfer_coeff_fan0;      // M306 A
+     float filament_heat_capacity_permm; // M306 H
++    #if ENABLED(MPC_DEADTIME)
++      float heater_deadtime;            // M306 D
++    #endif
+     #if ENABLED(MPC_INCLUDE_FAN)
+       float fan255_adjustment;          // M306 F
+       void applyFanAdjustment(const float cf) { fan255_adjustment = cf - ambient_xfer_coeff_fan0; }
+@@ -409,6 +412,11 @@ typedef struct { float p, i, d, c, f; } raw_pidcf_t;
+ 
+   #define MPC_dT ((OVERSAMPLENR * float(ACTUAL_ADC_SAMPLES)) / (TEMP_TIMER_FREQUENCY))
+ 
++  #if ENABLED(MPC_DEADTIME)
++    #define MPC_DEADTIME_MAX 8.0f       // (s) Longest heater dead time that can be modeled
++    #define MPC_DEADTIME_SAMPLES (uint8_t((MPC_DEADTIME_MAX) / (MPC_dT)) + 1)
++  #endif
++
+ #endif
+ 
+ #if ENABLED(G26_MESH_VALIDATION) && ANY(HAS_MARLINUI_MENU, EXTENSIBLE_UI)
+@@ -467,6 +475,10 @@ struct PIDHeaterInfo : public HeaterInfo {
+     float modeled_ambient_temp,
+           modeled_block_temp,
+           modeled_sensor_temp;
++    #if ENABLED(MPC_DEADTIME)
++      uint8_t pwm_history[MPC_DEADTIME_SAMPLES];  // Heater PWM of recent MPC steps, still on its way to the sensor
++      uint8_t pwm_history_index;                  // Newest entry
++    #endif
+     float fanCoefficient() { return mpc.fanCoefficient(); }
+     void applyFanAdjustment(const float cf) { mpc.applyFanAdjustment(cf); }
+   };
