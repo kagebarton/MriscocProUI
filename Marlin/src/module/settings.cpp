@@ -3997,6 +3997,11 @@ void MarlinSettings::reset() {
     constexpr float _filament_heat_capacity_permm[] = FILAMENT_HEAT_CAPACITY_PERMM;
     static_assert(HOTENDS == COUNT(_filament_heat_capacity_permm), "FILAMENT_HEAT_CAPACITY_PERMM requires values for all (" STRINGIFY(HOTENDS) ") hotends.");
 
+    #if ENABLED(MPC_DEADTIME)
+      constexpr float _mpc_heater_deadtime[] = MPC_HEATER_DEADTIME;
+      static_assert(HOTENDS == COUNT(_mpc_heater_deadtime), "MPC_HEATER_DEADTIME requires values for all (" STRINGIFY(HOTENDS) ") hotends.");
+    #endif
+
     HOTEND_LOOP() {
       MPC_t &mpc = thermalManager.temp_hotend[e].mpc;
       mpc.heater_power = _mpc_heater_power[e];
@@ -4011,6 +4016,7 @@ void MarlinSettings::reset() {
         mpc.fan255_adjustment = _mpc_ambient_xfer_coeff_fan255[e] - _mpc_ambient_xfer_coeff[e];
       #endif
       mpc.filament_heat_capacity_permm = _filament_heat_capacity_permm[e];
+      TERN_(MPC_DEADTIME, mpc.heater_deadtime = _mpc_heater_deadtime[e]);
     }
 
   #endif // MPCTEMP

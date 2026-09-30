@@ -1049,6 +1049,10 @@ static_assert(NUM_SERVOS <= NUM_SERVO_PLUGS, "NUM_SERVOS (or some servo index) i
   #error "PID_MAX must be an integer from 0 to 255."
 #endif
 
+#if ENABLED(MPC_DEADTIME) && !defined(MPC_HEATER_DEADTIME)
+  #error "MPC_DEADTIME requires MPC_HEATER_DEADTIME."
+#endif
+
 #if ENABLED(MPC_INCLUDE_FAN)
   #if !HAS_FAN
     #error "MPC_INCLUDE_FAN requires at least one fan."

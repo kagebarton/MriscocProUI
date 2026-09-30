@@ -770,14 +770,20 @@
     #define MPC_HEATER_REFTEMP { 20 }                 // (°C) Reference temperature for MPC_HEATER_POWER and MPC_HEATER_ALPHA.
   #endif
 
+  #define MPC_DEADTIME                                // Model a dead time between heater and sensor (e.g., large blocks, cartridge thermistors).
+  #if ENABLED(MPC_DEADTIME)
+    #define MPC_HEATER_DEADTIME { 4.5f }              // (s) Delay from a heater power change to the modeled block. Set with M306 D. Not measured by M306 T.
+  #endif
+
   #define MPC_INCLUDE_FAN                             // Model the fan speed?
 
-  // Measured physical constants from M306
-  #define MPC_BLOCK_HEAT_CAPACITY { 20.99f }           // (J/K) Heat block heat capacities.
-  #define MPC_SENSOR_RESPONSIVENESS { 0.1397f }         // (K/s per ∆K) Rate of change of sensor temperature from heat block.
-  #define MPC_AMBIENT_XFER_COEFF { 0.0821f }           // (W/K) Heat transfer coefficients from heat block to room air with fan off.
+  // Physical constants fitted to measured Volcano heat-ups and steps (2026-09-23), not from M306 T.
+  // M306 T assumes no dead time and overestimates C for this hotend, so re-running it undoes these.
+  #define MPC_BLOCK_HEAT_CAPACITY { 16.95f }          // (J/K) Heat block heat capacities.
+  #define MPC_SENSOR_RESPONSIVENESS { 0.2673f }       // (K/s per ∆K) Rate of change of sensor temperature from heat block.
+  #define MPC_AMBIENT_XFER_COEFF { 0.0654f }          // (W/K) Heat transfer coefficients from heat block to room air with fan off.
   #if ENABLED(MPC_INCLUDE_FAN)
-    #define MPC_AMBIENT_XFER_COEFF_FAN255 { 0.1106f }  // (W/K) Heat transfer coefficients from heat block to room air with fan on full.
+    #define MPC_AMBIENT_XFER_COEFF_FAN255 { 0.1018f } // (W/K) Heat transfer coefficients from heat block to room air with fan on full.
   #endif
 
   // For one fan and multiple hotends MPC needs to know how to apply the fan cooling effect.
@@ -788,7 +794,7 @@
 
   // Filament Heat Capacity (joules/kelvin/mm)
   // Set at runtime with M306 H<value>
-  #define FILAMENT_HEAT_CAPACITY_PERMM { 5.6e-3f }    // 0.0056 J/K/mm for 1.75mm PLA (0.0149 J/K/mm for 2.85mm PLA).
+  #define FILAMENT_HEAT_CAPACITY_PERMM { 3.5e-3f }    // 0.0056 J/K/mm for 1.75mm PLA (0.0149 J/K/mm for 2.85mm PLA).
                                                       // 0.0036 J/K/mm for 1.75mm PETG (0.0094 J/K/mm for 2.85mm PETG).
                                                       // 0.00515 J/K/mm for 1.75mm ABS (0.0137 J/K/mm for 2.85mm ABS).
                                                       // 0.00522 J/K/mm for 1.75mm Nylon (0.0138 J/K/mm for 2.85mm Nylon).
@@ -3638,7 +3644,9 @@
   //#define HAS_GCODE_PREVIEW 1
   #define DISABLE_TUNING_GRAPH 0// PID/MPC Tuning Plot Graph (1624 bytes of flash)
   #define HAS_ESDIAG 1          // View End-stop switch continuity (560 bytes of flash)
-  #define HAS_CGCODE 1          // Extra Gcode options (3320 bytes of flash)
+  //#define HAS_CGCODE 1        // Extra Gcode options (3320 bytes of flash)
+                                // Keep off: libproui.a's C115/C*_report hard-code MSerial1's layout for the default
+                                // serial buffers (RX 128 / TX 64), so with RX_BUFFER_SIZE 2048 the boot banner (C115) hard-faults
   //#define HAS_LOCKSCREEN 1    // Simple lockscreen as to not accidentally change something (568 bytes of flash)
   #define USE_GRID_MESHVIEWER 1 // Enable two mesh graph types : one (1560 bytes of flash)
   #define HAS_CUSTOM_COLORS 1   // Able to change display colors (2040 bytes of flash)

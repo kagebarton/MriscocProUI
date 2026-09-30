@@ -36,6 +36,7 @@
  * Set MPC values manually for the specified or active extruder:
  *  A<watts/kelvin>           Ambient heat transfer coefficient (no fan).
  *  C<joules/kelvin>          Block heat capacity.
+ *  D<seconds>                Heater dead time. (Requires MPC_DEADTIME)
  *  F<watts/kelvin>           Ambient heat transfer coefficient (fan on full).
  *  H<joules/kelvin/mm>       Filament heat capacity per mm.
  *  P<watts>                  Heater power.
@@ -75,7 +76,7 @@ void GcodeSuite::M306() {
     }
   #endif
 
-  if (parser.seen("ACFPRH")) {
+  if (parser.seen("ACFPRH" TERN_(MPC_DEADTIME, "D"))) {
     MPC_t &mpc = thermalManager.temp_hotend[e].mpc;
     if (parser.seenval('P')) mpc.heater_power = parser.value_float();
     #if ENABLED(MPC_PTC)
@@ -83,6 +84,9 @@ void GcodeSuite::M306() {
       if (parser.seenval('Q')) mpc.heater_reftemp = parser.value_float();
     #endif
     if (parser.seenval('C')) mpc.block_heat_capacity = parser.value_float();
+    #if ENABLED(MPC_DEADTIME)
+      if (parser.seenval('D')) mpc.heater_deadtime = constrain(parser.value_float(), 0.0f, MPC_DEADTIME_MAX);
+    #endif
     if (parser.seenval('R')) mpc.sensor_responsiveness = parser.value_float();
     if (parser.seenval('A')) mpc.ambient_xfer_coeff_fan0 = parser.value_float();
     #if ENABLED(MPC_INCLUDE_FAN)
@@ -109,6 +113,9 @@ void GcodeSuite::M306_report(const bool forReplay/*=true*/) {
                            " Q", p_float_t(mpc.heater_reftemp, 2),
                          #endif
                          " C", p_float_t(mpc.block_heat_capacity, 2),
+                         #if ENABLED(MPC_DEADTIME)
+                           " D", p_float_t(mpc.heater_deadtime, 2),
+                         #endif
                          " R", p_float_t(mpc.sensor_responsiveness, 4),
                          " A", p_float_t(mpc.ambient_xfer_coeff_fan0, 4),
                          #if ENABLED(MPC_INCLUDE_FAN)

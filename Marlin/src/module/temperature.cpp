@@ -1775,6 +1775,9 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
       if (isnan(hotend.modeled_block_temp)) {
         hotend.modeled_ambient_temp = _MIN(30.0f, hotend.celsius); // Cap initial value at reasonable max room temperature of 30C
         hotend.modeled_block_temp = hotend.modeled_sensor_temp = hotend.celsius;
+        #if ENABLED(MPC_DEADTIME)
+          for (auto &pwm : hotend.pwm_history) pwm = hotend.soft_pwm_amount;
+        #endif
       }
 
       #if HOTENDS == 1
@@ -1803,9 +1806,23 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
         }
       }
 
+      #if ENABLED(MPC_DEADTIME)
+        // Heater power reaches the modeled block only after the dead time. Record this step's PWM,
+        // feed the model the PWM from that long ago, and total the PWM still on its way.
+        const uint8_t delay_steps = _MIN(uint8_t(_MAX(mpc.heater_deadtime, 0.0f) * RECIPROCAL(MPC_dT) + 0.5f), MPC_DEADTIME_SAMPLES - 1);
+        hotend.pwm_history_index = (hotend.pwm_history_index + 1) % MPC_DEADTIME_SAMPLES;
+        hotend.pwm_history[hotend.pwm_history_index] = hotend.soft_pwm_amount;
+        uint16_t in_flight_pwm = 0;
+        for (uint8_t i = 0; i < delay_steps; ++i)
+          in_flight_pwm += hotend.pwm_history[(hotend.pwm_history_index + MPC_DEADTIME_SAMPLES - i) % MPC_DEADTIME_SAMPLES];
+        const uint8_t model_pwm = hotend.pwm_history[(hotend.pwm_history_index + MPC_DEADTIME_SAMPLES - delay_steps) % MPC_DEADTIME_SAMPLES];
+      #else
+        const uint8_t model_pwm = hotend.soft_pwm_amount;
+      #endif
+
       // Update the modeled temperatures
       const float _heater_power = DIV_TERN(MPC_PTC, mpc.heater_power, 1.0f + mpc.heater_alpha * (hotend.modeled_block_temp - mpc.heater_reftemp));
-      float blocktempdelta = hotend.soft_pwm_amount * _heater_power * (MPC_dT / 127) / mpc.block_heat_capacity;
+      float blocktempdelta = model_pwm * _heater_power * (MPC_dT / 127) / mpc.block_heat_capacity;
       blocktempdelta += (hotend.modeled_ambient_temp - hotend.modeled_block_temp) * ambient_xfer_coeff * MPC_dT / mpc.block_heat_capacity;
       hotend.modeled_block_temp += blocktempdelta;
 
@@ -1822,11 +1839,21 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
       if (WITHIN(hotend.soft_pwm_amount, 1, 126) || fabs(blocktempdelta + delta_to_apply) < (MPC_STEADYSTATE * MPC_dT))
         hotend.modeled_ambient_temp += delta_to_apply > 0.f ? _MAX(delta_to_apply, MPC_MIN_AMBIENT_CHANGE * MPC_dT) : _MIN(delta_to_apply, -MPC_MIN_AMBIENT_CHANGE * MPC_dT);
 
+      #if ENABLED(MPC_DEADTIME)
+        // Plan from the block temperature expected once in-flight heat arrives, net of losses meanwhile
+        const float planned_block_temp = hotend.modeled_block_temp
+          + (in_flight_pwm * _heater_power * (MPC_dT / 127)
+             + (hotend.modeled_ambient_temp - hotend.modeled_block_temp) * ambient_xfer_coeff * (delay_steps * MPC_dT)
+            ) / mpc.block_heat_capacity;
+      #else
+        const float planned_block_temp = hotend.modeled_block_temp;
+      #endif
+
       float power = 0.0;
       if (hotend.target != 0 && !is_idling) {
         // Plan power level to get to target temperature in 2 seconds
-        power = (hotend.target - hotend.modeled_block_temp) * mpc.block_heat_capacity * 0.5f;
-        power -= (hotend.modeled_ambient_temp - hotend.modeled_block_temp) * ambient_xfer_coeff;
+        power = (hotend.target - planned_block_temp) * mpc.block_heat_capacity * 0.5f;
+        power -= (hotend.modeled_ambient_temp - planned_block_temp) * ambient_xfer_coeff;
       }
 
       float pid_output = power * 254.0f / _heater_power + 1.0f;        // Ensure correct quantization into a range of 0 to 127

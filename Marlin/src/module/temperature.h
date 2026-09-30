@@ -398,6 +398,9 @@ typedef struct { float p, i, d, c, f; } raw_pidcf_t;
     float sensor_responsiveness;        // M306 R
     float ambient_xfer_coeff_fan0;      // M306 A
     float filament_heat_capacity_permm; // M306 H
+    #if ENABLED(MPC_DEADTIME)
+      float heater_deadtime;            // M306 D
+    #endif
     #if ENABLED(MPC_INCLUDE_FAN)
       float fan255_adjustment;          // M306 F
       void applyFanAdjustment(const float cf) { fan255_adjustment = cf - ambient_xfer_coeff_fan0; }
@@ -408,6 +411,11 @@ typedef struct { float p, i, d, c, f; } raw_pidcf_t;
   } MPC_t;
 
   #define MPC_dT ((OVERSAMPLENR * float(ACTUAL_ADC_SAMPLES)) / (TEMP_TIMER_FREQUENCY))
+
+  #if ENABLED(MPC_DEADTIME)
+    #define MPC_DEADTIME_MAX 8.0f       // (s) Longest heater dead time that can be modeled
+    #define MPC_DEADTIME_SAMPLES (uint8_t((MPC_DEADTIME_MAX) / (MPC_dT)) + 1)
+  #endif
 
 #endif
 
@@ -467,6 +475,10 @@ struct PIDHeaterInfo : public HeaterInfo {
     float modeled_ambient_temp,
           modeled_block_temp,
           modeled_sensor_temp;
+    #if ENABLED(MPC_DEADTIME)
+      uint8_t pwm_history[MPC_DEADTIME_SAMPLES];  // Heater PWM of recent MPC steps, still on its way to the sensor
+      uint8_t pwm_history_index;                  // Newest entry
+    #endif
     float fanCoefficient() { return mpc.fanCoefficient(); }
     void applyFanAdjustment(const float cf) { mpc.applyFanAdjustment(cf); }
   };
