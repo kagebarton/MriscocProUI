@@ -401,6 +401,10 @@ typedef struct { float p, i, d, c, f; } raw_pidcf_t;
     #if ENABLED(MPC_DEADTIME)
       float heater_deadtime;            // M306 D
     #endif
+    #if ENABLED(MPC_SIDE_MASS)
+      float side_heat_capacity;         // M306 M
+      float side_xfer_coeff;            // M306 K
+    #endif
     #if ENABLED(MPC_INCLUDE_FAN)
       float fan255_adjustment;          // M306 F
       void applyFanAdjustment(const float cf) { fan255_adjustment = cf - ambient_xfer_coeff_fan0; }
@@ -475,6 +479,9 @@ struct PIDHeaterInfo : public HeaterInfo {
     float modeled_ambient_temp,
           modeled_block_temp,
           modeled_sensor_temp;
+    #if ENABLED(MPC_SIDE_MASS)
+      float modeled_side_temp;
+    #endif
     #if ENABLED(MPC_DEADTIME)
       uint8_t pwm_history[MPC_DEADTIME_SAMPLES];  // Heater PWM of recent MPC steps, still on its way to the sensor
       uint8_t pwm_history_index;                  // Newest entry

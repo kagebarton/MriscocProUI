@@ -1775,6 +1775,7 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
       if (isnan(hotend.modeled_block_temp)) {
         hotend.modeled_ambient_temp = _MIN(30.0f, hotend.celsius); // Cap initial value at reasonable max room temperature of 30C
         hotend.modeled_block_temp = hotend.modeled_sensor_temp = hotend.celsius;
+        TERN_(MPC_SIDE_MASS, hotend.modeled_side_temp = hotend.celsius);
         #if ENABLED(MPC_DEADTIME)
           for (auto &pwm : hotend.pwm_history) pwm = hotend.soft_pwm_amount;
         #endif
@@ -1820,11 +1821,26 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
         const uint8_t model_pwm = hotend.soft_pwm_amount;
       #endif
 
+      #if ENABLED(MPC_SIDE_MASS)
+        // Heat the block passes to a slower mass that lags behind it (e.g., the bulk of a large block)
+        const bool has_side_mass = mpc.side_heat_capacity > 0.0f;
+        const float side_flow = has_side_mass ? (hotend.modeled_block_temp - hotend.modeled_side_temp) * mpc.side_xfer_coeff : 0.0f;
+      #else
+        constexpr float side_flow = 0.0f;
+      #endif
+
       // Update the modeled temperatures
       const float _heater_power = DIV_TERN(MPC_PTC, mpc.heater_power, 1.0f + mpc.heater_alpha * (hotend.modeled_block_temp - mpc.heater_reftemp));
       float blocktempdelta = model_pwm * _heater_power * (MPC_dT / 127) / mpc.block_heat_capacity;
-      blocktempdelta += (hotend.modeled_ambient_temp - hotend.modeled_block_temp) * ambient_xfer_coeff * MPC_dT / mpc.block_heat_capacity;
+      blocktempdelta += ((hotend.modeled_ambient_temp - hotend.modeled_block_temp) * ambient_xfer_coeff - side_flow) * MPC_dT / mpc.block_heat_capacity;
       hotend.modeled_block_temp += blocktempdelta;
+
+      #if ENABLED(MPC_SIDE_MASS)
+        if (has_side_mass)
+          hotend.modeled_side_temp += side_flow * MPC_dT / mpc.side_heat_capacity;
+        else
+          hotend.modeled_side_temp = hotend.modeled_block_temp; // Stay in step so enabling it later starts from equilibrium
+      #endif
 
       const float sensortempdelta = (hotend.modeled_block_temp - hotend.modeled_sensor_temp) * (mpc.sensor_responsiveness * MPC_dT);
       hotend.modeled_sensor_temp += sensortempdelta;
@@ -1843,7 +1859,7 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
         // Plan from the block temperature expected once in-flight heat arrives, net of losses meanwhile
         const float planned_block_temp = hotend.modeled_block_temp
           + (in_flight_pwm * _heater_power * (MPC_dT / 127)
-             + (hotend.modeled_ambient_temp - hotend.modeled_block_temp) * ambient_xfer_coeff * (delay_steps * MPC_dT)
+             + ((hotend.modeled_ambient_temp - hotend.modeled_block_temp) * ambient_xfer_coeff - side_flow) * (delay_steps * MPC_dT)
             ) / mpc.block_heat_capacity;
       #else
         const float planned_block_temp = hotend.modeled_block_temp;
@@ -1854,6 +1870,10 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
         // Plan power level to get to target temperature in 2 seconds
         power = (hotend.target - planned_block_temp) * mpc.block_heat_capacity * 0.5f;
         power -= (hotend.modeled_ambient_temp - planned_block_temp) * ambient_xfer_coeff;
+        #if ENABLED(MPC_SIDE_MASS)
+          // Keep feeding the heat the side mass is still soaking up
+          if (has_side_mass) power += (planned_block_temp - hotend.modeled_side_temp) * mpc.side_xfer_coeff;
+        #endif
       }
 
       float pid_output = power * 254.0f / _heater_power + 1.0f;        // Ensure correct quantization into a range of 0 to 127

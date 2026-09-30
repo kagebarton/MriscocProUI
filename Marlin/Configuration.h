@@ -633,7 +633,7 @@
 #endif
 
 #if HAS_E_TEMP_SENSOR
-  #define TEMP_RESIDENCY_TIME         10  // (seconds) Time to wait for hotend to "settle" in M109
+  #define TEMP_RESIDENCY_TIME          3  // (seconds) Time to wait for hotend to "settle" in M109
   #define TEMP_WINDOW                  1  // (°C) Temperature proximity for the "temperature reached" timer
   #define TEMP_HYSTERESIS              3  // (°C) Temperature proximity considered "close enough" to the target
 #endif
@@ -772,14 +772,21 @@
 
   #define MPC_DEADTIME                                // Model a dead time between heater and sensor (e.g., large blocks, cartridge thermistors).
   #if ENABLED(MPC_DEADTIME)
-    #define MPC_HEATER_DEADTIME { 4.5f }              // (s) Delay from a heater power change to the modeled block. Set with M306 D. Not measured by M306 T.
+    #define MPC_HEATER_DEADTIME { 6.0f }              // (s) Delay from a heater power change to the modeled block. Set with M306 D. Not measured by M306 T.
+  #endif
+
+  #define MPC_SIDE_MASS                               // Model a slower mass that keeps soaking up heat after the block is hot (e.g., the bulk of a large block).
+  #if ENABLED(MPC_SIDE_MASS)
+    #define MPC_SIDE_HEAT_CAPACITY { 2.0f }           // (J/K) Side mass heat capacity, 0 to disable. Set with M306 M. Not measured by M306 T.
+    #define MPC_SIDE_XFER_COEFF { 0.1f }              // (W/K) Heat transfer coefficient from block to side mass. Set with M306 K.
   #endif
 
   #define MPC_INCLUDE_FAN                             // Model the fan speed?
 
   // Physical constants fitted to measured Volcano heat-ups and steps (2026-09-23), not from M306 T.
   // M306 T assumes no dead time and overestimates C for this hotend, so re-running it undoes these.
-  #define MPC_BLOCK_HEAT_CAPACITY { 16.95f }          // (J/K) Heat block heat capacities.
+  // With MPC_SIDE_MASS, C is only the fast part of the block; the side mass M holds the rest (2026-09-30).
+  #define MPC_BLOCK_HEAT_CAPACITY { 16.0f }           // (J/K) Heat block heat capacities.
   #define MPC_SENSOR_RESPONSIVENESS { 0.2673f }       // (K/s per ∆K) Rate of change of sensor temperature from heat block.
   #define MPC_AMBIENT_XFER_COEFF { 0.0654f }          // (W/K) Heat transfer coefficients from heat block to room air with fan off.
   #if ENABLED(MPC_INCLUDE_FAN)

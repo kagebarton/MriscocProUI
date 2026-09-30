@@ -39,6 +39,8 @@
  *  D<seconds>                Heater dead time. (Requires MPC_DEADTIME)
  *  F<watts/kelvin>           Ambient heat transfer coefficient (fan on full).
  *  H<joules/kelvin/mm>       Filament heat capacity per mm.
+ *  K<watts/kelvin>           Heat transfer coefficient from block to side mass. (Requires MPC_SIDE_MASS)
+ *  M<joules/kelvin>          Side mass heat capacity, 0 to disable. (Requires MPC_SIDE_MASS)
  *  P<watts>                  Heater power.
  *  R<kelvin/second/kelvin>   Sensor responsiveness (= transfer coefficient / heat capacity).
  *
@@ -76,7 +78,7 @@ void GcodeSuite::M306() {
     }
   #endif
 
-  if (parser.seen("ACFPRH" TERN_(MPC_DEADTIME, "D"))) {
+  if (parser.seen("ACFPRH" TERN_(MPC_DEADTIME, "D") TERN_(MPC_SIDE_MASS, "KM"))) {
     MPC_t &mpc = thermalManager.temp_hotend[e].mpc;
     if (parser.seenval('P')) mpc.heater_power = parser.value_float();
     #if ENABLED(MPC_PTC)
@@ -86,6 +88,10 @@ void GcodeSuite::M306() {
     if (parser.seenval('C')) mpc.block_heat_capacity = parser.value_float();
     #if ENABLED(MPC_DEADTIME)
       if (parser.seenval('D')) mpc.heater_deadtime = constrain(parser.value_float(), 0.0f, MPC_DEADTIME_MAX);
+    #endif
+    #if ENABLED(MPC_SIDE_MASS)
+      if (parser.seenval('M')) mpc.side_heat_capacity = _MAX(parser.value_float(), 0.0f);
+      if (parser.seenval('K')) mpc.side_xfer_coeff = _MAX(parser.value_float(), 0.0f);
     #endif
     if (parser.seenval('R')) mpc.sensor_responsiveness = parser.value_float();
     if (parser.seenval('A')) mpc.ambient_xfer_coeff_fan0 = parser.value_float();
@@ -115,6 +121,10 @@ void GcodeSuite::M306_report(const bool forReplay/*=true*/) {
                          " C", p_float_t(mpc.block_heat_capacity, 2),
                          #if ENABLED(MPC_DEADTIME)
                            " D", p_float_t(mpc.heater_deadtime, 2),
+                         #endif
+                         #if ENABLED(MPC_SIDE_MASS)
+                           " M", p_float_t(mpc.side_heat_capacity, 2),
+                           " K", p_float_t(mpc.side_xfer_coeff, 4),
                          #endif
                          " R", p_float_t(mpc.sensor_responsiveness, 4),
                          " A", p_float_t(mpc.ambient_xfer_coeff_fan0, 4),

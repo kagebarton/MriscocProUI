@@ -1052,6 +1052,9 @@ static_assert(NUM_SERVOS <= NUM_SERVO_PLUGS, "NUM_SERVOS (or some servo index) i
 #if ENABLED(MPC_DEADTIME) && !defined(MPC_HEATER_DEADTIME)
   #error "MPC_DEADTIME requires MPC_HEATER_DEADTIME."
 #endif
+#if ENABLED(MPC_SIDE_MASS) && !(defined(MPC_SIDE_HEAT_CAPACITY) && defined(MPC_SIDE_XFER_COEFF))
+  #error "MPC_SIDE_MASS requires MPC_SIDE_HEAT_CAPACITY and MPC_SIDE_XFER_COEFF."
+#endif
 
 #if ENABLED(MPC_INCLUDE_FAN)
   #if !HAS_FAN

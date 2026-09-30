@@ -4001,6 +4001,12 @@ void MarlinSettings::reset() {
       constexpr float _mpc_heater_deadtime[] = MPC_HEATER_DEADTIME;
       static_assert(HOTENDS == COUNT(_mpc_heater_deadtime), "MPC_HEATER_DEADTIME requires values for all (" STRINGIFY(HOTENDS) ") hotends.");
     #endif
+    #if ENABLED(MPC_SIDE_MASS)
+      constexpr float _mpc_side_heat_capacity[] = MPC_SIDE_HEAT_CAPACITY,
+                      _mpc_side_xfer_coeff[] = MPC_SIDE_XFER_COEFF;
+      static_assert(HOTENDS == COUNT(_mpc_side_heat_capacity), "MPC_SIDE_HEAT_CAPACITY requires values for all (" STRINGIFY(HOTENDS) ") hotends.");
+      static_assert(HOTENDS == COUNT(_mpc_side_xfer_coeff), "MPC_SIDE_XFER_COEFF requires values for all (" STRINGIFY(HOTENDS) ") hotends.");
+    #endif
 
     HOTEND_LOOP() {
       MPC_t &mpc = thermalManager.temp_hotend[e].mpc;
@@ -4017,6 +4023,10 @@ void MarlinSettings::reset() {
       #endif
       mpc.filament_heat_capacity_permm = _filament_heat_capacity_permm[e];
       TERN_(MPC_DEADTIME, mpc.heater_deadtime = _mpc_heater_deadtime[e]);
+      #if ENABLED(MPC_SIDE_MASS)
+        mpc.side_heat_capacity = _mpc_side_heat_capacity[e];
+        mpc.side_xfer_coeff = _mpc_side_xfer_coeff[e];
+      #endif
     }
 
   #endif // MPCTEMP
