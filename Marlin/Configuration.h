@@ -772,13 +772,13 @@
 
   #define MPC_DEADTIME                                // Model a dead time between heater and sensor (e.g., large blocks, cartridge thermistors).
   #if ENABLED(MPC_DEADTIME)
-    #define MPC_HEATER_DEADTIME { 6.0f }              // (s) Delay from a heater power change to the modeled block. Set with M306 D. Not measured by M306 T.
+    #define MPC_HEATER_DEADTIME { 5.5f }              // (s) Delay from a heater power change to the modeled block. Set with M306 D. Not measured by M306 T.
   #endif
 
   #define MPC_SIDE_MASS                               // Model a slower mass that keeps soaking up heat after the block is hot (e.g., the bulk of a large block).
   #if ENABLED(MPC_SIDE_MASS)
     #define MPC_SIDE_HEAT_CAPACITY { 2.0f }           // (J/K) Side mass heat capacity, 0 to disable. Set with M306 M. Not measured by M306 T.
-    #define MPC_SIDE_XFER_COEFF { 0.1f }              // (W/K) Heat transfer coefficient from block to side mass. Set with M306 K.
+    #define MPC_SIDE_XFER_COEFF { 0.05f }             // (W/K) Heat transfer coefficient from block to side mass. Set with M306 K.
   #endif
 
   #define MPC_INCLUDE_FAN                             // Model the fan speed?
