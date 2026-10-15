@@ -185,8 +185,8 @@ void SetRetractSpeed();
   void DoCoolDown();
 #endif
 #if ENABLED(BAUD_RATE_GCODE)
-  void SetBaud115K();
   void SetBaud250K();
+  void SetBaud500K();
 #endif
 #if HAS_LCD_BRIGHTNESS
   void TurnOffBacklight();

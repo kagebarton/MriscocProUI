@@ -36,7 +36,8 @@
  */
 
 // Change EEPROM version if the structure changes
-#define EEPROM_VERSION "V90"
+// K90: ProUI baud box now means 500K, so a stored V90 "250K" tick must not be read as 500K
+#define EEPROM_VERSION "K90"
 #define EEPROM_OFFSET 100
 
 // Check the integrity of data offsets.

@@ -102,7 +102,7 @@
  *
  * :[2400, 9600, 19200, 38400, 57600, 115200, 250000, 500000, 1000000]
  */
-#define BAUDRATE 250000
+#define BAUDRATE 250000     // ProUI "500K baud" box (Advanced Settings) switches to 500000; unticked = 250000. 500000 garbles on Linux via the CH9341.
 #define BAUD_RATE_GCODE     // Enable G-code M575 to set the baud rate
 
 /**

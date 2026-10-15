@@ -1144,6 +1144,7 @@ namespace LanguageWide_en {
     LSTR MSG_SHOW_TEMP_GRAPH              = _UxGT("Show Temp Graph");
 
     LSTR MSG_250K_BAUD                    = _UxGT("250K baud");
+    LSTR MSG_500K_BAUD                    = _UxGT("500K baud");
     LSTR MSG_SCREW_INSET                  = _UxGT("Bed Screw Inset");
     LSTR MSG_SPEED_IND                    = _UxGT("Speed Indicator");
     LSTR MSG_TRAMWIZ_CALC                 = _UxGT("Calculate Average");

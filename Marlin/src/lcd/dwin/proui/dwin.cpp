@@ -2154,7 +2154,7 @@ void DWIN_SetDataDefaults() {
     HMI_data.BedLevT = LEVELING_BED_TEMP;
   #endif
   TERN_(PROUI_ITEM_ENC, ui.rev_rate = false;)
-  TERN_(BAUD_RATE_GCODE, HMI_data.Baud250K = (BAUDRATE == 250000);)
+  TERN_(BAUD_RATE_GCODE, HMI_data.Baud500K = (BAUDRATE == 500000);)
   TERN_(PROUI_ITEM_TRAM, HMI_data.CalcAvg = true;)
   TERN_(SHOW_SPEED_IND, HMI_data.SpdInd = false;)
   TERN_(HAS_BED_PROBE, HMI_data.FullManualTramming = false;)
@@ -2239,7 +2239,7 @@ void DWIN_CopySettingsFrom(PGM_P const buff) {
   DWINUI::SetColors(HMI_data.Text_Color, HMI_data.Background_Color, HMI_data.TitleBg_Color);
   TERN_(PREVENT_COLD_EXTRUSION, ApplyExtMinT();)
   motion.feedrate_percentage = 100;
-  TERN_(BAUD_RATE_GCODE, if (HMI_data.Baud250K) { SetBaud250K(); } else { SetBaud115K(); })
+  TERN_(BAUD_RATE_GCODE, if (HMI_data.Baud500K) { SetBaud500K(); } else { SetBaud250K(); })
   TERN_(PROUI_MEDIASORT, card.setSortOn(HMI_data.MediaSort ? TERN(SDSORT_REVERSE, AS_REV, AS_FWD) : AS_OFF);)
   #if ALL(LED_CONTROL_MENU, HAS_COLOR_LEDS)
     leds.set_color(
@@ -2556,11 +2556,12 @@ void ApplyMove() {
 #endif
 
 #if ENABLED(BAUD_RATE_GCODE)
-  void SetBaud115K() { queue.inject(F("M575B500")); } // Unchecked 250K box = 500K
+  // "500K baud" box: ticked = 500000, unticked = 250000. Applied on toggle and when settings load at boot.
   void SetBaud250K() { queue.inject(F("M575B250")); }
+  void SetBaud500K() { queue.inject(F("M575B500")); }
   void SetBaudRate() {
-    Toggle_Chkb_Line(HMI_data.Baud250K);
-    HMI_data.Baud250K ? SetBaud250K() : SetBaud115K();
+    Toggle_Chkb_Line(HMI_data.Baud500K);
+    HMI_data.Baud500K ? SetBaud500K() : SetBaud250K();
   }
 #endif
 
@@ -4875,7 +4876,7 @@ void Draw_AdvancedSettings_Menu() {
       EDIT_ITEM(ICON_File, MSG_HAS_PREVIEW, onDrawChkbMenu, SetPreview, &HMI_data.EnablePreview);
     #endif
     #if ENABLED(BAUD_RATE_GCODE)
-      EDIT_ITEM(ICON_SetBaudRate, MSG_250K_BAUD, onDrawChkbMenu, SetBaudRate, &HMI_data.Baud250K);
+      EDIT_ITEM(ICON_SetBaudRate, MSG_500K_BAUD, onDrawChkbMenu, SetBaudRate, &HMI_data.Baud500K);
     #endif
     #if ENABLED(PROUI_MEDIASORT)
       EDIT_ITEM(ICON_File, MSG_MEDIA_SORT, onDrawChkbMenu, SetMediaSort, &HMI_data.MediaSort);
@@ -4938,7 +4939,7 @@ void Draw_AdvancedSettings_Menu() {
         EDIT_ITEM(ICON_File, MSG_HAS_PREVIEW, onDrawChkbMenu, SetPreview, &HMI_data.EnablePreview);
       #endif
       #if ENABLED(BAUD_RATE_GCODE)
-        EDIT_ITEM(ICON_SetBaudRate, MSG_250K_BAUD, onDrawChkbMenu, SetBaudRate, &HMI_data.Baud250K);
+        EDIT_ITEM(ICON_SetBaudRate, MSG_500K_BAUD, onDrawChkbMenu, SetBaudRate, &HMI_data.Baud500K);
       #endif
       #if ENABLED(PROUI_MEDIASORT)
         EDIT_ITEM(ICON_File, MSG_MEDIA_SORT, onDrawChkbMenu, SetMediaSort, &HMI_data.MediaSort);
