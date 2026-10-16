@@ -317,30 +317,37 @@ inline int read_serial(const serial_index_t index) { return SERIAL_IMPL.read(ind
 
 #endif // (ARDUINO_ARCH_STM32F4 || ARDUINO_ARCH_STM32) && USBCON
 
-#define PS_NORMAL 0
-#define PS_EOL    1
-#define PS_QUOTED 2
-#define PS_PAREN  3
-#define PS_ESC    4
-
 void GCodeQueue::gcode_line_error(FSTR_P const ferr, const serial_index_t serial_ind) {
   PORT_REDIRECT(SERIAL_PORTMASK(serial_ind)); // Reply to the serial port that sent the command
   SERIAL_ERROR_START();
   SERIAL_ECHOLN(ferr, serial_state[serial_ind.index].last_N);
-  // Clear out the RX buffer. A host streaming several lines ahead is usually partway through one when
-  // this stops, and the rest of that line would arrive without its N, skip the line number and checksum
-  // checks, and run as an unnumbered command. So unless the last byte cleared ended a line, skip to the next EOL.
-  int c, last = '\n';
-  while ((c = read_serial(serial_ind)) != -1) last = c;
+  // Upstream clears out the RX buffer here. A host streaming many lines ahead is then usually partway through
+  // one, and the rest of it arrives without its N, skips the line number and checksum checks, and runs as an
+  // unnumbered command. Every line still in flight also drew its own error and resend request, each clearing
+  // the buffer again and throwing away resent lines. Instead keep the buffer and skip those lines until the
+  // resent one arrives (see get_serial_commands).
   flush_and_request_resend(serial_ind);
-  serial_state[serial_ind.index].count = 0;
-  serial_state[serial_ind.index].input_state = ISEOL(last) ? PS_NORMAL : PS_EOL;
+  SerialState &serial = serial_state[serial_ind.index];
+  serial.count = 0;
+  serial.resend_wait = true;
+  serial.skipped_N = serial.last_N + 1;
+  serial.wait_ms = millis();
 }
+
+// Not the "Line Number" error: OctoPrint takes another request with that during its resend for a leftover of the
+// first one and ignores it. Hosts take errors they don't recognize as fatal, and "checksum" they know.
+#define STR_ERR_RESEND_LOST "Checksum mismatch or lost line in resend, Last Line: "
 
 FORCE_INLINE bool is_M29(const char * const cmd) {  // matches "M29" & "M29 ", but not "M290", etc
   const char * const m29 = strstr_P(cmd, PSTR("M29"));
   return m29 && !NUMERIC(m29[3]);
 }
+
+#define PS_NORMAL 0
+#define PS_EOL    1
+#define PS_QUOTED 2
+#define PS_PAREN  3
+#define PS_ESC    4
 
 inline void process_stream_char(const char c, uint8_t &sis, char (&buff)[MAX_CMD_SIZE], int &ind) {
 
@@ -437,6 +444,17 @@ void GCodeQueue::get_serial_commands() {
     }
   #endif
 
+  // Hosts send a resent line as soon as they have the request, so if nothing arrives it was lost too: ask again.
+  // Only a few times, in case the host is gone. A host that reconnects starts over with M110 anyway.
+  for (uint8_t p = 0; p < NUM_SERIAL; ++p) {
+    SerialState &serial = serial_state[p];
+    if (serial.resend_wait && serial.wait_timeouts < 3 && !ring_buffer.full() && !serial_data_available(p)
+        && ELAPSED(millis(), serial.wait_ms + 1000UL)) {
+      serial.wait_timeouts++;
+      gcode_line_error(F(STR_ERR_RESEND_LOST), p);
+    }
+  }
+
   // Loop while serial characters are incoming and the queue is not full
   for (bool hadData = true; hadData;) {
     // Unless a serial port has data, this will exit on next iteration
@@ -488,30 +506,49 @@ void GCodeQueue::get_serial_commands() {
 
           const long gcode_N = strtol(npos + 1, nullptr, 10);
 
+          char *apos = strrchr(command, '*');
+          bool checksum_ok = false;
+          if (apos) {
+            uint8_t checksum = 0, count = uint8_t(apos - command);
+            while (count) checksum ^= command[--count];
+            checksum_ok = strtol(apos + 1, nullptr, 10) == checksum;
+          }
+
           // The line number must be in the correct sequence.
           if (gcode_N != serial.last_N + 1 && !M110) {
             // A request-for-resend line was already in transit so we got two - oops!
             if (WITHIN(gcode_N, serial.last_N - 1, serial.last_N)) continue;
-            // A corrupted line or too high, indicating a lost line
-            gcode_line_error(F(STR_ERR_LINE_NO), p);
+            if (serial.resend_wait) {
+              // After a resend request, skip the lines that were already in flight behind the bad one, any that
+              // arrive corrupted, and repeats of lines already run, with no reply, as for the duplicates above.
+              // The host sends the resent line first, so a line between it and the highest one in flight means
+              // the host started over without it: it was lost, ask again.
+              serial.wait_ms = millis();
+              if (!checksum_ok || gcode_N > serial.skipped_N || gcode_N < serial.last_N) {
+                if (checksum_ok) serial.skipped_N = gcode_N;
+                continue;
+              }
+              gcode_line_error(F(STR_ERR_RESEND_LOST), p);
+            }
+            else // A corrupted line or too high, indicating a lost line
+              gcode_line_error(F(STR_ERR_LINE_NO), p);
+            // The lines in flight behind this one carry higher numbers
+            if (checksum_ok) serial.skipped_N = gcode_N;
             break;
           }
 
-          char *apos = strrchr(command, '*');
-          if (apos) {
-            uint8_t checksum = 0, count = uint8_t(apos - command);
-            while (count) checksum ^= command[--count];
-            if (strtol(apos + 1, nullptr, 10) != checksum) {
-              gcode_line_error(F(STR_ERR_CHECKSUM_MISMATCH), p);
-              break;
-            }
-          }
-          else {
+          if (!apos) {
             gcode_line_error(F(STR_ERR_NO_CHECKSUM), p);
+            break;
+          }
+          if (!checksum_ok) {
+            gcode_line_error(F(STR_ERR_CHECKSUM_MISMATCH), p);
             break;
           }
 
           serial.last_N = gcode_N;
+          serial.resend_wait = false;
+          serial.wait_timeouts = 0;
         }
         #if HAS_MEDIA
           // Pronterface "M29" and "M29 " has no line number

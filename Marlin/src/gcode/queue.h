@@ -43,6 +43,10 @@ public:
     int count;                      //!< Number of characters read in the current line of serial input
     char line_buffer[MAX_CMD_SIZE]; //!< The current line accumulator
     uint8_t input_state;            //!< The input state
+    bool resend_wait;               //!< A resend was requested and the line hasn't arrived yet
+    long skipped_N;                 //!< While waiting, the highest line number seen in flight behind the bad line
+    millis_t wait_ms;               //!< While waiting, when a line last arrived or the request was sent
+    uint8_t wait_timeouts;          //!< Requests sent again because nothing arrived
   };
 
   static SerialState serial_state[NUM_SERIAL]; //!< Serial states for each serial port
@@ -212,7 +216,12 @@ public:
   /**
    * (Re)Set the current line number for the last received command
    */
-  static void set_current_line_number(long n) { serial_state[ring_buffer.command_port().index].last_N = n; }
+  static void set_current_line_number(long n) {
+    SerialState &serial = serial_state[ring_buffer.command_port().index];
+    serial.last_N = n;
+    serial.resend_wait = false;
+    serial.wait_timeouts = 0;
+  }
 
   /**
    * Get the current line number for the last received command
