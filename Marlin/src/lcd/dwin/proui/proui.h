@@ -57,11 +57,10 @@ constexpr bool DEF_FIL_MOTION_SENSOR = ENABLED(FILAMENT_MOTION_SENSOR);
 
 #if HAS_TOOLBAR
   constexpr uint8_t TBMaxOpt = 5;      // Amount of shortcuts on screen
-  #if HAS_BED_PROBE
-    #define DEF_TBOPT {1, 7, 6, 2, 4}  // Default shorcuts for ABL/UBL
-  #else
-    #define DEF_TBOPT {1, 5, 4, 2, 3}; // Default shortcuts for MM
-  #endif
+  // Indexes into TBItemA (toolbar_def.h); they shift with the probe, tramming and preheat options
+  #define _TB_COOLDOWN TERN(HAS_BED_PROBE, 5 + ENABLED(PROUI_ITEM_TRAM), 4)
+  #define _TB_REBOOT   (_TB_COOLDOWN + 2 + TERN0(HAS_PREHEAT, PREHEAT_COUNT))
+  #define DEF_TBOPT {_TB_COOLDOWN, _TB_REBOOT + 2, 1, _TB_REBOOT + 1, _TB_REBOOT} // Cooldown, Z Raise, Home, Store, Reset
 #endif
 
 #ifndef LOW
