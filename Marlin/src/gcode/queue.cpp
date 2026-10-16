@@ -317,25 +317,30 @@ inline int read_serial(const serial_index_t index) { return SERIAL_IMPL.read(ind
 
 #endif // (ARDUINO_ARCH_STM32F4 || ARDUINO_ARCH_STM32) && USBCON
 
+#define PS_NORMAL 0
+#define PS_EOL    1
+#define PS_QUOTED 2
+#define PS_PAREN  3
+#define PS_ESC    4
+
 void GCodeQueue::gcode_line_error(FSTR_P const ferr, const serial_index_t serial_ind) {
   PORT_REDIRECT(SERIAL_PORTMASK(serial_ind)); // Reply to the serial port that sent the command
   SERIAL_ERROR_START();
   SERIAL_ECHOLN(ferr, serial_state[serial_ind.index].last_N);
-  while (read_serial(serial_ind) != -1) { /* nada */ } // Clear out the RX buffer. Why don't use flush here ?
+  // Clear out the RX buffer. A host streaming several lines ahead is usually partway through one when
+  // this stops, and the rest of that line would arrive without its N, skip the line number and checksum
+  // checks, and run as an unnumbered command. So unless the last byte cleared ended a line, skip to the next EOL.
+  int c, last = '\n';
+  while ((c = read_serial(serial_ind)) != -1) last = c;
   flush_and_request_resend(serial_ind);
   serial_state[serial_ind.index].count = 0;
+  serial_state[serial_ind.index].input_state = ISEOL(last) ? PS_NORMAL : PS_EOL;
 }
 
 FORCE_INLINE bool is_M29(const char * const cmd) {  // matches "M29" & "M29 ", but not "M290", etc
   const char * const m29 = strstr_P(cmd, PSTR("M29"));
   return m29 && !NUMERIC(m29[3]);
 }
-
-#define PS_NORMAL 0
-#define PS_EOL    1
-#define PS_QUOTED 2
-#define PS_PAREN  3
-#define PS_ESC    4
 
 inline void process_stream_char(const char c, uint8_t &sis, char (&buff)[MAX_CMD_SIZE], int &ind) {
 
